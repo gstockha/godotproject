@@ -149,8 +149,7 @@ public override void _Ready(){
     #endregion
     
     ang = (-1 * Rotation.y);
-    Vector3 rotationDeg = collisionShape.RotationDegrees;
-    collisionShape.RotationDegrees = new Vector3(rotationDeg.x, ang, rotationDeg.z);
+    collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,ang,collisionShape.RotationDegrees.z);
     yvelocity = -1;
     
 }
@@ -427,6 +426,8 @@ public void _isWall(float delta){
         wallb = true;
         Vector3 wallbang = velocity.Bounce(GetSlideCollision(0).Normal);
         Vector2 wallang = new Vector2(wallbang.x,wallbang.z);
+        wallbx = wallang.x;
+        wallby = wallang.y;
         _alterDirection(GetSlideCollision(0).Normal);
         if (dashing && !walldashing){
             dashtimer.Stop();
@@ -485,8 +486,7 @@ public void _isBoinging(float delta){
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
-        Vector3 rotation = collisionShape.RotationDegrees;
-        collisionShape.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
+        collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
     }
 }
 
@@ -619,19 +619,125 @@ public void _rotateMesh(float xvel, float yvel, float delta){
 }
 
 public void _alterDirection(Vector3 alterNormal){
-
+    Vector3 wallbang = -new Vector3(dragdir[0], 0, dragdir[1]).Bounce(alterNormal);
+    int camArray = (int)camera.Get("camsetarray");
+    if (camArray == 1 || camArray == 3) wallbang.z *= -1;
+    else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
+    float camAng = Mathf.Deg2Rad((float)(camera.Get("camsets[camsetarray]"))) * -1;
+    if (Math.Round((float)ang,2,MidpointRounding.AwayFromZero) != Math.Round((float)camAng,2,MidpointRounding.AwayFromZero)){
+        angTarget = Rotation.y * -1;
+        ang = camAng;
+    }
+    for (int i = 0; i < dirsize; i++){
+        dir[0,i] = wallbang.z;
+        dir[1,i] = wallbang.x;
+    }
 }
 
 public void _jump(){
-
+    boingCharge = true;
+    if (boing != 0){ //boing jump
+        yvelocity = boing;
+        boingDash = false;
+        _squishNScale((gravity * 0.017F), bottom.GetCollisionNormal(), true);
+        squishSet = false;
+        boing = 0;
+        boingTimer.Stop();
+        collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+        if (shiftedDir != 0){ //boing jump off a slope
+            Vector3 wallbang = velocity.Bounce(bottom.GetCollisionNormal());
+            Vector2 wallang = new Vector2(wallbang.x, wallbang.z);
+            _alterDirection(bottom.GetCollisionNormal());
+            wallb = true;
+            wallbx = wallang.x * .5F;
+            wallby = wallang.y * .5F;
+        }
+        float lastyvel = yvelocity + (gravity * .017F); //yvel times rough delta estimate
+        int combo = bounceCombo;
+        if (combo > bounceComboCap) combo = bounceComboCap;
+        if (basejumpwindow < 1) basejumpwindow = 1;
+        float windowRatio = jumpwindow / basejumpwindow;
+        if (jumpwindow > 0){ //reward late boing
+            jumpwindow = (float)Math.Ceiling((jumpwindow + 1) * (bounce / bouncebase));
+            if (jumpwindow < 1) jumpwindow = 1;
+        }
+        string chargedNote = "";
+        if (windowRatio >= 1) chargedNote += "charged ";
+        float nuyvel = 0;
+        if (bouncedashing != 1){ //regular boingjump
+            jumpwindow = (jumpwindow / basejumpwindow * 75F) + bouncebase;
+            nuyvel = (float)Math.Round((jumpforce*(1+combo*.035F))*jumpwindow,1,MidpointRounding.AwayFromZero);
+            bounceCombo += 1;
+            if (!wallb) _drawMoveNote(chargedNote + "boingjump");
+            else{
+                _drawMoveNote(chargedNote + "walljump");
+                squishReverb[2] = 1; //set wall jiggle to true
+            }
+        }
+        else{ //crashing or walldashing
+            jumpwindow = (jumpwindow / basejumpwindow) + bouncebase;
+            bouncedashing = 0;
+            nuyvel = (float)Math.Round((jumpforce * (1 + bounceComboCap * .1F) * jumpwindow),1,MidpointRounding.AwayFromZero);
+            if (wallb){ //if off wall
+                _drawMoveNote(chargedNote + "crash walljump");
+                nuyvel *= windowRatio * .65F;
+                lastyvel *= windowRatio * .65F;
+                squishReverb[2] = 1; //set wall jiggle to true
+            }
+            else _drawMoveNote(chargedNote + "crashjump");
+        }
+        yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
+        squishReverb[0] = yvelocity * .033F;
+        _capSpeed(22, 50);
+        jumpwindow = 0;
+        bounce = bouncebase;
+    }
+    else if (yvelocity == -1 || (IsOnFloor() && shiftedDir == 0) || (shiftedDir != 0 && bottom.IsColliding())){
+        if (preBoingTimer.IsStopped() && shiftedDir == 0) preBoingTimer.Start(.2F); //idle charge jump
+        else _normalJump(); //jump normal jump on shift
+    }
+    else return;
+    canCrash = true;
+    if (shiftedDir != 0) shiftedSticky = 0;
 }
 
 public void _normalJump(){
-
+	boingCharge = false;
+	_drawMoveNote("jump");
+	yvelocity = jumpforce;
+	squishReverb[0] = yvelocity * .033F;
+	preBoingTimer.Stop();
+	canCrash = true;
+	if (shiftedDir != 0) shiftedSticky = 0;
 }
 
 public void _dash(){
-
+if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
+        if (IsOnFloor() && (yvelocity == -1) && (shiftedDir == 0)){ // on ground and not on shift
+            yvelocity = jumpforce * .5F;
+            _drawMoveNote("dash");
+        }
+        else if (canCrash){ // in air and not on shift
+            dashtimer.Stop();
+            weight = baseweight * 3;
+            shiftedDir = 0; // don't need to apply shifted gravity anymore if doing this
+            _drawMoveNote("crash");
+        }
+        else if (shiftedDir != 0){ // is on shift
+            dashtimer.Start(.3F);
+            dashspeed = speedCap * 2;
+            _drawMoveNote("slope dash");
+        }
+        else return;
+        if (moving){ // dash changes direction
+            int signy = Math.Sign(stickdir[1]);
+            for (int i = 0; i < dirsize; i++){
+                dir[0,i] = stickdir[0] * friction;
+                dir[1,i] = stickdir[1] * friction;
+            }
+        }
+        dashing = true;
+    }
 }
 
 public override void _Input(InputEvent @event){
