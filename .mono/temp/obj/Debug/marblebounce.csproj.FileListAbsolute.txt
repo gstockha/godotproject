@@ -1,0 +1,8 @@
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.csproj.AssemblyReference.cache
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.AssemblyInfoInputs.cache
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.AssemblyInfo.cs
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.csproj.CoreCompileInputs.cache
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\bin\Debug\marblebounce.dll
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\bin\Debug\marblebounce.pdb
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.dll
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.pdb

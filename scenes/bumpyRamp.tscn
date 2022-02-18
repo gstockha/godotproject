@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0, 1, 0.647059, 1 )
+
+[node name="bumpyRamp" type="CSGPolygon" groups=[
+"shifts",
+]]
+transform = Transform( -3.14315e-06, 0, 1, 0, 1, 0, -1, 0, -3.14315e-06, 0, 1, 0 )
+use_collision = true
+polygon = PoolVector2Array( 0.2, 0, 0.5, 0.15, 0.8, 0, 1.1, -0.2, -0.1, -0.2 )
+depth = 15.98
+material = SubResource( 1 )

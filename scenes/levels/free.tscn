@@ -1,0 +1,129 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://src/tipNote.gd" type="Script" id=1]
+[ext_resource path="res://scenes/cyFlat.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/player/PlayerBall.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/speedrunNote.gd" type="Script" id=4]
+[ext_resource path="res://src/moveNote.gd" type="Script" id=5]
+[ext_resource path="res://scenes/wallBlock.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
+
+[sub_resource type="DynamicFont" id=1]
+size = 24
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 9 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 42
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 9 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 36
+use_filter = true
+font_data = ExtResource( 9 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 24
+use_filter = true
+font_data = ExtResource( 9 )
+
+[node name="Spatial" type="Spatial"]
+
+[node name="cyFlat" parent="." instance=ExtResource( 2 )]
+transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
+
+[node name="playerNode" type="Spatial" parent="."]
+
+[node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 4, 11 )
+
+[node name="checkpoints" type="Spatial" parent="playerNode"]
+
+[node name="checkpoint1" parent="playerNode/checkpoints" instance=ExtResource( 7 )]
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
+
+[node name="moveNote" type="Label" parent="."]
+anchor_left = 0.499652
+anchor_top = 1.0
+anchor_right = 0.499652
+anchor_bottom = 1.00417
+margin_left = -84.5546
+margin_top = -51.0
+margin_right = 41.4454
+margin_bottom = -23.0024
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+align = 1
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="tipNote" type="Label" parent="."]
+anchor_top = 0.124
+anchor_right = 1.0
+anchor_bottom = 0.26
+margin_top = -0.280006
+margin_bottom = 10.8
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 3
+custom_constants/shadow_as_outline = 0
+align = 1
+valign = 1
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Timer" parent="tipNote"]
+one_shot = true
+
+[node name="speedrunNote" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -322.0
+margin_top = 6.0
+margin_right = -17.0
+margin_bottom = 52.0
+custom_fonts/font = SubResource( 3 )
+align = 2
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="prNote" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -234.0
+margin_top = 42.0
+margin_right = -18.0
+margin_bottom = 60.0
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 0.894118, 0.733333, 0, 1 )
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="wallBlock" parent="." instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, -6, 1, 3 )
+
+[node name="wallBlock2" parent="." instance=ExtResource( 6 )]
+transform = Transform( 0.707107, 0, 0.707107, 0, 15, 0, -0.707107, 0, 0.707107, 2, 1, -3 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.4281, -0.79763, 0.424873, -0.0885215, 0.430861, 0.898066, -0.899386, -0.422072, 0.113844, -2.665, 45, 11.267 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+shadow_enabled = true
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
+
+[connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]

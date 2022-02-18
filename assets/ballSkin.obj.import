@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/ballSkin.obj-a80f703af897db9d50e4c5fdb5b3daa4.mesh"
+
+[deps]
+
+files=[ "res://.import/ballSkin.obj-a80f703af897db9d50e4c5fdb5b3daa4.mesh" ]
+
+source_file="res://assets/ballSkin.obj"
+dest_files=[ "res://.import/ballSkin.obj-a80f703af897db9d50e4c5fdb5b3daa4.mesh", "res://.import/ballSkin.obj-a80f703af897db9d50e4c5fdb5b3daa4.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="BoxShape" id=2]
+
+[node name="Killbox" type="Area" groups=[
+"killboxes",
+]]
+transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, 0, -15, 0 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 2 )
