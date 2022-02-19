@@ -4,10 +4,11 @@ namespace MyMath{
     public static class MyMathClass{
         public static float array2dMean(float[,] array, int firstD){
             float total = 0;
-            for (int i = 0; i < array.Length; i++){
-                total += array[firstD, i];
+            for (int i = 0; i < array.GetLength(1); i++){
+                total += (float)array[firstD, i];
             }
-            return (total / array.Length);
+            if (float.IsNaN(total)) return 0;
+            return ((float)total / array.GetLength(1));
         }
 
         public static float arrayMax(float[] array){

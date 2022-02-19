@@ -53,7 +53,7 @@ var shiftedDir = 0 #going up a hill or down it
 var shiftedSticky = -1 #-1 means is sticky, 0 means unsticky (activated)
 var shiftedBoost = [0,0] #keep applying shift even after off shift (shiftedDir is 0), 1 is used and denominator
 var rampSlope = 0 #0 gets good y normal of ramp
-var shiftLinger = false
+var shiftedLinger = false
 
 var slowMo = false
 var speedRun = false
@@ -203,7 +203,7 @@ func _applyFriction(delta: float) -> void: #add 'drag' to movement
 	if friction > 1: friction = 1
 
 func _applyShift(delta: float, isGrounded: bool) -> void: #apply shift (slopoes or otherwise)
-	if shiftedDir != 0 and not shiftLinger: #on shift
+	if shiftedDir != 0 and not shiftedLinger: #on shift
 		var grav = (.05 + (baseweight * .01))
 		var fric = friction
 		var shift = bottom.get_collision_normal()
@@ -224,7 +224,7 @@ func _applyShift(delta: float, isGrounded: bool) -> void: #apply shift (slopoes 
 		elif shiftedDir < 0: shiftedBoost[0] = 0
 		move_and_collide(Vector3(shift.x * fric * grav,shiftedSticky,shift.z * fric * grav),true)
 	elif shiftedBoost[0] > 0: #shift linger
-		shiftLinger = true
+		shiftedLinger = true
 		shiftedBoost[0] -= delta * (baseweight * 10)
 		if shiftedBoost[0] < 0: shiftedBoost[0] = 0
 		var momentum = (shiftedBoost[0] / shiftedBoost[1])
@@ -236,7 +236,7 @@ func _applyShift(delta: float, isGrounded: bool) -> void: #apply shift (slopoes 
 		if (shiftedBoost[0] < 0 or momentum < .01 or friction == 0): #turn it off
 			shiftedBoost[0] = 0
 			shiftedBoost[1] = 0
-			shiftLinger = false
+			shiftedLinger = false
 			rampSlope = 0
 	if isGrounded: #if isRolling, check shift status
 		if (get_slide_count() > 0): #shifted check
@@ -251,7 +251,7 @@ func _applyShift(delta: float, isGrounded: bool) -> void: #apply shift (slopoes 
 					if (shiftedDir > 0): #going DOWN slope
 						shiftedSticky = -1
 						rampSlope = 0
-					elif shiftLinger and (get_slide_collision(0).collider.is_in_group('ramps')):
+					elif shiftedLinger and (get_slide_collision(0).collider.is_in_group('ramps')):
 						if friction > .7 and (rampSlope < (1 - get_floor_normal().y)): #get relevant downward Y vector normal
 							rampSlope = (1 - get_floor_normal().y) * friction
 				else: shiftedDir = -.1
@@ -659,7 +659,7 @@ func _dieNRespawn() -> void:
 	wallb = false
 	canCrash = false
 	shiftedDir = 0
-	shiftLinger = false
+	shiftedLinger = false
 	boingDash = false
 	preBoingTimer.stop()
 	_squishNScale((gravity * 0.017),null)

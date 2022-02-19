@@ -141,11 +141,16 @@ public override void _Ready(){
             controllerStr[5] = "Back";
         }
     }
-    int pointer = 0;
-    foreach(KeyValuePair<string,string> entry in controlNames){
-        controlNames[entry.Key] = controllerStr[pointer];
-        pointer ++;
-    }
+    // foreach(KeyValuePair<string,string> entry in controlNames.Keys){
+    //     controlNames[entry.Key] = controllerStr[pointer];
+    //     pointer ++;
+    // }
+    controlNames["roll"] = controllerStr[0];
+    controlNames["jump"] = controllerStr[1];
+    controlNames["dash"] = controllerStr[2];
+    controlNames["camera"] = controllerStr[3];
+    controlNames["restart"] = controllerStr[4];
+    controlNames["speedrun"] = controllerStr[5];
     #endregion
     
     ang = (-1 * Rotation.y);
@@ -186,7 +191,7 @@ public void _controller(float delta){
         stickdir[0] = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
         stickdir[1] = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
     }
-    moving = (stickdir[0] != 0 || stickdir[1] == 0);
+    moving = (stickdir[0] != 0 || stickdir[1] != 0);
     _applyFriction(delta);
     direction_ground = new Vector2(dragdir[0],dragdir[1]); //direction vector
     float xvel = 0;
@@ -227,12 +232,13 @@ public void _applyFriction(float delta){
         cameraFriction += delta * (2 + (tractionlist[traction] * .04F));
         if (cameraFriction > 1) cameraFriction = 1;
     }
-    int signdir;
+    int signdir = 0;
     if (moving){
         dragdir[0] = MyMathClass.array2dMean(dir,0);
         dragdir[1] = MyMathClass.array2dMean(dir,1);
         for (i = 0; i < 2; i++){
-            signdir = Math.Sign(stickdir[i]);
+            if (!float.IsNaN(stickdir[i])) signdir = Math.Sign(stickdir[i]);
+            else signdir = Math.Sign(dragdir[i]);
             if (signdir != 0 && Math.Sign(dragdir[i]) != signdir){
                 dir[i,current] += (tractionlist[traction] * signdir) * delta;
             }
@@ -242,7 +248,7 @@ public void _applyFriction(float delta){
         for (i = 0; i < 2; i++){
             if (dragdir[i] == 0) continue;
             if (Math.Abs(dragdir[i]) > .015F){ //slowly reduce speed (friction)
-                dragdir[i] = MyMathClass.array2dMean(dir,i);
+                dragdir[i] = MyMathClass.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
                 dir[i,current] -= (tractionlist[traction] * .08F * signdir) * baseweight * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
@@ -251,11 +257,11 @@ public void _applyFriction(float delta){
             }
             else dragdir[i] = 0;
         }
-        var absx = Math.Abs(dragdir[0]);
-        var absy = Math.Abs(dragdir[1]);
-        friction = (absx > absy) ? absx : absy;
-        if (friction > 1) friction = 1;
     }
+    float absx = Math.Abs(dragdir[0]);
+    float absy = Math.Abs(dragdir[1]);
+    friction = (absx > absy) ? absx : absy;
+    if (friction > 1) friction = 1;
 }
 
 public void _applyShift(float delta, bool isGrounded){
@@ -447,16 +453,20 @@ public void _isWall(float delta){
 }
 
 public void _isBoinging(float delta){
-    Node colliderNode = (Node)GetSlideCollision(0).Collider;
-    if (bottom.IsColliding() || (colliderNode.IsInGroup("walls") && IsOnWall())){
+    bool isWall = IsOnWall();
+    if (isWall){
+        Node colliderNode = (Node)GetSlideCollision(0).Collider;
+        isWall = colliderNode.IsInGroup("walls");
+    }
+    if (bottom.IsColliding() || isWall){
         if (jumpwindow < basejumpwindow) jumpwindow += 60 * delta;
         else jumpwindow = basejumpwindow;
         if (!wallb && shiftedDir == 0){
             float jumpratio = jumpwindow / basejumpwindow;
             float offset = (speed * bouncebase) / basejumpwindow;
             if (bottom.IsColliding()){
-                colliderNode = (Node)bottom.GetCollider();
-                if (colliderNode.IsInGroup("slides")){
+                Node bottomNode = (Node)bottom.GetCollider();
+                if (bottomNode.IsInGroup("slides")){
                     offset *= 2;
                     jumpratio *= baseweight * .015F;
                 }
@@ -623,7 +633,8 @@ public void _alterDirection(Vector3 alterNormal){
     int camArray = (int)camera.Get("camsetarray");
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    float camAng = Mathf.Deg2Rad((float)(camera.Get("camsets[camsetarray]"))) * -1;
+    int[] camAngs = (int[])(camera.Get("camsets"));
+    float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
     if (Math.Round((float)ang,2,MidpointRounding.AwayFromZero) != Math.Round((float)camAng,2,MidpointRounding.AwayFromZero)){
         angTarget = Rotation.y * -1;
         ang = camAng;
@@ -742,7 +753,7 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
 
 public override void _Input(InputEvent @event){
     if (@event.IsActionPressed("jump")) _jump();
-    else if (@event.IsActionPressed("jump")){
+    else if (@event.IsActionReleased("jump")){
         if (boingCharge){
             if (IsOnFloor() || yvelocity == -1 || IsOnWall()){
                 if (boing != 0){
@@ -863,7 +874,7 @@ public void _on_hitBox_area_entered(Area area){
                 break;
             case "killboxes":
                 if (!area.Name.BeginsWith("delay")) _dieNRespawn();
-                else if (deathtimer.IsStopped()) deathtimer.start(2);
+                else if (deathtimer.IsStopped()) deathtimer.Start(2);
                 break;
             case "warps":
                 Area checkpoint1 = (Area)GetNode("../checkpoints/checkpoint1");
@@ -884,20 +895,61 @@ public void _on_hitBox_area_entered(Area area){
             case "tips":
                 string str = "";
                 switch(area.Name){
-					
+					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
+                    case "jumpTip": str = controlNames["jump"] + " to Jump"; break;
+                    case "bounceTip": str = controlNames["jump"] + " after hitting the ground\n to Boingjump"; break;
+                    case "camTip": str = controlNames["camera"] + "\nto rotate the camera"; break;
+                    case "restartTip": 
+                        str = controlNames["restart"] + " to restart from checkpoint\n" +
+                        controlNames["speedrun"] + " to start speedrun mode";
+                        break;
+                    case "boingTip": str = "Hold " + controlNames["jump"] + " before landing\nto charge a Boingjump"; break;
+                    case "boingTip2": str = "Get a bouncing start\nfor a bigger Boingjump!"; break;
+                    case "dashTip": str = controlNames["dash"] + " to Dash"; break;
+                    case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
+                    case "slideTip2": str = "You can slide super far on glass!"; break;
+                    case "crashTip": str = "Dash in mid-air\nto Crash"; break;
+                    case "crashTip2": str = "Boingjump after hitting a wall\nto Walljump"; break;
+                    case "wallTip": str = "Boingjump after hitting a wall\nto Walljump"; break;
+                    case "wallTip2": str = "Chain a Crashjump into\na Walljump!"; break;
+                    case "shiftTip": str = "Roll down slopes to go fast!"; break;
+                    case "shiftTip2": str = "Jump off ramps at high speeds\nto get some air!"; break;
+                    case "part1Tip": str = "Grats on making it this far. You got it!"; break;
+                    case "part3Tip": str = "Take your time..."; break;
+                    case "part4Tip": str = "Crash Walljump by Crashing or Dashing into\na wall followed by a Walljump"; break;
+                    case "endTip": str = "That's all for now. Good job!\nTravel down to restart in speedrun mode!"; break;
                 }
                 if (str != "") _drawTip(str);
+                break;
+            case "camerasets":
+                Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
+                if (setDelay.IsStopped()){
+                    string[] tag = area.Name.Split("cameraset");
+                    camera.Call("_auto_move_camera", tag[1].ToInt());
+                }
                 break;
         }
     }
 }
 
 public void _on_hitBox_area_exited(Area area){
-
+    Godot.Collections.Array groups = area.GetGroups();
+    for (int i = 0; i < groups.Count; i++){
+        switch(groups[i].ToString()){
+            case "checkpoints":
+                speedrunNote.Set("timerOn", true);
+                speedrunNote.Set("time", 0);
+                break;
+            case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
+            //case "tips": 
+        }
+    }
 }
 
 public void _drawMoveNote(string text){
-
+    moveNote.Text = text;
+    moveNote.Set("alpha", 2.5);
+    moveNote.AddColorOverride("font_color", new Color(1,1,1,1));
 }
 
 public void _drawTip(string text){
