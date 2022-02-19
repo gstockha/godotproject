@@ -741,31 +741,155 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
 }
 
 public override void _Input(InputEvent @event){
-
+    if (@event.IsActionPressed("jump")) _jump();
+    else if (@event.IsActionPressed("jump")){
+        if (boingCharge){
+            if (IsOnFloor() || yvelocity == -1 || IsOnWall()){
+                if (boing != 0){
+                    if (!boingTimer.IsStopped()) boingTimer.Stop();
+                    _jump();
+                }
+                else if (!preBoingTimer.IsStopped()) _normalJump();
+            }
+            boingCharge = false;
+        }
+    }
+    else if (@event.IsActionPressed("dash")) _dash();
+    else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
+    else if (@event.IsActionPressed("speedrun_reset")){
+        Area checkpnt = (Area)GetNode("../checkpoints/checkpoint1");
+        Translation = checkpnt.Translation;
+        if (!speedRun){
+            _drawTip("Speedrun mode activates!\nPress T to restart speedrun");
+            speedRun = true;
+        }
+    }
+    else if (@event.IsActionPressed("add_traction")){
+        if (traction < 100) traction += 10;
+        else traction = 0;
+        GD.Print("traction " + (tractionlist[traction]).ToString());
+    }
+    else if (@event.IsActionPressed("sub_traction")){
+        if (traction > 0) traction -= 10;
+        else traction = 100;
+        GD.Print("traction " + (tractionlist[traction]).ToString());
+    }
+    else if (@event.IsActionPressed("slow-mo")){
+        if (!slowMo) Engine.TimeScale = .3F;
+        else Engine.TimeScale = 1;
+        slowMo = !slowMo;
+    }
+    else if (@event.IsActionPressed("debug_restart")) GetTree().ReloadCurrentScene();
+    else if (@event.IsActionPressed("end_game")) GetTree().Quit();
 }
 
 public void _on_DashtTimer_timeout(){
-
+    dashing = false;
+    walldashing = false;
+    dashspeed = speedCap * 1.5F;
 }
 
 public void _on_boingTimer_timeout(){
-
+    if (boingCharge) return;
+    _squishNScale((gravity * .017F), bottom.GetCollisionNormal(), true);
+    squishSet = false;
+    if (!wallb){
+        yvelocity = boing;
+        squishReverb[0] = yvelocity * .033F;
+    }
+    else{
+        squishReverb[0] = boing * .12F;
+        squishReverb[2] = 1; //proc wall wiggle
+    }
+    boingDash = false;
+    jumpwindow = 0;
+    boing = 0;
+    collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
 }
 
 public void _on_preBoingTimer_timeout(){
-
+    boing = jumpforce;
+    jumpwindow = 0;
+    basejumpwindow = (float)Math.Round(boing * 1.2F, 0, MidpointRounding.AwayFromZero);
 }
 
 public void _dieNRespawn(){
-
+    idle = true;
+    yvelocity = 1;
+    stickdir[0] = 0;
+    stickdir[1] = 0;
+    weight = baseweight;
+    dashing = false;
+    dashtimer.Stop();
+    walldashing = false;
+    dashspeed = speedCap * 1.5F;
+    wallb = false;
+    canCrash = false;
+    shiftedDir = 0;
+    shiftedLinger = false;
+    boingDash = false;
+    preBoingTimer.Stop();
+    _squishNScale(gravity * .017F, bottom.GetCollisionNormal(), true);
+    squishSet = false;
+    boing = 0;
+    collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+    boingCharge = false;
+    boingTimer.Stop();
+    for (int i = 0; i < dirsize; i++){
+        dir[0,i] = 0;
+        dir[1,i] = 0;
+    }
+    Translation = checkpoint.Translation;
 }
 
 public void _on_deathtimer_timeout(){
-
+    Area hitbox = (Area)GetNode("hitBox");
+    Godot.Collections.Array areas = hitbox.GetOverlappingAreas();
+    for (int i = 0; i < areas.Count; i++){
+        hitbox = (Area)GetNode(areas[i].ToString());
+        if (hitbox.IsInGroup("killboxes")){
+            _dieNRespawn();
+            return;
+        }
+    }
 }
 
 public void _on_hitBox_area_entered(Area area){
-
+    Godot.Collections.Array groups = area.GetGroups();
+    for (int i = 0; i < groups.Count; i++){
+        switch(groups[i].ToString()){
+            case "checkpoints":
+                checkpoint = area;
+                break;
+            case "killboxes":
+                if (!area.Name.BeginsWith("delay")) _dieNRespawn();
+                else if (deathtimer.IsStopped()) deathtimer.start(2);
+                break;
+            case "warps":
+                Area checkpoint1 = (Area)GetNode("../checkpoints/checkpoint1");
+                Translation = checkpoint1.Translation;
+                if (speedRun){
+                    if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
+                        prNote.Text = "PR: " + speedrunNote.Text;
+                        speedrunNote.Set("prtime", speedrunNote._Get("time"));
+                    }
+                }
+                else{
+                    _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
+                    speedRun = true;
+                }
+                speedrunNote.Set("time", 0);
+                speedrunNote.Set("timerOn", false);
+                break;
+            case "tips":
+                string str = "";
+                switch(area.Name){
+					
+                }
+                if (str != "") _drawTip(str);
+                break;
+        }
+    }
 }
 
 public void _on_hitBox_area_exited(Area area){
@@ -777,7 +901,10 @@ public void _drawMoveNote(string text){
 }
 
 public void _drawTip(string text){
-
+    Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+    if (!textTimer.IsStopped()) textTimer.Stop();
+    textTimer.Start(2.5F);
+    tipNote.Text = text;
 }
 
 }
