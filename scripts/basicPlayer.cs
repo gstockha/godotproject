@@ -3,11 +3,6 @@ using System;
 using System.Collections.Generic;
 using MyMath;
 public class basicPlayer : KinematicBody{
-#region import scripts
-//static myMath = (GDScript) GD.Load("res://scripts/math.gd");
-//object mymath = (Godot.Object) myMath.New();
-
-#endregion
 
 #region basic movement variables
 Vector2 direction_ground;
@@ -159,27 +154,27 @@ public override void _Ready(){
     
 }
 
-public override void _Process(float delta){ //run physics
+public override void _PhysicsProcess(float delta){ //run physics
     if (boing == 0){ //not boinging
         _controller(delta);
         bool isGrounded = IsOnFloor() || (yvelocity == -1);
         if (isGrounded) _isRolling(delta);
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
-        else if (yvelocity > 0) yvelocity *= -1;
-        _applyShift(delta,isGrounded);
-        if (squishGrow) _squishNScale(delta,bottom.GetCollisionNormal(),true);
+        else if (yvelocity > 0) yvelocity *= -1; //ceiling
+        _applyShift(delta, isGrounded);
+        if (squishGrow) _squishNScale(delta, new Vector3(0,0,0), true);
     }
     else _isBoinging(delta);
     if (angTarget != 0){
         if (Math.Sign(ang) != Math.Sign(angTarget)){
-            float add = MyMathClass.findDegreeDistance(ang,angTarget);
+            float add = myMath.findDegreeDistance(ang,angTarget);
             string turnDir = (string)camera.Get("turnDir");
             if (turnDir == "left") add *= -1;
             ang = angTarget + add;
         }
         ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[traction] * .0007F)));
-        if (Math.Round(ang,2,MidpointRounding.AwayFromZero) == Math.Round(angTarget,2,MidpointRounding.AwayFromZero)){
+        if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
             ang = angTarget;
             angTarget = 0;
         }
@@ -193,7 +188,7 @@ public void _controller(float delta){
     }
     moving = (stickdir[0] != 0 || stickdir[1] != 0);
     _applyFriction(delta);
-    direction_ground = new Vector2(dragdir[0],dragdir[1]); //direction vector
+    direction_ground = new Vector2(dragdir[0],dragdir[1]).Rotated(ang).Normalized(); //direction vector
     float xvel = 0;
     float yvel = 0;
     float mod = 0;
@@ -224,8 +219,8 @@ public void _applyFriction(float delta){
     }
     dir[0,current] = stickdir[0];
     dir[1,current] = stickdir[1];
-    dir[0,current] = MyMathClass.array2dMean(dir, 0);
-    dir[1,current] = MyMathClass.array2dMean(dir, 1);
+    dir[0,current] = myMath.array2dMean(dir, 0);
+    dir[1,current] = myMath.array2dMean(dir, 1);
     if (cameraFriction != 1){ //friction after turning camera
         dir[0,current] *= cameraFriction;
         dir[1,current] *= cameraFriction;
@@ -234,8 +229,8 @@ public void _applyFriction(float delta){
     }
     int signdir = 0;
     if (moving){
-        dragdir[0] = MyMathClass.array2dMean(dir,0);
-        dragdir[1] = MyMathClass.array2dMean(dir,1);
+        dragdir[0] = myMath.array2dMean(dir,0);
+        dragdir[1] = myMath.array2dMean(dir,1);
         for (i = 0; i < 2; i++){
             if (!float.IsNaN(stickdir[i])) signdir = Math.Sign(stickdir[i]);
             else signdir = Math.Sign(dragdir[i]);
@@ -248,7 +243,7 @@ public void _applyFriction(float delta){
         for (i = 0; i < 2; i++){
             if (dragdir[i] == 0) continue;
             if (Math.Abs(dragdir[i]) > .015F){ //slowly reduce speed (friction)
-                dragdir[i] = MyMathClass.array2dMean(dir,i);   
+                dragdir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
                 dir[i,current] -= (tractionlist[traction] * .08F * signdir) * baseweight * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
@@ -277,10 +272,7 @@ public void _applyShift(float delta, bool isGrounded){
             if (shift.y != 1){ //make sure we're not passing a flat vector
                 bool record = true;
                 if (shiftedLastYNorm == 0) shiftedLastYNorm = shift.y;
-                else if (Math.Round(shift.y * 10, 2, MidpointRounding.AwayFromZero) >
-                Math.Round(shiftedLastYNorm * 10, 2, MidpointRounding.AwayFromZero)){
-                    record = false;
-                }
+                else if (Mathf.Round(shift.y * 10) > Mathf.Round(shiftedLastYNorm * 10)) record = false;
                 else shiftedLastYNorm = shift.y;
                 if (record){ //save the last rolling vector
                     fric *= (shiftedBoost[0] * (1 - shiftedLastYNorm));
@@ -399,7 +391,7 @@ public void _isRolling(float delta){
                 }
                 boing *= -1;
                 jumpwindow = 0;
-                basejumpwindow = (float)Math.Round(boing * .12F,0,MidpointRounding.AwayFromZero);
+                basejumpwindow = Mathf.Round(boing * 1.2F);
                 if (boingTimer.IsStopped()) boingTimer.Start(boing * .02F);
                 rolling = false;
                 bounce -= weight * .1F;
@@ -446,7 +438,7 @@ public void _isWall(float delta){
         if (isWall){
             boing = speed * .7F * friction;
             jumpwindow = 0;
-            basejumpwindow = (float)Math.Round(boing * 4, 0, MidpointRounding.AwayFromZero);
+            basejumpwindow = Mathf.Round(boing * 4);
             if (boingTimer.IsStopped()) boingTimer.Start(boing * .07F);
         }
     }
@@ -486,13 +478,13 @@ public void _isBoinging(float delta){
         }
         if (GetSlideCount() > 0 && collisionScales[0] != collisionShape.Scale.x){
             if (!wallb) _squishNScale(delta, bottom.GetCollisionNormal(), false);
-            else _squishNScale(delta,GetSlideCollision(0).Normal, false);
+            else _squishNScale(delta, GetSlideCollision(0).Normal, false);
         }
     }
     else{
         boingDash = false;
         jumpwindow = 0;
-        _squishNScale((gravity * 0.017F), bottom.GetCollisionNormal(), true);
+        _squishNScale((gravity * 0.017F), new Vector3(0,0,0), true);
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
@@ -501,19 +493,20 @@ public void _isBoinging(float delta){
 }
 
 public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
-    float rate = delta * 60 * .1F;
+    float rate = delta * 6;
     if (!reset && !squishSet){
         float squish = boing /  22;
-        if (squish > .9) squish = .9F;
+        if (squish > .9F) squish = .9F;
         squishReverb[0] = 0;
         squishReverb[1] = 1;
         squishGrow = true;
+        //GD.Print(squish);
         if (IsOnFloor() || shiftedDir != 0){
             collisionScales[0] = collisionBaseScale * (1 + (squish * .7F)); //x
             collisionScales[1] = collisionBaseScale * (1 - (squish * .7F)); //y
             collisionScales[2] = collisionScales[0]; //z
         }
-        else if (Math.Round(squishNormal.y,0,MidpointRounding.AwayFromZero) == 0){
+        else if (Mathf.Round(squishNormal.y) == 0){ //wall
             Vector3 rotation = collisionShape.RotationDegrees;
             collisionShape.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
             squish *= 1.5F;
@@ -521,12 +514,12 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             float sub = collisionBaseScale * (1 - (squish * .7F));
             int camAng = (int)camera.Get("camsetarray");
             collisionScales[1] = add; //go ahead and set y now
-            float normx = (float)Math.Round(squishNormal.x,0,MidpointRounding.AwayFromZero);
-            float normz = (float)Math.Round(squishNormal.z,0,MidpointRounding.AwayFromZero);
+            float normx = Mathf.Round(squishNormal.x);
+            float normz = Mathf.Round(squishNormal.z);
             bool flip = false;
             if (normx == 0 || normz == 0){ //45 degree flip
                 collisionShape.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
-                flip = (Math.Sign(Math.Abs(normx)) == 1 && Math.Sign(Math.Abs(normx)) == 0);
+                flip = (Math.Sign(Math.Abs(normx)) == 1 && Math.Sign(Math.Abs(normz)) == 0);
             }
             else flip = (normx == 1 && normz == 1) || (normx == -1 && normz == -1);
             if (flip){
@@ -545,14 +538,14 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         }
         squishSet = true;
     }
-    else if (reset && squishReverb[0] != squishReverb[1]){ //BbOoOiIinNg!
+    else if (reset && squishReverb[0] != squishReverb[1]){ //BbOoOiIinNg! jiggle
         if (squishReverb[0] > .75F) squishReverb[0] = .75F;
         float mod = 1;
         for (int i = 0; i < 3; i++){
             if (i == 0){
                 if (squishReverb[2] == 0){ //wall bounce proc is false
                     if (collisionShape.Scale.x < collisionBaseScale) mod += squishReverb[0];
-                    else if (collisionShape.Scale.x > collisionBaseScale) mod -= squishReverb[0];
+                    else mod -= squishReverb[0];
                 }
                 else{ //if wallbounce, alter jiggle pattern
                     squishReverb[2] = 0;
@@ -566,17 +559,16 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         squishReverb[1] = squishReverb[0];
         rate *= .9F; //make boing good
     }
-    float cshx = Mathf.Lerp(collisionShape.Scale.x, collisionScales[0], rate);
-    float cshy = Mathf.Lerp(collisionShape.Scale.y, collisionScales[1], rate);
-    float cshz = Mathf.Lerp(collisionShape.Scale.z, collisionScales[2], rate);
-    collisionShape.Scale = new Vector3(cshz, cshy, cshz);
+    collisionShape.Scale =
+    new Vector3(Mathf.Lerp(collisionShape.Scale.x, collisionScales[0], rate),
+    Mathf.Lerp(collisionShape.Scale.y, collisionScales[1], rate),
+    Mathf.Lerp(collisionShape.Scale.z, collisionScales[2], rate));
     Vector3 translations = mesh.Translation;
-    if (IsOnFloor() && shiftedDir == 0){
+    if (IsOnFloor() && shiftedDir == 0){ //crush the ball into the floor
         if (translations.y > 0) mesh.Translation = new Vector3(translations.x, 0, translations.z);
         Vector3 collisionscales = collisionShape.Scale;
         if (collisionscales.y < collisionBaseScale){
-            float meshTarg = 0;
-            meshTarg -= ((collisionBaseScale * collisionBaseScale * 10) *
+            float meshTarg = 0 - ((collisionBaseScale * collisionBaseScale * 12) *
             (collisionBaseScale - collisionscales.y) / collisionBaseScale);
             meshTarg *= ((basejumpwindow*.5F)/jumpforce < 1) ? ((basejumpwindow*.5F)/jumpforce) : 1;
             translations = mesh.Translation;
@@ -592,28 +584,22 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         else mesh.Translation = new Vector3(translations.x, 0, translations.z);
     }
     if (!IsOnFloor() && !IsOnWall()){ //airborne
-        if ((collisionShape.Scale.x > collisionScales[0] * (1 - squishReverb[0]))
-        && (collisionShape.Scale.x < collisionScales[0] * (1 + squishReverb[0]))){
+        if (collisionShape.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
+        && collisionShape.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
             squishReverb[0] -= .02F;
             if (squishReverb[0] < 0) squishReverb[0] = 0;
             if (squishReverb[0] == 0) collisionShape.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
         }
     }
-    else if ((basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1) || (boing == 0 && (IsOnFloor() || yvelocity == -1))){
-        if (boing == 0) collisionShape.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
-        else{ //windowed
-            collisionScales[0] = collisionShape.Scale.x;
-            collisionScales[1] = collisionShape.Scale.y;
-            collisionScales[2] = collisionShape.Scale.z;
-        }
+    else if (basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1){// || (boing == 0 && (IsOnFloor() || yvelocity == -1))){
+        //if (boing == 0){}// collisionShape.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
+        collisionScales[0] = collisionShape.Scale.x; //windowed
+        collisionScales[1] = collisionShape.Scale.y;
+        collisionScales[2] = collisionShape.Scale.z;
     }
     squishGrow = (collisionShape.Scale.x != collisionBaseScale);
 }
 
-public void _capSpeed(float high, float low){
-    if (yvelocity < -low) yvelocity = -low;
-	else if (yvelocity > high) yvelocity = high;
-}
 public void _rotateMesh(float xvel, float yvel, float delta){
     Vector3 meshRotation = mesh.Rotation;
     float angy = meshRotation.y;
@@ -623,19 +609,24 @@ public void _rotateMesh(float xvel, float yvel, float delta){
     }
     float xv = Math.Abs(xvel);
     float yv = Math.Abs(yvel);
-    float turn = (xv < yv) ? xv : yv;
+    float turn = (xv > yv) ? xv : yv;
     turn *= 1.5F * delta;
     mesh.Rotation = new Vector3(meshRotation.x + turn, angy, meshRotation.z);
 }
 
+public void _capSpeed(float high, float low){
+    if (yvelocity < -low) yvelocity = -low;
+	else if (yvelocity > high) yvelocity = high;
+}
+
 public void _alterDirection(Vector3 alterNormal){
-    Vector3 wallbang = -new Vector3(dragdir[0], 0, dragdir[1]).Bounce(alterNormal);
+    Vector3 wallbang = new Vector3(dragdir[0], 0, dragdir[1]).Bounce(alterNormal);
     int camArray = (int)camera.Get("camsetarray");
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    int[] camAngs = (int[])(camera.Get("camsets"));
+    int[] camAngs = new int[] {135,45,-45,-135};
     float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
-    if (Math.Round((float)ang,2,MidpointRounding.AwayFromZero) != Math.Round((float)camAng,2,MidpointRounding.AwayFromZero)){
+    if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
         angTarget = Rotation.y * -1;
         ang = camAng;
     }
@@ -650,7 +641,7 @@ public void _jump(){
     if (boing != 0){ //boing jump
         yvelocity = boing;
         boingDash = false;
-        _squishNScale((gravity * 0.017F), bottom.GetCollisionNormal(), true);
+        _squishNScale((gravity * .017F), new Vector3(0,0,0), true);
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
@@ -676,8 +667,8 @@ public void _jump(){
         if (windowRatio >= 1) chargedNote += "charged ";
         float nuyvel = 0;
         if (bouncedashing != 1){ //regular boingjump
-            jumpwindow = (jumpwindow / basejumpwindow * 75F) + bouncebase;
-            nuyvel = (float)Math.Round((jumpforce*(1+combo*.035F))*jumpwindow,1,MidpointRounding.AwayFromZero);
+            jumpwindow = (jumpwindow / basejumpwindow * .75F) + bouncebase;
+            nuyvel = myMath.roundTo((jumpforce*(1 + combo * .035F)) * jumpwindow, 10);
             bounceCombo += 1;
             if (!wallb) _drawMoveNote(chargedNote + "boingjump");
             else{
@@ -688,7 +679,7 @@ public void _jump(){
         else{ //crashing or walldashing
             jumpwindow = (jumpwindow / basejumpwindow) + bouncebase;
             bouncedashing = 0;
-            nuyvel = (float)Math.Round((jumpforce * (1 + bounceComboCap * .1F) * jumpwindow),1,MidpointRounding.AwayFromZero);
+            nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F) * jumpwindow),10);
             if (wallb){ //if off wall
                 _drawMoveNote(chargedNote + "crash walljump");
                 nuyvel *= windowRatio * .65F;
@@ -778,12 +769,12 @@ public override void _Input(InputEvent @event){
     else if (@event.IsActionPressed("add_traction")){
         if (traction < 100) traction += 10;
         else traction = 0;
-        GD.Print("traction " + (tractionlist[traction]).ToString());
+        GD.Print("traction " + traction.ToString());
     }
     else if (@event.IsActionPressed("sub_traction")){
         if (traction > 0) traction -= 10;
         else traction = 100;
-        GD.Print("traction " + (tractionlist[traction]).ToString());
+        GD.Print("traction " + traction.ToString());
     }
     else if (@event.IsActionPressed("slow-mo")){
         if (!slowMo) Engine.TimeScale = .3F;
@@ -795,6 +786,7 @@ public override void _Input(InputEvent @event){
 }
 
 public void _on_DashtTimer_timeout(){
+    GD.Print("end dash");
     dashing = false;
     walldashing = false;
     dashspeed = speedCap * 1.5F;
@@ -802,7 +794,7 @@ public void _on_DashtTimer_timeout(){
 
 public void _on_boingTimer_timeout(){
     if (boingCharge) return;
-    _squishNScale((gravity * .017F), bottom.GetCollisionNormal(), true);
+    _squishNScale((gravity * .017F), new Vector3(0,0,0), true);
     squishSet = false;
     if (!wallb){
         yvelocity = boing;
@@ -821,7 +813,7 @@ public void _on_boingTimer_timeout(){
 public void _on_preBoingTimer_timeout(){
     boing = jumpforce;
     jumpwindow = 0;
-    basejumpwindow = (float)Math.Round(boing * 1.2F, 0, MidpointRounding.AwayFromZero);
+    basejumpwindow = Mathf.Round(boing * 1.2F);
 }
 
 public void _dieNRespawn(){
@@ -840,7 +832,7 @@ public void _dieNRespawn(){
     shiftedLinger = false;
     boingDash = false;
     preBoingTimer.Stop();
-    _squishNScale(gravity * .017F, bottom.GetCollisionNormal(), true);
+    _squishNScale(gravity * .017F, new Vector3(0,0,0), true);
     squishSet = false;
     boing = 0;
     collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
@@ -869,9 +861,7 @@ public void _on_hitBox_area_entered(Area area){
     Godot.Collections.Array groups = area.GetGroups();
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
-            case "checkpoints":
-                checkpoint = area;
-                break;
+            case "checkpoints": checkpoint = area; break;
             case "killboxes":
                 if (!area.Name.BeginsWith("delay")) _dieNRespawn();
                 else if (deathtimer.IsStopped()) deathtimer.Start(2);
@@ -937,8 +927,10 @@ public void _on_hitBox_area_exited(Area area){
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
             case "checkpoints":
-                speedrunNote.Set("timerOn", true);
-                speedrunNote.Set("time", 0);
+                if (speedRun && area.Name == "checkpoint1"){
+                    speedrunNote.Set("timerOn", true);
+                    speedrunNote.Set("time", 0);
+                }
                 break;
             case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
             //case "tips": 

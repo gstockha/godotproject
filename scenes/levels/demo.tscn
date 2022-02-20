@@ -91,7 +91,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, -150 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 17, 115 )
 script = ExtResource( 15 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]

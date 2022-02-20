@@ -1,7 +1,8 @@
 using System;
+using Godot;
 
 namespace MyMath{
-    public static class MyMathClass{
+    public static class myMath{
         public static float array2dMean(float[,] array, int firstD){
             float total = 0;
             for (int i = 0; i < array.GetLength(1); i++){
@@ -27,6 +28,10 @@ namespace MyMath{
             float max_angle = 6.28F; //appox PI * 2
             float difference = (to - from % max_angle);
             return Math.Abs((2 * difference % max_angle) - difference);
+        }
+
+        public static float roundTo(float n, int r){ //rounds n to nearest r
+	        return (Mathf.Round(n * r) / r);
         }
     }
 }
