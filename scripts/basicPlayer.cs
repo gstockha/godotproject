@@ -386,7 +386,7 @@ public void _isRolling(float delta){
                     if (bounce != bouncebase) bounceCombo = 0; //not full bounce
                 }
                 else{ //crashing
-                    boing = yvelocity * (1 - (weight * .2F));
+                    boing = yvelocity * (bounce * (1 - (weight * .2F)));
                     bouncedashing = 1;
                 }
                 boing *= -1;
@@ -500,7 +500,6 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         squishReverb[0] = 0;
         squishReverb[1] = 1;
         squishGrow = true;
-        //GD.Print(squish);
         if (IsOnFloor() || shiftedDir != 0){
             collisionScales[0] = collisionBaseScale * (1 + (squish * .7F)); //x
             collisionScales[1] = collisionBaseScale * (1 - (squish * .7F)); //y
@@ -660,7 +659,7 @@ public void _jump(){
         if (basejumpwindow < 1) basejumpwindow = 1;
         float windowRatio = jumpwindow / basejumpwindow;
         if (jumpwindow > 0){ //reward late boing
-            jumpwindow = (float)Math.Ceiling((jumpwindow + 1) * (bounce / bouncebase));
+            jumpwindow = (float)Mathf.Ceil((jumpwindow + 1) * (bounce / bouncebase));
             if (jumpwindow < 1) jumpwindow = 1;
         }
         string chargedNote = "";
@@ -679,7 +678,7 @@ public void _jump(){
         else{ //crashing or walldashing
             jumpwindow = (jumpwindow / basejumpwindow) + bouncebase;
             bouncedashing = 0;
-            nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F) * jumpwindow),10);
+            nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F)) * jumpwindow,10);
             if (wallb){ //if off wall
                 _drawMoveNote(chargedNote + "crash walljump");
                 nuyvel *= windowRatio * .65F;
@@ -785,8 +784,7 @@ public override void _Input(InputEvent @event){
     else if (@event.IsActionPressed("end_game")) GetTree().Quit();
 }
 
-public void _on_DashtTimer_timeout(){
-    GD.Print("end dash");
+public void _on_DashTimer_timeout(){
     dashing = false;
     walldashing = false;
     dashspeed = speedCap * 1.5F;
