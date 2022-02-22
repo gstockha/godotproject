@@ -40,7 +40,7 @@ transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 4, 11 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 4, 15 )
 
 [node name="checkpoints" type="Spatial" parent="playerNode"]
 
@@ -56,8 +56,8 @@ margin_left = -84.5546
 margin_top = -51.0
 margin_right = 41.4454
 margin_bottom = -23.0024
-custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 1 )
 align = 1
 script = ExtResource( 5 )
 __meta__ = {
@@ -70,10 +70,10 @@ anchor_right = 1.0
 anchor_bottom = 0.26
 margin_top = -0.280006
 margin_bottom = 10.8
-custom_fonts/font = SubResource( 2 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_y = 3
 custom_constants/shadow_as_outline = 0
+custom_fonts/font = SubResource( 2 )
 align = 1
 valign = 1
 script = ExtResource( 1 )
@@ -105,8 +105,8 @@ margin_left = -234.0
 margin_top = 42.0
 margin_right = -18.0
 margin_bottom = 60.0
-custom_fonts/font = SubResource( 4 )
 custom_colors/font_color = Color( 0.894118, 0.733333, 0, 1 )
+custom_fonts/font = SubResource( 4 )
 align = 2
 __meta__ = {
 "_edit_use_anchors_": false

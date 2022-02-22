@@ -9,10 +9,9 @@ flags_transparent = true
 params_diffuse_mode = 2
 albedo_color = Color( 1, 1, 1, 0.686275 )
 
-[node name="tipArea" type="Area" groups=[
-"tips",
-]]
+[node name="tipArea" type="Area" groups=["tips"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, 0, 0, 0 )

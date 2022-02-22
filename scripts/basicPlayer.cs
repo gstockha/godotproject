@@ -46,7 +46,6 @@ float boing = 0;
 bool boingCharge = false;
 bool boingDash = false; //use dashspeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
 bool squishSet = false; //only run the mesh squish settings once in _squishNScale
-bool squishGrow = true; //tells the _squishNScale script to keep growing
 float[] squishReverb = new float[] {0,1,0}; //squishReverb[2] was a bool in gd
 #endregion
 
@@ -77,8 +76,10 @@ Timer preBoingTimer;
 Timer dashtimer;
 Timer deathtimer;
 MeshInstance mesh;
+MeshInstance shadow;
 Spatial collisionShape;
 RayCast bottom;
+RayCast shadowCast;
 Area checkpoint;
 Camera camera;
 Label moveNote;
@@ -94,8 +95,10 @@ public override void _Ready(){
     dashtimer = GetNode<Timer>("DashTimer");
     deathtimer = GetNode<Timer>("hitBox/deathTimer");
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
+    shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
     collisionShape = GetNode<Spatial>("CollisionShape");
     bottom = GetNode<RayCast>("RayCast");
+    shadowCast = GetNode<RayCast>("shadowCast");
     checkpoint = GetNode<Area>("../checkpoints/checkpoint1");
     camera = GetNode<Camera>("Position3D/playerCam");
     moveNote = GetNode<Label>("../../moveNote");
@@ -136,10 +139,6 @@ public override void _Ready(){
             controllerStr[5] = "Back";
         }
     }
-    // foreach(KeyValuePair<string,string> entry in controlNames.Keys){
-    //     controlNames[entry.Key] = controllerStr[pointer];
-    //     pointer ++;
-    // }
     controlNames["roll"] = controllerStr[0];
     controlNames["jump"] = controllerStr[1];
     controlNames["dash"] = controllerStr[2];
@@ -161,24 +160,23 @@ public override void _PhysicsProcess(float delta){ //run physics
         if (isGrounded) _isRolling(delta);
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
-        else if (yvelocity > 0) yvelocity *= -1; //ceiling
+        else if (yvelocity > 0){ //ceiling bounce
+            squishReverb[0] = yvelocity * .066F;
+            float warpRate = squishReverb[0] * 1.25F;
+            if (warpRate > .65F) warpRate = .65F;
+            GD.Print(warpRate);
+            collisionShape.Scale = new Vector3(collisionBaseScale*(1+warpRate),collisionBaseScale*(1-warpRate),collisionBaseScale*(1+warpRate));
+            collisionScales[0] = .9F;
+            collisionScales[1] = .3F;
+            collisionScales[2] = collisionScales[0];
+            squishSet = false;
+            yvelocity *= -1;
+        }
         _applyShift(delta, isGrounded);
-        if (squishGrow) _squishNScale(delta, new Vector3(0,0,0), true);
+        if (!isGrounded || collisionScales[0] != collisionBaseScale) _squishNScale(delta, new Vector3(0,0,0), true);
     }
     else _isBoinging(delta);
-    if (angTarget != 0){
-        if (Math.Sign(ang) != Math.Sign(angTarget)){
-            float add = myMath.findDegreeDistance(ang,angTarget);
-            string turnDir = (string)camera.Get("turnDir");
-            if (turnDir == "left") add *= -1;
-            ang = angTarget + add;
-        }
-        ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[traction] * .0007F)));
-        if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
-            ang = angTarget;
-            angTarget = 0;
-        }
-    }
+    _turnDelay();
 }
 
 public void _controller(float delta){
@@ -495,11 +493,10 @@ public void _isBoinging(float delta){
 public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
     float rate = delta * 6;
     if (!reset && !squishSet){
-        float squish = boing /  22;
+        float squish = squish = boing /  22;
         if (squish > .9F) squish = .9F;
         squishReverb[0] = 0;
         squishReverb[1] = 1;
-        squishGrow = true;
         if (IsOnFloor() || shiftedDir != 0){
             collisionScales[0] = collisionBaseScale * (1 + (squish * .7F)); //x
             collisionScales[1] = collisionBaseScale * (1 - (squish * .7F)); //y
@@ -582,7 +579,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         }
         else mesh.Translation = new Vector3(translations.x, 0, translations.z);
     }
-    if (!IsOnFloor() && !IsOnWall()){ //airborne
+    if (!IsOnFloor() && (!wallb || !IsOnWall())){ //airborne
         if (collisionShape.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
         && collisionShape.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
             squishReverb[0] -= .02F;
@@ -590,13 +587,12 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             if (squishReverb[0] == 0) collisionShape.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
         }
     }
-    else if (basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1){// || (boing == 0 && (IsOnFloor() || yvelocity == -1))){
-        //if (boing == 0){}// collisionShape.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
+    else if (basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1){
         collisionScales[0] = collisionShape.Scale.x; //windowed
         collisionScales[1] = collisionShape.Scale.y;
         collisionScales[2] = collisionShape.Scale.z;
     }
-    squishGrow = (collisionShape.Scale.x != collisionBaseScale);
+    else if (jumpwindow == 0 && boing == 0 && (IsOnFloor() || yvelocity == -1)) collisionShape.Scale = new Vector3(collisionBaseScale,collisionBaseScale,collisionBaseScale);
 }
 
 public void _rotateMesh(float xvel, float yvel, float delta){
@@ -616,6 +612,21 @@ public void _rotateMesh(float xvel, float yvel, float delta){
 public void _capSpeed(float high, float low){
     if (yvelocity < -low) yvelocity = -low;
 	else if (yvelocity > high) yvelocity = high;
+}
+
+public void _turnDelay(){
+    if (angTarget == 0) return;
+    if (Math.Sign(ang) != Math.Sign(angTarget)){
+        float add = myMath.findDegreeDistance(ang,angTarget);
+        string turnDir = (string)camera.Get("turnDir");
+        if (turnDir == "left") add *= -1;
+        ang = angTarget + add;
+    }
+    ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[traction] * .0007F)));
+    if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
+        ang = angTarget;
+        angTarget = 0;
+    }
 }
 
 public void _alterDirection(Vector3 alterNormal){
@@ -654,6 +665,7 @@ public void _jump(){
             wallby = wallang.y * .5F;
         }
         float lastyvel = yvelocity + (gravity * .017F); //yvel times rough delta estimate
+        if (lastyvel > 20) lastyvel = 20;
         int combo = bounceCombo;
         if (combo > bounceComboCap) combo = bounceComboCap;
         if (basejumpwindow < 1) basejumpwindow = 1;
@@ -674,6 +686,7 @@ public void _jump(){
                 _drawMoveNote(chargedNote + "walljump");
                 squishReverb[2] = 1; //set wall jiggle to true
             }
+            yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
         else{ //crashing or walldashing
             jumpwindow = (jumpwindow / basejumpwindow) + bouncebase;
@@ -686,8 +699,9 @@ public void _jump(){
                 squishReverb[2] = 1; //set wall jiggle to true
             }
             else _drawMoveNote(chargedNote + "crashjump");
+            if (lastyvel > nuyvel || lastyvel == 20) nuyvel += lastyvel * .2F;
+            yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
-        yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         squishReverb[0] = yvelocity * .033F;
         _capSpeed(22, 50);
         jumpwindow = 0;

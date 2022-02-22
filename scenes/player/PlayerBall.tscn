@@ -1,17 +1,19 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scripts/playerCam.gd" type="Script" id=1]
 [ext_resource path="res://assets/ballSkin.obj" type="ArrayMesh" id=2]
-[ext_resource path="res://scripts/basicEle.gd" type="Script" id=3]
+[ext_resource path="res://scripts/basicPlayer.cs" type="Script" id=3]
 
 [sub_resource type="SphereShape" id=2]
 
+[sub_resource type="SphereShape" id=3]
+
 [node name="PlayerBall" type="KinematicBody"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17, -150 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 15, -138 )
 script = ExtResource( 3 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0 )
 shape = SubResource( 2 )
 
 [node name="BallSkin" type="MeshInstance" parent="CollisionShape"]
@@ -46,7 +48,7 @@ enabled = true
 
 [node name="CollisionShape" type="CollisionShape" parent="hitBox"]
 transform = Transform( 0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0, 0, 0 )
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="deathTimer" type="Timer" parent="hitBox"]
 
