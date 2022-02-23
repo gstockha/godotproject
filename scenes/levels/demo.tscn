@@ -94,7 +94,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 16, -138 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 91, 18, 114 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -410,14 +410,14 @@ transform = Transform( -5.02681e-08, 0, 0.8, 0, 1, 0, -1.15, 0, -3.49691e-08, 0,
 [node name="slideTip" parent="envStarting/part4dashing" instance=ExtResource( 14 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0257111, -2.0319, -65.2834 )
 
-[node name="slideTip2" parent="envStarting/part4dashing" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.77034, -0.0319004, -81.2834 )
-
 [node name="platSmall6" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -3.01609e-07, 0, 1.5, 0, 1, 0, -6.9, 0, -6.55671e-08, 4.60001, -5.003, -76.6 )
 
 [node name="wallBlock" parent="envStarting/part4dashing" instance=ExtResource( 13 )]
 transform = Transform( 1.5, 0, 0, 0, 8, 0, 0, 0, 0.1, 4.62453, -2.99697, -90.1793 )
+
+[node name="camTip" parent="envStarting/part4dashing" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.827667, 0.00843811, -81.3368 )
 
 [node name="part5crashing" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -112, -6, 11 )
@@ -575,9 +575,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 52.8825, 18.27, -172.973 )
 
 [node name="wall3" parent="envStarting/part6walljumping" instance=ExtResource( 13 )]
 transform = Transform( -4.71473e-06, 0, -0.1, 0, 13, 0, 1.5, 0, -3.14315e-07, 69, 17.77, -168.292 )
-
-[node name="camTip" parent="envStarting/part6walljumping" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -26.4864, -0.23, -161 )
 
 [node name="plat2" parent="envStarting/part6walljumping" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -2.62268e-07, 0, 6, 0, 1, 0, -6, 0, -2.62268e-07, 32.7475, -3.003, -159.287 )

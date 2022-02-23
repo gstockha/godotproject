@@ -112,6 +112,7 @@ func _process(delta: float) -> void:
 	elif stickMove == true:
 		stickMove = false
 		player.angTarget = -1 * player.rotation.y
+		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
 		if player.cameraFriction > 1: player.cameraFriction = 1
 

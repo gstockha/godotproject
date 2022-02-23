@@ -126,7 +126,7 @@ public override void _Ready(){
     }
     else{ //controller
         controllerStr[0] = "Left Joystick";
-        controllerStr[3] = "L & R";
+        controllerStr[3] = "L & R or Right Joystick";
         controllerStr[4] = "Start";
         if (Input.GetJoyName(0).BeginsWith("x") || Input.GetJoyName(0).BeginsWith("X")){ //xbox
             controllerStr[1] = "A Button";
@@ -796,6 +796,7 @@ public override void _Input(InputEvent @event){
     }
     else if (@event.IsActionPressed("debug_restart")) GetTree().ReloadCurrentScene();
     else if (@event.IsActionPressed("end_game")) GetTree().Quit();
+    else if (@event.IsActionPressed("fullscreen")) OS.WindowFullscreen = !OS.WindowFullscreen;
 }
 
 public void _on_DashTimer_timeout(){
@@ -905,11 +906,11 @@ public void _on_hitBox_area_entered(Area area){
                         str = controlNames["restart"] + " to restart from checkpoint\n" +
                         controlNames["speedrun"] + " to start speedrun mode";
                         break;
-                    case "boingTip": str = "Hold " + controlNames["jump"] + " before landing\nto charge a Boingjump"; break;
+                    case "boingTip": str = "Hold " + controlNames["jump"] + " to\ncharge a Boingjump"; break;
                     case "boingTip2": str = "Get a bouncing start\nfor a bigger Boingjump!"; break;
                     case "dashTip": str = controlNames["dash"] + " to Dash"; break;
                     case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
-                    case "slideTip2": str = "You can slide super far on glass!"; break;
+                    //case "slideTip2": str = "You can slide super far on glass!"; break;
                     case "crashTip": str = "Dash in mid-air\nto Crash"; break;
                     case "crashTip2": str = "Boingjump after hitting a wall\nto Walljump"; break;
                     case "wallTip": str = "Boingjump after hitting a wall\nto Walljump"; break;
@@ -945,7 +946,11 @@ public void _on_hitBox_area_exited(Area area){
                 }
                 break;
             case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
-            //case "tips": 
+            case "tips": 
+                Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+                if (!textTimer.IsStopped()) textTimer.Stop();
+                textTimer.Start(2);
+                break;
         }
     }
 }
@@ -959,7 +964,6 @@ public void _drawMoveNote(string text){
 public void _drawTip(string text){
     Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
     if (!textTimer.IsStopped()) textTimer.Stop();
-    textTimer.Start(2.5F);
     tipNote.Text = text;
 }
 
