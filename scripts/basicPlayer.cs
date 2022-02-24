@@ -164,7 +164,6 @@ public override void _PhysicsProcess(float delta){ //run physics
             squishReverb[0] = yvelocity * .066F;
             float warpRate = squishReverb[0] * 1.25F;
             if (warpRate > .65F) warpRate = .65F;
-            GD.Print(warpRate);
             collisionShape.Scale = new Vector3(collisionBaseScale*(1+warpRate),collisionBaseScale*(1-warpRate),collisionBaseScale*(1+warpRate));
             collisionScales[0] = .9F;
             collisionScales[1] = .3F;
@@ -891,6 +890,9 @@ public void _on_hitBox_area_entered(Area area){
                 else{
                     _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
                     speedRun = true;
+                    Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+                    if (!textTimer.IsStopped()) textTimer.Stop();
+                    textTimer.Start(2);
                 }
                 speedrunNote.Set("time", 0);
                 speedrunNote.Set("timerOn", false);
@@ -912,7 +914,7 @@ public void _on_hitBox_area_entered(Area area){
                     case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
                     //case "slideTip2": str = "You can slide super far on glass!"; break;
                     case "crashTip": str = "Dash in mid-air\nto Crash"; break;
-                    case "crashTip2": str = "Boingjump after hitting a wall\nto Walljump"; break;
+                    case "crashTip2": str = "Boingjump after a Crash\nto Crashjump"; break;
                     case "wallTip": str = "Boingjump after hitting a wall\nto Walljump"; break;
                     case "wallTip2": str = "Chain a Crashjump into\na Walljump!"; break;
                     case "shiftTip": str = "Roll down slopes to go fast!"; break;

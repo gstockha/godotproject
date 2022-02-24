@@ -137,6 +137,7 @@ script = ExtResource( 17 )
 
 [node name="shadowSkin" type="MeshInstance" parent="playerNode/PlayerBall/shadowCast"]
 transform = Transform( 0.7, 0, 0, 0, 0.04, 0, 0, 0, 0.7, 0, 0, 0 )
+layers = 0
 cast_shadow = 3
 generate_lightmap = false
 mesh = SubResource( 17 )
@@ -313,26 +314,26 @@ transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -10, 6,
 polygon = PoolVector2Array( -3, 1.5, -3, -5, 12, -5 )
 material = SubResource( 8 )
 
+[node name="bounceTip" parent="envStarting/part1moving" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3, 8.90529, 82.5 )
+
 [node name="part2jumping" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0 )
 
 [node name="platRound" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
 transform = Transform( 4, 0, 0, 0, 1, 0, 0, 0, 4, -30, -10, 88 )
 
-[node name="bounceTip" parent="envStarting/part2jumping" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -32.3, -7.09471, 93.5 )
-
 [node name="platRound2" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.29479, 0, -1.17729, 0, 1, 0, 1.17729, 0, 1.29479, -44, -10, 87.979 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -44, -10, 87.979 )
 
 [node name="platRound3" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.29479, 0, -1.1773, 0, 1, 0, 1.1773, 0, 1.29479, -53, -10, 85.449 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -53, -10, 85.449 )
 
 [node name="platRound4" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.29479, 0, -1.17729, 0, 1, 0, 1.17729, 0, 1.29479, -62.4308, -10, 82.2868 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -62.4308, -10, 82.2868 )
 
 [node name="platRound6" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.29479, 0, -1.1773, 0, 1, 0, 1.1773, 0, 1.29479, -70.0493, -10, 76.5411 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -70.0493, -10, 76.5411 )
 
 [node name="plat" parent="envStarting/part2jumping" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -10, 0, -4.52987e-07, 0, 1, 0, 1.50996e-06, 0, -3, -91.413, -13.003, 67 )

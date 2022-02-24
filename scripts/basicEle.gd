@@ -716,7 +716,7 @@ func _on_hitBox_area_entered(area):
 					'boingTip2': string = 'Get a bouncing start\nfor a big Boingjump!'
 					'dashTip': string = str(controlNames['dash']) + ' to Dash'
 					'slideTip': string = 'Hold ' + str(controlNames['jump']) + ' after dashing\nto Slide'
-					'slideTip2': string = 'You can slide super far on glass!'
+					#'slideTip2': string = 'You can slide super far on glass!'
 					'crashTip': string = 'Dash in mid-air\nto Crash'
 					'crashTip2': string = 'Boingjump after crashing\nto Crashjump'
 					'wallTip': string = 'Boingjump after hitting a wall\nto Walljump'
