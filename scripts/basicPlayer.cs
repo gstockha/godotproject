@@ -810,6 +810,7 @@ public void _on_boingTimer_timeout(){
     squishSet = false;
     if (!wallb){
         yvelocity = boing;
+        if (yvelocity > 20) yvelocity = 20;
         squishReverb[0] = yvelocity * .033F;
     }
     else{

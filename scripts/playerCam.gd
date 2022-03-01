@@ -39,24 +39,48 @@ func _move_camera(evn) -> void:
 		setDelay.stop()
 		setDelay.start(6)
 	elif (cam != 1):
-		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-#		player.rotation_degrees.y = camsets[camsetarray]
-		if evn.is_action("pan_left"):
-			turnDir = 'left'
-			if camsetarray < 3:
-				camsetarray += 1
-				cam = 2
-			else:
-				camsetarray = 0
-				cam = 4
-		elif evn.is_action("pan_right"):
-			turnDir = 'right'
-			if camsetarray > 0:
-				camsetarray -= 1
-				cam = 2
-			else:
-				camsetarray = 3
-				cam = 3
+		var rot = round(player.rotation_degrees.y)
+		if player.rotation_degrees.y == camsets[camsetarray]:
+			if evn.is_action("pan_left"):
+				turnDir = 'left'
+				if camsetarray < 3:
+					camsetarray += 1
+					cam = 2
+				else:
+					camsetarray = 0
+					cam = 4
+			elif evn.is_action("pan_right"):
+				turnDir = 'right'
+				if camsetarray > 0:
+					camsetarray -= 1
+					cam = 2
+				else:
+					camsetarray = 3
+					cam = 3
+		else:
+			var set = false
+			if evn.is_action("pan_left"):
+				turnDir = 'left'
+				while(!set):
+					if rot > -179: rot -= 1
+					else: rot = 180
+					for i in range(4):
+						if (rot == camsets[i]):
+							set = true
+							camsetarray = i
+							if (i == 0): cam = 4
+							else: cam = 2
+			elif evn.is_action("pan_right"):
+				turnDir = 'right'
+				while(!set):
+					if rot < 179: rot += 1
+					else: rot = -180
+					for i in range(4):
+						if (rot == camsets[i]):
+							set = true
+							camsetarray = i
+							if (i == 3): cam = 3
+							else: cam = 2
 		lastAng = -1 * player.rotation.y
 		stickMove = false
 
@@ -105,7 +129,7 @@ func _process(delta: float) -> void:
 		var panStrength = Input.get_action_strength("move_camera_right") - Input.get_action_strength("move_camera_left")
 		if panStrength > 0: turnDir = 'right'
 		else: turnDir = 'left'
-		player.rotate_y(lerp(0, .055, panStrength*1.1)) #needs to eventually just rotate camera not player
+		player.rotate_y(lerp(0, .12, panStrength*abs(panStrength)*.3)) #needs to eventually just rotate camera not player
 		if player.cameraFriction > 1: player.cameraFriction = 1
 		setDelay.stop()
 		setDelay.start(6)

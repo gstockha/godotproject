@@ -377,7 +377,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roofGuard" type="StaticBody" parent="envStarting/part4dashing" groups=["flats"]]
-transform = Transform( -4.37114e-09, 0, 6, 0, 3, 0, -0.1, 0, -2.62268e-07, 4.58701, 2, -10.2796 )
+transform = Transform( -4.37114e-09, 0, 6, 0, 5, 0, -0.1, 0, -2.62268e-07, 4.58701, 4, -10.2796 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/roofGuard"]
 shape = SubResource( 9 )
