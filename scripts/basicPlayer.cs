@@ -701,7 +701,7 @@ public void _jump(){
             if (lastyvel > nuyvel || lastyvel == 20) nuyvel += lastyvel * .2F;
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
-        squishReverb[0] = yvelocity * .033F;
+        squishReverb[0] = yvelocity * .035F;
         _capSpeed(22, 50);
         jumpwindow = 0;
         bounce = bouncebase;
@@ -719,7 +719,7 @@ public void _normalJump(){
 	boingCharge = false;
 	_drawMoveNote("jump");
 	yvelocity = jumpforce;
-	squishReverb[0] = yvelocity * .033F;
+	squishReverb[0] = yvelocity * .035F;
 	preBoingTimer.Stop();
 	canCrash = true;
 	if (shiftedDir != 0) shiftedSticky = 0;
@@ -774,8 +774,11 @@ public override void _Input(InputEvent @event){
         Area checkpnt = (Area)GetNode("../checkpoints/checkpoint1");
         Translation = checkpnt.Translation;
         if (!speedRun){
-            _drawTip("Speedrun mode activates!\nPress T to restart speedrun");
+            _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
             speedRun = true;
+            Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+            if (!textTimer.IsStopped()) textTimer.Stop();
+            textTimer.Start(2);
         }
     }
     else if (@event.IsActionPressed("add_traction")){
@@ -811,7 +814,7 @@ public void _on_boingTimer_timeout(){
     if (!wallb){
         yvelocity = boing;
         if (yvelocity > 20) yvelocity = 20;
-        squishReverb[0] = yvelocity * .033F;
+        squishReverb[0] = yvelocity * .035F;
     }
     else{
         squishReverb[0] = boing * .12F;
