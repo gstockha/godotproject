@@ -321,19 +321,19 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3, 8.90529, 82.5 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0 )
 
 [node name="platRound" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 4, 0, 0, 0, 1, 0, 0, 0, 4, -30, -10, 88 )
+transform = Transform( 4, 0, 0, 0, 1, 0, 0, 0, 4, -31, -10, 88 )
 
 [node name="platRound2" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -44, -10, 87.979 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -45.2282, -10, 87.979 )
 
 [node name="platRound3" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -53, -10, 85.449 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -55.086, -10, 85.449 )
 
 [node name="platRound4" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -62.4308, -10, 82.2868 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -64.989, -10, 82.287 )
 
 [node name="platRound6" parent="envStarting/part2jumping" instance=ExtResource( 6 )]
-transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -70.0493, -10, 76.5411 )
+transform = Transform( 1.47976, 0, -1.34548, 0, 1, 0, 1.34548, 0, 1.47976, -73.14, -10, 76.541 )
 
 [node name="plat" parent="envStarting/part2jumping" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -10, 0, -4.52987e-07, 0, 1, 0, 1.50996e-06, 0, -3, -91.413, -13.003, 67 )
@@ -388,22 +388,22 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="platSmall" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
-transform = Transform( -9.83506e-08, 0, 3, 0, 1, 0, -2.25, 0, -1.31134e-07, 4.60001, -5.003, -19.5 )
+transform = Transform( -1.02722e-07, 0, 3, 0, 1, 0, -2.35, 0, -1.31134e-07, 4.60001, -5.003, -19.5 )
 
 [node name="dashTip" parent="envStarting/part4dashing" instance=ExtResource( 14 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.474289, -2.0319, -5.1917 )
 
 [node name="platSmall2" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
-transform = Transform( -9.83506e-08, 0, 3, 0, 1, 0, -2.25, 0, -1.31134e-07, 4.60001, -5.003, -32 )
+transform = Transform( -1.02722e-07, 0, 3, 0, 1, 0, -2.35, 0, -1.31134e-07, 4.60001, -5.003, -32 )
 
 [node name="platSmall3" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
-transform = Transform( -7.64949e-08, 0, 1, 0, 1, 0, -1.75, 0, -4.37114e-08, 0.599991, -5.003, -44 )
+transform = Transform( -1.02722e-07, 0, 1, 0, 1, 0, -2.35, 0, -4.37114e-08, 0.599991, -5.003, -44 )
 
 [node name="platSmall4" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
-transform = Transform( -7.64949e-08, 0, 1, 0, 1, 0, -1.75, 0, -4.37114e-08, 8.6, -5.003, -44 )
+transform = Transform( -1.02722e-07, 0, 1, 0, 1, 0, -2.35, 0, -4.37114e-08, 8.6, -5.003, -44 )
 
 [node name="platSmall5" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
-transform = Transform( -7.64949e-08, 0, 1.6, 0, 1, 0, -1.75, 0, -6.99382e-08, 4.60001, -5.003, -54.8 )
+transform = Transform( -1.02722e-07, 0, 1.6, 0, 1, 0, -2.35, 0, -6.99382e-08, 4.60001, -5.003, -55.8 )
 
 [node name="platSmall7" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -5.02681e-08, 0, 0.8, 0, 1, 0, -1.15, 0, -3.49691e-08, 0, -5.003, -65.1 )
@@ -1005,12 +1005,14 @@ __meta__ = {
 one_shot = true
 
 [node name="speedrunNote" type="Label" parent="."]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -322.0
-margin_top = 6.0
-margin_right = -17.0
-margin_bottom = 52.0
+anchor_left = 0.986
+anchor_top = 0.04
+anchor_right = 0.987
+anchor_bottom = 0.04
+margin_left = -304.08
+margin_top = -22.8
+margin_right = -0.360107
+margin_bottom = 23.2
 custom_fonts/font = SubResource( 15 )
 align = 2
 script = ExtResource( 3 )

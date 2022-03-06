@@ -35,7 +35,7 @@ float[,] dir = new float[2,dirsize];
 float[] stickdir = new float[] {0,0};
 float[] dragdir = new float[] {0,0};
 float friction = 0;
-static float speedCap = 10;
+static float speedCap = 12;
 float speed = speedCap;
 int traction = 50;
 float[] tractionlist = new float[101];
@@ -304,6 +304,11 @@ public void _applyShift(float delta, bool isGrounded){
             shiftedSticky = 0;
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
             if (GetFloorNormal().y < 1 == false || colliderNode.IsInGroup("flats")){ //normal ground
+                if (dashing){
+                    dashing = false;
+                    walldashing = false;
+                    dashspeed = speedCap * 1.5F;
+                }
 				shiftedDir = 0;
 				rampSlope = 0;
 				shiftedLastYNorm = 0;
@@ -655,11 +660,13 @@ public void _jump(){
         boing = 0;
         boingTimer.Stop();
         collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+        bool slopeSquish = false;
         if (shiftedDir != 0){ //boing jump off a slope
             Vector3 wallbang = velocity.Bounce(bottom.GetCollisionNormal());
             Vector2 wallang = new Vector2(wallbang.x, wallbang.z);
             _alterDirection(bottom.GetCollisionNormal());
             wallb = true;
+            slopeSquish = true;
             wallbx = wallang.x * .5F;
             wallby = wallang.y * .5F;
         }
@@ -675,14 +682,15 @@ public void _jump(){
         }
         string chargedNote = "";
         if (windowRatio >= 1) chargedNote += "charged ";
+        if (slopeSquish) _drawMoveNote(chargedNote + "slopejump");
         float nuyvel = 0;
         if (bouncedashing != 1){ //regular boingjump
             jumpwindow = (jumpwindow / basejumpwindow * .75F) + bouncebase;
             nuyvel = myMath.roundTo((jumpforce*(1 + combo * .035F)) * jumpwindow, 10);
             bounceCombo += 1;
-            if (!wallb) _drawMoveNote(chargedNote + "boingjump");
+            if (!wallb && !slopeSquish) _drawMoveNote(chargedNote + "boingjump");
             else{
-                _drawMoveNote(chargedNote + "walljump");
+                if (!slopeSquish) _drawMoveNote(chargedNote + "walljump");
                 squishReverb[2] = 1; //set wall jiggle to true
             }
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
@@ -692,12 +700,12 @@ public void _jump(){
             bouncedashing = 0;
             nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F)) * jumpwindow,10);
             if (wallb){ //if off wall
-                _drawMoveNote(chargedNote + "crash walljump");
+                if (!slopeSquish) _drawMoveNote(chargedNote + "crash walljump");
                 nuyvel *= windowRatio * .65F;
                 lastyvel *= windowRatio * .65F;
                 squishReverb[2] = 1; //set wall jiggle to true
             }
-            else _drawMoveNote(chargedNote + "crashjump");
+            else if (!slopeSquish) _drawMoveNote(chargedNote + "crashjump");
             if (lastyvel > nuyvel || lastyvel == 20) nuyvel += lastyvel * .2F;
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
@@ -727,7 +735,7 @@ public void _normalJump(){
 
 public void _dash(){
 if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
-        if (IsOnFloor() && (yvelocity == -1) && (shiftedDir == 0)){ // on ground and not on shift
+        if (IsOnFloor() && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
         }
@@ -820,6 +828,7 @@ public void _on_boingTimer_timeout(){
         squishReverb[0] = boing * .12F;
         squishReverb[2] = 1; //proc wall wiggle
     }
+    canCrash = yvelocity >= (bouncebase * jumpforce);
     boingDash = false;
     jumpwindow = 0;
     boing = 0;
