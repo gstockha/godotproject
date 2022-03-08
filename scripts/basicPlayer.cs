@@ -349,10 +349,10 @@ public void _isRolling(float delta){
             boingDash = true;
             dashing = false;
             if (weight != baseweight) bouncedashing = 2; //so you can't crash out of dash
-            weight = baseweight;
         }
     }
     else walldashing = false;
+    weight = baseweight;
     if (yvelocity == -1){ //not bouncing up
         if (moving) rolling = true;
         else{ //not pressing move keys
@@ -501,12 +501,12 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         if (squish > .9F) squish = .9F;
         squishReverb[0] = 0;
         squishReverb[1] = 1;
-        if (IsOnFloor() || shiftedDir != 0){
+        if (IsOnFloor() || (shiftedDir != 0 && Mathf.Round(squishNormal.y) != 0)){ //on floor OR on shift and not on a wall
             collisionScales[0] = collisionBaseScale * (1 + (squish * .7F)); //x
             collisionScales[1] = collisionBaseScale * (1 - (squish * .7F)); //y
             collisionScales[2] = collisionScales[0]; //z
         }
-        else if (Mathf.Round(squishNormal.y) == 0){ //wall
+        else if (Mathf.Round(squishNormal.y) == 0){ //on a wall
             Vector3 rotation = collisionShape.RotationDegrees;
             collisionShape.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
             squish *= 1.5F;
@@ -575,7 +575,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             if (meshTarg < translations.y) mesh.Translation = new Vector3(translations.x,meshTarg,translations.z);
         }
     }
-    else if (translations.y != 0){
+    else if (translations.y != 0){ //undo the crush effect
         if (translations.y < -.5F) mesh.Translation = new Vector3(translations.x, -.5F, translations.z);
         else if (translations.y < 0){
             float newY = translations.y + (delta * Math.Abs(yvelocity));
@@ -928,6 +928,7 @@ public void _on_hitBox_area_entered(Area area){
                     //case "slideTip2": str = "You can slide super far on glass!"; break;
                     case "crashTip": str = "Dash in mid-air\nto Crash"; break;
                     case "crashTip2": str = "Boingjump after a Crash\nto Crashjump"; break;
+                    case "crashTip3": str = "Try charging a big Crashjump\nto get over the wall!"; break;
                     case "wallTip": str = "Boingjump after hitting a wall\nto Walljump"; break;
                     case "wallTip2": str = "Chain a Crashjump into\na Walljump!"; break;
                     case "shiftTip": str = "Roll down slopes to go fast!"; break;
