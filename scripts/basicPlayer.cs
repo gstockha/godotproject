@@ -439,9 +439,10 @@ public void _isWall(float delta){
         }
         if (isWall){
             boing = speed * .7F * friction;
+            if (boing < 4) boing = 4;
             jumpwindow = 0;
             basejumpwindow = Mathf.Round(boing * 4);
-            if (boingTimer.IsStopped()) boingTimer.Start(boing * .07F);
+            if (boingTimer.IsStopped()) boingTimer.Start(boing * .12F);
         }
     }
 }
@@ -935,7 +936,7 @@ public void _on_hitBox_area_entered(Area area){
                     case "shiftTip2": str = "Jump off ramps at high speeds\nto get some air!"; break;
                     case "part1Tip": str = "Grats on making it this far. You got it!"; break;
                     case "part3Tip": str = "Take your time..."; break;
-                    case "part4Tip": str = "Crash Walljump by Crashing or Dashing into\na wall followed by a Walljump"; break;
+                    case "part4Tip": str = "Try dashing into the wall and\ncharge a Walljump off of it!"; break;
                     case "endTip": str = "That's all for now. Good job!\nTravel down to restart in speedrun mode!"; break;
                 }
                 if (str != "") _drawTip(str);

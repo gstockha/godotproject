@@ -12,8 +12,8 @@ func _process(delta):
 	if is_colliding():
 		var point = get_collision_point()
 		shadow.global_transform.origin = point
-		var heightScale = (point.y/player.global_transform.origin.y) + .05
-		if heightScale > 1: heightScale = 1
-		elif heightScale < .1: heightScale = .1
-		shadow.scale.x = shadowScale * heightScale
-		shadow.scale.z = shadowScale * heightScale
+#		var heightScale = (point.y/player.global_transform.origin.y) + .07
+#		if heightScale > 1: heightScale = 1
+#		elif heightScale < .1: heightScale = .1
+		shadow.scale.x = shadowScale# * heightScale
+		shadow.scale.z = shadowScale# * heightScale
