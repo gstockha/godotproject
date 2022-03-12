@@ -424,10 +424,8 @@ public void _isWall(float delta){
     }
     if (isWall || dashing){
         wallb = true;
-        Vector3 wallbang = velocity.Bounce(GetSlideCollision(0).Normal);
-        Vector2 wallang = new Vector2(wallbang.x,wallbang.z);
-        wallbx = wallang.x;
-        wallby = wallang.y;
+        wallbx = GetSlideCollision(0).Normal.x * 2;
+        wallby = GetSlideCollision(0).Normal.z * 2;
         _alterDirection(GetSlideCollision(0).Normal);
         if (dashing && !walldashing){
             dashtimer.Stop();
@@ -439,11 +437,16 @@ public void _isWall(float delta){
         }
         if (isWall){
             boing = speed * .7F * friction;
-            if (boing < 4) boing = 4;
+            if (boing < 2) boing = 2;
             jumpwindow = 0;
-            basejumpwindow = Mathf.Round(boing * 4);
-            if (boingTimer.IsStopped()) boingTimer.Start(boing * .12F);
+            basejumpwindow = Mathf.Round(boing * 2);
+            boingTimer.Stop();
+            boingTimer.Start(boing * .1F);
         }
+    }
+    else if (!isWall){
+        wallb = false;
+        boingTimer.Stop();
     }
 }
 
@@ -691,7 +694,12 @@ public void _jump(){
             bounceCombo += 1;
             if (!wallb && !slopeSquish) _drawMoveNote(chargedNote + "boingjump");
             else{
-                if (!slopeSquish) _drawMoveNote(chargedNote + "walljump");
+                if (!slopeSquish){
+                    _drawMoveNote(chargedNote + "walljump");
+                    wallbx *= (jumpforce * (.2F + (.1F * jumpwindow)));
+                    wallby *= (jumpforce * (.2F + (.1F * jumpwindow)));
+                    nuyvel *= .5F + (.15F * jumpwindow);
+                }
                 squishReverb[2] = 1; //set wall jiggle to true
             }
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
@@ -701,7 +709,12 @@ public void _jump(){
             bouncedashing = 0;
             nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F)) * jumpwindow,10);
             if (wallb){ //if off wall
-                if (!slopeSquish) _drawMoveNote(chargedNote + "crash walljump");
+                if (!slopeSquish){
+                    _drawMoveNote(chargedNote + "crash walljump");
+                    wallbx *= (jumpforce * (.4F + (.25F * jumpwindow)));
+                    wallby *= (jumpforce * (.4F + (.25F * jumpwindow)));
+                    nuyvel *= .5F + (.1F * jumpwindow);
+                }
                 nuyvel *= windowRatio * .65F;
                 lastyvel *= windowRatio * .65F;
                 squishReverb[2] = 1; //set wall jiggle to true
