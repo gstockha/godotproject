@@ -35,6 +35,7 @@ float[,] dir = new float[2,dirsize];
 float[] stickdir = new float[] {0,0};
 float[] dragdir = new float[] {0,0};
 float friction = 0;
+float wallFriction = 0;
 static float speedCap = 12;
 float speed = speedCap;
 int traction = 50;
@@ -198,9 +199,16 @@ public void _controller(float delta){
         xvel = direction_ground.x * mod;
         yvel = direction_ground.y * mod;
     }
+    else if (moving){
+        wallFriction += .01F * delta * 60;
+        if (wallFriction > 1) wallFriction = 1;
+        MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
+        xvel = wallbx * (1 - wallFriction);
+        yvel = wallby * (1 - wallFriction);
+    }
     else{
-        xvel = wallbx;
-        yvel = wallby;
+        xvel = wallbx * (1 - wallFriction);
+        yvel = wallby * (1 - wallFriction);
     }
     velocity = new Vector3(xvel, yvelocity, yvel); //apply velocity
     MoveAndSlide(velocity, Vector3.Up, true);
@@ -424,6 +432,7 @@ public void _isWall(float delta){
     }
     if (isWall || dashing){
         wallb = true;
+        wallFriction = 0;
         wallbx = GetSlideCollision(0).Normal.x * 2;
         wallby = GetSlideCollision(0).Normal.z * 2;
         _alterDirection(GetSlideCollision(0).Normal);
@@ -670,6 +679,7 @@ public void _jump(){
             Vector2 wallang = new Vector2(wallbang.x, wallbang.z);
             _alterDirection(bottom.GetCollisionNormal());
             wallb = true;
+            wallFriction = 0;
             slopeSquish = true;
             wallbx = wallang.x * .5F;
             wallby = wallang.y * .5F;
@@ -698,7 +708,7 @@ public void _jump(){
                     _drawMoveNote(chargedNote + "walljump");
                     wallbx *= (jumpforce * (.2F + (.1F * jumpwindow)));
                     wallby *= (jumpforce * (.2F + (.1F * jumpwindow)));
-                    nuyvel *= .5F + (.15F * jumpwindow);
+                    nuyvel *= .5F + (.2F * jumpwindow);
                 }
                 squishReverb[2] = 1; //set wall jiggle to true
             }
