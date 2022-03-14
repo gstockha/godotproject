@@ -610,7 +610,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roof5" type="StaticBody" parent="envStarting/part6walljumping" groups=["flats", "slides"]]
-transform = Transform( -4, 5.62503e-16, -4.52987e-07, 0, 0.1, 1.11759e-07, 6.03983e-07, 3.72529e-09, -3, 60.8148, 28.4134, -168.344 )
+transform = Transform( -3.5, 5.62503e-16, -4.52987e-07, 0, 0.1, 1.11759e-07, 5.28485e-07, 3.72529e-09, -3, 61.5599, 27.4134, -168.344 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part6walljumping/roof5"]
 shape = SubResource( 9 )
@@ -621,7 +621,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roofShift2" type="StaticBody" parent="envStarting/part6walljumping" groups=["shifts", "slides"]]
-transform = Transform( -2.39435e-07, -9.08811e-10, -4, -1.16431, 0.0978148, 0, 5.47763, 0.0207912, -1.74846e-07, 60.885, 29.6251, -176.691 )
+transform = Transform( -2.48894e-07, -9.14498e-10, -3.5, -1.69576, 0.0956305, 1.33039e-08, 5.54657, 0.0292372, -1.5299e-07, 61.6301, 29.092, -176.818 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part6walljumping/roofShift2"]
 shape = SubResource( 9 )
@@ -854,7 +854,7 @@ mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
 [node name="shift" parent="envMainCourse/part2" instance=ExtResource( 12 )]
-transform = Transform( -4.67428e-08, -0.0517637, 2.89778, 1.13134e-08, 0.193185, 0.776456, -1, 4.60516e-09, -1.26666e-07, -55.5109, -7.79441, -8 )
+transform = Transform( -4.67428e-08, -0.0517638, 3.38074, 1.13134e-08, 0.193185, 0.905866, -1, 4.60516e-09, -1.47777e-07, -54.5109, -8.79441, -8 )
 
 [node name="part3" type="Spatial" parent="envMainCourse"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -126.136, 25.674, 40.762 )

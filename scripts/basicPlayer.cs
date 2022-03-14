@@ -759,7 +759,7 @@ public void _normalJump(){
 
 public void _dash(){
 if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
-        if (IsOnFloor() && shiftedDir == 0){ // on ground and not on shift
+        if (bottom.IsColliding() && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
         }
