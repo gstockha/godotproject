@@ -199,14 +199,12 @@ public void _controller(float delta){
         xvel = direction_ground.x * mod;
         yvel = direction_ground.y * mod;
     }
-    else if (moving){
-        wallFriction += .01F * delta * 60;
-        if (wallFriction > 1) wallFriction = 1;
-        MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
-        xvel = wallbx * (1 - wallFriction);
-        yvel = wallby * (1 - wallFriction);
-    }
     else{
+        if (moving){ //wallb air control
+            wallFriction += .01F * delta * 60;
+            if (wallFriction > 1) wallFriction = 1;
+            MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
+        }
         xvel = wallbx * (1 - wallFriction);
         yvel = wallby * (1 - wallFriction);
     }
@@ -389,7 +387,7 @@ public void _isRolling(float delta){
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         if ((yvelocity * bounce) * -1 > bouncethreshold && yvelocity != -1){
-            if (GetSlideCollision(0).Normal.y == 1 || boingCharge || bouncedashing == 2){
+            if ((GetSlideCollision(0).Normal.y > .98 && GetSlideCollision(0).Normal.y < 1.02) || boingCharge || bouncedashing == 2){
                 if (bouncedashing != 2){ //not crashing (bouncedashing == 2 is crashing)
                     boing = yvelocity * bounce;
                     bouncedashing = 0;
@@ -946,7 +944,7 @@ public void _on_hitBox_area_entered(Area area){
                         controlNames["speedrun"] + " to start speedrun mode";
                         break;
                     case "boingTip": str = "Hold " + controlNames["jump"] + " to\ncharge a Boingjump"; break;
-                    case "boingTip2": str = "Get a bouncing start\nfor a bigger Boingjump!"; break;
+                    case "boingTip2": str = "The more you squish,\nthe higher you boing!"; break;
                     case "dashTip": str = controlNames["dash"] + " to Dash"; break;
                     case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
                     //case "slideTip2": str = "You can slide super far on glass!"; break;

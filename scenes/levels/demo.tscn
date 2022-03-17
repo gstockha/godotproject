@@ -94,7 +94,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 16, -148 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 121, 74, -170 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -854,7 +854,7 @@ mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
 [node name="shift" parent="envMainCourse/part2" instance=ExtResource( 12 )]
-transform = Transform( -4.67428e-08, -0.0517638, 3.38074, 1.13134e-08, 0.193185, 0.905866, -1, 4.60516e-09, -1.47777e-07, -54.5109, -8.79441, -8 )
+transform = Transform( -4.67428e-08, -0.0517638, 3.38074, 1.13134e-08, 0.193185, 0.905866, -1, 4.60516e-09, -1.47777e-07, -54.5109, -8.48676, -8 )
 
 [node name="part3" type="Spatial" parent="envMainCourse"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -126.136, 25.674, 40.762 )
