@@ -130,8 +130,8 @@ public override void _Ready(){
         controllerStr[3] = "L & R or Right Joystick";
         controllerStr[4] = "Start";
         if (Input.GetJoyName(0).BeginsWith("x") || Input.GetJoyName(0).BeginsWith("X")){ //xbox
-            controllerStr[1] = "A Button";
-            controllerStr[2] = "X Button";
+            controllerStr[1] = "the A Button";
+            controllerStr[2] = "the X Button";
             controllerStr[5] = "Back";
         }
         else{ //other controller
@@ -788,7 +788,7 @@ public override void _Input(InputEvent @event){
     if (@event.IsActionPressed("jump")) _jump();
     else if (@event.IsActionReleased("jump")){
         if (boingCharge){
-            if (IsOnFloor() || yvelocity == -1 || IsOnWall()){
+            if (bottom.IsColliding() || yvelocity == -1 || IsOnWall()){
                 if (boing != 0){
                     if (!boingTimer.IsStopped()) boingTimer.Stop();
                     _jump();
@@ -936,8 +936,8 @@ public void _on_hitBox_area_entered(Area area){
                 string str = "";
                 switch(area.Name){
 					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
-                    case "jumpTip": str = controlNames["jump"] + " to Jump"; break;
-                    case "bounceTip": str = controlNames["jump"] + " after hitting the ground\n to Boingjump"; break;
+                    case "jumpTip": str = "Press and release\n" + controlNames["jump"] + " to Jump"; break;
+                    case "bounceTip": str = "Jump after hitting the ground\n to Boingjump"; break;
                     case "camTip": str = controlNames["camera"] + "\nto rotate the camera"; break;
                     case "restartTip": 
                         str = controlNames["restart"] + " to restart from checkpoint\n" +
