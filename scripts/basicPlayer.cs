@@ -200,7 +200,7 @@ public void _controller(float delta){
         yvel = direction_ground.y * mod;
     }
     else{
-        if (moving){ //wallb air control
+        if (moving && (Mathf.Sign(wallbx) != Mathf.Sign(direction_ground.x) || Mathf.Sign(wallby) != Mathf.Sign(direction_ground.y))){ //wallb air control
             wallFriction += .01F * delta * 60;
             if (wallFriction > 1) wallFriction = 1;
             MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
