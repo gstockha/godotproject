@@ -94,7 +94,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -39.6639, 68, 41.132 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 97.336, 20.104, 202.068 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -165,7 +165,7 @@ one_shot = true
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 97.336, 20.104, 202.068 )
 
 [node name="checkpoint2" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
-transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, -24, 23.23, 114.5 )
+transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, -24, 23.23, 113.5 )
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint2"]
@@ -261,7 +261,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148705, 0 )
 shape = SubResource( 4 )
 
 [node name="checkpoint11" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
-transform = Transform( 2.5, 0, 0, 0, 1.5, 0, 0, 0, 1.99999, -4.68757, 65.1051, 41.8714 )
+transform = Transform( 2.5, 0, 0, 0, 1.5, 0, 0, 0, 1.99999, -4.68757, 65.1051, 42.5067 )
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint11"]
@@ -269,7 +269,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148705, 0 )
 shape = SubResource( 4 )
 
 [node name="checkpointEnd" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
-transform = Transform( 1.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 94.5925, 57.7511, 42.9108 )
+transform = Transform( 1.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 98.5925, 57.7511, 42.9108 )
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpointEnd"]
@@ -286,10 +286,7 @@ transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, 5
 transform = Transform( 9, 0, 0, 0, 1, 0, 0, 0, 8, 119.298, 1, 70.1379 )
 
 [node name="moveTip" parent="envStarting/part1moving" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120.861, 3.8, 77.209 )
-
-[node name="restartTip" parent="envStarting/part1moving" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120.861, 3.8, 63.067 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 120.861, 3.8, 75.7948 )
 
 [node name="platSkinny" parent="envStarting/part1moving" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( 6.3, 0, 0, 0, 1, 0, 0, 0, 1.25, 88.7725, 1, 70.1379 )
@@ -344,8 +341,8 @@ transform = Transform( -0.707107, 0, -0.702864, 0, 1, 0, 0.707107, 0, -0.702864,
 polygon = PoolVector2Array( -3, 1.5, -3, -5, 12, -5 )
 material = SubResource( 8 )
 
-[node name="bounceTip" parent="envStarting/part1moving" instance=ExtResource( 14 )]
-transform = Transform( 0.68624, 0, 0.727375, 0, 1, 0, -0.727375, 0, 0.68624, -27.9908, 8.90529, 92.4161 )
+[node name="restartTip" parent="envStarting/part1moving" instance=ExtResource( 14 )]
+transform = Transform( 0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -28.1714, 8.8, 92.2257 )
 
 [node name="part2jumping" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0 )
@@ -952,7 +949,7 @@ transform = Transform( 3, 0, 0, 0, 0.173205, 0.3, 0, -0.1, 0.519615, 1.50902, -2
 transform = Transform( 3, 0, 0, 0, 0.141421, 1.06066, 0, -0.141421, 1.06066, 1.50904, -17.4771, 35.5712 )
 
 [node name="landingSpace" type="Spatial" parent="envMainCourse/part4"]
-transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, -0.697998, 0, 141.997 )
+transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, 2.83751, 0, 145.533 )
 
 [node name="platRound" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 6 )]
 transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -89.5459, -29.1074, 43.5015 )

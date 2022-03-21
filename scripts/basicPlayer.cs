@@ -157,7 +157,7 @@ public override void _Ready(){
 public override void _PhysicsProcess(float delta){ //run physics
     if (boing == 0){ //not boinging
         _controller(delta);
-        bool isGrounded = IsOnFloor() || (yvelocity == -1);
+        bool isGrounded = (IsOnFloor() || yvelocity == -1);
         if (isGrounded) _isRolling(delta);
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
@@ -306,6 +306,7 @@ public void _applyShift(float delta, bool isGrounded){
         }
     }
     if (isGrounded){ //if isRolling, check shift status
+        GD.Print(GD.RandRange(0,1));
         if (GetSlideCount() > 0){ //shifted check
             shiftedSticky = 0;
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
@@ -446,7 +447,7 @@ public void _isWall(float delta){
             boing = speed * .7F * friction;
             if (boing < 2) boing = 2;
             jumpwindow = 0;
-            basejumpwindow = Mathf.Round(boing * 2);
+            basejumpwindow = Mathf.Round(boing * 6);
             boingTimer.Stop();
             boingTimer.Start(boing * .1F);
         }
@@ -700,7 +701,10 @@ public void _jump(){
             jumpwindow = (jumpwindow / basejumpwindow * .75F) + bouncebase;
             nuyvel = myMath.roundTo((jumpforce*(1 + combo * .035F)) * jumpwindow, 10);
             bounceCombo += 1;
-            if (!wallb && !slopeSquish) _drawMoveNote(chargedNote + "boingjump");
+            if (!wallb && !slopeSquish){
+                if (chargedNote == "") _drawMoveNote("boingjump");
+                else _drawMoveNote("chargedjump");
+            }
             else{
                 if (!slopeSquish){
                     _drawMoveNote(chargedNote + "walljump");
@@ -936,22 +940,22 @@ public void _on_hitBox_area_entered(Area area){
                 string str = "";
                 switch(area.Name){
 					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
-                    case "jumpTip": str = "Press and release\n" + controlNames["jump"] + " to Jump"; break;
-                    case "bounceTip": str = "Jump after hitting the ground\n to Boingjump"; break;
+                    case "jumpTip": str = "Press " + controlNames["jump"] + " to Jump"; break;
+                    case "bounceTip": str = "Try jumping right when you hit the\nground to Boingjump"; break;
                     case "camTip": str = controlNames["camera"] + "\nto rotate the camera"; break;
                     case "restartTip": 
                         str = controlNames["restart"] + " to restart from checkpoint\n" +
                         controlNames["speedrun"] + " to start speedrun mode";
                         break;
-                    case "boingTip": str = "Hold " + controlNames["jump"] + " to\ncharge a Boingjump"; break;
+                    case "boingTip": str = "Hold " + controlNames["jump"] + "\nto Chargejump"; break;
                     case "boingTip2": str = "The more you squish,\nthe higher you boing!"; break;
                     case "dashTip": str = controlNames["dash"] + " to Dash"; break;
                     case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
                     //case "slideTip2": str = "You can slide super far on glass!"; break;
                     case "crashTip": str = "Dash in mid-air\nto Crash"; break;
-                    case "crashTip2": str = "Boingjump after a Crash\nto Crashjump"; break;
+                    case "crashTip2": str = "Jump after a Crash\nto Crashjump"; break;
                     case "crashTip3": str = "Try charging a big Crashjump\nto get over the wall!"; break;
-                    case "wallTip": str = "Boingjump after hitting a wall\nto Walljump"; break;
+                    case "wallTip": str = "Jump after hitting a wall\nto Walljump"; break;
                     case "wallTip2": str = "Chain a Crashjump into\na Walljump!"; break;
                     case "shiftTip": str = "Roll down slopes to go fast!"; break;
                     case "shiftTip2": str = "Jump off ramps at high speeds\nto get some air!"; break;
