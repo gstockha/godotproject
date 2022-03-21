@@ -157,7 +157,7 @@ public override void _Ready(){
 public override void _PhysicsProcess(float delta){ //run physics
     if (boing == 0){ //not boinging
         _controller(delta);
-        bool isGrounded = (IsOnFloor() || yvelocity == -1);
+        bool isGrounded = (IsOnFloor() || yvelocity == -1 || shiftedSticky == -1);
         if (isGrounded) _isRolling(delta);
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
@@ -306,7 +306,6 @@ public void _applyShift(float delta, bool isGrounded){
         }
     }
     if (isGrounded){ //if isRolling, check shift status
-        GD.Print(GD.RandRange(0,1));
         if (GetSlideCount() > 0){ //shifted check
             shiftedSticky = 0;
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
@@ -338,7 +337,7 @@ public void _applyShift(float delta, bool isGrounded){
             }
         }
         else if (!bottom.IsColliding()){
-            yvelocity -= (gravity * weight) * delta; //gravity
+            yvelocity = (yvelocity > 0) ? -1 : yvelocity - (gravity * weight) * delta; //if initial fall off, reset yvel, else gravity
             shiftedSticky = 0;
         }
     }
@@ -388,7 +387,7 @@ public void _isRolling(float delta){
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         if ((yvelocity * bounce) * -1 > bouncethreshold && yvelocity != -1){
-            if ((GetSlideCollision(0).Normal.y > .98 && GetSlideCollision(0).Normal.y < 1.02) || boingCharge || bouncedashing == 2){
+            if ((GetSlideCollision(0).Normal.y > .95F && GetSlideCollision(0).Normal.y < 1.05F) || boingCharge || bouncedashing == 2){
                 if (bouncedashing != 2){ //not crashing (bouncedashing == 2 is crashing)
                     boing = yvelocity * bounce;
                     bouncedashing = 0;
@@ -710,7 +709,7 @@ public void _jump(){
                     _drawMoveNote(chargedNote + "walljump");
                     wallbx *= (jumpforce * (.2F + (.1F * jumpwindow)));
                     wallby *= (jumpforce * (.2F + (.1F * jumpwindow)));
-                    nuyvel *= .5F + (.2F * jumpwindow);
+                    nuyvel *= .5F + (.3F * jumpwindow);
                 }
                 squishReverb[2] = 1; //set wall jiggle to true
             }
@@ -725,7 +724,7 @@ public void _jump(){
                     _drawMoveNote(chargedNote + "crash walljump");
                     wallbx *= (jumpforce * (.4F + (.25F * jumpwindow)));
                     wallby *= (jumpforce * (.4F + (.25F * jumpwindow)));
-                    nuyvel *= .5F + (.1F * jumpwindow);
+                    nuyvel *= .4F + (.25F * jumpwindow);
                 }
                 nuyvel *= windowRatio * .65F;
                 lastyvel *= windowRatio * .65F;

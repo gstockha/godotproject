@@ -76,7 +76,7 @@ font_data = ExtResource( 16 )
 [node name="Spatial" type="Spatial"]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.4281, -0.79763, 0.424873, -0.0885215, 0.430861, 0.898066, -0.899386, -0.422072, 0.113844, -2.665, 45, 11.267 )
+transform = Transform( 0.4281, -0.79763, 0.424873, -0.0885214, 0.430861, 0.898066, -0.899386, -0.422072, 0.113844, -2.665, 45, 11.267 )
 light_indirect_energy = 0.0
 light_specular = 0.0
 shadow_enabled = true
@@ -94,7 +94,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 97.336, 20.104, 202.068 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 99.523, 18.104, 204.267 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -336,7 +336,7 @@ shape = SubResource( 5 )
 mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
-[node name="shiftBlock" parent="envStarting/part1moving" groups=["ramps"] instance=ExtResource( 10 )]
+[node name="shiftBlock" parent="envStarting/part1moving" groups=["shifts"] instance=ExtResource( 10 )]
 transform = Transform( -0.707107, 0, -0.702864, 0, 1, 0, 0.707107, 0, -0.702864, -33.934, 6.037, 94.597 )
 polygon = PoolVector2Array( -3, 1.5, -3, -5, 12, -5 )
 material = SubResource( 8 )
