@@ -19,6 +19,7 @@ float basejumpwindow = 0;
 float jumpwindow = 0;
 float ang = 0;
 float angTarget = 0;
+bool angDelayFriction = true; //player friction modifies angTarget lerping or not
 float cameraFriction = 1; //apply to friction after moving camera
 bool wallb = false;
 float wallbx = 0;
@@ -637,7 +638,8 @@ public void _turnDelay(){
         if (turnDir == "left") add *= -1;
         ang = angTarget + add;
     }
-    ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[traction] * .0007F)));
+    if (angDelayFriction) ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[traction] * .0007F)));
+    else ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[0] * .0007F)));
     if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
         ang = angTarget;
         angTarget = 0;
@@ -969,7 +971,8 @@ public void _on_hitBox_area_entered(Area area){
                 Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
                 if (setDelay.IsStopped()){
                     string[] tag = area.Name.Split("cameraset");
-                    camera.Call("_auto_move_camera", tag[1].ToInt());
+                    tag = tag[1].Split("-");
+                    camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
                 }
                 break;
         }

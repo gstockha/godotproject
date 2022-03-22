@@ -31,6 +31,7 @@ func _input(event: InputEvent) -> void:
 
 func _move_camera(evn) -> void:
 	turnRate = 8
+	player.angDelayFriction = true
 	if ((evn is InputEventMouseMotion) and (cam == 1)): #free cam
 		player.rotate_y(-lerp(0, 1.0, evn.relative.x/300)) #needs to eventually just rotate camera not player
 		if evn.relative.x < 0: turnDir = 'right'
@@ -57,7 +58,7 @@ func _move_camera(evn) -> void:
 				else:
 					camsetarray = 3
 					cam = 3
-		else:
+		else: #find closest 90 degree angle
 			var set = false
 			if evn.is_action("pan_left"):
 				turnDir = 'left'
@@ -98,21 +99,21 @@ func _process(delta: float) -> void:
 				if proty < 180: player.rotation_degrees.y += turnRate * delta * 60
 				else: player.rotation_degrees.y = -179
 			elif proty < 1:
-				if proty < -144: player.rotation_degrees.y += turnRate * delta * 60
-				else: 
+				if proty < -135 - (turnRate + 1): player.rotation_degrees.y += turnRate * delta * 60
+				else:
 					player.rotation_degrees.y = -135
 					cam = 0
 			else: player.rotation_degrees.y = 134
-		else: #under (-135 to 135)
-			if proty <= -134:
+		elif cam == 4: #under (-135 to 135)
+			if proty <= 0: #-134
 				if proty > -180: player.rotation_degrees.y -= turnRate * delta * 60
 				else: player.rotation_degrees.y = 179
-			elif proty > 1:
-				if proty > 144: player.rotation_degrees.y -= turnRate * delta * 60
+			else: #elif proty > 1:
+				if proty > 135 + (turnRate + 1): player.rotation_degrees.y -= turnRate * delta * 60
 				else:
 					player.rotation_degrees.y = 135
 					cam = 0
-			else: player.rotation_degrees.y = -134
+			#else: player.rotation_degrees.y = -134
 		player.angTarget = -1 * player.rotation.y
 		if cam == 0:
 			if player.cameraFriction == 1: player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*.8
@@ -155,8 +156,21 @@ func findDegreeDistance(from,to):
 	var difference = fmod(to - from, max_angle)
 	return abs(fmod(2 * difference, max_angle) - difference)
 
-func _auto_move_camera(target: int) -> void:
+func _auto_move_camera(target: int, direction: String) -> void:
 	if target == camsetarray: return
-	player.rotation_degrees.y = camsets[target]
+#	if (direction == "L" && ((camsetarray + 1) == target or (camsetarray == 3 and target == 0))): direction = "R"
+#	elif (direction == "R" && ((camsetarray - 1) == target or (camsetarray == 0 and target == 3))): direction = "L"
+	if direction == "L":
+		turnDir = 'left'
+		if (target == 0):
+			if camsetarray != 1: cam = 4
+			else: cam = 2
+	else:
+		turnDir = 'right'
+		if camsetarray > 0: cam = 2
+		else: cam = 3
+	player.angDelayFriction = false
+	turnRate = 2
+	camsetarray = target
 	setDelay.stop()
-	setDelay.start(6)
+	setDelay.start(3)

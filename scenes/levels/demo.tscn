@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://assets/ballSkin.obj" type="ArrayMesh" id=2]
@@ -50,6 +50,8 @@ albedo_color = Color( 0.686275, 1, 0.913725, 0.196078 )
 [sub_resource type="SpatialMaterial" id=12]
 albedo_color = Color( 0.333333, 1, 0.529412, 1 )
 
+[sub_resource type="BoxShape" id=18]
+
 [sub_resource type="DynamicFont" id=13]
 size = 24
 outline_color = Color( 0, 0, 0, 1 )
@@ -94,7 +96,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 99.523, 18.104, 204.267 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 118.523, 72.104, -168.733 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -221,7 +223,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
 [node name="checkpoint6-3" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
-transform = Transform( 2.5, 0, 0, 0, 1, 0, 0, 0, 3, 122.202, 72.23, -169.5 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 3, 117.902, 72.9259, -169.5 )
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint6-3"]
@@ -713,6 +715,14 @@ transform = Transform( 3, 0, 0, 0, 0.141421, 0.707107, 0, -0.141421, 0.707107, 1
 
 [node name="shiftTip2" parent="envStarting/part7ramping" instance=ExtResource( 14 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 57.8436, -190 )
+
+[node name="camerasetL-0" type="Area" parent="envStarting/part7ramping" groups=["camerasets"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 61, -188.575 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part7ramping/camerasetL-0"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
+shape = SubResource( 18 )
 
 [node name="envMainCourse" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 121, 35, -28 )
