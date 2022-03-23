@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="BoxShape" id=18]
+
+[sub_resource type="BoxShape" id=19]
+
+[node name="cameraset" type="Area" groups=["camerasets"]]
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
+shape = SubResource( 18 )
+
+[node name="cameraBuffer" type="Area" parent="." groups=["camerabuffers"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="cameraBuffer"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, -2.07684, 0, 0 )
+shape = SubResource( 19 )

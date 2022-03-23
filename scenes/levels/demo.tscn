@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://assets/ballSkin.obj" type="ArrayMesh" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://scripts/playerCam.gd" type="Script" id=15]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=16]
 [ext_resource path="res://scripts/shadowCast.gd" type="Script" id=17]
+[ext_resource path="res://scenes/cameraset.tscn" type="PackedScene" id=18]
 
 [sub_resource type="BoxShape" id=1]
 
@@ -47,10 +48,16 @@ albedo_color = Color( 0.333333, 1, 0.529412, 1 )
 flags_transparent = true
 albedo_color = Color( 0.686275, 1, 0.913725, 0.196078 )
 
+[sub_resource type="BoxShape" id=18]
+
+[sub_resource type="BoxShape" id=19]
+
 [sub_resource type="SpatialMaterial" id=12]
 albedo_color = Color( 0.333333, 1, 0.529412, 1 )
 
-[sub_resource type="BoxShape" id=18]
+[sub_resource type="BoxShape" id=20]
+
+[sub_resource type="BoxShape" id=21]
 
 [sub_resource type="DynamicFont" id=13]
 size = 24
@@ -96,7 +103,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 118.523, 72.104, -168.733 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.52301, 17.104, -147.733 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -391,6 +398,9 @@ transform = Transform( 6, 0, 0, 0, 2.5, 0, 0, 0, 1, -129.472, 1.1, -10 )
 [node name="obstacle3" parent="envStarting/part3boinging" instance=ExtResource( 9 )]
 transform = Transform( 6, 0, 0, 0, 2.65, 0, 0, 0, 1, -129.472, 1.6, -52 )
 
+[node name="camTip" parent="envStarting/part3boinging" instance=ExtResource( 14 )]
+transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -119.687, -9.9659, 70.9194 )
+
 [node name="part4dashing" type="Spatial" parent="envStarting"]
 transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -132.831, 2, -85.5293 )
 
@@ -419,8 +429,24 @@ material/0 = SubResource( 11 )
 [node name="platSmall" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -1.74846e-07, 0, 3, 0, 1, 0, -4, 0, -1.31134e-07, 4.601, -5.073, -5.779 )
 
+[node name="camerasetL-2" type="Area" parent="envStarting/part4dashing" groups=["camerasets"]]
+transform = Transform( -0.70711, 0, 0.707104, 0, 1, 0, -0.707104, 0, -0.70711, 8.87994, 1.07365, 3.77886 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-2"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
+shape = SubResource( 18 )
+
+[node name="cameraBuffer" type="Area" parent="envStarting/part4dashing/camerasetL-2" groups=["camerabuffers"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-2/cameraBuffer"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, -2.07684, 0, 0 )
+shape = SubResource( 19 )
+
 [node name="dashTip" parent="envStarting/part4dashing" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.474289, -2.0319, -5.1917 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.655212, -2.37611, -7.83928 )
 
 [node name="platSmall2" parent="envStarting/part4dashing" groups=["flats"] instance=ExtResource( 11 )]
 transform = Transform( -1.02722e-07, 0, 3, 0, 1, 0, -2.35, 0, -1.31134e-07, 4.60001, -5.003, -32 )
@@ -449,8 +475,21 @@ transform = Transform( -3.01609e-07, 0, 1.5, 0, 1, 0, -6.9, 0, -6.55671e-08, 4.6
 [node name="wallBlock" parent="envStarting/part4dashing" instance=ExtResource( 13 )]
 transform = Transform( 1.5, 0, 0, 0, 8, 0, 0, 0, 0.1, 4.62453, -2.99697, -90.1793 )
 
-[node name="camTip" parent="envStarting/part4dashing" instance=ExtResource( 14 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.827667, 0.00843811, -81.3368 )
+[node name="camerasetL-3" type="Area" parent="envStarting/part4dashing" groups=["camerasets"]]
+transform = Transform( -3.12924e-06, 0, -1, 0, 1, 0, 1, 0, -3.12924e-06, 4.49742, 3.48981, -82.9448 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-3"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
+shape = SubResource( 18 )
+
+[node name="cameraBuffer" type="Area" parent="envStarting/part4dashing/camerasetL-3" groups=["camerabuffers"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-3/cameraBuffer"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, -2.07684, 0, 0 )
+shape = SubResource( 19 )
 
 [node name="part5crashing" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -72.514, -6, 12 )
@@ -473,7 +512,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5908, 8.08805, -133.533 )
 transform = Transform( 1.76777, 0, 1.41421, 0, 1, 0, -1.76777, 0, 1.41421, -2.5363, 4.997, -118.976 )
 
 [node name="plat3" parent="envStarting/part5crashing" groups=["flats"] instance=ExtResource( 11 )]
-transform = Transform( -1.09278e-07, 0, 3.3, 0, 1, 0, -2.5, 0, -1.44248e-07, 3.28452, 4.997, -117.622 )
+transform = Transform( -1.09278e-07, 0, 3.3, 0, 1, 0, -2.5, 0, -1.44248e-07, 3.389, 4.997, -117.61 )
 
 [node name="crashTip2" parent="envStarting/part5crashing" instance=ExtResource( 14 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.40921, 8.08805, -114.533 )
@@ -498,6 +537,22 @@ transform = Transform( -1.60933e-06, 0, 4.99999, 0, 4.25, 0, -1, 0, -7.86781e-06
 
 [node name="crashTip3" parent="envStarting/part5crashing" instance=ExtResource( 14 )]
 transform = Transform( 0.707106, 0, 0.707108, 0, 1, 0, -0.707108, 0, 0.707106, 76.8717, 8.08805, -135.144 )
+
+[node name="camerasetL-2" type="Area" parent="envStarting/part5crashing" groups=["camerasets"]]
+transform = Transform( -3.30806e-06, 0, 1, 0, 1, 0, -1, 0, -3.30806e-06, 72.29, 11.4855, -124.252 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part5crashing/camerasetL-2"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
+shape = SubResource( 18 )
+
+[node name="cameraBuffer" type="Area" parent="envStarting/part5crashing/camerasetL-2" groups=["camerabuffers"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envStarting/part5crashing/camerasetL-2/cameraBuffer"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, -2.07684, 0, 0 )
+shape = SubResource( 19 )
 
 [node name="part6walljumping" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14.571, 2, -6.733 )
@@ -716,13 +771,8 @@ transform = Transform( 3, 0, 0, 0, 0.141421, 0.707107, 0, -0.141421, 0.707107, 1
 [node name="shiftTip2" parent="envStarting/part7ramping" instance=ExtResource( 14 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 57.8436, -190 )
 
-[node name="camerasetL-0" type="Area" parent="envStarting/part7ramping" groups=["camerasets"]]
+[node name="camerasetL-0" parent="envStarting/part7ramping" instance=ExtResource( 18 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 61, -188.575 )
-monitoring = false
-
-[node name="CollisionShape" type="CollisionShape" parent="envStarting/part7ramping/camerasetL-0"]
-transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
-shape = SubResource( 18 )
 
 [node name="envMainCourse" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 121, 35, -28 )
@@ -1009,6 +1059,22 @@ transform = Transform( 9.46224e-07, 0, -1, 0, 3, 0, 0.1, 0, 9.41753e-06, -63.244
 [node name="CollisionShape" type="CollisionShape" parent="envMainCourse/part4/landingSpace/warp"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -0.148701, 0 )
 shape = SubResource( 4 )
+
+[node name="camerasetR-2" type="Area" parent="envMainCourse/part4" groups=["camerasets"]]
+transform = Transform( 0.707111, 0, -0.707102, 0, 1, 0, 0.707102, 0, 0.707111, -162.423, 8, 40.3161 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envMainCourse/part4/camerasetR-2"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, 0, 0, 0 )
+shape = SubResource( 20 )
+
+[node name="cameraBuffer" type="Area" parent="envMainCourse/part4/camerasetR-2" groups=["camerabuffers"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="envMainCourse/part4/camerasetR-2/cameraBuffer"]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 6, -2.07684, 0, 0 )
+shape = SubResource( 21 )
 
 [node name="moveNote" type="Label" parent="."]
 anchor_left = 0.499652

@@ -158,7 +158,7 @@ public override void _Ready(){
 public override void _PhysicsProcess(float delta){ //run physics
     if (boing == 0){ //not boinging
         _controller(delta);
-        bool isGrounded = (IsOnFloor() || yvelocity == -1 || shiftedSticky == -1);
+        bool isGrounded = (IsOnFloor() || yvelocity == -1);
         if (isGrounded) _isRolling(delta);
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
@@ -265,28 +265,34 @@ public void _applyFriction(float delta){
 
 public void _applyShift(float delta, bool isGrounded){
     if (shiftedDir != 0 && !shiftedLinger){ //on shift
-        float grav = .05F + (baseweight * .01F);
-        float fric = friction;
-        Vector3 shift = bottom.GetCollisionNormal();
-        if (shiftedDir > 0){ //going down
-            if (!dashing) shiftedBoost[0] += delta * (baseweight * 10); //charge up
-            else shiftedBoost[0] += delta * (baseweight * 20);
-            if (shiftedBoost[0] > 30) shiftedBoost[0] = 30;
-            shiftedBoost[1] = shiftedBoost[0]; //records the max shiftedBoost[0]
-            if (shift.y != 1){ //make sure we're not passing a flat vector
-                bool record = true;
-                if (shiftedLastYNorm == 0) shiftedLastYNorm = shift.y;
-                else if (Mathf.Round(shift.y * 10) > Mathf.Round(shiftedLastYNorm * 10)) record = false;
-                else shiftedLastYNorm = shift.y;
-                if (record){ //save the last rolling vector
-                    fric *= (shiftedBoost[0] * (1 - shiftedLastYNorm));
-                    shiftedLingerVec = new Vector3(shift.x*grav*fric, 0, shift.z*grav*fric);
+        if (bottom.IsColliding()){ //make sure you're still on ground
+            float grav = .05F + (baseweight * .01F);
+            float fric = friction;
+            Vector3 shift = bottom.GetCollisionNormal();
+            if (shiftedDir > 0){ //going down
+                if (!dashing) shiftedBoost[0] += delta * (baseweight * 10); //charge up
+                else shiftedBoost[0] += delta * (baseweight * 20);
+                if (shiftedBoost[0] > 30) shiftedBoost[0] = 30;
+                shiftedBoost[1] = shiftedBoost[0]; //records the max shiftedBoost[0]
+                if (shift.y != 1){ //make sure we're not passing a flat vector
+                    bool record = true;
+                    if (shiftedLastYNorm == 0) shiftedLastYNorm = shift.y;
+                    else if (Mathf.Round(shift.y * 10) > Mathf.Round(shiftedLastYNorm * 10)) record = false;
+                    else shiftedLastYNorm = shift.y;
+                    if (record){ //save the last rolling vector
+                        fric *= (shiftedBoost[0] * (1 - shiftedLastYNorm));
+                        shiftedLingerVec = new Vector3(shift.x*grav*fric, 0, shift.z*grav*fric);
+                    }
+                    _rotateMesh(shiftedLingerVec.x*2*60, shiftedLingerVec.z*2*60, delta);
                 }
-                _rotateMesh(shiftedLingerVec.x*2*60, shiftedLingerVec.z*2*60, delta);
             }
+            else if (shiftedDir < 0) shiftedBoost[0] = 0;
+            MoveAndCollide(new Vector3(shift.x*fric*grav, shiftedSticky, shift.z*fric*grav));
         }
-        else if (shiftedDir < 0) shiftedBoost[0] = 0;
-        MoveAndCollide(new Vector3(shift.x*fric*grav, shiftedSticky, shift.z*fric*grav));
+        else{ //fixes a shiftedDir glitch where you abruptly fall off of slopes
+            yvelocity -= (gravity * weight) * delta;
+            shiftedSticky = 0;
+        }
     }
     else if (shiftedBoost[0] > 0){ //shift linger
         shiftedLinger = true;
@@ -338,7 +344,7 @@ public void _applyShift(float delta, bool isGrounded){
             }
         }
         else if (!bottom.IsColliding()){
-            yvelocity = (yvelocity > 0) ? -1 : yvelocity - (gravity * weight) * delta; //if initial fall off, reset yvel, else gravity
+            yvelocity -= (gravity * weight) * delta;
             shiftedSticky = 0;
         }
     }
@@ -968,12 +974,17 @@ public void _on_hitBox_area_entered(Area area){
                 if (str != "") _drawTip(str);
                 break;
             case "camerasets":
-                Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
-                if (setDelay.IsStopped()){
-                    string[] tag = area.Name.Split("cameraset");
-                    tag = tag[1].Split("-");
-                    camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
+                if ((bool)camera.Get("autoBuffer") == true){ //have triggered the buffer (to make it only triggerable via a direction)
+                    Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
+                    if (setDelay.IsStopped()){
+                        string[] tag = area.Name.Split("cameraset");
+                        tag = tag[1].Split("-");
+                        camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
+                    }
                 }
+                break;
+            case "camerabuffers":
+                camera.Set("autoBuffer",true);
                 break;
         }
     }

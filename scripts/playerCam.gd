@@ -9,6 +9,8 @@ onready var lastAng = camsets[camsetarray]
 var turnRate = 8
 var stickMove = false
 var turnDir = 'right'
+var autoBuffer = false #make sure you're going the right direction to trigger auto cam
+var customset = 0
 
 func _ready():
 	player.rotation_degrees.y = 45
@@ -95,15 +97,15 @@ func _process(delta: float) -> void:
 				player.rotation_degrees.y = camsets[camsetarray]
 				cam = 0
 		elif cam == 3: #over (135 to -135)
-			if proty >= 134:
+			if proty >= 0:#134:
 				if proty < 180: player.rotation_degrees.y += turnRate * delta * 60
 				else: player.rotation_degrees.y = -179
-			elif proty < 1:
+			else: #elif proty < 1:
 				if proty < -135 - (turnRate + 1): player.rotation_degrees.y += turnRate * delta * 60
 				else:
 					player.rotation_degrees.y = -135
 					cam = 0
-			else: player.rotation_degrees.y = 134
+			#else: player.rotation_degrees.y = 134
 		elif cam == 4: #under (-135 to 135)
 			if proty <= 0: #-134
 				if proty > -180: player.rotation_degrees.y -= turnRate * delta * 60
@@ -116,13 +118,15 @@ func _process(delta: float) -> void:
 			#else: player.rotation_degrees.y = -134
 		player.angTarget = -1 * player.rotation.y
 		if cam == 0:
+			if customset != 0:
+				cam = customset
+				customset = 0
+			print(camsetarray)
 			if player.cameraFriction == 1: player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*.8
 			else:
 				player.cameraFriction -= (1 - (findDegreeDistance(lastAng,player.angTarget)/3.14))
 				if player.cameraFriction < 0: player.cameraFriction = 0
 			if player.cameraFriction > 1: player.cameraFriction = 1
-			#print(player.cameraFriction)
-			#mesh.rotate_y(player.angTarget)
 	elif Input.get_action_strength("move_camera_right") > 0 or Input.get_action_strength("move_camera_left") > 0:
 		if stickMove == false:
 			lastAng = -1 * player.rotation.y
@@ -158,19 +162,20 @@ func findDegreeDistance(from,to):
 
 func _auto_move_camera(target: int, direction: String) -> void:
 	if target == camsetarray: return
-#	if (direction == "L" && ((camsetarray + 1) == target or (camsetarray == 3 and target == 0))): direction = "R"
-#	elif (direction == "R" && ((camsetarray - 1) == target or (camsetarray == 0 and target == 3))): direction = "L"
 	if direction == "L":
 		turnDir = 'left'
-		if (target == 0):
-			if camsetarray != 1: cam = 4
-			else: cam = 2
+		if (target == 0): cam = 4 if (camsetarray != 1) else 2
+		elif (target == 2): cam = 2# if (camsetarray != 0) else 2
+		elif (target == 3): cam = 3 if (camsetarray != 2) else 2
 	else:
-		turnDir = 'right'
-		if camsetarray > 0: cam = 2
-		else: cam = 3
+		if (target == 2): 
+			if (camsetarray != 0): cam = 2
+			else:
+				cam = 3
+				customset = 2
 	player.angDelayFriction = false
 	turnRate = 2
 	camsetarray = target
 	setDelay.stop()
 	setDelay.start(3)
+	autoBuffer = false
