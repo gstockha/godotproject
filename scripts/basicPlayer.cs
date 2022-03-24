@@ -204,8 +204,8 @@ public void _controller(float delta){
         if (moving && (Mathf.Sign(wallbx) != Mathf.Sign(direction_ground.x) || Mathf.Sign(wallby) != Mathf.Sign(direction_ground.y))){ //wallb air control
             wallFriction += .01F * delta * 60;
             if (wallFriction > 1) wallFriction = 1;
-            MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
         }
+        if (wallFriction != 0) MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
         xvel = wallbx * (1 - wallFriction);
         yvel = wallby * (1 - wallFriction);
     }
@@ -225,12 +225,12 @@ public void _applyFriction(float delta){
     dir[1,current] = stickdir[1];
     dir[0,current] = myMath.array2dMean(dir, 0);
     dir[1,current] = myMath.array2dMean(dir, 1);
-    if (cameraFriction != 1){ //friction after turning camera
-        dir[0,current] *= cameraFriction;
-        dir[1,current] *= cameraFriction;
-        cameraFriction += delta * (2 + (tractionlist[traction] * .04F));
-        if (cameraFriction > 1) cameraFriction = 1;
-    }
+    // if (cameraFriction != 1){ //friction after turning camera
+    //     dir[0,current] *= cameraFriction;
+    //     dir[1,current] *= cameraFriction;
+    //     cameraFriction += delta * (2 + (tractionlist[traction] * .04F));
+    //     if (cameraFriction > 1) cameraFriction = 1;
+    // }
     int signdir = 0;
     if (moving){
         dragdir[0] = myMath.array2dMean(dir,0);
@@ -260,12 +260,20 @@ public void _applyFriction(float delta){
     float absx = Math.Abs(dragdir[0]);
     float absy = Math.Abs(dragdir[1]);
     friction = (absx > absy) ? absx : absy;
+    if (cameraFriction != 1){ //friction after turning camera
+        if (cameraFriction < 1){
+            friction *= cameraFriction;
+            cameraFriction += delta * (.1F + (tractionlist[traction] * .0003F));
+        }
+        else cameraFriction = 1;
+    }
     if (friction > 1) friction = 1;
 }
 
 public void _applyShift(float delta, bool isGrounded){
+    bool bottomTouching = bottom.IsColliding();
     if (shiftedDir != 0 && !shiftedLinger){ //on shift
-        if (bottom.IsColliding()){ //make sure you're still on ground
+        if (bottomTouching){ //make sure you're still on ground
             float grav = .05F + (baseweight * .01F);
             float fric = friction;
             Vector3 shift = bottom.GetCollisionNormal();
@@ -289,9 +297,10 @@ public void _applyShift(float delta, bool isGrounded){
             else if (shiftedDir < 0) shiftedBoost[0] = 0;
             MoveAndCollide(new Vector3(shift.x*fric*grav, shiftedSticky, shift.z*fric*grav));
         }
-        else{ //fixes a shiftedDir glitch where you abruptly fall off of slopes
+        else if (jumpwindow != 0){ //fixes a shiftedDir glitch where you abruptly fall off of slopes
             yvelocity -= (gravity * weight) * delta;
             shiftedSticky = 0;
+            bottomTouching = true; //so we don't apply it twice (below)
         }
     }
     else if (shiftedBoost[0] > 0){ //shift linger
@@ -343,7 +352,7 @@ public void _applyShift(float delta, bool isGrounded){
                 lastTranslationY = Translation.y;
             }
         }
-        else if (!bottom.IsColliding()){
+        else if (!bottomTouching){
             yvelocity -= (gravity * weight) * delta;
             shiftedSticky = 0;
         }
@@ -450,8 +459,9 @@ public void _isWall(float delta){
             walldashing = true;
         }
         if (isWall){
-            boing = speed * .7F * friction;
-            if (boing < 2) boing = 2;
+            float fricMod = (friction > .4F) ? friction * .75F : .4F * .75F;
+            boing = speed * .7F * fricMod;
+            if (boing < 3) boing = 3;
             jumpwindow = 0;
             basejumpwindow = Mathf.Round(boing * 6);
             boingTimer.Stop();
@@ -629,6 +639,8 @@ public void _rotateMesh(float xvel, float yvel, float delta){
     float turn = (xv > yv) ? xv : yv;
     turn *= 1.5F * delta;
     mesh.Rotation = new Vector3(meshRotation.x + turn, angy, meshRotation.z);
+    //Rotation = new Vector3(Rotation.x,angy,Rotation.z);
+    //ang = Mathf.Rad2Deg(-angy);
 }
 
 public void _capSpeed(float high, float low){
@@ -717,7 +729,7 @@ public void _jump(){
                     _drawMoveNote(chargedNote + "walljump");
                     wallbx *= (jumpforce * (.2F + (.1F * jumpwindow)));
                     wallby *= (jumpforce * (.2F + (.1F * jumpwindow)));
-                    nuyvel *= .5F + (.3F * jumpwindow);
+                    nuyvel *= .6F + (.2F * jumpwindow);
                 }
                 squishReverb[2] = 1; //set wall jiggle to true
             }
@@ -785,10 +797,20 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
         }
         else return;
         if (moving){ // dash changes direction
-            int signy = Math.Sign(stickdir[1]);
+            float dirx = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
+            float diry = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
+            Vector2 dirVec;
+            if (angTarget == 0) dirVec = new Vector2(dirx,diry).Rotated(ang).Normalized(); //direction vector
+            else{
+                dirVec = new Vector2(dirx,diry).Rotated(angTarget); //direction vector with targ ang
+                GD.Print(Math.Sign(dirVec.x));
+                GD.Print(Math.Sign(dirVec.y));
+                GD.Print(Math.Sign(dirx));
+                GD.Print(Math.Sign(diry));
+            }
             for (int i = 0; i < dirsize; i++){
-                dir[0,i] = stickdir[0] * friction;
-                dir[1,i] = stickdir[1] * friction;
+                dir[0,i] = dirVec.x * friction;
+                dir[1,i] = dirVec.y * friction;
             }
         }
         dashing = true;
@@ -963,7 +985,7 @@ public void _on_hitBox_area_entered(Area area){
                     case "crashTip2": str = "Jump after a Crash\nto Crashjump"; break;
                     case "crashTip3": str = "Try charging a big Crashjump\nto get over the wall!"; break;
                     case "wallTip": str = "Jump after hitting a wall\nto Walljump"; break;
-                    case "wallTip2": str = "Chain a Crashjump into\na Walljump!"; break;
+                    case "wallTip2": str = "You can charge walljumps too!"; break;
                     case "shiftTip": str = "Roll down slopes to go fast!"; break;
                     case "shiftTip2": str = "Jump off ramps at high speeds\nto get some air!"; break;
                     case "part1Tip": str = "Grats on making it this far. You got it!"; break;

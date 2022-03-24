@@ -7,7 +7,7 @@ var camsets = [135,45,-45,-135]
 var camsetarray = 1
 onready var lastAng = camsets[camsetarray]
 var turnRate = 8
-var stickMove = false
+#var stickMove = false
 var turnDir = 'right'
 var autoBuffer = false #make sure you're going the right direction to trigger auto cam
 var customset = 0
@@ -24,10 +24,10 @@ func _input(event: InputEvent) -> void:
 		else:
 			cam = 0
 			camsetarray = findClosestCamSet(player.rotation_degrees.y)
-			stickMove = false
+			#stickMove = false
 			player.angTarget = -1 * player.rotation.y
-			player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))
-			if player.cameraFriction > 1: player.cameraFriction = 1
+#			player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))
+#			if player.cameraFriction > 1: player.cameraFriction = 1
 	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		_move_camera(event)
 
@@ -38,7 +38,9 @@ func _move_camera(evn) -> void:
 		player.rotate_y(-lerp(0, 1.0, evn.relative.x/300)) #needs to eventually just rotate camera not player
 		if evn.relative.x < 0: turnDir = 'right'
 		elif evn.relative.x: turnDir = 'left'
-		#new stuff line 1.27.22
+		player.angTarget = -1 * player.rotation.y
+		player.cameraFriction = .5 + (player.traction * .001)
+		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 		setDelay.stop()
 		setDelay.start(6)
 	elif (cam != 1):
@@ -85,7 +87,7 @@ func _move_camera(evn) -> void:
 							if (i == 3): cam = 3
 							else: cam = 2
 		lastAng = -1 * player.rotation.y
-		stickMove = false
+		#stickMove = false
 
 func _process(delta: float) -> void:
 	if cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
@@ -122,28 +124,32 @@ func _process(delta: float) -> void:
 				cam = customset
 				customset = 0
 			print(camsetarray)
-			if player.cameraFriction == 1: player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*.8
-			else:
-				player.cameraFriction -= (1 - (findDegreeDistance(lastAng,player.angTarget)/3.14))
-				if player.cameraFriction < 0: player.cameraFriction = 0
-			if player.cameraFriction > 1: player.cameraFriction = 1
+#			if player.cameraFriction == 1: player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*.8
+#			else:
+#				player.cameraFriction -= (1 - (findDegreeDistance(lastAng,player.angTarget)/3.14))
+#				if player.cameraFriction < 0: player.cameraFriction = 0
+#			if player.cameraFriction > 1: player.cameraFriction = 1
 	elif Input.get_action_strength("move_camera_right") > 0 or Input.get_action_strength("move_camera_left") > 0:
-		if stickMove == false:
-			lastAng = -1 * player.rotation.y
-			stickMove = true
+#		if stickMove == false:
+#			lastAng = -1 * player.rotation.y
+#			stickMove = true
+		print(rand_range(0,1))
 		var panStrength = Input.get_action_strength("move_camera_right") - Input.get_action_strength("move_camera_left")
 		if panStrength > 0: turnDir = 'right'
 		else: turnDir = 'left'
-		player.rotate_y(lerp(0, .12, panStrength*abs(panStrength)*.3)) #needs to eventually just rotate camera not player
-		if player.cameraFriction > 1: player.cameraFriction = 1
+		player.rotate_y(lerp(0, .11, panStrength*abs(panStrength)*.4)) #needs to eventually just rotate camera not player
+#		if player.cameraFriction > 1: player.cameraFriction = 1
+		player.cameraFriction = .5 + (player.traction * .0015)
+		player.angTarget = -1 * player.rotation.y
 		setDelay.stop()
 		setDelay.start(6)
-	elif stickMove == true:
-		stickMove = false
-		player.angTarget = -1 * player.rotation.y
 		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
-		if player.cameraFriction > 1: player.cameraFriction = 1
+#	elif stickMove == true:
+#		stickMove = false
+#		player.angTarget = -1 * player.rotation.y
+#		camsetarray = findClosestCamSet(player.rotation_degrees.y)
+#		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
+#		if player.cameraFriction > 1: player.cameraFriction = 1
 
 func findClosestCamSet(rotation: float):
 	var targ = 0

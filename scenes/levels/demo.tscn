@@ -93,7 +93,7 @@ shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
 directional_shadow_mode = 0
 
 [node name="killboxMain" type="Area" parent="." groups=["killboxes"]]
-transform = Transform( 14, 0, 0, 0, 1, 0, 0, 0, 14, -3, -15, -19 )
+transform = Transform( 18, 0, 0, 0, 1, 0, 0, 0, 18, -3, -15, 4 )
 gravity = 0.0
 
 [node name="CollisionShape" type="CollisionShape" parent="killboxMain"]
@@ -103,7 +103,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" type="KinematicBody" parent="playerNode"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.52301, 17.104, -147.733 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 76.523, 43.104, -147.733 )
 script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/PlayerBall"]
@@ -681,7 +681,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roof5" type="StaticBody" parent="envStarting/part6walljumping" groups=["flats", "slides"]]
-transform = Transform( -3.5, 5.62503e-16, -4.52987e-07, 0, 0.1, 1.11759e-07, 5.28485e-07, 3.72529e-09, -3, 61.5599, 27.4134, -168.344 )
+transform = Transform( -3.5, 5.62503e-16, -4.52987e-07, 0, 0.1, 1.11759e-07, 5.28485e-07, 3.72529e-09, -3, 61.5599, 26.4134, -168.344 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part6walljumping/roof5"]
 shape = SubResource( 9 )
@@ -692,7 +692,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roofShift2" type="StaticBody" parent="envStarting/part6walljumping" groups=["shifts", "slides"]]
-transform = Transform( -2.48894e-07, -9.14498e-10, -3.5, -1.69576, 0.0956305, 1.33039e-08, 5.54657, 0.0292372, -1.5299e-07, 61.6301, 29.092, -176.818 )
+transform = Transform( -2.60245e-07, -9.33141e-10, -3.5, -2.17932, 0.0931704, 2.47108e-08, 5.59022, 0.0363219, -1.53304e-07, 61.63, 28.615, -176.761 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part6walljumping/roofShift2"]
 shape = SubResource( 9 )
@@ -819,7 +819,7 @@ transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -36, -20, -8 )
 transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 1, -43.7012, -13.4179, -8 )
 
 [node name="wallBlock2" parent="envMainCourse/part2" instance=ExtResource( 13 )]
-transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 1, -38.7012, -8.66695, -8 )
+transform = Transform( 0.1, 0, 0, 0, 12, 0, 0, 0, 1, -38.7012, -8.66695, -8 )
 
 [node name="plat2" parent="envMainCourse/part2" instance=ExtResource( 11 )]
 transform = Transform( 9, 0, 0, 0, 1, 0, 0, 0, 3, -78.9986, -13, -8 )
