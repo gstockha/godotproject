@@ -661,6 +661,7 @@ public void _turnDelay(){
     if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
         ang = angTarget;
         angTarget = 0;
+        angDelayFriction = true;
     }
 }
 
@@ -674,6 +675,7 @@ public void _alterDirection(Vector3 alterNormal){
     if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
         angTarget = Rotation.y * -1;
         ang = camAng;
+        angDelayFriction = true;
     }
     for (int i = 0; i < dirsize; i++){
         dir[0,i] = wallbang.z;
@@ -797,20 +799,13 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
         }
         else return;
         if (moving){ // dash changes direction
-            float dirx = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-            float diry = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
-            Vector2 dirVec;
-            if (angTarget == 0) dirVec = new Vector2(dirx,diry).Rotated(ang).Normalized(); //direction vector
-            else{
-                dirVec = new Vector2(dirx,diry).Rotated(angTarget); //direction vector with targ ang
-                GD.Print(Math.Sign(dirVec.x));
-                GD.Print(Math.Sign(dirVec.y));
-                GD.Print(Math.Sign(dirx));
-                GD.Print(Math.Sign(diry));
+            if (!angDelayFriction){
+                ang = angTarget; //if not auto camera moved
+                angTarget = 0;
             }
             for (int i = 0; i < dirsize; i++){
-                dir[0,i] = dirVec.x * friction;
-                dir[1,i] = dirVec.y * friction;
+                dir[0,i] = stickdir[0] * friction;
+                dir[1,i] = stickdir[1] * friction;
             }
         }
         dashing = true;

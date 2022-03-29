@@ -15,7 +15,7 @@ _global_script_class_icons={
 [application]
 
 config/name="marblebounce"
-run/main_scene="res://scenes/levels/demo.tscn"
+run/main_scene="res://scenes/levels/free.tscn"
 
 [display]
 
@@ -172,6 +172,12 @@ fullscreen={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777254,"unicode":0,"echo":false,"script":null)
  ]
 }
+
+[layer_names]
+
+3d_physics/layer_1="World"
+3d_physics/layer_2="Players"
+3d_physics/layer_3="Enemies"
 
 [physics]
 

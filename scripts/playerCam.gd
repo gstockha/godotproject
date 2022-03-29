@@ -123,7 +123,7 @@ func _process(delta: float) -> void:
 			if customset != 0:
 				cam = customset
 				customset = 0
-			print(camsetarray)
+#			print(camsetarray)
 #			if player.cameraFriction == 1: player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*.8
 #			else:
 #				player.cameraFriction -= (1 - (findDegreeDistance(lastAng,player.angTarget)/3.14))
@@ -133,7 +133,6 @@ func _process(delta: float) -> void:
 #		if stickMove == false:
 #			lastAng = -1 * player.rotation.y
 #			stickMove = true
-		print(rand_range(0,1))
 		var panStrength = Input.get_action_strength("move_camera_right") - Input.get_action_strength("move_camera_left")
 		if panStrength > 0: turnDir = 'right'
 		else: turnDir = 'left'

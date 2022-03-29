@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/cyFlat.tscn" type="PackedScene" id=2]
@@ -7,13 +7,14 @@
 [ext_resource path="res://src/moveNote.gd" type="Script" id=5]
 [ext_resource path="res://scenes/wallBlock.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
+[ext_resource path="res://scripts/worldFree.gd" type="Script" id=10]
+[ext_resource path="res://scenes/mobs/Goon.tscn" type="PackedScene" id=11]
 
-[sub_resource type="DynamicFont" id=1]
-size = 24
-outline_color = Color( 0, 0, 0, 1 )
-use_filter = true
-font_data = ExtResource( 9 )
+[sub_resource type="NavigationMesh" id=5]
+vertices = PoolVector3Array( -3.1, 2.4, 0.800003, 0.200001, 2.4, -0.699997, -1.6, 2.4, -2.5, -3.4, 2.4, 0.200001, -39.4, 2.4, 2.9, -8.8, 2.4, 2.9, -8.5, 2.4, 0.200001, -39.4, 2.4, -7.9, -3.4, 2.4, 0.200001, -1.6, 2.4, -2.5, -1.6, 2.4, -3.7, -8.5, 2.4, 0.200001, -39.4, 2.4, -18.4, -39.4, 2.4, -7.9, -8.5, 2.4, 0.200001, 2, 2.4, -6.7, -8.5, 2.4, -39.4, -18.7, 2.4, -39.4, -8.5, 2.4, 0.200001, -1.6, 2.4, -3.7, 2, 2.4, -6.7, -29.2, 2.4, -39.4, -39.4, 2.4, -39.4, -39.4, 2.4, -28.9, -18.7, 2.4, -39.4, -29.2, 2.4, -39.4, -39.4, 2.4, -28.9, -39.4, 2.4, -18.4, 2, 2.4, -6.7, 2, 2.4, -39.4, -8.5, 2.4, -39.4, 39.5, 2.4, -30.4, 39.5, 2.4, -39.4, 29.9, 2.4, -39.4, 39.5, 2.4, -21.4, 39.5, 2.4, -30.4, 29.9, 2.4, -39.4, 39.5, 2.4, -21.4, 29.9, 2.4, -39.4, 20.6, 2.4, -39.4, 39.5, 2.4, -12.4, 2, 2.4, -39.4, 2, 2.4, -6.7, 2.6, 2.4, -6.7, 11.3, 2.4, -39.4, 5.6, 2.4, -3.1, 39.5, 2.4, -3.1, 39.5, 2.4, -12.4, 20.6, 2.4, -39.4, 11.3, 2.4, -39.4, 2.6, 2.4, -6.7, -0.0999985, 16.4, -3.4, 1.7, 16.4, -1, 4.1, 16.4, -2.8, 2.3, 16.4, -5.2, 1.4, 2.4, 0.5, 0.200001, 2.4, -0.699997, -3.1, 2.4, 0.800003, 2.6, 2.4, 0.5, 1.4, 2.4, 0.5, -3.1, 2.4, 0.800003, -3.1, 2.4, 5.3, 2.6, 2.4, 0.5, -3.7, 2.4, 5.9, 5.3, 2.4, 39.5, 16.7, 2.4, 39.5, 39.5, 2.4, 18.2, 39.5, 2.4, 7.4, 2.6, 2.4, 0.5, -3.1, 2.4, 5.3, -3.7, 2.4, 5.9, 28.1, 2.4, 39.5, 39.5, 2.4, 39.5, 39.5, 2.4, 28.7, 28.1, 2.4, 39.5, 39.5, 2.4, 28.7, 39.5, 2.4, 18.2, 16.7, 2.4, 39.5, 39.5, 2.4, 7.4, 39.5, 2.4, -3.1, 5.6, 2.4, -3.1, 2.6, 2.4, 0.5, -3.7, 2.4, 5.9, -6.1, 2.4, 5.9, -6.1, 2.4, 39.5, 5.3, 2.4, 39.5, -7.6, 16.4, 1.4, -7.6, 16.4, 4.4, -4.6, 16.4, 4.4, -4.6, 16.4, 1.4, -7.3, 2.4, 1.7, -7.3, 2.4, 4.4, -4.6, 2.4, 4.4, -4.6, 2.4, 1.7, -39.4, 2.4, 30.2, -39.4, 2.4, 39.5, -31.3, 2.4, 39.5, -39.4, 2.4, 30.2, -31.3, 2.4, 39.5, -22.9, 2.4, 39.5, -39.4, 2.4, 21.2, -39.4, 2.4, 30.2, -22.9, 2.4, 39.5, -14.5, 2.4, 39.5, -8.8, 2.4, 5.6, -8.8, 2.4, 2.9, -39.4, 2.4, 2.9, -39.4, 2.4, 11.9, -6.1, 2.4, 5.9, -8.8, 2.4, 5.6, -39.4, 2.4, 11.9, -39.4, 2.4, 21.2, -14.5, 2.4, 39.5, -6.1, 2.4, 39.5 )
+polygons = [ PoolIntArray( 3, 2, 0 ), PoolIntArray( 0, 2, 1 ), PoolIntArray( 5, 4, 6 ), PoolIntArray( 6, 4, 7 ), PoolIntArray( 9, 8, 10 ), PoolIntArray( 10, 8, 11 ), PoolIntArray( 17, 16, 12 ), PoolIntArray( 12, 16, 13 ), PoolIntArray( 13, 16, 14 ), PoolIntArray( 14, 16, 15 ), PoolIntArray( 18, 20, 19 ), PoolIntArray( 23, 22, 21 ), PoolIntArray( 25, 24, 26 ), PoolIntArray( 26, 24, 27 ), PoolIntArray( 30, 29, 28 ), PoolIntArray( 33, 32, 31 ), PoolIntArray( 36, 35, 34 ), PoolIntArray( 38, 37, 39 ), PoolIntArray( 39, 37, 40 ), PoolIntArray( 42, 41, 43 ), PoolIntArray( 43, 41, 44 ), PoolIntArray( 50, 49, 45 ), PoolIntArray( 45, 49, 48 ), PoolIntArray( 45, 48, 47 ), PoolIntArray( 45, 47, 46 ), PoolIntArray( 51, 54, 52 ), PoolIntArray( 52, 54, 53 ), PoolIntArray( 57, 56, 55 ), PoolIntArray( 59, 58, 60 ), PoolIntArray( 60, 58, 61 ), PoolIntArray( 66, 65, 67 ), PoolIntArray( 67, 65, 64 ), PoolIntArray( 67, 64, 62 ), PoolIntArray( 62, 64, 63 ), PoolIntArray( 70, 69, 68 ), PoolIntArray( 73, 72, 71 ), PoolIntArray( 75, 74, 76 ), PoolIntArray( 76, 74, 77 ), PoolIntArray( 80, 79, 81 ), PoolIntArray( 81, 79, 78 ), PoolIntArray( 83, 82, 84 ), PoolIntArray( 84, 82, 85 ), PoolIntArray( 89, 88, 86 ), PoolIntArray( 86, 88, 87 ), PoolIntArray( 93, 92, 90 ), PoolIntArray( 90, 92, 91 ), PoolIntArray( 94, 96, 95 ), PoolIntArray( 99, 98, 97 ), PoolIntArray( 101, 100, 102 ), PoolIntArray( 102, 100, 103 ), PoolIntArray( 105, 104, 106 ), PoolIntArray( 106, 104, 107 ), PoolIntArray( 109, 108, 110 ), PoolIntArray( 110, 108, 111 ), PoolIntArray( 111, 108, 112 ), PoolIntArray( 112, 108, 113 ) ]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -32,10 +33,14 @@ size = 24
 use_filter = true
 font_data = ExtResource( 9 )
 
-[node name="Spatial" type="Spatial"]
+[sub_resource type="DynamicFont" id=1]
+size = 24
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 9 )
 
-[node name="cyFlat" parent="." instance=ExtResource( 2 )]
-transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
+[node name="World" type="Spatial"]
+script = ExtResource( 10 )
 
 [node name="playerNode" type="Spatial" parent="."]
 
@@ -47,22 +52,24 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 4, 15 )
 [node name="checkpoint1" parent="playerNode/checkpoints" instance=ExtResource( 7 )]
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 
-[node name="moveNote" type="Label" parent="."]
-anchor_left = 0.499652
-anchor_top = 1.0
-anchor_right = 0.499652
-anchor_bottom = 1.00417
-margin_left = -84.5546
-margin_top = -51.0
-margin_right = 41.4454
-margin_bottom = -23.0024
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_fonts/font = SubResource( 1 )
-align = 1
-script = ExtResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="enemies" type="Spatial" parent="."]
+
+[node name="Goon" parent="enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 4, 15 )
+
+[node name="Navigation" type="Navigation" parent="."]
+
+[node name="NavigationMeshInstance" type="NavigationMeshInstance" parent="Navigation"]
+navmesh = SubResource( 5 )
+
+[node name="cyFlat" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 2 )]
+transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
+
+[node name="wallBlock2" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 6 )]
+transform = Transform( 0.707107, 0, 0.707107, 0, 15, 0, -0.707107, 0, 0.707107, 2, 1, -3 )
+
+[node name="wallBlock" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, -6, 1, 3 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -112,18 +119,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="wallBlock" parent="." instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, -6, 1, 3 )
+[node name="moveNote" type="Label" parent="."]
+anchor_left = 0.499652
+anchor_top = 1.0
+anchor_right = 0.499652
+anchor_bottom = 1.00417
+margin_left = -84.5546
+margin_top = -51.0
+margin_right = 41.4454
+margin_bottom = -23.0024
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+align = 1
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="wallBlock2" parent="." instance=ExtResource( 6 )]
-transform = Transform( 0.707107, 0, 0.707107, 0, 15, 0, -0.707107, 0, 0.707107, 2, 1, -3 )
+[node name="DefaultWorld" parent="." instance=ExtResource( 8 )]
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.4281, -0.79763, 0.424873, -0.0885215, 0.430861, 0.898066, -0.899386, -0.422072, 0.113844, -2.665, 45, 11.267 )
-light_indirect_energy = 0.0
-light_specular = 0.0
-shadow_enabled = true
-shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
-directional_shadow_mode = 0
+[node name="enemyPathTimer" type="Timer" parent="."]
+autostart = true
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
+[connection signal="timeout" from="enemyPathTimer" to="." method="_on_enemyPathTimer_timeout"]
