@@ -138,8 +138,4 @@ __meta__ = {
 
 [node name="DefaultWorld" parent="." instance=ExtResource( 8 )]
 
-[node name="enemyPathTimer" type="Timer" parent="."]
-autostart = true
-
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
-[connection signal="timeout" from="enemyPathTimer" to="." method="_on_enemyPathTimer_timeout"]

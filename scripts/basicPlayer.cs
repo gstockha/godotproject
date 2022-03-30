@@ -41,12 +41,12 @@ static float speedCap = 12;
 float speed = speedCap;
 int traction = 50;
 float[] tractionlist = new float[101];
-static float baseweight = 1.2F;
-float weight = baseweight;
-float dashspeed = speedCap * 1.5F;
+static float baseWeight = 1.2F;
+float weight = baseWeight;
+float dashSpeed = speedCap * 1.5F;
 float boing = 0;
 bool boingCharge = false;
-bool boingDash = false; //use dashspeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
+bool boingDash = false; //use dashSpeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
 bool squishSet = false; //only run the mesh squish settings once in _squishNScale
 float[] squishReverb = new float[] {0,1,0}; //squishReverb[2] was a bool in gd
 #endregion
@@ -195,7 +195,7 @@ public void _controller(float delta){
     if (rolling && !dashing) mod = (speed * friction); //rolling and moving
     else if (!wallb && !dashing) mod = (.9f * speed * friction); //airborne or idle
     else if (wallb && !dashing) notWall = false;
-    else if (dashing) mod = dashspeed;
+    else if (dashing) mod = dashSpeed;
     if (notWall){
         xvel = direction_ground.x * mod;
         yvel = direction_ground.y * mod;
@@ -249,7 +249,7 @@ public void _applyFriction(float delta){
             if (Math.Abs(dragdir[i]) > .015F){ //slowly reduce speed (friction)
                 dragdir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
-                dir[i,current] -= (tractionlist[traction] * .08F * signdir) * baseweight * delta;
+                dir[i,current] -= (tractionlist[traction] * .08F * signdir) * baseWeight * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
                     dir[i,current] = 0;
                 }
@@ -274,12 +274,12 @@ public void _applyShift(float delta, bool isGrounded){
     bool bottomTouching = bottom.IsColliding();
     if (shiftedDir != 0 && !shiftedLinger){ //on shift
         if (bottomTouching){ //make sure you're still on ground
-            float grav = .05F + (baseweight * .01F);
+            float grav = .05F + (baseWeight * .01F);
             float fric = friction;
             Vector3 shift = bottom.GetCollisionNormal();
             if (shiftedDir > 0){ //going down
-                if (!dashing) shiftedBoost[0] += delta * (baseweight * 10); //charge up
-                else shiftedBoost[0] += delta * (baseweight * 20);
+                if (!dashing) shiftedBoost[0] += delta * (baseWeight * 10); //charge up
+                else shiftedBoost[0] += delta * (baseWeight * 20);
                 if (shiftedBoost[0] > 30) shiftedBoost[0] = 30;
                 shiftedBoost[1] = shiftedBoost[0]; //records the max shiftedBoost[0]
                 if (shift.y != 1){ //make sure we're not passing a flat vector
@@ -305,11 +305,11 @@ public void _applyShift(float delta, bool isGrounded){
     }
     else if (shiftedBoost[0] > 0){ //shift linger
         shiftedLinger = true;
-        shiftedBoost[0] -= delta * (baseweight * 10);
+        shiftedBoost[0] -= delta * (baseWeight * 10);
         if (shiftedBoost[0] < 0) shiftedBoost[0] = 0;
         float momentum = shiftedBoost[0] / shiftedBoost[1];
         if (rampSlope != 0){ //decrease the Y slope vector over time
-            rampSlope -= (delta * (1 - shiftedBoost[1] * .01F) * (baseweight * .1F));
+            rampSlope -= (delta * (1 - shiftedBoost[1] * .01F) * (baseWeight * .1F));
             if (rampSlope < 0) rampSlope = 0;
         }
         MoveAndCollide(new Vector3((shiftedLingerVec.x*momentum)*friction,rampSlope,(shiftedLingerVec.z*momentum)*friction));
@@ -329,7 +329,7 @@ public void _applyShift(float delta, bool isGrounded){
                 if (dashing){
                     dashing = false;
                     walldashing = false;
-                    dashspeed = speedCap * 1.5F;
+                    dashSpeed = speedCap * 1.5F;
                 }
 				shiftedDir = 0;
 				rampSlope = 0;
@@ -370,11 +370,11 @@ public void _isRolling(float delta){
             dashtimer.Stop();
             boingDash = true;
             dashing = false;
-            if (weight != baseweight) bouncedashing = 2; //so you can't crash out of dash
+            if (weight != baseWeight) bouncedashing = 2; //so you can't crash out of dash
         }
     }
     else walldashing = false;
-    weight = baseweight;
+    weight = baseWeight;
     if (yvelocity == -1){ //not bouncing up
         if (moving) rolling = true;
         else{ //not pressing move keys
@@ -388,9 +388,13 @@ public void _isRolling(float delta){
                 }
             }
         }
-        if (IsOnWall() && rolling){
+        if (IsOnWall()){
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
-            if (!colliderNode.IsInGroup("obstacles")){
+            if (colliderNode.IsInGroup("obstacles")) return;
+            if (colliderNode.IsInGroup("mobs")){
+                _collisionDamage(colliderNode, GetSlideCollision(0).Normal);
+            }
+            else if (rolling){
                 _alterDirection(GetSlideCollision(0).Normal); //reverse direction
                 if (dashing){
                     dashtimer.Stop();
@@ -440,11 +444,13 @@ public void _isAirborne(float delta){
 public void _isWall(float delta){
     yvelocity -= (gravity * weight) * delta; //gravity
     bool isWall = false;
+    bool isMob = false;
     if (GetSlideCount() > 0){
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
         isWall = colliderNode.IsInGroup("walls");
+        if (!isWall) isMob = colliderNode.IsInGroup("mobs");
     }
-    if (isWall || dashing){
+    if ((isWall || dashing) && !isMob){
         wallb = true;
         wallFriction = 0;
         wallbx = GetSlideCollision(0).Normal.x * 2;
@@ -453,7 +459,7 @@ public void _isWall(float delta){
         if (dashing && !walldashing){
             dashtimer.Stop();
             dashing = false;
-            weight = baseweight;
+            weight = baseWeight;
             speed = speedCap;
             bouncedashing = 1;
             walldashing = true;
@@ -467,6 +473,9 @@ public void _isWall(float delta){
             boingTimer.Stop();
             boingTimer.Start(boing * .1F);
         }
+    }
+    else if (!isWall && isMob){
+        _collisionDamage((Node)GetSlideCollision(0).Collider, GetSlideCollision(0).Normal);
     }
     else if (!isWall){
         wallb = false;
@@ -490,7 +499,7 @@ public void _isBoinging(float delta){
                 Node bottomNode = (Node)bottom.GetCollider();
                 if (bottomNode.IsInGroup("slides")){
                     offset *= 2;
-                    jumpratio *= baseweight * .015F;
+                    jumpratio *= baseWeight * .015F;
                 }
             }
             if (offset > 1) offset = 1;
@@ -499,7 +508,7 @@ public void _isBoinging(float delta){
             _applyFriction(delta);
             float spd = speed * friction * (bouncebase * offset);
             if (boingDash){
-                float dashSpd = (dashspeed*friction*(dashspeed/speedCap))*(bouncebase*offset);
+                float dashSpd = (dashSpeed*friction*(dashSpeed/speedCap))*(bouncebase*offset);
                 if (dashSpd > spd) spd = dashSpd;
                 if (boingCharge && spd > 4 && jumpwindow == 60 * delta) _drawMoveNote("slide");
             }
@@ -788,13 +797,13 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
         }
         else if (canCrash){ // in air and not on shift
             dashtimer.Stop();
-            weight = baseweight * 3;
+            weight = baseWeight * 3;
             shiftedDir = 0; // don't need to apply shifted gravity anymore if doing this
             _drawMoveNote("crash");
         }
         else if (shiftedDir != 0){ // is on shift
             dashtimer.Start(.3F);
-            dashspeed = speedCap * 2;
+            dashSpeed = speedCap * 2;
             _drawMoveNote("slope dash");
         }
         else return;
@@ -810,6 +819,19 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
         }
         dashing = true;
     }
+}
+
+public void _launch(Vector3 launchVec, float power){
+    wallb = true;
+    wallbx = launchVec.x;
+    wallby = launchVec.z;
+    yvelocity = power;
+    wallFriction = 0;
+    _alterDirection(launchVec.Normalized());
+    _squishNScale((gravity * .017F), new Vector3(0,0,0), true);
+    squishSet = false;
+    squishReverb[0] = power * .05F;
+    squishReverb[2] = 1; //proc wall wiggle
 }
 
 public override void _Input(InputEvent @event){
@@ -862,7 +884,7 @@ public override void _Input(InputEvent @event){
 public void _on_DashTimer_timeout(){
     dashing = false;
     walldashing = false;
-    dashspeed = speedCap * 1.5F;
+    dashSpeed = speedCap * 1.5F;
 }
 
 public void _on_boingTimer_timeout(){
@@ -896,11 +918,11 @@ public void _dieNRespawn(){
     yvelocity = 1;
     stickdir[0] = 0;
     stickdir[1] = 0;
-    weight = baseweight;
+    weight = baseWeight;
     dashing = false;
     dashtimer.Stop();
     walldashing = false;
-    dashspeed = speedCap * 1.5F;
+    dashSpeed = speedCap * 1.5F;
     wallb = false;
     canCrash = false;
     shiftedDir = 0;
@@ -1024,6 +1046,30 @@ public void _on_hitBox_area_exited(Area area){
                 textTimer.Start(2);
                 break;
         }
+    }
+}
+
+public void _collisionDamage(Node collisionNode, Vector3 cVector){
+    switch(collisionNode.Name){
+        case("Goon"):
+            int damage = (int)collisionNode.Get("damage");
+            if ((baseWeight * 10) < damage){
+                float power = (damage / baseWeight) * (.5F + (friction * .5F));
+                if (dashing){
+                    dashtimer.Stop();
+                    dashing = false;
+                    weight = baseWeight;
+                    speed = speedCap;
+                    collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
+                    float weightPowerMod = 1 - (baseWeight * .5F); //default .6
+                    if (weightPowerMod > 1) weightPowerMod = 1;
+                    power *= weightPowerMod; //don't send me as far
+                }
+                Vector3 launch = new Vector3(cVector.x * power, 0, cVector.z * power);
+                _launch(launch, power);
+                
+            }
+            break;
     }
 }
 
