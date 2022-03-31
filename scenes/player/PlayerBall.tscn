@@ -13,8 +13,7 @@
 
 [node name="PlayerBall" type="KinematicBody"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 76.523, 43.104, -147.733 )
-collision_layer = 7
-collision_mask = 5
+collision_layer = 2
 script = ExtResource( 3 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
@@ -65,6 +64,8 @@ mesh = SubResource( 17 )
 material/0 = null
 
 [node name="hitBox" type="Area" parent="."]
+collision_layer = 7
+collision_mask = 7
 
 [node name="CollisionShape" type="CollisionShape" parent="hitBox"]
 transform = Transform( 0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0, 0, 0 )

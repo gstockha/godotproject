@@ -390,11 +390,8 @@ public void _isRolling(float delta){
         }
         if (IsOnWall()){
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
-            if (colliderNode.IsInGroup("obstacles")) return;
-            if (colliderNode.IsInGroup("mobs")){
-                _collisionDamage(colliderNode, GetSlideCollision(0).Normal);
-            }
-            else if (rolling){
+            if (colliderNode.IsInGroup("obstacles") || colliderNode.IsInGroup("mobs")) return;
+            if (rolling){
                 _alterDirection(GetSlideCollision(0).Normal); //reverse direction
                 if (dashing){
                     dashtimer.Stop();
@@ -444,13 +441,12 @@ public void _isAirborne(float delta){
 public void _isWall(float delta){
     yvelocity -= (gravity * weight) * delta; //gravity
     bool isWall = false;
-    bool isMob = false;
     if (GetSlideCount() > 0){
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
         isWall = colliderNode.IsInGroup("walls");
-        if (!isWall) isMob = colliderNode.IsInGroup("mobs");
+        if (!isWall && colliderNode.IsInGroup("mobs")) return; //if enemy, leave
     }
-    if ((isWall || dashing) && !isMob){
+    if (isWall || dashing){
         wallb = true;
         wallFriction = 0;
         wallbx = GetSlideCollision(0).Normal.x * 2;
@@ -473,9 +469,6 @@ public void _isWall(float delta){
             boingTimer.Stop();
             boingTimer.Start(boing * .1F);
         }
-    }
-    else if (!isWall && isMob){
-        _collisionDamage((Node)GetSlideCollision(0).Collider, GetSlideCollision(0).Normal);
     }
     else if (!isWall){
         wallb = false;
@@ -958,6 +951,7 @@ public void _on_hitBox_area_entered(Area area){
     Godot.Collections.Array groups = area.GetGroups();
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
+            case "mobs": _collisionDamage(area.Owner); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
                 if (!area.Name.BeginsWith("delay")) _dieNRespawn();
@@ -1049,26 +1043,30 @@ public void _on_hitBox_area_exited(Area area){
     }
 }
 
-public void _collisionDamage(Node collisionNode, Vector3 cVector){
+public void _collisionDamage(Node collisionNode){
     switch(collisionNode.Name){
         case("Goon"):
+            if ((bool)collisionNode.Get("invincible")) return;
             int damage = (int)collisionNode.Get("damage");
-            if ((baseWeight * 10) < damage){
-                float power = (damage / baseWeight) * (.5F + (friction * .5F));
-                if (dashing){
-                    dashtimer.Stop();
-                    dashing = false;
-                    weight = baseWeight;
-                    speed = speedCap;
+            Vector3 vel = (Vector3)collisionNode.Get("velocity");
+            float power = (damage / baseWeight) * (.5F + (friction * .3F));
+            if (dashing){
+                if (weight <= baseWeight){ //not crashing
                     collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
-                    float weightPowerMod = 1 - (baseWeight * .5F); //default .6
+                    float weightPowerMod = 1 - (baseWeight * .6F);
                     if (weightPowerMod > 1) weightPowerMod = 1;
                     power *= weightPowerMod; //don't send me as far
                 }
-                Vector3 launch = new Vector3(cVector.x * power, 0, cVector.z * power);
-                _launch(launch, power);
-                
+                else{ //crashing
+                    collisionNode.Call("_squish", power);
+                }
+                dashtimer.Stop();
+                dashing = false;
+                weight = baseWeight;
+                speed = speedCap;
             }
+            Vector3 launch = new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F);
+            _launch(launch, power);
             break;
     }
 }
