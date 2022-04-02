@@ -17,6 +17,8 @@ bool squished = false;
 bool lingerMove = false;
 float[] squishSet = new float[] {0,0,0};
 int currentPathIndex = 0;
+float ang = 0;
+float angTarget = 0;
 Timer pathTimer;
 Timer deathTimer;
 Spatial target;
@@ -61,17 +63,36 @@ public override void _PhysicsProcess(float delta){
 
 public void _moveToTarget(){
     if (!lingerMove && GlobalTransform.origin.DistanceTo(path[currentPathIndex]) >= .1F){
-        Vector3 direction = path[currentPathIndex] - GlobalTransform.origin;
-        velocity = direction.Normalized() * speed;
-        MoveAndSlide(velocity, Vector3.Up);
+        _velocityMove(path[currentPathIndex] - GlobalTransform.origin);
+    }
+    else if (lingerMove && bottom.IsColliding()){
+        pathTimer.Stop();
+        pathTimer.Start(2);
+        lingerMove = false;
+        stunned = false;
+        path = nav.GetSimplePath(GlobalTransform.origin, target.GlobalTransform.origin);
+        currentPathIndex = 0;
+        ang = angTarget;
+        angTarget = new Vector2(path[currentPathIndex].x, path[currentPathIndex].z).Angle();
     }
     else if (!lingerMove){
         currentPathIndex ++;
         if (currentPathIndex > (path.Length - 1)) lingerMove = true;
+        else{
+            ang = angTarget;
+            angTarget = new Vector2(path[currentPathIndex].x, path[currentPathIndex].z).Angle();
+        }
     }
-    else if (lingerMove && bottom.IsColliding()){
-        MoveAndSlide(velocity, Vector3.Up);
+}
+
+public void _velocityMove(Vector3 vec){
+    Vector2 laterDir = new Vector2(vec.x, vec.z).Rotated(ang);
+    if (ang != angTarget){
+        ang = Mathf.Lerp(ang, angTarget, .01F);
+        if (Mathf.Round(ang * 10) == Mathf.Round(angTarget * 10)) ang = angTarget;
     }
+    velocity = new Vector3(laterDir.x, vec.y, laterDir.y).Normalized() * speed;
+    MoveAndSlide(velocity, Vector3.Up);
 }
 
 public void _launch(float power, Vector3 cVec){
@@ -101,6 +122,8 @@ public void _on_PathTimer_timeout(){
     stunned = false;
     path = nav.GetSimplePath(GlobalTransform.origin, target.GlobalTransform.origin);
     currentPathIndex = 0;
+    ang = angTarget;
+    angTarget = new Vector2(path[currentPathIndex].x, path[currentPathIndex].z).Angle();
 }
 
 public void _on_DeathTimer_timeout(){

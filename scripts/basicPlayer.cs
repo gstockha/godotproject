@@ -641,8 +641,6 @@ public void _rotateMesh(float xvel, float yvel, float delta){
     float turn = (xv > yv) ? xv : yv;
     turn *= 1.5F * delta;
     mesh.Rotation = new Vector3(meshRotation.x + turn, angy, meshRotation.z);
-    //Rotation = new Vector3(Rotation.x,angy,Rotation.z);
-    //ang = Mathf.Rad2Deg(-angy);
 }
 
 public void _capSpeed(float high, float low){
