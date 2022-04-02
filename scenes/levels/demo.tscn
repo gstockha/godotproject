@@ -87,6 +87,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 118.523, 73.104, -168.733 )
 
 [node name="checkpoints" type="Spatial" parent="playerNode"]
 
@@ -198,7 +199,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148705, 0 )
 shape = SubResource( 4 )
 
 [node name="checkpointEnd" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
-transform = Transform( 1.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 98.5925, 57.7511, 42.9108 )
+transform = Transform( 2.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 100.31, 57.7511, 42.9108 )
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpointEnd"]
@@ -1066,3 +1067,5 @@ __meta__ = {
 [node name="DefaultWorld" parent="." instance=ExtResource( 5 )]
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
+
+[editable path="envMainCourse/part4/landingSpace/wallBounce"]

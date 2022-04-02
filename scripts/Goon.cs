@@ -3,24 +3,24 @@ using System;
 
 public class Goon : KinematicBody
 {
-Vector3[] path = new Vector3[0];
 Vector3 velocity = Vector3.Zero;
 Vector3 launchVec = Vector3.Zero;
 float yvelocity = 0;
 int aggroRange = 20;
 int damage = 20;
-float speed = 5;
+float speed = 9;
+float ang = 0;
 bool launched = false;
 bool invincible = false; //in air
 bool stunned = false;
 bool squished = false;
-bool lingerMove = false;
+string state = "idle";
+float skrrt = 1;
 float[] squishSet = new float[] {0,0,0};
-int currentPathIndex = 0;
-float ang = 0;
-float angTarget = 0;
+
 Timer pathTimer;
 Timer deathTimer;
+Timer angleChecker;
 Spatial target;
 Navigation nav;
 MeshInstance mesh;
@@ -31,6 +31,7 @@ Spatial world;
 public override void _Ready(){
     pathTimer = GetNode<Timer>("PathTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
+    angleChecker = GetNode<Timer>("AngleChecker");
     target = GetNode<Spatial>("../../playerNode/PlayerBall");
     nav = GetNode<Navigation>("../../Navigation");
     mesh = GetNode<MeshInstance>("MeshInstance");
@@ -44,62 +45,44 @@ public override void _Ready(){
 }
 
 public override void _PhysicsProcess(float delta){
-    if (squished){
+    if (state == "squished"){
         mesh.Scale = new Vector3(Mathf.Lerp(mesh.Scale.x, squishSet[0], .2F),Mathf.Lerp(mesh.Scale.y, squishSet[1], .2F),Mathf.Lerp(mesh.Scale.x, squishSet[2], .2F));
         if (!stunned) mesh.Translation = new Vector3(mesh.Translation.x, Mathf.Lerp(mesh.Translation.y, 0, .2F), mesh.Translation.z);
     }
-    else if (launched){
+    else if (state == "launched"){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
-        yvelocity -= 20 * delta;
+        yvelocity -= 25 * delta;
         if (IsOnFloor()){
-            launched = false;
-            pathTimer.Start(3);
+            state = "idle";
+            pathTimer.Start(2);
             deathTimer.Stop();
             invincible = false;
         }
     }
-    else if (path.Length > 0 || lingerMove) _moveToTarget();
+    else if (state == "move") _velocityMove(delta);
 }
 
-public void _moveToTarget(){
-    if (!lingerMove && GlobalTransform.origin.DistanceTo(path[currentPathIndex]) >= .1F){
-        _velocityMove(path[currentPathIndex] - GlobalTransform.origin);
-    }
-    else if (lingerMove && bottom.IsColliding()){
-        pathTimer.Stop();
-        pathTimer.Start(2);
-        lingerMove = false;
-        stunned = false;
-        path = nav.GetSimplePath(GlobalTransform.origin, target.GlobalTransform.origin);
-        currentPathIndex = 0;
-        ang = angTarget;
-        angTarget = new Vector2(path[currentPathIndex].x, path[currentPathIndex].z).Angle();
-    }
-    else if (!lingerMove){
-        currentPathIndex ++;
-        if (currentPathIndex > (path.Length - 1)) lingerMove = true;
-        else{
-            ang = angTarget;
-            angTarget = new Vector2(path[currentPathIndex].x, path[currentPathIndex].z).Angle();
+public void _velocityMove(float delta){
+    // if (!bottom.IsColliding()){
+    //     state = "search";
+    //     pathTimer.Stop();
+    //     pathTimer.Start(2);
+    //     return;
+    // }
+    MoveAndSlide(velocity * skrrt, Vector3.Up);
+    if (skrrt < 1){
+        skrrt -= .5F * delta;
+        if (skrrt < .08F){
+            state = "search";
+            pathTimer.Start(2);
         }
     }
-}
-
-public void _velocityMove(Vector3 vec){
-    Vector2 laterDir = new Vector2(vec.x, vec.z).Rotated(ang);
-    if (ang != angTarget){
-        ang = Mathf.Lerp(ang, angTarget, .01F);
-        if (Mathf.Round(ang * 10) == Mathf.Round(angTarget * 10)) ang = angTarget;
-    }
-    velocity = new Vector3(laterDir.x, vec.y, laterDir.y).Normalized() * speed;
-    MoveAndSlide(velocity, Vector3.Up);
 }
 
 public void _launch(float power, Vector3 cVec){
     launched = true;
     launchVec = new Vector3(cVec.x * power * 3, 0, cVec.z * power * 3);
     yvelocity = power * 1.5F;
-    path = new Vector3[0];
     pathTimer.Stop();
     deathTimer.Start(3);
     invincible = true;
@@ -108,8 +91,7 @@ public void _launch(float power, Vector3 cVec){
 
 public void _squish(float power){
     //check power vs health and all that here?
-    squished = true;
-    path = new Vector3[0];
+    state = "squished";
     pathTimer.Stop();
     deathTimer.Start(1.5F);
     invincible = true;
@@ -117,13 +99,35 @@ public void _squish(float power){
 
 public void _on_PathTimer_timeout(){
     pathTimer.Stop();
-    pathTimer.Start(2);
-    lingerMove = false;
-    stunned = false;
-    path = nav.GetSimplePath(GlobalTransform.origin, target.GlobalTransform.origin);
-    currentPathIndex = 0;
-    ang = angTarget;
-    angTarget = new Vector2(path[currentPathIndex].x, path[currentPathIndex].z).Angle();
+    if (stunned){
+        Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
+        stunned = false;
+    }
+    if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
+        state = "search";
+        pathTimer.Start(2);
+        return;
+    }
+    state = "move";
+    skrrt = 1;
+    velocity = new Vector3(target.GlobalTransform.origin - GlobalTransform.origin);
+    ang = new Vector2(velocity.x, velocity.z).Angle();
+    angleChecker.Start(.25F);
+    velocity = velocity.Normalized() * speed;
+}
+
+public void _on_AngleChecker_timeout(){ //only fire infrequently
+    if (state != "move") return;
+    Vector3 targVector = new Vector3(target.GlobalTransform.origin - GlobalTransform.origin);
+    float targAngle = new Vector2(targVector.x, targVector.z).Angle();
+    float maxAngle = 6.28F;
+    float difference = (targAngle - ang % maxAngle);
+    difference = Math.Abs((2 * difference % maxAngle) - difference);
+    if (difference > 1){
+        GD.Print("lost target!");
+        skrrt = .99F;
+        angleChecker.Stop();
+    }
 }
 
 public void _on_DeathTimer_timeout(){

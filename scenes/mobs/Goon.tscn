@@ -38,8 +38,11 @@ wait_time = 6.0
 [node name="DeathTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="AngleChecker" type="Timer" parent="."]
+
 [node name="RayCast" type="RayCast" parent="."]
 enabled = true
 
 [connection signal="timeout" from="PathTimer" to="." method="_on_PathTimer_timeout"]
 [connection signal="timeout" from="DeathTimer" to="." method="_on_DeathTimer_timeout"]
+[connection signal="timeout" from="AngleChecker" to="." method="_on_AngleChecker_timeout"]

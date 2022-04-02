@@ -182,8 +182,8 @@ public override void _PhysicsProcess(float delta){ //run physics
 
 public void _controller(float delta){
     if (!idle){ //update direction
-        stickdir[0] = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-        stickdir[1] = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
+        stickdir[0] = Mathf.Round(Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
+        stickdir[1] = Mathf.Round(Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
     }
     moving = (stickdir[0] != 0 || stickdir[1] != 0);
     _applyFriction(delta);
@@ -814,12 +814,14 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
 
 public void _launch(Vector3 launchVec, float power, bool alterDir){
     #region turn off boing charge and boing
-    boingDash = false;
-    jumpwindow = 0;
-    boing = 0;
-    boingTimer.Stop();
-    preBoingTimer.Stop();
-    boingCharge = false;
+    if (boing != 0 || !preBoingTimer.IsStopped()){
+        boingDash = false;
+        jumpwindow = 0;
+        boing = 0;
+        boingTimer.Stop();
+        preBoingTimer.Stop();
+        boingCharge = false;
+    }
     #endregion
     if (alterDir){
         wallb = true;
@@ -1077,7 +1079,7 @@ public void _collisionDamage(Node collisionNode){
                     weight = baseWeight;
                     speed = speedCap;
                 }
-                Vector3 launch = (vel != Vector3.Zero) ? new Vector3(vel.x * power * .6F, 0, vel.z * power * .6F) : new Vector3(velocity.x * -1, 0, velocity.z * -1);
+                Vector3 launch = (vel != Vector3.Zero) ? new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F) : new Vector3(velocity.x * -1, 0, velocity.z * -1);
                 _launch(launch, power, notCrashing);
                 break;
             }
