@@ -26,7 +26,7 @@ float wallbx = 0;
 float wallby = 0;
 bool idle = true;
 bool dashing = false;
-bool canCrash = false; //set to true in jump function
+int hasJumped = 0; //set to 2 (strong) in jump function, 1 in boing timer timeout (soft) (distinction for leeway jumping) CANCRASH == 2 == HASJUMPED
 int bouncedashing = 0;
 bool walldashing = false; //for speed boost after dashing into a wall
 bool rolling = true;
@@ -81,6 +81,7 @@ MeshInstance mesh;
 MeshInstance shadow;
 Spatial collisionShape;
 RayCast floorCast;
+RayCast leewayCast;
 RayCast shadowCast;
 Area checkpoint;
 Camera camera;
@@ -100,6 +101,7 @@ public override void _Ready(){
     shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
     collisionShape = GetNode<Spatial>("CollisionShape");
     floorCast = GetNode<RayCast>("floorCast");
+    leewayCast = GetNode<RayCast>("leewayCast");
     shadowCast = GetNode<RayCast>("shadowCast");
     checkpoint = GetNode<Area>("../checkpoints/checkpoint1");
     camera = GetNode<Camera>("Position3D/playerCam");
@@ -362,7 +364,7 @@ public void _applyShift(float delta, bool isGrounded){
 public void _isRolling(float delta){
     jumpwindow = 0;
 	wallb = false;
-	canCrash = false;
+	hasJumped = 0;
 	idle = false;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
@@ -766,27 +768,27 @@ public void _jump(){
         else _normalJump(); //jump normal jump on shift
     }
     else return;
-    canCrash = true;
+    hasJumped = 2;
     if (shiftedDir != 0) shiftedSticky = 0;
 }
 
 public void _normalJump(){
 	boingCharge = false;
 	_drawMoveNote("jump");
-	yvelocity = jumpforce;
+	yvelocity = jumpforce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 10) * .5F;
 	squishReverb[0] = yvelocity * .035F;
 	preBoingTimer.Stop();
-	canCrash = true;
+	hasJumped = 2;
 	if (shiftedDir != 0) shiftedSticky = 0;
 }
 
 public void _dash(){
 if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
-        if (floorCast.IsColliding() && shiftedDir == 0){ // on ground and not on shift
+        if (leewayCast.IsColliding() && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
         }
-        else if (canCrash){ // in air and not on shift
+        else if (hasJumped > 0){ // in air and not on shift
             dashtimer.Stop();
             weight = baseWeight * 3;
             shiftedDir = 0; // don't need to apply shifted gravity anymore if doing this
@@ -840,13 +842,13 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
 public override void _Input(InputEvent @event){
     if (@event.IsActionPressed("jump")) _jump();
     else if (@event.IsActionReleased("jump")){
-        if (boingCharge){
-            if (floorCast.IsColliding() || yvelocity == -1 || IsOnWall()){
+        if (boingCharge){  //below check: leeway ray and moving up and haven't hard jumped (hasJumped != 2) or yvel = -1 or wall
+            if (IsOnFloor() || yvelocity == -1 || IsOnWall() || (leewayCast.IsColliding() && yvelocity > 0 && hasJumped != 2 && boing == 0)){
                 if (boing != 0){
                     if (!boingTimer.IsStopped()) boingTimer.Stop();
                     _jump();
                 }
-                else if (!preBoingTimer.IsStopped()) _normalJump();
+                else _normalJump();
             }
             boingCharge = false;
         }
@@ -903,7 +905,7 @@ public void _on_boingTimer_timeout(){
         squishReverb[0] = boing * .12F;
         squishReverb[2] = 1; //proc wall wiggle
     }
-    canCrash = yvelocity >= (bounceBase * jumpforce);
+    hasJumped = yvelocity >= (bounceBase * jumpforce) ? 1 : hasJumped; //soft has jumped else what it was
     boingDash = false;
     jumpwindow = 0;
     boing = 0;
@@ -927,7 +929,7 @@ public void _dieNRespawn(){
     walldashing = false;
     dashSpeed = speedCap * 1.5F;
     wallb = false;
-    canCrash = false;
+    hasJumped = 0;
     shiftedDir = 0;
     shiftedLinger = false;
     boingDash = false;

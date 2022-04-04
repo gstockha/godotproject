@@ -50,6 +50,10 @@ one_shot = true
 [node name="floorCast" type="RayCast" parent="."]
 enabled = true
 
+[node name="leewayCast" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
+enabled = true
+
 [node name="shadowCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true

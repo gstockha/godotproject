@@ -44,7 +44,7 @@ public override void _Ready(){
 
 public override void _PhysicsProcess(float delta){
     if (state == "idle") return;
-    if (state == "attack" || state == "search") _velocityMove(delta);
+    if (state == "attack" || state == "search" || state == "repath") _velocityMove(delta);
     else if (state == "squished"){
         mesh.Scale = new Vector3(Mathf.Lerp(mesh.Scale.x, squishSet[0], .2F),Mathf.Lerp(mesh.Scale.y, squishSet[1], .2F),Mathf.Lerp(mesh.Scale.x, squishSet[2], .2F));
         if (!stunned) mesh.Translation = new Vector3(mesh.Translation.x, Mathf.Lerp(mesh.Translation.y, 0, .2F), mesh.Translation.z);
@@ -74,6 +74,12 @@ public void _velocityMove(float delta){
         }
         else if (state == "search"){
             velocity = new Vector3(velocity.x * -1, 0, velocity.z * -1);
+            state = "repath"; //get away from the curve
+            return;
+        }
+        else if (state == "repath"){
+            MoveAndSlide(velocity * skrrt, Vector3.Up);
+            if (bottom.IsColliding()) state = "search";
             return;
         }
     }
@@ -112,7 +118,7 @@ public void _on_PathTimer_timeout(){
         Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
         stunned = false;
     }
-    if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
+    if (state == "idle" || GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
         state = "search";
         pathTimer.Start(2);
         velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), 0, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 1.5F;
