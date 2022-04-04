@@ -80,7 +80,7 @@ Timer deathtimer;
 MeshInstance mesh;
 MeshInstance shadow;
 Spatial collisionShape;
-RayCast bottom;
+RayCast floorCast;
 RayCast shadowCast;
 Area checkpoint;
 Camera camera;
@@ -99,7 +99,7 @@ public override void _Ready(){
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
     shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
     collisionShape = GetNode<Spatial>("CollisionShape");
-    bottom = GetNode<RayCast>("RayCast");
+    floorCast = GetNode<RayCast>("floorCast");
     shadowCast = GetNode<RayCast>("shadowCast");
     checkpoint = GetNode<Area>("../checkpoints/checkpoint1");
     camera = GetNode<Camera>("Position3D/playerCam");
@@ -271,12 +271,12 @@ public void _applyFriction(float delta){
 }
 
 public void _applyShift(float delta, bool isGrounded){
-    bool bottomTouching = bottom.IsColliding();
+    bool floorCastTouching = floorCast.IsColliding();
     if (shiftedDir != 0 && !shiftedLinger){ //on shift
-        if (bottomTouching){ //make sure you're still on ground
+        if (floorCastTouching){ //make sure you're still on ground
             float grav = .05F + (baseWeight * .01F);
             float fric = friction;
-            Vector3 shift = bottom.GetCollisionNormal();
+            Vector3 shift = floorCast.GetCollisionNormal();
             if (shiftedDir > 0){ //going down
                 if (!dashing) shiftedBoost[0] += delta * (baseWeight * 10); //charge up
                 else shiftedBoost[0] += delta * (baseWeight * 20);
@@ -300,7 +300,7 @@ public void _applyShift(float delta, bool isGrounded){
         else if (jumpwindow != 0){ //fixes a shiftedDir glitch where you abruptly fall off of slopes
             yvelocity -= (gravity * weight) * delta;
             shiftedSticky = 0;
-            bottomTouching = true; //so we don't apply it twice (below)
+            floorCastTouching = true; //so we don't apply it twice (below)
         }
     }
     else if (shiftedBoost[0] > 0){ //shift linger
@@ -352,7 +352,7 @@ public void _applyShift(float delta, bool isGrounded){
                 lastTranslationY = Translation.y;
             }
         }
-        else if (!bottomTouching){
+        else if (!floorCastTouching){
             yvelocity -= (gravity * weight) * delta;
             shiftedSticky = 0;
         }
@@ -482,15 +482,15 @@ public void _isBoinging(float delta){
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
         isWall = colliderNode.IsInGroup("walls");
     }
-    if (bottom.IsColliding() || isWall){
+    if (floorCast.IsColliding() || isWall){
         if (jumpwindow < basejumpwindow) jumpwindow += 60 * delta;
         else jumpwindow = basejumpwindow;
         if (!wallb && shiftedDir == 0){
             float jumpratio = jumpwindow / basejumpwindow;
             float offset = (speed * bounceBase) / basejumpwindow;
-            if (bottom.IsColliding()){
-                Node bottomNode = (Node)bottom.GetCollider();
-                if (bottomNode.IsInGroup("slides")){
+            if (floorCast.IsColliding()){
+                Node floorCastNode = (Node)floorCast.GetCollider();
+                if (floorCastNode.IsInGroup("slides")){
                     offset *= 2;
                     jumpratio *= baseWeight * .015F;
                 }
@@ -509,7 +509,7 @@ public void _isBoinging(float delta){
             MoveAndSlide(velocity, Vector3.Up, true);
         }
         if (GetSlideCount() > 0 && collisionScales[0] != collisionShape.Scale.x){
-            if (!wallb) _squishNScale(delta, bottom.GetCollisionNormal(), false);
+            if (!wallb) _squishNScale(delta, floorCast.GetCollisionNormal(), false);
             else _squishNScale(delta, GetSlideCollision(0).Normal, false);
         }
     }
@@ -695,9 +695,9 @@ public void _jump(){
         collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
         bool slopeSquish = false;
         if (shiftedDir != 0){ //boing jump off a slope
-            Vector3 wallbang = velocity.Bounce(bottom.GetCollisionNormal());
+            Vector3 wallbang = velocity.Bounce(floorCast.GetCollisionNormal());
             Vector2 wallang = new Vector2(wallbang.x, wallbang.z);
-            _alterDirection(bottom.GetCollisionNormal());
+            _alterDirection(floorCast.GetCollisionNormal());
             wallb = true;
             wallFriction = 0;
             slopeSquish = true;
@@ -761,7 +761,7 @@ public void _jump(){
         jumpwindow = 0;
         bounce = bounceBase;
     }
-    else if (yvelocity == -1 || (IsOnFloor() && shiftedDir == 0) || (shiftedDir != 0 && bottom.IsColliding())){
+    else if (yvelocity == -1 || (IsOnFloor() && shiftedDir == 0) || (shiftedDir != 0 && floorCast.IsColliding())){
         if (preBoingTimer.IsStopped() && shiftedDir == 0) preBoingTimer.Start(.2F); //idle charge jump
         else _normalJump(); //jump normal jump on shift
     }
@@ -782,7 +782,7 @@ public void _normalJump(){
 
 public void _dash(){
 if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
-        if (bottom.IsColliding() && shiftedDir == 0){ // on ground and not on shift
+        if (floorCast.IsColliding() && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
         }
@@ -841,7 +841,7 @@ public override void _Input(InputEvent @event){
     if (@event.IsActionPressed("jump")) _jump();
     else if (@event.IsActionReleased("jump")){
         if (boingCharge){
-            if (bottom.IsColliding() || yvelocity == -1 || IsOnWall()){
+            if (floorCast.IsColliding() || yvelocity == -1 || IsOnWall()){
                 if (boing != 0){
                     if (!boingTimer.IsStopped()) boingTimer.Stop();
                     _jump();

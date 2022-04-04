@@ -47,7 +47,7 @@ one_shot = true
 process_mode = 0
 one_shot = true
 
-[node name="RayCast" type="RayCast" parent="."]
+[node name="floorCast" type="RayCast" parent="."]
 enabled = true
 
 [node name="shadowCast" type="RayCast" parent="."]
