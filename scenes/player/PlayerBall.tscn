@@ -94,7 +94,7 @@ collision_mask = 0
 monitorable = false
 
 [node name="scanBody" type="CollisionShape" parent="lockOnScanner"]
-transform = Transform( 25, 0, 0, 0, 6, 0, 0, 0, 20, 0, 3, -15 )
+transform = Transform( 25, 0, 0, 0, 6, 0, 0, 0, 23, 0, 3, -13 )
 shape = SubResource( 18 )
 
 [connection signal="area_entered" from="hitBox" to="." method="_on_hitBox_area_entered"]

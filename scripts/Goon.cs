@@ -53,7 +53,7 @@ public override void _PhysicsProcess(float delta){
     if (state == states.attack || state == states.search || state == states.repath) _velocityMove(delta);
     else if (state == states.squished){
         mesh.Scale = new Vector3(Mathf.Lerp(mesh.Scale.x, squishSet[0], .2F),Mathf.Lerp(mesh.Scale.y, squishSet[1], .2F),Mathf.Lerp(mesh.Scale.x, squishSet[2], .2F));
-        if (!stunned) mesh.Translation = new Vector3(mesh.Translation.x, Mathf.Lerp(mesh.Translation.y, 0, .2F), mesh.Translation.z);
+        mesh.Translation = new Vector3(mesh.Translation.x, Mathf.Lerp(mesh.Translation.y, 0, .2F), mesh.Translation.z);
     }
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
@@ -119,7 +119,7 @@ public void _squish(float power){ //check power vs health and all that here?
 public void _on_PathTimer_timeout(){
     pathTimer.Stop();
     skrrt = 1;
-    if (stunned){ //move up
+    if (stunned){ //wake up
         Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
         stunned = false;
         state = states.alert;

@@ -22,8 +22,8 @@ func _input(event: InputEvent) -> void:
 	if (event is InputEventMouseButton): #quick camera
 		if event.is_pressed():
 			cam = 1
-			lastAng = -1 * player.rotation.y
-		else:
+			if (lockOn == null): lastAng = -1 * player.rotation.y
+		elif (lockOn == null):
 			cam = 0
 			camsetarray = findClosestCamSet(player.rotation_degrees.y)
 			#stickMove = false
@@ -32,7 +32,7 @@ func _input(event: InputEvent) -> void:
 #			if player.cameraFriction > 1: player.cameraFriction = 1
 	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		_move_camera(event)
-	elif (event.is_action_pressed("lock_on")): _findLockOn()
+	elif (event.is_action_pressed("lock_on")): _findLockOn(lockOn)
 
 func _move_camera(evn) -> void:
 	turnRate = 8
@@ -94,10 +94,15 @@ func _move_camera(evn) -> void:
 
 func _process(delta: float) -> void:
 	if (lockOn != null):
-		player.rotation.y = Vector2(player.translation.x,
-		player.translation.z).angle_to(Vector2(lockOn.translation.x, lockOn.translation.z))
-		print(player.rotation.y)
-		player.angTarget = player.rotation.y * -1
+		if (!is_instance_valid(lockOn)):
+			lockOn = null
+			return
+		var oldRot = player.rotation.y
+		player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
+		var nuRot = player.rotation.y
+		player.rotation.y = oldRot
+		player.rotation.y = lerp_angle(oldRot, nuRot, .8 * delta)
+		player.ang = player.rotation.y * -1
 		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 	elif cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
 		var proty = player.rotation_degrees.y
@@ -159,10 +164,9 @@ func _process(delta: float) -> void:
 #		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
 #		if player.cameraFriction > 1: player.cameraFriction = 1
 
-func _findLockOn() -> void:
-	if (lockOn != null):
-		lockOn = null
-		return
+func _findLockOn(lockOnMode) -> void:
+	lockOn = null
+	if (lockOnMode != null): return
 	var areas = []
 	for area in lockScanner.get_overlapping_areas():
 		if (area.get_parent().name == player.name): continue
@@ -171,12 +175,19 @@ func _findLockOn() -> void:
 	var myPoint = global_transform.origin
 	var distance = 9999
 	var checkDistance
+	var spaceState = get_world().direct_space_state
+	var los
 	for area in areas:
+		los = spaceState.intersect_ray(player.translation, area.translation)
+		if (los.size() > 0): continue
 		checkDistance = myPoint.distance_to(area.global_transform.origin)
 		if checkDistance < distance:
 			distance = checkDistance
 			lockOn = area
-	print(lockOn)
+	if (lockOn == null): return
+	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
+	player.angTarget = player.rotation.y * -1
+	camsetarray = findClosestCamSet(player.rotation_degrees.y)
 
 func findClosestCamSet(rotation: float):
 	var targ = 0

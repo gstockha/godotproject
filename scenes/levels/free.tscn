@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/player/PlayerBall.tscn" type="PackedScene" id=3]
 [ext_resource path="res://src/speedrunNote.gd" type="Script" id=4]
 [ext_resource path="res://src/moveNote.gd" type="Script" id=5]
+[ext_resource path="res://scenes/geography/wallBlock.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
@@ -56,6 +57,9 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 2.16045, 3 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
+
+[node name="wallBlock" parent="." instance=ExtResource( 6 )]
+transform = Transform( 0.707106, 0, -2.12132, 0, 10, 0, 0.707108, 0, 2.12132, 1, 2, -17 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
