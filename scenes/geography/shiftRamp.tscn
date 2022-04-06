@@ -10,6 +10,7 @@ albedo_color = Color( 0.333333, 1, 0.529412, 1 )
 
 [node name="shift" parent="." groups=["shifts"] instance=ExtResource( 1 )]
 transform = Transform( -1.31134e-07, -0.128557, 7.66045, 0, 0.153209, 6.42785, -3, 5.6194e-09, -3.34849e-07, -4.6093, 9.3658, -0.285004 )
+collision_mask = 0
 
 [node name="rampBlock" parent="." groups=["ramps"] instance=ExtResource( 2 )]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -24.6161, -0.6371, -1.27299 )

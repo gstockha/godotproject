@@ -9,3 +9,4 @@ func  _spawnMob(mobName: String, point: Vector3) -> void:
 		"goon": spawnedEnemy = goon.instance()
 	$enemies.add_child(spawnedEnemy)
 	spawnedEnemy.global_transform.origin = point
+	spawnedEnemy.spawnPoint = point

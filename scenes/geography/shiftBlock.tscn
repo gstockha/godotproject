@@ -6,6 +6,7 @@ albedo_color = Color( 0.333333, 1, 0.529412, 1 )
 
 [node name="shiftBlock" type="CSGPolygon"]
 use_collision = true
+collision_mask = 0
 polygon = PoolVector2Array( -3, 3, -3, -5, 7, -5 )
 depth = 16.1
 material = SubResource( 1 )

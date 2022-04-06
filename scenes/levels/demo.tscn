@@ -5,14 +5,14 @@
 [ext_resource path="res://src/speedrunNote.gd" type="Script" id=3]
 [ext_resource path="res://src/moveNote.gd" type="Script" id=4]
 [ext_resource path="res://scenes/DefaultWorld.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scenes/roundPlat.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/geography/roundPlat.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scenes/cyFlat.tscn" type="PackedScene" id=8]
-[ext_resource path="res://scenes/obstacle.tscn" type="PackedScene" id=9]
-[ext_resource path="res://scenes/shiftBlock.tscn" type="PackedScene" id=10]
-[ext_resource path="res://scenes/cyPlat.tscn" type="PackedScene" id=11]
-[ext_resource path="res://scenes/shiftTile.tscn" type="PackedScene" id=12]
-[ext_resource path="res://scenes/wallBlock.tscn" type="PackedScene" id=13]
+[ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/geography/obstacle.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scenes/geography/shiftBlock.tscn" type="PackedScene" id=10]
+[ext_resource path="res://scenes/geography/cyPlat.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/geography/shiftTile.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/geography/wallBlock.tscn" type="PackedScene" id=13]
 [ext_resource path="res://scenes/tipArea.tscn" type="PackedScene" id=14]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=16]
 [ext_resource path="res://scenes/cameraset.tscn" type="PackedScene" id=18]
@@ -352,6 +352,7 @@ transform = Transform( -1.74846e-07, 0, 3, 0, 1, 0, -4, 0, -1.31134e-07, 4.601, 
 
 [node name="camerasetL-2" type="Area" parent="envStarting/part4dashing" groups=["camerasets"]]
 transform = Transform( -0.70711, 0, 0.707104, 0, 1, 0, -0.707104, 0, -0.70711, 8.87994, 1.07365, 3.77886 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-2"]
@@ -360,6 +361,7 @@ shape = SubResource( 18 )
 
 [node name="cameraBuffer" type="Area" parent="envStarting/part4dashing/camerasetL-2" groups=["camerabuffers"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-2/cameraBuffer"]
@@ -398,6 +400,7 @@ transform = Transform( 1.5, 0, 0, 0, 8, 0, 0, 0, 0.1, 4.62453, -2.99697, -90.179
 
 [node name="camerasetL-3" type="Area" parent="envStarting/part4dashing" groups=["camerasets"]]
 transform = Transform( -3.12924e-06, 0, -1, 0, 1, 0, 1, 0, -3.12924e-06, 4.49742, 3.48981, -82.9448 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-3"]
@@ -406,6 +409,7 @@ shape = SubResource( 18 )
 
 [node name="cameraBuffer" type="Area" parent="envStarting/part4dashing/camerasetL-3" groups=["camerabuffers"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part4dashing/camerasetL-3/cameraBuffer"]
@@ -461,6 +465,7 @@ transform = Transform( -2.98023e-06, 0, 1, 0, 1, 0, -1, 0, -2.98023e-06, 76.2611
 
 [node name="camerasetL-2" type="Area" parent="envStarting/part5crashing" groups=["camerasets"]]
 transform = Transform( -3.30806e-06, 0, 1, 0, 1, 0, -1, 0, -3.30806e-06, 72.29, 11.4855, -124.252 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part5crashing/camerasetL-2"]
@@ -469,6 +474,7 @@ shape = SubResource( 18 )
 
 [node name="cameraBuffer" type="Area" parent="envStarting/part5crashing/camerasetL-2" groups=["camerabuffers"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part5crashing/camerasetL-2/cameraBuffer"]
@@ -983,6 +989,7 @@ shape = SubResource( 4 )
 
 [node name="camerasetR-2" type="Area" parent="envMainCourse/part4" groups=["camerasets"]]
 transform = Transform( 0.707111, 0, -0.707102, 0, 1, 0, 0.707102, 0, 0.707111, -162.423, 8, 40.3161 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envMainCourse/part4/camerasetR-2"]
@@ -991,6 +998,7 @@ shape = SubResource( 20 )
 
 [node name="cameraBuffer" type="Area" parent="envMainCourse/part4/camerasetR-2" groups=["camerabuffers"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+collision_mask = 0
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="envMainCourse/part4/camerasetR-2/cameraBuffer"]

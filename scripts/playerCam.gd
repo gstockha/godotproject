@@ -1,6 +1,7 @@
 extends Camera
 onready var player = get_node("../../")
 onready var mesh = get_node('../../CollisionShape/BallSkin')
+onready var lockScanner = get_node('../../lockOnScanner')
 onready var setDelay = get_node("setDelay")
 var cam = 0 #rotate mode
 var camsets = [135,45,-45,-135]
@@ -11,6 +12,7 @@ var turnRate = 8
 var turnDir = 'right'
 var autoBuffer = false #make sure you're going the right direction to trigger auto cam
 var customset = 0
+var lockOn = null
 
 func _ready():
 	player.rotation_degrees.y = 45
@@ -30,6 +32,7 @@ func _input(event: InputEvent) -> void:
 #			if player.cameraFriction > 1: player.cameraFriction = 1
 	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		_move_camera(event)
+	elif (event.is_action_pressed("lock_on")): _findLockOn()
 
 func _move_camera(evn) -> void:
 	turnRate = 8
@@ -90,7 +93,13 @@ func _move_camera(evn) -> void:
 		#stickMove = false
 
 func _process(delta: float) -> void:
-	if cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
+	if (lockOn != null):
+		player.rotation.y = Vector2(player.translation.x,
+		player.translation.z).angle_to(Vector2(lockOn.translation.x, lockOn.translation.z))
+		print(player.rotation.y)
+		player.angTarget = player.rotation.y * -1
+		camsetarray = findClosestCamSet(player.rotation_degrees.y)
+	elif cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
 		var proty = player.rotation_degrees.y
 		if cam == 2:
 			if proty < camsets[camsetarray] - turnRate: player.rotation_degrees.y += turnRate * delta * 60
@@ -149,6 +158,25 @@ func _process(delta: float) -> void:
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 #		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
 #		if player.cameraFriction > 1: player.cameraFriction = 1
+
+func _findLockOn() -> void:
+	if (lockOn != null):
+		lockOn = null
+		return
+	var areas = []
+	for area in lockScanner.get_overlapping_areas():
+		if (area.get_parent().name == player.name): continue
+		areas.append(area.get_parent())
+	if len(areas) == 0: return
+	var myPoint = global_transform.origin
+	var distance = 9999
+	var checkDistance
+	for area in areas:
+		checkDistance = myPoint.distance_to(area.global_transform.origin)
+		if checkDistance < distance:
+			distance = checkDistance
+			lockOn = area
+	print(lockOn)
 
 func findClosestCamSet(rotation: float):
 	var targ = 0

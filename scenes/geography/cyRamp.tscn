@@ -10,6 +10,7 @@ albedo_color = Color( 0.333333, 1, 0.529412, 1 )
 
 [node name="cyRamp" type="StaticBody"]
 transform = Transform( 1, 0, 0, 0, 0.173205, 0.5, 0, -0.1, 0.866025, 0, 2, 0 )
+collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0 )

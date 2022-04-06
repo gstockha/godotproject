@@ -9,6 +9,7 @@ albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [node name="platRound" type="StaticBody" groups=["flats"]]
 transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0 )
+collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0 )

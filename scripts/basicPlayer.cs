@@ -784,7 +784,7 @@ public void _normalJump(){
 
 public void _dash(){
 if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
-        if (leewayCast.IsColliding() && shiftedDir == 0){ // on ground and not on shift
+        if (leewayCast.IsColliding() && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
         }
