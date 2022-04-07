@@ -59,11 +59,12 @@ public override void _PhysicsProcess(float delta){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 25 * delta;
         if (IsOnFloor()){
-            stunned = true;
-            state = states.alert;
-            pathTimer.Start(3);
+            // stunned = true;
+            // state = states.alert;
+            // pathTimer.Start(3);
+            // invincible = false;
             deathTimer.Stop();
-            invincible = false;
+            _on_DeathTimer_timeout();
         }
         else if (IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
@@ -105,8 +106,9 @@ public void _launch(float power, Vector3 cVec){
     else launchVec = new Vector3(velocity.x, 0, velocity.z);
     yvelocity = power * 1.5F;
     pathTimer.Stop();
-    deathTimer.Start(3);
+    deathTimer.Start(2);
     invincible = true;
+    if (target.Get("lockOn") == this) target.Call("_lockOn", false);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
@@ -114,6 +116,7 @@ public void _squish(float power){ //check power vs health and all that here?
     pathTimer.Stop();
     deathTimer.Start(1.5F);
     invincible = true;
+    if (target.Get("lockOn") == this) target.Call("_lockOn", false);
 }
 
 public void _on_PathTimer_timeout(){
@@ -160,6 +163,7 @@ public void _on_DeathTimer_timeout(){
     GD.Print("deleted!");
     QueueFree();
     world.Call("_spawnMob", "goon", spawnPoint);
+    if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", false);
 }
 
 }

@@ -27,7 +27,7 @@ float wallby = 0;
 bool idle = true;
 bool dashing = false;
 int hasJumped = 0; //set to 2 (strong) in jump function, 1 in boing timer timeout (soft) (distinction for leeway jumping) CANCRASH == 2 == HASJUMPED
-int bouncedashing = 0;
+int bounceDashing = 0;
 bool walldashing = false; //for speed boost after dashing into a wall
 bool rolling = true;
 bool moving = false;
@@ -40,7 +40,7 @@ float wallFriction = 0;
 static float speedCap = 12;
 float speed = speedCap;
 int traction = 50;
-float[] tractionlist = new float[101];
+float[] tractionList = new float[101];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
 float dashSpeed = speedCap * 1.5F;
@@ -60,6 +60,7 @@ int shiftedSticky = -1;
 float[] shiftedBoost = new float[] {0,0};
 float rampSlope = 0;
 bool shiftedLinger = false;
+Spatial lockOn = null;
 #endregion
 
 #region misc. game variables
@@ -70,7 +71,7 @@ Dictionary<string, string> controlNames = new Dictionary<string, string>(){
 };
 #endregion
 
-#region iables (init in _Ready())
+#region onready variables (init in _Ready())
 float collisionBaseScale = .6F;
 float[] collisionScales;
 Timer boingTimer;
@@ -115,8 +116,8 @@ public override void _Ready(){
     //collisionScales
     collisionScales = new float[] {collisionBaseScale,collisionBaseScale,collisionBaseScale};
     //traction
-    for (int x = 0; x < tractionlist.Length; x++){
-        tractionlist[x] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F));
+    for (int x = 0; x < tractionList.Length; x++){
+        tractionList[x] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F));
     }
     //control dictionary
     string[] controllerStr = new string[6];
@@ -180,6 +181,7 @@ public override void _PhysicsProcess(float delta){ //run physics
     }
     else _isBoinging(delta);
     _turnDelay();
+    _lockOn(true);
 }
 
 public void _controller(float delta){
@@ -189,7 +191,7 @@ public void _controller(float delta){
     }
     moving = (stickdir[0] != 0 || stickdir[1] != 0);
     _applyFriction(delta);
-    direction_ground = new Vector2(dragdir[0],dragdir[1]).Rotated(ang).Normalized(); //direction vector
+    direction_ground = new Vector2(dragdir[0],dragdir[1]).Rotated(ang).Normalized();
     float xvel = 0;
     float yvel = 0;
     float mod = 0;
@@ -197,7 +199,10 @@ public void _controller(float delta){
     if (rolling && !dashing) mod = (speed * friction); //rolling and moving
     else if (!wallb && !dashing) mod = (.9f * speed * friction); //airborne or idle
     else if (wallb && !dashing) notWall = false;
-    else if (dashing) mod = dashSpeed;
+    else if (dashing){
+        mod = dashSpeed;
+        if (angTarget != 0 && lockOn == null) direction_ground = new Vector2(dragdir[0],dragdir[1]).Rotated(angTarget).Normalized(); //alter direction vector
+    }
     if (notWall){
         xvel = direction_ground.x * mod;
         yvel = direction_ground.y * mod;
@@ -227,12 +232,6 @@ public void _applyFriction(float delta){
     dir[1,current] = stickdir[1];
     dir[0,current] = myMath.array2dMean(dir, 0);
     dir[1,current] = myMath.array2dMean(dir, 1);
-    // if (cameraFriction != 1){ //friction after turning camera
-    //     dir[0,current] *= cameraFriction;
-    //     dir[1,current] *= cameraFriction;
-    //     cameraFriction += delta * (2 + (tractionlist[traction] * .04F));
-    //     if (cameraFriction > 1) cameraFriction = 1;
-    // }
     int signdir = 0;
     if (moving){
         dragdir[0] = myMath.array2dMean(dir,0);
@@ -241,7 +240,7 @@ public void _applyFriction(float delta){
             if (!float.IsNaN(stickdir[i])) signdir = Math.Sign(stickdir[i]);
             else signdir = Math.Sign(dragdir[i]);
             if (signdir != 0 && Math.Sign(dragdir[i]) != signdir){
-                dir[i,current] += (tractionlist[traction] * signdir) * delta;
+                dir[i,current] += (tractionList[traction] * signdir) * delta;
             }
         }
     }
@@ -251,7 +250,7 @@ public void _applyFriction(float delta){
             if (Math.Abs(dragdir[i]) > .015F){ //slowly reduce speed (friction)
                 dragdir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
-                dir[i,current] -= (tractionlist[traction] * .08F * signdir) * baseWeight * delta;
+                dir[i,current] -= (tractionList[traction] * .08F * signdir) * baseWeight * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
                     dir[i,current] = 0;
                 }
@@ -265,11 +264,26 @@ public void _applyFriction(float delta){
     if (cameraFriction != 1){ //friction after turning camera
         if (cameraFriction < 1){
             friction *= cameraFriction;
-            cameraFriction += delta * (.1F + (tractionlist[traction] * .0003F));
+            cameraFriction += delta * (.1F + (tractionList[traction] * .0003F));
         }
         else cameraFriction = 1;
     }
     if (friction > 1) friction = 1;
+}
+
+public void _lockOn(bool lockOnTrue){
+    if (!lockOnTrue){// || IsInstanceValid(lockOn)){
+        lockOn = null;
+        camera.Call("_findLockOn", 0); //turn off lockOn on camera
+        return;
+    }
+    if (lockOn == null) return;
+    Vector3 target = lockOn.Translation;
+    float oldRot = Rotation.y;
+    LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
+    float nuRot = Rotation.y;
+    Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
+    ang = (!dashing) ? Rotation.y * -1 : nuRot * -1;
 }
 
 public void _applyShift(float delta, bool isGrounded){
@@ -372,7 +386,7 @@ public void _isRolling(float delta){
             dashtimer.Stop();
             boingDash = true;
             dashing = false;
-            if (weight != baseWeight) bouncedashing = 2; //so you can't crash out of dash
+            if (weight != baseWeight) bounceDashing = 2; //so you can't crash out of dash
         }
     }
     else walldashing = false;
@@ -406,15 +420,15 @@ public void _isRolling(float delta){
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         if ((yvelocity * bounce) * -1 > bouncethreshold && yvelocity != -1){
-            if ((GetSlideCollision(0).Normal.y > .95F && GetSlideCollision(0).Normal.y < 1.05F) || boingCharge || bouncedashing == 2){
-                if (bouncedashing != 2){ //not crashing (bouncedashing == 2 is crashing)
+            if ((GetSlideCollision(0).Normal.y > .95F && GetSlideCollision(0).Normal.y < 1.05F) || boingCharge || bounceDashing == 2){
+                if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
-                    bouncedashing = 0;
+                    bounceDashing = 0;
                     if (bounce != bounceBase) bounceCombo = 0; //not full bounce
                 }
                 else{ //crashing
                     boing = yvelocity * (bounce * (1 - (weight * .2F)));
-                    bouncedashing = 1;
+                    bounceDashing = 1;
                 }
                 boing *= -1;
                 jumpwindow = 0;
@@ -459,7 +473,7 @@ public void _isWall(float delta){
             dashing = false;
             weight = baseWeight;
             speed = speedCap;
-            bouncedashing = 1;
+            bounceDashing = 1;
             walldashing = true;
         }
         if (isWall){
@@ -658,8 +672,8 @@ public void _turnDelay(){
         if (turnDir == "left") add *= -1;
         ang = angTarget + add;
     }
-    if (angDelayFriction) ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[traction] * .0007F)));
-    else ang = Mathf.Lerp(ang,angTarget,.015F + ((tractionlist[0] * .0007F)));
+    if (angDelayFriction) ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[traction] * .0007F)));
+    else ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[0] * .0007F)));
     if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
         ang = angTarget;
         angTarget = 0;
@@ -720,7 +734,7 @@ public void _jump(){
         if (windowRatio >= 1) chargedNote += "charged ";
         if (slopeSquish) _drawMoveNote(chargedNote + "slopejump");
         float nuyvel = 0;
-        if (bouncedashing != 1){ //regular boingjump
+        if (bounceDashing != 1){ //regular boingjump
             jumpwindow = (jumpwindow / basejumpwindow * .75F) + bounceBase;
             nuyvel = myMath.roundTo((jumpforce*(1 + combo * .035F)) * jumpwindow, 10);
             bounceCombo += 1;
@@ -741,7 +755,7 @@ public void _jump(){
         }
         else{ //crashing or walldashing
             jumpwindow = (jumpwindow / basejumpwindow) + bounceBase;
-            bouncedashing = 0;
+            bounceDashing = 0;
             nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F)) * jumpwindow,10);
             if (wallb){ //if off wall
                 if (!slopeSquish){
@@ -801,10 +815,6 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
         }
         else return;
         if (moving){ // dash changes direction
-            if (!angDelayFriction){
-                ang = angTarget; //if not auto camera moved
-                angTarget = 0;
-            }
             for (int i = 0; i < dirsize; i++){
                 dir[0,i] = stickdir[0] * friction;
                 dir[1,i] = stickdir[1] * friction;
@@ -945,6 +955,8 @@ public void _dieNRespawn(){
         dir[1,i] = 0;
     }
     Translation = checkpoint.Translation;
+    lockOn = null;
+    camera.Call("_findLockOn", 0); //turn off lockOn on camera
 }
 
 public void _on_deathtimer_timeout(){
