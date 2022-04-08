@@ -53,6 +53,10 @@ enabled = true
 transform = Transform( 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
 
+[node name="directionCast" type="RayCast" parent="."]
+enabled = true
+cast_to = Vector3( 0, 0, -1 )
+
 [node name="shadowCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true

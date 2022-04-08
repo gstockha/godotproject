@@ -33,8 +33,8 @@ bool rolling = true;
 bool moving = false;
 static int dirsize = 13;
 float[,] dir = new float[2,dirsize];
-float[] stickdir = new float[] {0,0};
-float[] dragdir = new float[] {0,0};
+float[] stickDir = new float[] {0,0};
+float[] moveDir = new float[] {0,0};
 float friction = 0;
 float wallFriction = 0;
 static float speedCap = 12;
@@ -186,12 +186,12 @@ public override void _PhysicsProcess(float delta){ //run physics
 
 public void _controller(float delta){
     if (!idle){ //update direction
-        stickdir[0] = Mathf.Round(Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
-        stickdir[1] = Mathf.Round(Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
+        stickDir[0] = Mathf.Round(Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
+        stickDir[1] = Mathf.Round(Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
     }
-    moving = (stickdir[0] != 0 || stickdir[1] != 0);
+    moving = (stickDir[0] != 0 || stickDir[1] != 0);
     _applyFriction(delta);
-    direction_ground = new Vector2(dragdir[0],dragdir[1]).Rotated(ang).Normalized();
+    direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(ang).Normalized();
     float xvel = 0;
     float yvel = 0;
     float mod = 0;
@@ -201,7 +201,7 @@ public void _controller(float delta){
     else if (wallb && !dashing) notWall = false;
     else if (dashing){
         mod = dashSpeed;
-        if (angTarget != 0 && lockOn == null) direction_ground = new Vector2(dragdir[0],dragdir[1]).Rotated(angTarget).Normalized(); //alter direction vector
+        if (angTarget != 0 && lockOn == null) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized(); //alter direction vector
     }
     if (notWall){
         xvel = direction_ground.x * mod;
@@ -228,38 +228,38 @@ public void _applyFriction(float delta){
         dir[0,i] = dir[0,i+1];
         dir[1,i] = dir[1,i+1];
     }
-    dir[0,current] = stickdir[0];
-    dir[1,current] = stickdir[1];
+    dir[0,current] = stickDir[0];
+    dir[1,current] = stickDir[1];
     dir[0,current] = myMath.array2dMean(dir, 0);
     dir[1,current] = myMath.array2dMean(dir, 1);
     int signdir = 0;
     if (moving){
-        dragdir[0] = myMath.array2dMean(dir,0);
-        dragdir[1] = myMath.array2dMean(dir,1);
+        moveDir[0] = myMath.array2dMean(dir,0);
+        moveDir[1] = myMath.array2dMean(dir,1);
         for (i = 0; i < 2; i++){
-            if (!float.IsNaN(stickdir[i])) signdir = Math.Sign(stickdir[i]);
-            else signdir = Math.Sign(dragdir[i]);
-            if (signdir != 0 && Math.Sign(dragdir[i]) != signdir){
+            if (!float.IsNaN(stickDir[i])) signdir = Math.Sign(stickDir[i]);
+            else signdir = Math.Sign(moveDir[i]);
+            if (signdir != 0 && Math.Sign(moveDir[i]) != signdir){
                 dir[i,current] += (tractionList[traction] * signdir) * delta;
             }
         }
     }
-    else if (dragdir[0] != 0 || dragdir[1] != 0){ //stop at .015 friction if not moving
+    else if (moveDir[0] != 0 || moveDir[1] != 0){ //stop at .015 friction if not moving
         for (i = 0; i < 2; i++){
-            if (dragdir[i] == 0) continue;
-            if (Math.Abs(dragdir[i]) > .015F){ //slowly reduce speed (friction)
-                dragdir[i] = myMath.array2dMean(dir,i);   
+            if (moveDir[i] == 0) continue;
+            if (Math.Abs(moveDir[i]) > .015F){ //slowly reduce speed (friction)
+                moveDir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
                 dir[i,current] -= (tractionList[traction] * .08F * signdir) * baseWeight * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
                     dir[i,current] = 0;
                 }
             }
-            else dragdir[i] = 0;
+            else moveDir[i] = 0;
         }
     }
-    float absx = Math.Abs(dragdir[0]);
-    float absy = Math.Abs(dragdir[1]);
+    float absx = Math.Abs(moveDir[0]);
+    float absy = Math.Abs(moveDir[1]);
     friction = (absx > absy) ? absx : absy;
     if (cameraFriction != 1){ //friction after turning camera
         if (cameraFriction < 1){
@@ -277,13 +277,19 @@ public void _lockOn(bool lockOnTrue){
         camera.Call("_findLockOn", 0); //turn off lockOn on camera
         return;
     }
-    if (lockOn == null) return;
+    if (lockOn == null){
+        // float moveAng = new Vector2(moveDir[0], moveDir[1]);//.Rotated(ang);
+        // LookAt(new Vector3())
+        // Rotation = new Vector3(Rotation.x, moveAng * -1, Rotation.z);
+        return;
+    }
     Vector3 target = lockOn.Translation;
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
     float nuRot = Rotation.y;
     Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
     ang = (!dashing) ? Rotation.y * -1 : nuRot * -1;
+    camera.Call("findClosestCamSet", RotationDegrees);
 }
 
 public void _applyShift(float delta, bool isGrounded){
@@ -512,8 +518,8 @@ public void _isBoinging(float delta){
                 }
             }
             if (offset > 1) offset = 1;
-            stickdir[0] *= (1 - jumpratio);
-            stickdir[1] *= (1 - jumpratio);
+            stickDir[0] *= (1 - jumpratio);
+            stickDir[1] *= (1 - jumpratio);
             _applyFriction(delta);
             float spd = speed * friction * (bounceBase * offset);
             if (boingDash){
@@ -649,8 +655,8 @@ public void _rotateMesh(float xvel, float yvel, float delta){
     Vector3 meshRotation = mesh.Rotation;
     float angy = meshRotation.y;
     if (!wallb){
-        Vector2 dragDir = new Vector2(dragdir[1], dragdir[0]);
-        angy = dragDir.Angle();
+        Vector2 dragdir = new Vector2(moveDir[1], moveDir[0]);
+        angy = dragdir.Angle();
     }
     float xv = Math.Abs(xvel);
     float yv = Math.Abs(yvel);
@@ -682,7 +688,7 @@ public void _turnDelay(){
 }
 
 public void _alterDirection(Vector3 alterNormal){
-    Vector3 wallbang = new Vector3(dragdir[0], 0, dragdir[1]).Bounce(alterNormal);
+    Vector3 wallbang = new Vector3(moveDir[0], 0, moveDir[1]).Bounce(alterNormal);
     int camArray = (int)camera.Get("camsetarray");
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
@@ -797,7 +803,7 @@ public void _normalJump(){
 }
 
 public void _dash(){
-if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
+if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
         if (leewayCast.IsColliding() && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
@@ -816,8 +822,8 @@ if ((moving || (dragdir[0] != 0 || dragdir[1] != 0)) && !dashing){
         else return;
         if (moving){ // dash changes direction
             for (int i = 0; i < dirsize; i++){
-                dir[0,i] = stickdir[0] * friction;
-                dir[1,i] = stickdir[1] * friction;
+                dir[0,i] = stickDir[0] * friction;
+                dir[1,i] = stickDir[1] * friction;
             }
         }
         dashing = true;
@@ -931,8 +937,8 @@ public void _on_preBoingTimer_timeout(){
 public void _dieNRespawn(){
     idle = true;
     yvelocity = 1;
-    stickdir[0] = 0;
-    stickdir[1] = 0;
+    stickDir[0] = 0;
+    stickDir[1] = 0;
     weight = baseWeight;
     dashing = false;
     dashtimer.Stop();

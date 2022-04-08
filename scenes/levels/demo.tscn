@@ -87,7 +87,7 @@ shape = SubResource( 1 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 118.523, 73.104, -168.733 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 98.523, 19.104, 204.267 )
 
 [node name="checkpoints" type="Spatial" parent="playerNode"]
 
