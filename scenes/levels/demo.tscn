@@ -948,7 +948,7 @@ transform = Transform( 6, 0, 0, 0, 0.2, 0, 0, 0, 1.8, -72.738, -3.647, 43.422 )
 transform = Transform( -7.86805e-08, 0, 0.2, 0, 19.8, 0, -1.8, 0, -8.74228e-09, -84.3333, -23.1391, 43.4 )
 
 [node name="wallBounce2" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 13 )]
-transform = Transform( 0, 0, 0.2, 0, 21, 0, -1.8, 0, 0, -89.0614, -20.865, 43.4 )
+transform = Transform( -7.86805e-08, 0, 0.2, 0, 23, 0, -1.8, 0, -8.74228e-09, -89.0614, -20.865, 43.4 )
 
 [node name="endTip" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 14 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -61.965, -1.88645, 41.6703 )

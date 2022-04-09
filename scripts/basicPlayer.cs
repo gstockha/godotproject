@@ -153,6 +153,7 @@ public override void _Ready(){
     #endregion
     
     ang = (-1 * Rotation.y);
+    ang = 0;
     collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,ang,collisionShape.RotationDegrees.z);
     yvelocity = -1;
     
@@ -209,7 +210,7 @@ public void _controller(float delta){
     }
     else{
         if (moving && (Mathf.Sign(wallbx) != Mathf.Sign(direction_ground.x) || Mathf.Sign(wallby) != Mathf.Sign(direction_ground.y))){ //wallb air control
-            wallFriction += .01F * delta * 60;
+            wallFriction += .01F * delta * ((traction * .25F) + 40);
             if (wallFriction > 1) wallFriction = 1;
         }
         if (wallFriction != 0) MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
@@ -278,9 +279,16 @@ public void _lockOn(bool lockOnTrue){
         return;
     }
     if (lockOn == null){
-        // float moveAng = new Vector2(moveDir[0], moveDir[1]);//.Rotated(ang);
-        // LookAt(new Vector3())
-        // Rotation = new Vector3(Rotation.x, moveAng * -1, Rotation.z);
+        if (Math.Abs(moveDir[0]) > .05F){
+            float lastAng = ang;
+            ang += (moveDir[0] + (moveDir[0] * .5F)) * .01F;
+            if (moveDir[1] > 0){
+                float backInfluence = (moveDir[1] + (moveDir[1] * .3F)) * .01F;
+                backInfluence *= (lastAng < ang) ? 1 : -1;
+                ang += backInfluence;
+            }
+        }
+        Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
         return;
     }
     Vector3 target = lockOn.Translation;
@@ -288,7 +296,7 @@ public void _lockOn(bool lockOnTrue){
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
     float nuRot = Rotation.y;
     Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
-    ang = (!dashing) ? Rotation.y * -1 : nuRot * -1;
+    ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1;
     camera.Call("findClosestCamSet", RotationDegrees);
 }
 
@@ -808,7 +816,7 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
         }
-        else if (hasJumped > 0){ // in air and not on shift
+        else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashtimer.Stop();
             weight = baseWeight * 3;
             shiftedDir = 0; // don't need to apply shifted gravity anymore if doing this
