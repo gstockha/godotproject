@@ -31,8 +31,8 @@ int bounceDashing = 0;
 bool walldashing = false; //for speed boost after dashing into a wall
 bool rolling = true;
 bool moving = false;
-static int dirsize = 13;
-float[,] dir = new float[2,dirsize];
+static int dirSize = 13;
+float[,] dir = new float[2,dirSize];
 float[] stickDir = new float[] {0,0};
 float[] moveDir = new float[] {0,0};
 float friction = 0;
@@ -151,10 +151,8 @@ public override void _Ready(){
     controlNames["restart"] = controllerStr[4];
     controlNames["speedrun"] = controllerStr[5];
     #endregion
-    
+    //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,45,collisionShape.RotationDegrees.z);
     ang = (-1 * Rotation.y);
-    ang = 0;
-    collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,ang,collisionShape.RotationDegrees.z);
     yvelocity = -1;
     
 }
@@ -182,7 +180,7 @@ public override void _PhysicsProcess(float delta){ //run physics
     }
     else _isBoinging(delta);
     _turnDelay();
-    _lockOn(true);
+    _lockOn(true, delta);
 }
 
 public void _controller(float delta){
@@ -223,7 +221,7 @@ public void _controller(float delta){
 }
 
 public void _applyFriction(float delta){
-    int current = dirsize - 1;
+    int current = dirSize - 1;
     int i;
     for (i = 0; i < current; i++){
         dir[0,i] = dir[0,i+1];
@@ -272,23 +270,20 @@ public void _applyFriction(float delta){
     if (friction > 1) friction = 1;
 }
 
-public void _lockOn(bool lockOnTrue){
+public void _lockOn(bool lockOnTrue, float delta){
     if (!lockOnTrue){// || IsInstanceValid(lockOn)){
         lockOn = null;
         camera.Call("_findLockOn", 0); //turn off lockOn on camera
         return;
     }
     if (lockOn == null){
-        if (Math.Abs(moveDir[0]) > .05F){
-            float lastAng = ang;
-            ang += (moveDir[0] + (moveDir[0] * .5F)) * .01F;
-            if (moveDir[1] > 0){
-                float backInfluence = (moveDir[1] + (moveDir[1] * .3F)) * .01F;
-                backInfluence *= (lastAng < ang) ? 1 : -1;
-                ang += backInfluence;
-            }
+        if (moveDir[0] != 0 && !IsOnWall()){//(Math.Abs(moveDir[0]) > .05F){
+            float addAng = 0;
+            addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * .5F) * .01F : ((moveDir[0] * 2) * .5F) * .01F;
+            addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .7F); //speed up ang if moving backward, slow it down if forward
+            ang += addAng * delta * 60;
+            Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
         }
-        Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
         return;
     }
     Vector3 target = lockOn.Translation;
@@ -297,7 +292,7 @@ public void _lockOn(bool lockOnTrue){
     float nuRot = Rotation.y;
     Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
     ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1;
-    camera.Call("findClosestCamSet", RotationDegrees);
+    //camera.Call("findClosestCamSet", RotationDegrees);
 }
 
 public void _applyShift(float delta, bool isGrounded){
@@ -412,7 +407,7 @@ public void _isRolling(float delta){
             else if (rolling){
                 rolling = false;
                 friction = 0;
-                for (int i = 0; i < dirsize; i++){
+                for (int i = 0; i < dirSize; i++){
                     dir[0,i] = 0;
                     dir[1,i] = 0;
                 }
@@ -550,7 +545,7 @@ public void _isBoinging(float delta){
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
-        collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+        //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
     }
 }
 
@@ -568,7 +563,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         }
         else if (Mathf.Round(squishNormal.y) == 0){ //on a wall
             Vector3 rotation = collisionShape.RotationDegrees;
-            collisionShape.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
+            //collisionShape.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
             squish *= 1.5F;
             float add = collisionBaseScale * (1 + (squish * .7F));
             float sub = collisionBaseScale * (1 - (squish * .7F));
@@ -578,7 +573,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             float normz = Mathf.Round(squishNormal.z);
             bool flip = false;
             if (normx == 0 || normz == 0){ //45 degree flip
-                collisionShape.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
+                //collisionShape.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
                 flip = (Math.Sign(Math.Abs(normx)) == 1 && Math.Sign(Math.Abs(normz)) == 0);
             }
             else flip = (normx == 1 && normz == 1) || (normx == -1 && normz == -1);
@@ -697,7 +692,7 @@ public void _turnDelay(){
 
 public void _alterDirection(Vector3 alterNormal){
     Vector3 wallbang = new Vector3(moveDir[0], 0, moveDir[1]).Bounce(alterNormal);
-    int camArray = (int)camera.Get("camsetarray");
+    int camArray = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
     int[] camAngs = new int[] {135,45,-45,-135};
@@ -707,7 +702,7 @@ public void _alterDirection(Vector3 alterNormal){
         ang = camAng;
         angDelayFriction = true;
     }
-    for (int i = 0; i < dirsize; i++){
+    for (int i = 0; i < dirSize; i++){
         dir[0,i] = wallbang.z;
         dir[1,i] = wallbang.x;
     }
@@ -722,7 +717,7 @@ public void _jump(){
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
-        collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+        //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
         bool slopeSquish = false;
         if (shiftedDir != 0){ //boing jump off a slope
             Vector3 wallbang = velocity.Bounce(floorCast.GetCollisionNormal());
@@ -828,12 +823,9 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             _drawMoveNote("slope dash");
         }
         else return;
-        if (moving){ // dash changes direction
-            for (int i = 0; i < dirsize; i++){
-                dir[0,i] = stickDir[0] * friction;
-                dir[1,i] = stickDir[1] * friction;
-            }
-        }
+        int i; //if your moveDir doesn't match your stickDir, override
+        if (Math.Sign(moveDir[0]) != Math.Sign(stickDir[0])) for (i = 0; i < dirSize; i++) dir[0,i] = stickDir[0] * friction;
+        if (Math.Sign(moveDir[1]) != Math.Sign(stickDir[1])) for (i = 0; i < dirSize; i++) dir[1,i] = stickDir[1] * friction;
         dashing = true;
     }
 }
@@ -933,7 +925,7 @@ public void _on_boingTimer_timeout(){
     boingDash = false;
     jumpwindow = 0;
     boing = 0;
-    collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+    //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
 }
 
 public void _on_preBoingTimer_timeout(){
@@ -961,10 +953,10 @@ public void _dieNRespawn(){
     _squishNScale(gravity * .017F, new Vector3(0,0,0), true);
     squishSet = false;
     boing = 0;
-    collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+    //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
     boingCharge = false;
     boingTimer.Stop();
-    for (int i = 0; i < dirsize; i++){
+    for (int i = 0; i < dirSize; i++){
         dir[0,i] = 0;
         dir[1,i] = 0;
     }

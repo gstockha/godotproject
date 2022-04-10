@@ -157,8 +157,8 @@ func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
 		player.lockOn = null
 		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-		player.rotation_degrees.y = camsets[camsetarray]
-		player.ang = player.rotation.y * -1
+		#player.rotation_degrees.y = camsets[camsetarray]
+		#player.ang = player.rotation.y * -1
 		player.angTarget = 0
 		return
 	var areas = []
@@ -184,7 +184,7 @@ func _findLockOn(lockOnMode) -> void:
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	player.ang = player.rotation.y * -1
 
-func findClosestCamSet(rotation: float):
+func findClosestCamSet(rotation: float): #in degrees
 	var targ = 0
 	var dist = 1000
 	for i in range(len(camsets)):
@@ -192,6 +192,7 @@ func findClosestCamSet(rotation: float):
 			dist = abs(camsets[i] - rotation)
 			targ = i
 	player.squishSet = false
+	camsetarray = targ
 	return targ
 
 func findDegreeDistance(from,to):

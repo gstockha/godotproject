@@ -108,7 +108,7 @@ public void _launch(float power, Vector3 cVec){
     pathTimer.Stop();
     deathTimer.Start(2);
     invincible = true;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", false);
+    if (target.Get("lockOn") == this) target.Call("_lockOn", false, 0);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
@@ -116,7 +116,7 @@ public void _squish(float power){ //check power vs health and all that here?
     pathTimer.Stop();
     deathTimer.Start(1.5F);
     invincible = true;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", false);
+    if (target.Get("lockOn") == this) target.Call("_lockOn", false, 0);
 }
 
 public void _on_PathTimer_timeout(){
@@ -163,7 +163,7 @@ public void _on_DeathTimer_timeout(){
     GD.Print("deleted!");
     QueueFree();
     world.Call("_spawnMob", "goon", spawnPoint);
-    if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", false);
+    if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", false, 0);
 }
 
 }
