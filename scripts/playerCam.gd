@@ -8,7 +8,7 @@ var camsets = [135,45,-45,-135]
 var camsetarray = 1
 onready var lastAng = camsets[camsetarray]
 var turnRate = 8
-#var stickMove = false
+var stickMove = false
 var turnDir = 'right'
 var autoBuffer = false #make sure you're going the right direction to trigger auto cam
 var customset = 0 #double camsets after a first one
@@ -25,14 +25,18 @@ func _ready():
 
 func _input(event: InputEvent) -> void:
 	if (event is InputEventMouseButton): #quick camera
+		if (lockOn != null): return
 		if event.is_pressed():
 			cam = 1
-			if (lockOn == null): lastAng = -1 * player.rotation.y
-		elif (lockOn == null):
+			lastAng = -1 * player.rotation.y
+		else:
 			cam = 0
-			camsetarray = findClosestCamSet(player.rotation_degrees.y)
+			player.camLock = false
+			player.ang = lastAng
+			player.rotation.y = lastAng * -1
+#			camsetarray = findClosestCamSet(player.rotation_degrees.y)
 			#stickMove = false
-			player.angTarget = -1 * player.rotation.y
+#			player.angTarget = -1 * player.rotation.y
 	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		_move_camera(event)
 	elif (event.is_action_pressed("lock_on")): _findLockOn(lockOn)
@@ -44,54 +48,55 @@ func _move_camera(evn) -> void:
 		player.rotate_y(-lerp(0, 1.0, evn.relative.x/300)) #needs to eventually just rotate camera not player
 		if evn.relative.x < 0: turnDir = 'right'
 		elif evn.relative.x: turnDir = 'left'
-		player.angTarget = -1 * player.rotation.y
-		player.cameraFriction = .5 + (player.traction * .001)
-		camsetarray = findClosestCamSet(player.rotation_degrees.y)
+#		player.angTarget = -1 * player.rotation.y
+		player.camLock = true
+#		player.cameraFriction = .5 + (player.traction * .001)
+#		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 		setDelay.stop()
 		setDelay.start(6)
 	elif (cam != 1):
-		var rot = round(player.rotation_degrees.y)
-		if player.rotation_degrees.y == camsets[camsetarray]:
-			if evn.is_action("pan_left"):
-				turnDir = 'left'
-				if camsetarray < 3:
-					camsetarray += 1
-					cam = 2
-				else:
-					camsetarray = 0
-					cam = 4
-			elif evn.is_action("pan_right"):
-				turnDir = 'right'
-				if camsetarray > 0:
-					camsetarray -= 1
-					cam = 2
-				else:
-					camsetarray = 3
-					cam = 3
-		else: #find closest 90 degree angle
-			var set = false
-			if evn.is_action("pan_left"):
-				turnDir = 'left'
-				while(!set):
-					if rot > -179: rot -= 1
-					else: rot = 180
-					for i in range(4):
-						if (rot == camsets[i]):
-							set = true
-							camsetarray = i
-							if (i == 0): cam = 4
-							else: cam = 2
-			elif evn.is_action("pan_right"):
-				turnDir = 'right'
-				while(!set):
-					if rot < 179: rot += 1
-					else: rot = -180
-					for i in range(4):
-						if (rot == camsets[i]):
-							set = true
-							camsetarray = i
-							if (i == 3): cam = 3
-							else: cam = 2
+#		var rot = round(player.rotation_degrees.y)
+#		if player.rotation_degrees.y == camsets[camsetarray]:
+		if evn.is_action("pan_left"):
+			turnDir = 'left'
+			if camsetarray < 3:
+				camsetarray += 1
+				cam = 2
+			else:
+				camsetarray = 0
+				cam = 4
+		elif evn.is_action("pan_right"):
+			turnDir = 'right'
+			if camsetarray > 0:
+				camsetarray -= 1
+				cam = 2
+			else:
+				camsetarray = 3
+				cam = 3
+#		else: #find closest 90 degree angle
+#			var set = false
+#			if evn.is_action("pan_left"):
+#				turnDir = 'left'
+#				while(!set):
+#					if rot > -179: rot -= 1
+#					else: rot = 180
+#					for i in range(4):
+#						if (rot == camsets[i]):
+#							set = true
+#							camsetarray = i
+#							if (i == 0): cam = 4
+#							else: cam = 2
+#			elif evn.is_action("pan_right"):
+#				turnDir = 'right'
+#				while(!set):
+#					if rot < 179: rot += 1
+#					else: rot = -180
+#					for i in range(4):
+#						if (rot == camsets[i]):
+#							set = true
+#							camsetarray = i
+#							if (i == 3): cam = 3
+#							else: cam = 2
 		lastAng = -1 * player.rotation.y
 		#stickMove = false
 
@@ -146,23 +151,27 @@ func _process(delta: float) -> void:
 		else: turnDir = 'left'
 		player.rotate_y(lerp(0, .11, panStrength*abs(panStrength)*.4)) #needs to eventually just rotate camera not player
 #		if player.cameraFriction > 1: player.cameraFriction = 1
-		player.cameraFriction = .5 + (player.traction * .0015)
-		player.angTarget = -1 * player.rotation.y
+#		player.cameraFriction = .5 + (player.traction * .0015)
+#		player.angTarget = -1 * player.rotation.y
+		if !stickMove:
+			lastAng = player.rotation.y * -1
+			player.camLock = true
+			stickMove = true
 		setDelay.stop()
 		setDelay.start(6)
-		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-#	elif stickMove == true:
-#		stickMove = false
+#		camsetarray = findClosestCamSet(player.rotation_degrees.y)
+	elif stickMove == true:
+		
+		stickMove = false
+		player.camLock = false
+		player.rotation.y = lastAng * -1
 #		player.angTarget = -1 * player.rotation.y
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 #		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
 #		if player.cameraFriction > 1: player.cameraFriction = 1
 	if heightMove:
-		print('moving')
 		translation.y = lerp(translation.y, targetY, .05)
 		rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
-		print(translation.y)
-		print(rotation_degrees.x)
 		if (translation.y > targetY - .1 && translation.y < targetY + .1):
 			if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
 				heightMove = false
@@ -200,6 +209,7 @@ func _findLockOn(lockOnMode) -> void:
 	player.ang = player.rotation.y * -1
 
 func findClosestCamSet(rotation: float): #in degrees
+	if player.camLock: rotation = rad2deg(lastAng * -1)
 	var targ = 0
 	var dist = 1000
 	for i in range(len(camsets)):
@@ -217,8 +227,8 @@ func findDegreeDistance(from,to):
 
 func _auto_move_camera(target: int, direction: String) -> void:
 	camsetarray = findClosestCamSet(player.rotation_degrees.y)
-	if target == camsetarray && direction != "H" && direction != "R": return
-	if direction != "H" && direction != "R":
+	if target == camsetarray && direction != "H" && direction != "O": return
+	if direction != "H" && direction != "O":
 		if direction == "L":
 			turnDir = 'left'
 			if (target == 0): cam = 4 if (camsetarray != 1) else 2
@@ -237,15 +247,18 @@ func _auto_move_camera(target: int, direction: String) -> void:
 		setDelay.stop()
 		setDelay.start(3)
 	elif direction == "H":
-		targetY = baseY + target
-		targetRotX = baseRotX - target
-		heightMove = true
-	elif direction == "R":
-		if (target == 0): #no animation reset
+		if (target != 0):
+			if (target <= 3): target = 3 #some fuck shit
+			elif (target <= 6): target = 6
+			if (translation.y == baseY + target): return;
+			targetY = baseY + target
+			targetRotX = baseRotX - target
+			heightMove = true
+		else: #no animation reset (in the player death script)
 			translation.y = baseY
 			rotation_degrees.x = baseRotX
-		else: #not 0, animation
+	elif direction == "O": #animation reset
 			targetY = baseY
 			targetRotX = baseRotX
 			heightMove = true
-	autoBuffer = false
+	autoBuffer = false #tigger the buffer off

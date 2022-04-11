@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scenes/shiftTile.tscn" type="PackedScene" id=1]
-[ext_resource path="res://scenes/shiftBlock.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/geography/shiftTile.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/geography/shiftBlock.tscn" type="PackedScene" id=2]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.333333, 1, 0.529412, 1 )

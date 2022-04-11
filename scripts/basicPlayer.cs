@@ -19,6 +19,7 @@ float basejumpwindow = 0;
 float jumpwindow = 0;
 float ang = 0;
 float angTarget = 0;
+bool camLock = false;
 bool angDelayFriction = true; //player friction modifies angTarget lerping or not
 float cameraFriction = 1; //apply to friction after moving camera
 bool wallb = false;
@@ -277,7 +278,7 @@ public void _lockOn(bool lockOnTrue, float delta){
         camera.Call("_findLockOn", 0); //turn off lockOn on camera
         return;
     }
-    if (angTarget != 0) return;
+    if (camLock == true) return;
     if (lockOn == null){
         if (moveDir[0] != 0 && !IsOnWall()){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
@@ -569,7 +570,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             squish *= 1.5F;
             float add = collisionBaseScale * (1 + (squish * .7F));
             float sub = collisionBaseScale * (1 - (squish * .7F));
-            int camAng = (int)camera.Get("camsetarray");
+            int camAng = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
             collisionScales[1] = add; //go ahead and set y now
             float normx = Mathf.Round(squishNormal.x);
             float normz = Mathf.Round(squishNormal.z);
@@ -677,6 +678,7 @@ public void _capSpeed(float high, float low){
 
 public void _turnDelay(){
     if (angTarget == 0) return;
+    camLock = true;
     if (Math.Sign(ang) != Math.Sign(angTarget)){
         float add = myMath.findDegreeDistance(ang,angTarget);
         string turnDir = (string)camera.Get("turnDir");
@@ -689,6 +691,7 @@ public void _turnDelay(){
         ang = angTarget;
         angTarget = 0;
         angDelayFriction = true;
+        camLock = false;
     }
 }
 
@@ -964,8 +967,10 @@ public void _dieNRespawn(){
     }
     Translation = checkpoint.GlobalTransform.origin;
     lockOn = null;
+    camLock = false;
+    angTarget = 0;
     camera.Call("_findLockOn", 0); //turn off lockOn on camera
-    camera.Call("_auto_move_camera", 0, "R"); //go to default height
+    camera.Call("_auto_move_camera", 0, "H"); //go to default height
 }
 
 public void _on_deathtimer_timeout(){
@@ -1015,7 +1020,7 @@ public void _on_hitBox_area_entered(Area area){
 					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
                     case "jumpTip": str = "Press " + controlNames["jump"] + " to Jump"; break;
                     case "bounceTip": str = "Try jumping right when you hit the\nground to Boingjump"; break;
-                    case "camTip": str = controlNames["camera"] + "\nto rotate the camera"; break;
+                    case "camTip": str = controlNames["camera"] + "\nto pan the camera"; break;
                     case "restartTip": 
                         str = controlNames["restart"] + " to restart from checkpoint\n" +
                         controlNames["speedrun"] + " to start speedrun mode";
@@ -1041,11 +1046,12 @@ public void _on_hitBox_area_entered(Area area){
                 break;
             case "camerasets":
                 if ((bool)camera.Get("autoBuffer") == true){ //have triggered the buffer (to make it only triggerable via a direction)
-                    Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
-                    if (setDelay.IsStopped()){
-                        string[] tag = area.Name.Split("cameraset");
-                        tag = tag[1].Split("-");
-                        camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
+                    string[] tag = area.Name.Split("cameraset");
+                    tag = tag[1].Split("-");
+                    if (tag[0] == "H") camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]); //height camera
+                    else{ //not height camera, check timer buffer
+                        Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
+                        if (setDelay.IsStopped()) camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
                     }
                 }
                 break;
