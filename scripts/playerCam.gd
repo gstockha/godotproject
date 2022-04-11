@@ -11,8 +11,13 @@ var turnRate = 8
 #var stickMove = false
 var turnDir = 'right'
 var autoBuffer = false #make sure you're going the right direction to trigger auto cam
-var customset = 0
+var customset = 0 #double camsets after a first one
 var lockOn = null
+var baseY = 5 #translation Y
+var baseRotX = -10 #rotation_degrees X
+var targetY = baseY
+var targetRotX = baseRotX
+var heightMove = false
 
 func _ready():
 	player.rotation_degrees.y = 45
@@ -125,6 +130,7 @@ func _process(delta: float) -> void:
 			if customset != 0:
 				cam = customset
 				customset = 0
+				return
 #			print(camsetarray)
 #			if player.cameraFriction == 1: player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*.8
 #			else:
@@ -151,6 +157,15 @@ func _process(delta: float) -> void:
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 #		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
 #		if player.cameraFriction > 1: player.cameraFriction = 1
+	if heightMove:
+		print('moving')
+		translation.y = lerp(translation.y, targetY, .05)
+		rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
+		print(translation.y)
+		print(rotation_degrees.x)
+		if (translation.y > targetY - .1 && translation.y < targetY + .1):
+			if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
+				heightMove = false
 
 func _findLockOn(lockOnMode) -> void:
 	lockOn = null
@@ -201,21 +216,36 @@ func findDegreeDistance(from,to):
 	return abs(fmod(2 * difference, max_angle) - difference)
 
 func _auto_move_camera(target: int, direction: String) -> void:
-	if target == camsetarray: return
-	if direction == "L":
-		turnDir = 'left'
-		if (target == 0): cam = 4 if (camsetarray != 1) else 2
-		elif (target == 2): cam = 2# if (camsetarray != 0) else 2
-		elif (target == 3): cam = 3 if (camsetarray != 2) else 2
-	else:
-		if (target == 2): 
-			if (camsetarray != 0): cam = 2
-			else:
-				cam = 3
-				customset = 2
-	player.angDelayFriction = false
-	turnRate = 2
-	camsetarray = target
-	setDelay.stop()
-	setDelay.start(3)
+	camsetarray = findClosestCamSet(player.rotation_degrees.y)
+	if target == camsetarray && direction != "H" && direction != "R": return
+	if direction != "H" && direction != "R":
+		if direction == "L":
+			turnDir = 'left'
+			if (target == 0): cam = 4 if (camsetarray != 1) else 2
+			elif (target == 2): cam = 2# if (camsetarray != 0) else 2
+			elif (target == 3): cam = 3 if (camsetarray != 2) else 2
+		elif direction == "R":
+			if (target == 2): 
+				if (camsetarray != 0): cam = 2
+				else:
+					cam = 3
+					customset = 2
+			elif (target == 1): cam = 2
+		player.angDelayFriction = false
+		turnRate = 2
+		camsetarray = target
+		setDelay.stop()
+		setDelay.start(3)
+	elif direction == "H":
+		targetY = baseY + target
+		targetRotX = baseRotX - target
+		heightMove = true
+	elif direction == "R":
+		if (target == 0): #no animation reset
+			translation.y = baseY
+			rotation_degrees.x = baseRotX
+		else: #not 0, animation
+			targetY = baseY
+			targetRotX = baseRotX
+			heightMove = true
 	autoBuffer = false

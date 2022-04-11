@@ -60,7 +60,6 @@ int shiftedSticky = -1;
 float[] shiftedBoost = new float[] {0,0};
 float rampSlope = 0;
 bool shiftedLinger = false;
-Spatial lockOn = null;
 #endregion
 
 #region misc. game variables
@@ -90,6 +89,8 @@ Label moveNote;
 Label tipNote;
 Label speedrunNote;
 Label prNote;
+Spatial lockOn = null;
+
 #endregion
 
 public override void _Ready(){
@@ -276,11 +277,12 @@ public void _lockOn(bool lockOnTrue, float delta){
         camera.Call("_findLockOn", 0); //turn off lockOn on camera
         return;
     }
+    if (angTarget != 0) return;
     if (lockOn == null){
         if (moveDir[0] != 0 && !IsOnWall()){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
-            addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * .5F) * .01F : ((moveDir[0] * 2) * .5F) * .01F;
-            addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .7F); //speed up ang if moving backward, slow it down if forward
+            addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * (speed * .05F)) * .01F : ((moveDir[0] * 2) * (speed * .05F)) * .01F;
+            addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
             ang += addAng * delta * 60;
             Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
         }
@@ -291,7 +293,7 @@ public void _lockOn(bool lockOnTrue, float delta){
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
     float nuRot = Rotation.y;
     Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
-    ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1;
+    ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
     //camera.Call("findClosestCamSet", RotationDegrees);
 }
 
@@ -695,13 +697,13 @@ public void _alterDirection(Vector3 alterNormal){
     int camArray = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    int[] camAngs = new int[] {135,45,-45,-135};
-    float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
-    if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
-        angTarget = Rotation.y * -1;
-        ang = camAng;
-        angDelayFriction = true;
-    }
+    // int[] camAngs = new int[] {135,45,-45,-135};
+    // float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
+    // if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
+    //     angTarget = Rotation.y * -1;
+    //     ang = camAng;
+    //     angDelayFriction = true;
+    // }
     for (int i = 0; i < dirSize; i++){
         dir[0,i] = wallbang.z;
         dir[1,i] = wallbang.x;
@@ -859,7 +861,7 @@ public override void _Input(InputEvent @event){
     if (@event.IsActionPressed("jump")) _jump();
     else if (@event.IsActionReleased("jump")){
         if (boingCharge){  //below check: leeway ray and moving up and haven't hard jumped (hasJumped != 2) or yvel = -1 or wall
-            if (IsOnFloor() || yvelocity == -1 || IsOnWall() || (leewayCast.IsColliding() && yvelocity > 0 && hasJumped != 2 && boing == 0)){
+            if (IsOnFloor() || yvelocity == -1 || IsOnWall() && wallb || (leewayCast.IsColliding() && yvelocity > 0 && hasJumped != 2 && boing == 0)){
                 if (boing != 0){
                     if (!boingTimer.IsStopped()) boingTimer.Stop();
                     _jump();
@@ -960,9 +962,10 @@ public void _dieNRespawn(){
         dir[0,i] = 0;
         dir[1,i] = 0;
     }
-    Translation = checkpoint.Translation;
+    Translation = checkpoint.GlobalTransform.origin;
     lockOn = null;
     camera.Call("_findLockOn", 0); //turn off lockOn on camera
+    camera.Call("_auto_move_camera", 0, "R"); //go to default height
 }
 
 public void _on_deathtimer_timeout(){
