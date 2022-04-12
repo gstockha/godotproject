@@ -3,6 +3,7 @@ onready var player = get_node("../../")
 onready var mesh = get_node('../../CollisionShape/BallSkin')
 onready var lockScanner = get_node('../../lockOnScanner')
 onready var setDelay = get_node("setDelay")
+onready var bufferTimer = get_node("bufferTimer")
 var cam = 0 #rotate mode
 var camsets = [135,45,-45,-135]
 var camsetarray = 1
@@ -17,7 +18,10 @@ var baseY = 5 #translation Y
 var baseRotX = -10 #rotation_degrees X
 var targetY = baseY
 var targetRotX = baseRotX
+var lerpMove = false
 var heightMove = false
+var angMove = false
+var angMoveTarget = 0
 
 func _ready():
 	player.rotation_degrees.y = 45
@@ -29,6 +33,7 @@ func _input(event: InputEvent) -> void:
 		if event.is_pressed():
 			cam = 1
 			lastAng = -1 * player.rotation.y
+			print(rad2deg(player.ang)+180)
 		else:
 			cam = 0
 			player.camLock = false
@@ -55,16 +60,15 @@ func _move_camera(evn) -> void:
 		setDelay.stop()
 		setDelay.start(6)
 	elif (cam != 1):
-#		var rot = round(player.rotation_degrees.y)
-#		if player.rotation_degrees.y == camsets[camsetarray]:
-		if evn.is_action("pan_left"):
-			turnDir = 'left'
-			if camsetarray < 3:
-				camsetarray += 1
-				cam = 2
-			else:
-				camsetarray = 0
-				cam = 4
+		if player.rotation_degrees.y == camsets[camsetarray]:
+			if evn.is_action("pan_left"):
+				turnDir = 'left'
+				if camsetarray < 3:
+					camsetarray += 1
+					cam = 2
+				else:
+					camsetarray = 0
+					cam = 4
 		elif evn.is_action("pan_right"):
 			turnDir = 'right'
 			if camsetarray > 0:
@@ -73,30 +77,31 @@ func _move_camera(evn) -> void:
 			else:
 				camsetarray = 3
 				cam = 3
-#		else: #find closest 90 degree angle
-#			var set = false
-#			if evn.is_action("pan_left"):
-#				turnDir = 'left'
-#				while(!set):
-#					if rot > -179: rot -= 1
-#					else: rot = 180
-#					for i in range(4):
-#						if (rot == camsets[i]):
-#							set = true
-#							camsetarray = i
-#							if (i == 0): cam = 4
-#							else: cam = 2
-#			elif evn.is_action("pan_right"):
-#				turnDir = 'right'
-#				while(!set):
-#					if rot < 179: rot += 1
-#					else: rot = -180
-#					for i in range(4):
-#						if (rot == camsets[i]):
-#							set = true
-#							camsetarray = i
-#							if (i == 3): cam = 3
-#							else: cam = 2
+		else: #find closest 90 degree angle
+			var rot = round(player.rotation_degrees.y)
+			var set = false
+			if evn.is_action("pan_left"):
+				turnDir = 'left'
+				while(!set):
+					if rot > -179: rot -= 1
+					else: rot = 180
+					for i in range(4):
+						if (rot == camsets[i]):
+							set = true
+							camsetarray = i
+							if (i == 0): cam = 4
+							else: cam = 2
+			elif evn.is_action("pan_right"):
+				turnDir = 'right'
+				while(!set):
+					if rot < 179: rot += 1
+					else: rot = -180
+					for i in range(4):
+						if (rot == camsets[i]):
+							set = true
+							camsetarray = i
+							if (i == 3): cam = 3
+							else: cam = 2
 		lastAng = -1 * player.rotation.y
 		#stickMove = false
 
@@ -161,7 +166,6 @@ func _process(delta: float) -> void:
 		setDelay.start(6)
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 	elif stickMove == true:
-		
 		stickMove = false
 		player.camLock = false
 		player.rotation.y = lastAng * -1
@@ -169,12 +173,19 @@ func _process(delta: float) -> void:
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 #		player.cameraFriction = (1-(findDegreeDistance(lastAng,player.angTarget)/3.14))*1.1
 #		if player.cameraFriction > 1: player.cameraFriction = 1
-	if heightMove:
-		translation.y = lerp(translation.y, targetY, .05)
-		rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
-		if (translation.y > targetY - .1 && translation.y < targetY + .1):
-			if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
-				heightMove = false
+	if lerpMove:
+		if heightMove:
+			translation.y = lerp(translation.y, targetY, .05)
+			rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
+			if (translation.y > targetY - .1 && translation.y < targetY + .1):
+				if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
+					heightMove = false
+		if angMove:
+			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
+			if (player.ang > angMoveTarget - .01 && player.ang < angMoveTarget + .01):
+				player.ang = angMoveTarget
+				angMove = false
+		lerpMove = heightMove || angMove
 
 func _findLockOn(lockOnMode) -> void:
 	lockOn = null
@@ -227,8 +238,8 @@ func findDegreeDistance(from,to):
 
 func _auto_move_camera(target: int, direction: String) -> void:
 	camsetarray = findClosestCamSet(player.rotation_degrees.y)
-	if target == camsetarray && direction != "H" && direction != "O": return
-	if direction != "H" && direction != "O":
+	if target == camsetarray && (direction == "R" || direction == "L"): return
+	if direction == "R" || direction == "L":
 		if direction == "L":
 			turnDir = 'left'
 			if (target == 0): cam = 4 if (camsetarray != 1) else 2
@@ -246,19 +257,39 @@ func _auto_move_camera(target: int, direction: String) -> void:
 		camsetarray = target
 		setDelay.stop()
 		setDelay.start(3)
-	elif direction == "H":
-		if (target != 0):
+	else:
+		lerpMove = true
+		if direction == "H":
 			if (target <= 3): target = 3 #some fuck shit
 			elif (target <= 6): target = 6
 			if (translation.y == baseY + target): return;
 			targetY = baseY + target
 			targetRotX = baseRotX - target
 			heightMove = true
-		else: #no animation reset (in the player death script)
-			translation.y = baseY
-			rotation_degrees.x = baseRotX
-	elif direction == "O": #animation reset
-			targetY = baseY
-			targetRotX = baseRotX
-			heightMove = true
+		elif direction == "HA": #height angle hybrid (for ramps and stuff)
+			if (translation.y != baseY + 6):
+				targetY = baseY + 6
+				targetRotX = baseRotX - 6
+				heightMove = true
+			angMoveTarget = deg2rad(target - 180) #target goes to the angMove
+			angMove = true
+		elif direction == "O": #height animation reset
+			if (target != 999):
+				targetY = baseY
+				targetRotX = baseRotX
+				heightMove = true
+			else: #no animation reset (in the player death script)
+				translation.y = baseY
+				rotation_degrees.x = baseRotX
+				angMove = false
+				heightMove = false
+				lerpMove = false #turn the shit off
+		elif direction == "A":
+			angMoveTarget = deg2rad(target - 180)
+			angMove = true
 	autoBuffer = false #tigger the buffer off
+
+
+func _on_bufferTimer_timeout():
+	bufferTimer.stop()
+	autoBuffer = false

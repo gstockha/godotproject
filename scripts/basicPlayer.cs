@@ -970,7 +970,7 @@ public void _dieNRespawn(){
     camLock = false;
     angTarget = 0;
     camera.Call("_findLockOn", 0); //turn off lockOn on camera
-    camera.Call("_auto_move_camera", 0, "H"); //go to default height
+    camera.Call("_auto_move_camera", 999, "O"); //go to default height
 }
 
 public void _on_deathtimer_timeout(){
@@ -1048,7 +1048,7 @@ public void _on_hitBox_area_entered(Area area){
                 if ((bool)camera.Get("autoBuffer") == true){ //have triggered the buffer (to make it only triggerable via a direction)
                     string[] tag = area.Name.Split("cameraset");
                     tag = tag[1].Split("-");
-                    if (tag[0] == "H") camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]); //height camera
+                    if (tag[0] != "R" || tag[0] != "L") camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]); //height camera
                     else{ //not height camera, check timer buffer
                         Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
                         if (setDelay.IsStopped()) camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
@@ -1057,6 +1057,9 @@ public void _on_hitBox_area_entered(Area area){
                 break;
             case "camerabuffers":
                 camera.Set("autoBuffer",true);
+                Timer bufferTimer = (Timer)GetNode("Position3D/playerCam/bufferTimer");
+                bufferTimer.Stop();
+                bufferTimer.Start(1);
                 break;
         }
     }

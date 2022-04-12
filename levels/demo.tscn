@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=2]
+[gd_scene load_steps=33 format=2]
 
 [ext_resource path="res://src/moveNote.gd" type="Script" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=15]
 [ext_resource path="res://src/speedrunNote.gd" type="Script" id=16]
 [ext_resource path="res://scenes/geography/wallBlockTransparent.tscn" type="PackedScene" id=17]
+[ext_resource path="res://scenes/geography/windowWall.tscn" type="PackedScene" id=18]
 
 [sub_resource type="BoxShape" id=1]
 
@@ -197,7 +198,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 99.523, 18.104, 204.267 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 100.523, 60.104, 44.267 )
 
 [node name="envStarting" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.23, 26 )
@@ -238,6 +239,12 @@ shape = SubResource( 5 )
 [node name="MeshInstance" type="MeshInstance" parent="envStarting/part1moving/obstacleStair"]
 mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
+
+[node name="camerasetH-4" parent="envStarting/part1moving" instance=ExtResource( 13 )]
+transform = Transform( -0.707107, 0, -0.707107, 0, 1.5, 0, 0.707107, 0, -0.707107, -24.7486, 13.2931, 96.8736 )
+
+[node name="camerasetO-0" parent="envStarting/part1moving" instance=ExtResource( 13 )]
+transform = Transform( -0.707107, 0, -0.707107, 0, 1.5, 0, 0.707107, 0, -0.707107, -49.4973, -1.70688, 123.037 )
 
 [node name="obstacleStair2" type="StaticBody" parent="envStarting/part1moving" groups=["flats", "obstacles"]]
 transform = Transform( -7.42462, 0, -5.65685, 0, 1, 0, 7.42462, 0, -5.65685, -18.808, 5, 90.827 )
@@ -375,9 +382,11 @@ transform = Transform( 1.5, 0, 0, 0, 8, 0, 0, 0, 0.1, 4.62453, -2.99697, -90.179
 
 [node name="camerasetL-2" parent="envStarting/part4dashing" instance=ExtResource( 13 )]
 transform = Transform( -0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 8.88, 1.07, 3.78 )
+monitorable = false
 
 [node name="camerasetL-3" parent="envStarting/part4dashing" instance=ExtResource( 13 )]
 transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4.5, 3.5, -82.95 )
+monitorable = false
 
 [node name="part5crashing" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -72.514, -6, 12 )
@@ -405,8 +414,8 @@ transform = Transform( -1.09278e-07, 0, 3.3, 0, 1, 0, -2.5, 0, -1.44248e-07, 3.3
 [node name="crashTip2" parent="envStarting/part5crashing" instance=ExtResource( 7 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.59079, 8.08805, -114.533 )
 
-[node name="camerasetH-2" parent="envStarting/part5crashing" instance=ExtResource( 13 )]
-transform = Transform( 0.5, 0, -1.43051e-06, 0, 1, 0, 7.15256e-07, 0, 1, 0.489449, 11.2856, -117.529 )
+[node name="camerasetHA-265" parent="envStarting/part5crashing" instance=ExtResource( 13 )]
+transform = Transform( 0.5, 0, -1.43051e-06, 0, 1, 0, 7.15256e-07, 0, 1, 1.48945, 11.2856, -117.529 )
 
 [node name="camerasetO-0" parent="envStarting/part5crashing" instance=ExtResource( 13 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 2, 69.4894, 11.2856, -118.529 )
@@ -434,6 +443,7 @@ transform = Transform( -2.98023e-06, 0, 1, 0, 1, 0, -1, 0, -2.98023e-06, 76.2611
 
 [node name="camerasetL-2" parent="envStarting/part5crashing" instance=ExtResource( 13 )]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 72.3, 11.48, -124.25 )
+monitorable = false
 
 [node name="part6walljumping" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14.571, 2, -6.733 )
@@ -455,6 +465,7 @@ transform = Transform( 0.5, 0, 7.59959e-07, 0, 15, 0, -7.59959e-07, 0, 0.5, 3.16
 
 [node name="camerasetR-2" parent="envStarting/part6walljumping" instance=ExtResource( 13 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 4, -153.599 )
+monitorable = false
 
 [node name="plat2" parent="envStarting/part6walljumping" groups=["flats"] instance=ExtResource( 4 )]
 transform = Transform( -2.62268e-07, 0, 6, 0, 1, 0, -6, 0, -2.62268e-07, 32.7475, -3.003, -159.287 )
@@ -545,6 +556,9 @@ material/0 = SubResource( 11 )
 [node name="plat3" parent="envStarting/part6walljumping" groups=["flats"] instance=ExtResource( 4 )]
 transform = Transform( -6.55671e-08, 2.98023e-08, 5, 7.10543e-15, 1, -1.49012e-07, -1.5, 3.43425e-15, -2.18557e-07, 59.1076, 15.6555, -168.287 )
 
+[node name="camerasetA-265" parent="envStarting/part6walljumping" instance=ExtResource( 13 )]
+transform = Transform( 1, -9.71074e-14, -1.54972e-06, 4.73695e-15, 1, -1.49011e-08, 3.09944e-06, 2.98023e-08, 0.5, 50.9492, 21.6555, -168.135 )
+
 [node name="plat4" parent="envStarting/part6walljumping" groups=["flats"] instance=ExtResource( 4 )]
 transform = Transform( -4.37114e-08, 2.98023e-08, 1, 4.73695e-15, 1, -2.98023e-08, -1, 3.43425e-15, -4.37114e-08, 52.7314, 15.6555, -173.135 )
 
@@ -587,7 +601,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="camTip" parent="envStarting/part6walljumping" instance=ExtResource( 7 )]
-transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, 24.742, -1.0319, -151.977 )
+transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, 24.742, -0.0319004, -151.977 )
 
 [node name="part7ramping" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14.571, 2.01536, -6.733 )
@@ -658,17 +672,18 @@ transform = Transform( 3, 0, 0, 0, 0.141421, 0.707107, 0, -0.141421, 0.707107, 1
 [node name="shiftTip2" parent="envStarting/part7ramping" instance=ExtResource( 7 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 57.8436, -190 )
 
+[node name="camerasetHA-90" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
+transform = Transform( -1, 0, -1.31134e-07, 0, 1, 0, 8.74228e-08, 0, -1.5, 108.634, 61, -187 )
+
 [node name="camerasetL-0" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 61, -188.575 )
+monitorable = false
 
-[node name="camerasetH-4" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
-transform = Transform( -4.37114e-08, 0, -1.5, 0, 1, 0, 1, 0, -6.55671e-08, 120, 61, -181 )
-
-[node name="camerasetH-5" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
-transform = Transform( 1, 0, 4.64916e-06, 0, 1, 0, -3.09944e-06, 0, 1.5, 104, 61, -187 )
+[node name="camerasetHA-360" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
+transform = Transform( -4.37114e-08, 0, -1.5, 0, 1, 0, 1, 0, -6.55671e-08, 120, 61, -178 )
 
 [node name="camerasetO-1" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
-transform = Transform( 1, 0, 3.09944e-06, 0, 2, 0, -3.09944e-06, 0, 1, 61, 38, -188 )
+transform = Transform( -1, 0, -8.74228e-08, 0, 2, 0, 8.74228e-08, 0, -1, 61, 38, -188 )
 
 [node name="camerasetO-0" parent="envStarting/part7ramping" instance=ExtResource( 13 )]
 transform = Transform( -4.37114e-08, 0, -2, 0, 2.5, 0, 1, 0, -8.74228e-08, 122, 31, -95 )
@@ -705,8 +720,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 25, -2 )
 [node name="plat" parent="envMainCourse/part2" instance=ExtResource( 4 )]
 transform = Transform( 6, 0, 0, 0, 1, 0, 0, 0, 3, 8.58018, -13, -8 )
 
-[node name="camerasetH-1" parent="envMainCourse/part2" instance=ExtResource( 13 )]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2, -7, -8 )
+[node name="camerasetHA-90" parent="envMainCourse/part2" instance=ExtResource( 13 )]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 6, -7, -8 )
 
 [node name="platLanding" parent="envMainCourse/part2" instance=ExtResource( 8 )]
 transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -14, -20, -8 )
@@ -727,7 +742,7 @@ transform = Transform( 0.1, 0, 0, 0, 12, 0, 0, 0, 1, -38.7012, -8.66695, -8 )
 transform = Transform( 9, 0, 0, 0, 1, 0, 0, 0, 3, -78.9986, -13, -8 )
 
 [node name="camerasetO-0" parent="envMainCourse/part2" instance=ExtResource( 13 )]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -64, -7, -8 )
+transform = Transform( -1, 0, -1.50996e-07, 0, 1.5, 0, 1.50996e-07, 0, -1, -64, -5, -8 )
 
 [node name="obstacleStair4" type="StaticBody" parent="envMainCourse/part2" groups=["flats", "obstacles"]]
 transform = Transform( 8, 0, 0, 0, 1, 0, 0, 0, 6, -88.9813, -7.44425, -8.019 )
@@ -832,8 +847,8 @@ shape = SubResource( 5 )
 mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
-[node name="shift" parent="envMainCourse/part2" instance=ExtResource( 14 )]
-transform = Transform( -4.67428e-08, -0.0517638, 3.38074, 1.13134e-08, 0.193185, 0.905866, -1, 4.60516e-09, -1.47777e-07, -54.5109, -8.48676, -8 )
+[node name="shift" parent="envMainCourse/part2" groups=["shifts"] instance=ExtResource( 14 )]
+transform = Transform( -4.7551e-08, -0.068404, 3.28892, 7.19644e-09, 0.187938, 1.19707, -1, 4.60516e-09, -1.47777e-07, -54.5109, -8.48676, -8 )
 
 [node name="part3" type="Spatial" parent="envMainCourse"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -126.136, 25.674, 40.762 )
@@ -913,8 +928,8 @@ transform = Transform( 3, 0, 0, 0, 0.173205, 0.3, 0, -0.1, 0.519615, 1.50902, -2
 [node name="rampExit" parent="envMainCourse/part4/shiftRampMain" groups=["ramps"] instance=ExtResource( 14 )]
 transform = Transform( 3, 0, 0, 0, 0.141421, 1.06066, 0, -0.141421, 1.06066, 1.50904, -17.4771, 35.5712 )
 
-[node name="camerasetH-4" parent="envMainCourse/part4/shiftRampMain" instance=ExtResource( 13 )]
-transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 1.25925, 23.8384, -21.9436 )
+[node name="camerasetHA-270" parent="envMainCourse/part4/shiftRampMain" instance=ExtResource( 13 )]
+transform = Transform( -4.37115e-08, 0, -1, 0, 1, 0, 1, 0, -4.37115e-08, 1.25925, 23.8384, -22.9436 )
 
 [node name="landingSpace" type="Spatial" parent="envMainCourse/part4"]
 transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, 2.1304, 0, 144.826 )
@@ -932,7 +947,7 @@ transform = Transform( 6, 0, 0, 0, 0.2, 0, 0, 0, 1.8, -72.738, -3.647, 43.422 )
 transform = Transform( -7.86788e-08, 0, 0.2, 0, 19.8, 0, -1.8, 0, -8.74235e-09, -84.3301, -23.2043, 43.4 )
 
 [node name="wallBlock2" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 17 )]
-transform = Transform( -7.86802e-08, 0, 0.2, 0, 23, 0, -1.8, 0, -8.74232e-09, -89.0921, -20.78, 43.4 )
+transform = Transform( -7.86792e-08, 0, 0.2, 0, 23, 0, -1.8, 0, -8.74238e-09, -89.0921, -19.78, 43.4 )
 
 [node name="endTip" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 7 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -61.965, -1.88645, 41.6703 )
@@ -940,40 +955,23 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -61.965, -1.88645, 41.6703 )
 [node name="plat4" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 4 )]
 transform = Transform( 0.0262496, 0, 1.49994, 0, 0.2, 0, -2.99989, 0, 0.0131248, -63.8145, -3.64417, 52.6663 )
 
-[node name="wallTile" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, 7.33137e-06, 9.16421e-07, 1.13134e-08, 2.89778, -0.025882, -9.41753e-06, 0.776459, 0.0965926, -63.144, -5.865, 61.5355 )
+[node name="fallWall" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 18 )]
+transform = Transform( -3, 0, -1.58151e-07, 0, 8, 0, 4.74452e-06, 0, -0.1, -63.85, -11.259, 58.75 )
 
-[node name="wallTile4" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, 7.33137e-06, 9.16421e-07, 1.13134e-08, 2.89778, -0.025882, -9.41753e-06, 0.776459, 0.0965926, -63.144, -11.865, 61.5355 )
+[node name="fallWall2" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 18 )]
+transform = Transform( -3, 0, -1.58151e-07, 0, 8, 0, 4.74452e-06, 0, -0.1, -63.85, -11.259, 64.75 )
 
-[node name="wallTile2" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, -7.33137e-06, 9.16421e-07, 0, 2.89778, 0.0258819, -9.50694e-06, -0.776457, 0.0965926, -63.1441, -8.865, 58.5355 )
+[node name="fallWall3" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 18 )]
+transform = Transform( -1.31135e-07, 0, -0.1, 0, 8, 0, 3, 0, -4.37112e-09, -66.773, -11.259, 61.75 )
 
-[node name="wallTile3" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, -7.33137e-06, 9.16421e-07, 0, 2.89778, 0.0258819, -9.50694e-06, -0.776457, 0.0965926, -63.144, -14.865, 58.8383 )
-
-[node name="wallTile6" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, 7.33137e-06, 9.16421e-07, 1.13134e-08, 2.89778, -0.025882, -9.41753e-06, 0.776459, 0.0965926, -63.144, -16.865, 61.5355 )
-
-[node name="wallTile7" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, 7.33137e-06, 9.16421e-07, 1.13134e-08, 2.89778, -0.025882, -9.41753e-06, 0.776459, 0.0965926, -63.144, -20.865, 61.5355 )
-
-[node name="wallTile5" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, -7.33137e-06, 9.16421e-07, 0, 2.89778, 0.0258819, -9.50694e-06, -0.776457, 0.0965926, -63.1441, -18.865, 59.0355 )
-
-[node name="wallTile8" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 11 )]
-transform = Transform( 1, -9.59635e-06, 8.86619e-07, -3.80971e-09, 2.81908, 0.034202, -9.50694e-06, -1.02606, 0.0939693, -63.1441, -22.865, 59.7355 )
+[node name="fallWall4" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 18 )]
+transform = Transform( -1.31135e-07, 0, -0.1, 0, 8, 0, 3, 0, -4.37112e-09, -60.9582, -11.259, 61.75 )
 
 [node name="warp" type="Area" parent="envMainCourse/part4/landingSpace" groups=["warps"]]
-transform = Transform( 9.46224e-07, 0, -1, 0, 3, 0, 0.1, 0, 9.41753e-06, -63.2441, -25.8949, 62.6576 )
+transform = Transform( 1.28156e-05, 0, -1.35, 0, 0.1, 0, 1.35, 0, 1.28156e-05, -63.839, -18.8949, 61.745 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envMainCourse/part4/landingSpace/warp"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -0.148701, 0 )
 shape = SubResource( 4 )
-
-[node name="camerasetR-2" parent="envMainCourse/part4" instance=ExtResource( 13 )]
-transform = Transform( 0.707107, 0, -0.707107, 0, 1.5, 0, 0.707107, 0, 0.707107, -162.42, 10, 40.31 )
-monitorable = false
 
 [node name="moveNote" type="Label" parent="."]
 anchor_left = 0.499652
