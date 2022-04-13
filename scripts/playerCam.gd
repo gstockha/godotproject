@@ -69,17 +69,21 @@ func _move_camera(evn) -> void:
 				else:
 					camsetarray = 0
 					cam = 4
-		elif evn.is_action("pan_right"):
-			turnDir = 'right'
-			if camsetarray > 0:
-				camsetarray -= 1
-				cam = 2
-			else:
-				camsetarray = 3
-				cam = 3
+			elif evn.is_action("pan_right"):
+				turnDir = 'right'
+				if camsetarray > 0:
+					camsetarray -= 1
+					cam = 2
+				else:
+					camsetarray = 3
+					cam = 3
 		else: #find closest 90 degree angle
-			var rot = round(player.rotation_degrees.y)
+			var playerRot = round(player.rotation_degrees.y)
+			var rot = playerRot
+			playerRot = deg2rad(playerRot)
 			var set = false
+			var dist
+			var threshold = deg2rad(30)
 			if evn.is_action("pan_left"):
 				turnDir = 'left'
 				while(!set):
@@ -87,10 +91,11 @@ func _move_camera(evn) -> void:
 					else: rot = 180
 					for i in range(4):
 						if (rot == camsets[i]):
-							set = true
-							camsetarray = i
-							if (i == 0): cam = 4
-							else: cam = 2
+							if (findDegreeDistance(deg2rad(camsets[i]), playerRot) > threshold):
+								set = true
+								camsetarray = i
+								if (i == 0): cam = 4
+								else: cam = 2
 			elif evn.is_action("pan_right"):
 				turnDir = 'right'
 				while(!set):
@@ -98,10 +103,11 @@ func _move_camera(evn) -> void:
 					else: rot = -180
 					for i in range(4):
 						if (rot == camsets[i]):
-							set = true
-							camsetarray = i
-							if (i == 3): cam = 3
-							else: cam = 2
+							if (findDegreeDistance(deg2rad(camsets[i]), playerRot) > threshold):
+								set = true
+								camsetarray = i
+								if (i == 3): cam = 3
+								else: cam = 2
 		lastAng = -1 * player.rotation.y
 		#stickMove = false
 
@@ -200,7 +206,11 @@ func _findLockOn(lockOnMode) -> void:
 	for area in lockScanner.get_overlapping_areas():
 		if (area.get_parent().name == player.name): continue
 		areas.append(area.get_parent())
-	if len(areas) == 0: return
+	if len(areas) == 0:
+		player.angTarget = Vector2(player.stickDir[1], player.stickDir[0]).angle()
+		print(player.angTarget)
+		player.rotation.y = player.angTarget
+		return
 	var myPoint = global_transform.origin
 	var distance = 9999
 	var checkDistance
@@ -214,7 +224,10 @@ func _findLockOn(lockOnMode) -> void:
 		if checkDistance < distance:
 			distance = checkDistance
 			lockOn = area
-	if (lockOn == null): return
+	if (lockOn == null): 
+		player.angTarget = Vector2(player.stickDir[1], player.stickDir[0]).angle()
+		player.rotation.y = player.angTarget
+		return
 	player.lockOn = lockOn
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	player.ang = player.rotation.y * -1
@@ -231,7 +244,7 @@ func findClosestCamSet(rotation: float): #in degrees
 	camsetarray = targ
 	return targ
 
-func findDegreeDistance(from,to):
+func findDegreeDistance(from: float, to: float):
 	var max_angle = 6.28 #approx 2*PI
 	var difference = fmod(to - from, max_angle)
 	return abs(fmod(2 * difference, max_angle) - difference)

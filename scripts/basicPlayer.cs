@@ -700,13 +700,13 @@ public void _alterDirection(Vector3 alterNormal){
     int camArray = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    // int[] camAngs = new int[] {135,45,-45,-135};
-    // float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
-    // if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
-    //     angTarget = Rotation.y * -1;
-    //     ang = camAng;
-    //     angDelayFriction = true;
-    // }
+    int[] camAngs = new int[] {135,45,-45,-135};
+    float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
+    if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
+        angTarget = Rotation.y * -1;
+        ang = camAng;
+        angDelayFriction = true;
+    }
     for (int i = 0; i < dirSize; i++){
         dir[0,i] = wallbang.z;
         dir[1,i] = wallbang.x;

@@ -271,9 +271,6 @@ transform = Transform( -0.707107, 0, -0.702864, 0, 1, 0, 0.707107, 0, -0.702864,
 polygon = PoolVector2Array( -3, 1.5, -3, -5, 12, -5 )
 material = SubResource( 8 )
 
-[node name="restartTip" parent="envStarting/part1moving" instance=ExtResource( 7 )]
-transform = Transform( 0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -28.1714, 8.8, 92.2257 )
-
 [node name="part2jumping" type="Spatial" parent="envStarting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 0 )
 
@@ -319,8 +316,8 @@ transform = Transform( 6, 0, 0, 0, 2.5, 0, 0, 0, 1, -129.472, 1.1, -10 )
 [node name="obstacle3" parent="envStarting/part3boinging" instance=ExtResource( 9 )]
 transform = Transform( 6, 0, 0, 0, 2.65, 0, 0, 0, 1, -129.472, 1.6, -52 )
 
-[node name="camTip" parent="envStarting/part3boinging" instance=ExtResource( 7 )]
-transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -119.687, -9.9659, 70.9194 )
+[node name="restartTip" parent="envStarting/part3boinging" instance=ExtResource( 7 )]
+transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -132.687, -9.9659, 68.9194 )
 
 [node name="part4dashing" type="Spatial" parent="envStarting"]
 transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -132.831, 2, -85.5293 )
@@ -953,7 +950,7 @@ transform = Transform( -7.86792e-08, 0, 0.2, 0, 23, 0, -1.8, 0, -8.74238e-09, -8
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -61.965, -1.88645, 41.6703 )
 
 [node name="plat4" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 4 )]
-transform = Transform( 0.0262496, 0, 1.49994, 0, 0.2, 0, -2.99989, 0, 0.0131248, -63.8145, -3.64417, 52.6663 )
+transform = Transform( 0.0262496, 0, 1.49994, 0, 0.2, 0, -2.99989, 0, 0.0131248, -63.785, -3.644, 52.666 )
 
 [node name="fallWall" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 18 )]
 transform = Transform( -3, 0, -1.58151e-07, 0, 8, 0, 4.74452e-06, 0, -0.1, -63.85, -11.259, 58.75 )
