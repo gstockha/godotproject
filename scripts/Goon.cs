@@ -32,6 +32,7 @@ MeshInstance mesh;
 RayCast bottom;
 Vector3 spawnPoint;
 Spatial world;
+MeshInstance arrow;
 
 public override void _Ready(){
     pathTimer = GetNode<Timer>("PathTimer");
@@ -41,6 +42,7 @@ public override void _Ready(){
     mesh = GetNode<MeshInstance>("MeshInstance");
     bottom = GetNode<RayCast>("RayCast");
     world = GetNode<Spatial>("../../../World");
+    arrow = GetNode<MeshInstance>("Arrow");
     pathTimer.Start(1);
     squishSet[0] = mesh.Scale.x * 1.3F;
     squishSet[1] = mesh.Scale.y * .7F;

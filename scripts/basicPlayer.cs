@@ -272,32 +272,6 @@ public void _applyFriction(float delta){
     if (friction > 1) friction = 1;
 }
 
-public void _lockOn(bool lockOnTrue, float delta){
-    if (!lockOnTrue){// || IsInstanceValid(lockOn)){
-        lockOn = null;
-        camera.Call("_findLockOn", 0); //turn off lockOn on camera
-        return;
-    }
-    if (camLock == true) return;
-    if (lockOn == null){
-        if (moveDir[0] != 0 && !IsOnWall()){//(Math.Abs(moveDir[0]) > .05F){
-            float addAng = 0;
-            addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * (speed * .05F)) * .01F : ((moveDir[0] * 2) * (speed * .05F)) * .01F;
-            addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
-            ang += addAng * delta * 60;
-            Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
-        }
-        return;
-    }
-    Vector3 target = lockOn.Translation;
-    float oldRot = Rotation.y;
-    LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
-    float nuRot = Rotation.y;
-    Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
-    ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
-    //camera.Call("findClosestCamSet", RotationDegrees);
-}
-
 public void _applyShift(float delta, bool isGrounded){
     bool floorCastTouching = floorCast.IsColliding();
     if (shiftedDir != 0 && !shiftedLinger){ //on shift
@@ -693,6 +667,7 @@ public void _turnDelay(){
         angDelayFriction = true;
         camLock = false;
     }
+    else GD.Print(Mathf.Rad2Deg(ang)+180);
 }
 
 public void _alterDirection(Vector3 alterNormal){
@@ -700,17 +675,51 @@ public void _alterDirection(Vector3 alterNormal){
     int camArray = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    int[] camAngs = new int[] {135,45,-45,-135};
-    float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
-    if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
-        angTarget = Rotation.y * -1;
-        ang = camAng;
-        angDelayFriction = true;
-    }
+    #region set angTarget (DEFUNCT)
+    // int[] camAngs = new int[] {135,45,-45,-135};
+    // float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
+    // if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
+    //     float lastAng = myMath.roundTo(Mathf.Rad2Deg(ang), 100) + 180;
+    //     float targAng = camAngs[camArray] + 180;
+    //     string turnDir = "";
+    //     if (camArray == 1 || camArray == 2) turnDir = (lastAng < targAng) ? "right" : "left";
+    //     else if (camArray == 0) turnDir = (lastAng < targAng && lastAng > 225) ? "right" : "left";
+    //     else turnDir = (lastAng < targAng || lastAng > 315) ? "right" : "left";
+    //     angTarget = Rotation.y * -1;
+    //     angDelayFriction = true;
+    //     GD.Print(targAng);
+    //     ang = camAng;
+    // }
+    #endregion
     for (int i = 0; i < dirSize; i++){
         dir[0,i] = wallbang.z;
         dir[1,i] = wallbang.x;
     }
+}
+
+public void _lockOn(bool lockOnTrue, float delta){
+    if (!lockOnTrue){// || IsInstanceValid(lockOn)){
+        lockOn = null;
+        camera.Call("_findLockOn", 0); //turn off lockOn on camera
+        return;
+    }
+    if (lockOn == null){
+        if (camLock == false && moveDir[0] != 0 && !IsOnWall()){//(Math.Abs(moveDir[0]) > .05F){
+            float addAng = 0;
+            addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * (speed * .05F)) * .01F : ((moveDir[0] * 2) * (speed * .05F)) * .01F;
+            addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
+            ang += addAng * delta * 60;
+            Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
+        }
+        return;
+    }
+    Vector3 target = lockOn.Translation;
+    float oldRot = Rotation.y;
+    LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
+    float nuRot = Rotation.y;
+    Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
+    ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
+    //camera.Call("findClosestCamSet", RotationDegrees);
 }
 
 public void _jump(){
@@ -803,7 +812,7 @@ public void _jump(){
 public void _normalJump(){
 	boingCharge = false;
 	_drawMoveNote("jump");
-	yvelocity = jumpforce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 10) * .5F;
+	yvelocity = jumpforce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 7) * .5F;
 	squishReverb[0] = yvelocity * .035F;
 	preBoingTimer.Stop();
 	hasJumped = 2;
@@ -829,8 +838,8 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
         }
         else return;
         int i; //if your moveDir doesn't match your stickDir, override
-        if (Math.Sign(moveDir[0]) != Math.Sign(stickDir[0])) for (i = 0; i < dirSize; i++) dir[0,i] = stickDir[0] * friction;
-        if (Math.Sign(moveDir[1]) != Math.Sign(stickDir[1])) for (i = 0; i < dirSize; i++) dir[1,i] = stickDir[1] * friction;
+        if (Math.Sign(stickDir[0]) != 0 && Math.Sign(moveDir[0]) != Math.Sign(stickDir[0])) for (i = 0; i < dirSize; i++) dir[0,i] = 0;//stickDir[0] * friction;
+        if (Math.Sign(stickDir[1]) != 0 && Math.Sign(moveDir[1]) != Math.Sign(stickDir[1])) for (i = 0; i < dirSize; i++) dir[1,i] = 0;//stickDir[1] * friction;
         dashing = true;
     }
 }

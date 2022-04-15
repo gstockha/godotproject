@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
@@ -7,10 +7,9 @@
 [ext_resource path="res://src/moveNote.gd" type="Script" id=5]
 [ext_resource path="res://scenes/geography/wallBlock.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scenes/DefaultWorld.tscn" type="PackedScene" id=8]
+[ext_resource path="res://environments/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/worldFree.gd" type="Script" id=10]
-[ext_resource path="res://scenes/mobs/Goon.tscn" type="PackedScene" id=11]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -51,9 +50,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 4, 15 )
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 
 [node name="enemies" type="Spatial" parent="."]
-
-[node name="Goon" parent="enemies" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.5, 2 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
