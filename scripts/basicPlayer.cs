@@ -262,12 +262,13 @@ public void _applyFriction(float delta){
     float absx = Math.Abs(moveDir[0]);
     float absy = Math.Abs(moveDir[1]);
     friction = (absx > absy) ? absx : absy;
-    if (cameraFriction != 1){ //friction after turning camera
-        if (cameraFriction < 1){
-            friction *= cameraFriction;
-            cameraFriction += delta * (.1F + (tractionList[traction] * .0003F));
+    if (cameraFriction != 0){ //friction after turning camera (camera's lock on script)
+        GD.Print(cameraFriction);
+        for (i = 0; i < dirSize; i++){
+            dir[0,i] *= cameraFriction;
+            dir[1,i] *= cameraFriction;
         }
-        else cameraFriction = 1;
+        cameraFriction = 0;
     }
     if (friction > 1) friction = 1;
 }
@@ -652,6 +653,7 @@ public void _capSpeed(float high, float low){
 
 public void _turnDelay(){
     if (angTarget == 0) return;
+    GD.Print(angTarget);
     camLock = true;
     if (Math.Sign(ang) != Math.Sign(angTarget)){
         float add = myMath.findDegreeDistance(ang,angTarget);
@@ -667,7 +669,6 @@ public void _turnDelay(){
         angDelayFriction = true;
         camLock = false;
     }
-    else GD.Print(Mathf.Rad2Deg(ang)+180);
 }
 
 public void _alterDirection(Vector3 alterNormal){
@@ -699,12 +700,11 @@ public void _alterDirection(Vector3 alterNormal){
 
 public void _lockOn(bool lockOnTrue, float delta){
     if (!lockOnTrue){// || IsInstanceValid(lockOn)){
-        lockOn = null;
         camera.Call("_findLockOn", 0); //turn off lockOn on camera
         return;
     }
     if (lockOn == null){
-        if (camLock == false && moveDir[0] != 0 && !IsOnWall()){//(Math.Abs(moveDir[0]) > .05F){
+        if (camLock == false && moveDir[0] != 0 && !wallb){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
             addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * (speed * .05F)) * .01F : ((moveDir[0] * 2) * (speed * .05F)) * .01F;
             addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
@@ -717,9 +717,11 @@ public void _lockOn(bool lockOnTrue, float delta){
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
     float nuRot = Rotation.y;
-    Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
-    ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
-    //camera.Call("findClosestCamSet", RotationDegrees);
+    if (angTarget != 0) angTarget = nuRot * -1;
+    else{
+        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
+        ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
+    }
 }
 
 public void _jump(){
@@ -975,11 +977,7 @@ public void _dieNRespawn(){
         dir[1,i] = 0;
     }
     Translation = checkpoint.GlobalTransform.origin;
-    lockOn = null;
-    camLock = false;
-    angTarget = 0;
-    camera.Call("_findLockOn", 0); //turn off lockOn on camera
-    camera.Call("_auto_move_camera", 999, "O"); //go to default height
+    camera.Call("_setToDefaults"); //turn off player: lockOn, camLock, angTarget ; turn off cam: lockOn, heightMove, angMove, lerpMove
 }
 
 public void _on_deathtimer_timeout(){

@@ -198,7 +198,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 98.523, 18.104, 203.267 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 138.523, 73.104, -170.733 )
 
 [node name="envStarting" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.23, 26 )
@@ -739,7 +739,7 @@ transform = Transform( 0.1, 0, 0, 0, 12, 0, 0, 0, 1, -38.7012, -8.66695, -8 )
 transform = Transform( 9, 0, 0, 0, 1, 0, 0, 0, 3, -78.9986, -13, -8 )
 
 [node name="camerasetO-0" parent="envMainCourse/part2" instance=ExtResource( 13 )]
-transform = Transform( -1, 0, -1.50996e-07, 0, 1.5, 0, 1.50996e-07, 0, -1, -64, -5, -8 )
+transform = Transform( -1, 0, -2.26494e-07, 0, 2, 0, 1.50996e-07, 0, -1.5, -64, -3, -8 )
 
 [node name="obstacleStair4" type="StaticBody" parent="envMainCourse/part2" groups=["flats", "obstacles"]]
 transform = Transform( 8, 0, 0, 0, 1, 0, 0, 0, 6, -88.9813, -7.44425, -8.019 )

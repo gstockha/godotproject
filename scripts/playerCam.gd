@@ -184,11 +184,13 @@ func _process(delta: float) -> void:
 			translation.y = lerp(translation.y, targetY, .05)
 			rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
 			if (translation.y > targetY - .1 && translation.y < targetY + .1):
+				translation.y = targetY
 				if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
+					rotation_degrees.x = targetRotX
 					heightMove = false
 		if angMove:
 			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
-			if (player.ang > angMoveTarget - .01 && player.ang < angMoveTarget + .01):
+			if (player.ang > angMoveTarget - .02 && player.ang < angMoveTarget + .02):
 				player.ang = angMoveTarget
 				angMove = false
 		lerpMove = heightMove || angMove
@@ -197,9 +199,8 @@ func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
 		player.lockOn = null
 		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-		#player.rotation_degrees.y = camsets[camsetarray]
-		#player.ang = player.rotation.y * -1
 		player.angTarget = 0
+		player.camLock = false
 		if lockOn != null: lockOn.arrow.visible = false
 		lockOn = null
 		return
@@ -226,8 +227,13 @@ func _findLockOn(lockOnMode) -> void:
 	if (lockOn == null): return
 	player.lockOn = lockOn
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
-	player.ang = player.rotation.y * -1
+	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
+	moveAng = (moveAng + player.ang) / 2
+	#player.cameraFriction = 1 - ((findDegreeDistance(moveAng, player.rotation.y * -1) / deg2rad(180)) * .8)
+	player.angTarget = player.rotation.y * -1
+	#player.ang = player.rotation.y * -1
 	lockOn.arrow.visible = true
+	player.camLock = false
 
 func findClosestCamSet(rotation: float): #in degrees
 	if player.camLock: rotation = rad2deg(lastAng * -1)
@@ -272,7 +278,7 @@ func _auto_move_camera(target: int, direction: String) -> void:
 		if direction == "H":
 			if (target <= 3): target = 3 #some fuck shit
 			elif (target <= 6): target = 6
-			if (translation.y == baseY + target): return;
+			if (translation.y == baseY + target): return
 			targetY = baseY + target
 			targetRotX = baseRotX - target
 			heightMove = true
@@ -284,21 +290,25 @@ func _auto_move_camera(target: int, direction: String) -> void:
 			angMoveTarget = deg2rad(target - 180) #target goes to the angMove
 			angMove = true
 		elif direction == "O": #height animation reset
-			if (target != 999):
-				targetY = baseY
-				targetRotX = baseRotX
-				heightMove = true
-			else: #no animation reset (in the player death script)
-				translation.y = baseY
-				rotation_degrees.x = baseRotX
-				angMove = false
-				heightMove = false
-				lerpMove = false #turn the shit off
+			targetY = baseY
+			targetRotX = baseRotX
+			heightMove = true
+			angMove = false
 		elif direction == "A":
 			angMoveTarget = deg2rad(target - 180)
 			angMove = true
 	autoBuffer = false #tigger the buffer off
 
+func _setToDefaults() -> void:
+	player.lockOn = null
+	player.camLock = false
+	player.angTarget = 0
+	_findLockOn(0)
+	translation.y = baseY
+	rotation_degrees.x = baseRotX
+	heightMove = false
+	angMove = false
+	lerpMove = false
 
 func _on_bufferTimer_timeout():
 	bufferTimer.stop()
