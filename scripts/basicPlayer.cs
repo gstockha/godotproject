@@ -21,7 +21,6 @@ float ang = 0;
 float angTarget = 0;
 bool camLock = false;
 bool angDelayFriction = true; //player friction modifies angTarget lerping or not
-float cameraFriction = 1; //apply to friction after moving camera
 bool wallb = false;
 float wallbx = 0;
 float wallby = 0;
@@ -262,14 +261,6 @@ public void _applyFriction(float delta){
     float absx = Math.Abs(moveDir[0]);
     float absy = Math.Abs(moveDir[1]);
     friction = (absx > absy) ? absx : absy;
-    if (cameraFriction != 0){ //friction after turning camera (camera's lock on script)
-        GD.Print(cameraFriction);
-        for (i = 0; i < dirSize; i++){
-            dir[0,i] *= cameraFriction;
-            dir[1,i] *= cameraFriction;
-        }
-        cameraFriction = 0;
-    }
     if (friction > 1) friction = 1;
 }
 
@@ -653,7 +644,6 @@ public void _capSpeed(float high, float low){
 
 public void _turnDelay(){
     if (angTarget == 0) return;
-    GD.Print(angTarget);
     camLock = true;
     if (Math.Sign(ang) != Math.Sign(angTarget)){
         float add = myMath.findDegreeDistance(ang,angTarget);
