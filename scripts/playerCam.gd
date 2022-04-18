@@ -28,39 +28,43 @@ func _ready():
 	mesh.rotation_degrees.y = 45
 
 func _input(event: InputEvent) -> void:
-	if (event is InputEventMouseButton): #quick camera
-		if (lockOn != null): return
-		if event.is_pressed():
-			cam = 1
-			lastAng = -1 * player.rotation.y
-			print(rad2deg(player.ang)+180)
-		else:
-			cam = 0
-			player.camLock = false
-			player.ang = lastAng
-			player.rotation.y = lastAng * -1
-#			camsetarray = findClosestCamSet(player.rotation_degrees.y)
-			#stickMove = false
-#			player.angTarget = -1 * player.rotation.y
-	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
+#	if (event is InputEventMouseButton): #quick camera
+#		if (lockOn != null): return
+#		if event.is_pressed():
+#			cam = 1
+#			lastAng = -1 * player.rotation.y
+#		else:
+#			cam = 0
+#			player.camLock = false
+#			player.ang = lastAng
+#			player.rotation.y = lastAng * -1
+##			camsetarray = findClosestCamSet(player.rotation_degrees.y)
+#			#stickMove = false
+##			player.angTarget = -1 * player.rotation.y
+#	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
+	if event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		if (lockOn == null): _move_camera(event)
+		elif event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
+		elif event.is_action_pressed("pan_left"): _directionalLockOn("L", true)
 	elif (event.is_action_pressed("lock_on")): _findLockOn(lockOn)
 
 func _move_camera(evn) -> void:
+	print()
 	turnRate = 8
 	player.angDelayFriction = true
-	if ((evn is InputEventMouseMotion) and (cam == 1)): #free cam
-		player.rotate_y(-lerp(0, 1.0, evn.relative.x/300)) #needs to eventually just rotate camera not player
-#		if evn.relative.x < 0: turnDir = 'right'
-#		elif evn.relative.x: turnDir = 'left'
-#		player.angTarget = -1 * player.rotation.y
-		player.camLock = true
-#		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-		setDelay.stop()
-		setDelay.start(6)
-	elif (cam != 1):
+#	if ((evn is InputEventMouseMotion) and (cam == 1)): #free cam
+#		player.rotate_y(-lerp(0, 1.0, evn.relative.x/300)) #needs to eventually just rotate camera not player
+##		if evn.relative.x < 0: turnDir = 'right'
+##		elif evn.relative.x: turnDir = 'left'
+##		player.angTarget = -1 * player.rotation.y
+#		player.camLock = true
+##		camsetarray = findClosestCamSet(player.rotation_degrees.y)
+#		setDelay.stop()
+#		setDelay.start(6)
+#	elif (cam != 1):
+	if (cam != 1):
 		if player.rotation_degrees.y == camsets[camsetarray]:
-			if evn.is_action("pan_left"):
+			if evn.get_action_strength("pan_left") > 0:
 				turnDir = 'left'
 				if camsetarray < 3:
 					camsetarray += 1
@@ -68,7 +72,7 @@ func _move_camera(evn) -> void:
 				else:
 					camsetarray = 0
 					cam = 4
-			elif evn.is_action("pan_right"):
+			elif evn.get_action_strength("pan_right") > 0:
 				turnDir = 'right'
 				if camsetarray > 0:
 					camsetarray -= 1
@@ -83,7 +87,7 @@ func _move_camera(evn) -> void:
 			var set = false
 			var dist
 			var threshold = deg2rad(30)
-			if evn.is_action("pan_left"):
+			if evn.get_action_strength("pan_left") > 0:
 				turnDir = 'left'
 				while(!set):
 					if rot > -179: rot -= 1
@@ -95,7 +99,7 @@ func _move_camera(evn) -> void:
 								camsetarray = i
 								if (i == 0): cam = 4
 								else: cam = 2
-			elif evn.is_action("pan_right"):
+			elif evn.get_action_strength("pan_right") > 0:
 				turnDir = 'right'
 				while(!set):
 					if rot < 179: rot += 1
@@ -188,12 +192,13 @@ func _process(delta: float) -> void:
 func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
 		player.lockOn = null
-		camsetarray = findClosestCamSet(player.rotation_degrees.y)
+		player.ang = player.rotation.y * -1
 		player.angTarget = 0
 		player.camLock = false
 		if lockOn != null: lockOn.arrow.visible = false
 		lockOn = null
 		return
+	if lockOn != null: lockOn.arrow.visible = false
 	lockOn = null
 	var areas = []
 	for area in lockScanner.get_overlapping_areas():
@@ -216,7 +221,6 @@ func _findLockOn(lockOnMode) -> void:
 			if los["collider"].is_in_group("walls"): continue
 		checkDistance = myPoint.distance_to(enemy.global_transform.origin)
 		# adjacent priority (distFloor) > angle priority (angDist) > distance priority (distance)
-		print(checkDistance)
 		if (checkDistance < distance && angDist == 1) || checkDistance < distFloor:
 			#if closer than last and haven't set angle priority and haven't set adjacent priority
 			distance = checkDistance
@@ -233,7 +237,50 @@ func _findLockOn(lockOnMode) -> void:
 	player.lockOn = lockOn
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	player.angTarget = player.rotation.y * -1
-	#player.ang = player.rotation.y * -1
+	lockOn.arrow.visible = true
+	player.camLock = false
+
+func _directionalLockOn(direction: String, closest: bool) -> void:
+	var areas = []
+	var tempLockOn = null
+	var mobParent
+	for area in lockScanner.get_overlapping_areas():
+		mobParent = area.get_parent()
+		if (mobParent.name == player.name) || (lockOn != null && mobParent == lockOn): continue
+		areas.append(mobParent)
+	if len(areas) == 0: return
+	var spaceState = get_world().direct_space_state
+	var los
+	var angDist = 99 if closest else 0
+	var enemyAngDist = 0
+	var lastRot = player.rotation.y
+	player.look_at(Vector3(lockOn.translation.x,lockOn.translation.y,lockOn.translation.z),Vector3.UP)
+	var targAngle = player.rotation.y
+	player.rotation.y = lastRot
+	for enemy in areas:
+		if enemy.invincible == true: continue
+		los = spaceState.intersect_ray(player.translation, enemy.translation)
+		if (los.size() > 0):
+			if los["collider"].is_in_group("walls"): continue
+		player.look_at(Vector3(enemy.translation.x,enemy.translation.y,enemy.translation.z),Vector3.UP)
+		if (direction=="L"&&player.rotation.y+3>targAngle+3)||(direction=="R"&&player.rotation.y+3<targAngle+3):
+			enemyAngDist = findDegreeDistance(player.rotation.y, targAngle)
+			if (closest && enemyAngDist < angDist) || (!closest && enemyAngDist > angDist):
+				angDist = enemyAngDist
+				tempLockOn = enemy
+		player.rotation.y = lastRot
+	if tempLockOn == null:
+		if closest && direction == "R": _directionalLockOn("L", false)
+		elif closest && direction == "L": _directionalLockOn("R", false)
+		else:
+			lockOn = 0
+			_findLockOn(lockOn)
+		return
+	if lockOn != null: lockOn.arrow.visible = false
+	lockOn = tempLockOn
+	player.lockOn = lockOn
+	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
+	player.angTarget = player.rotation.y * -1
 	lockOn.arrow.visible = true
 	player.camLock = false
 

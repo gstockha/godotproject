@@ -31,7 +31,7 @@ Spatial target;
 MeshInstance mesh;
 RayCast bottom;
 Vector3 spawnPoint;
-Spatial world;
+Spatial parent;
 MeshInstance arrow;
 
 public override void _Ready(){
@@ -41,7 +41,7 @@ public override void _Ready(){
     target = GetNode<Spatial>("../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bottom = GetNode<RayCast>("RayCast");
-    world = GetNode<Spatial>("../../../World");
+    parent = GetNode<Spatial>("../../Enemies");
     arrow = GetNode<MeshInstance>("Arrow");
     pathTimer.Start(1);
     squishSet[0] = mesh.Scale.x * 1.3F;
@@ -110,7 +110,7 @@ public void _launch(float power, Vector3 cVec){
     pathTimer.Stop();
     deathTimer.Start(2);
     invincible = true;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", false, 0);
+    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
@@ -118,7 +118,7 @@ public void _squish(float power){ //check power vs health and all that here?
     pathTimer.Stop();
     deathTimer.Start(1.5F);
     invincible = true;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", false, 0);
+    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
 public void _on_PathTimer_timeout(){
@@ -162,10 +162,9 @@ public void _on_AngleChecker_timeout(){ //only fire infrequently
 }
 
 public void _on_DeathTimer_timeout(){
-    GD.Print("deleted!");
     QueueFree();
-    world.Call("_spawnMob", "goon", spawnPoint);
-    if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", false, 0);
+    parent.Call("_spawnTimerSet", "goon", spawnPoint, 2);
+    //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }
 
 }

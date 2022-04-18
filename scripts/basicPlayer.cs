@@ -181,7 +181,7 @@ public override void _PhysicsProcess(float delta){ //run physics
     }
     else _isBoinging(delta);
     _turnDelay();
-    _lockOn(true, delta);
+    _lockOn(false, delta);
 }
 
 public void _controller(float delta){
@@ -201,7 +201,7 @@ public void _controller(float delta){
     else if (wallb && !dashing) notWall = false;
     else if (dashing){
         mod = dashSpeed;
-        if (angTarget != 0 && lockOn == null) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized(); //alter direction vector
+        if (angTarget != 0) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized(); //alter direction vector
     }
     if (notWall){
         xvel = direction_ground.x * mod;
@@ -688,11 +688,7 @@ public void _alterDirection(Vector3 alterNormal){
     }
 }
 
-public void _lockOn(bool lockOnTrue, float delta){
-    if (!lockOnTrue){// || IsInstanceValid(lockOn)){
-        camera.Call("_findLockOn", 0); //turn off lockOn on camera
-        return;
-    }
+public void _lockOn(bool triggerScript, float delta){
     if (lockOn == null){
         if (camLock == false && moveDir[0] != 0 && !wallb){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
@@ -703,13 +699,20 @@ public void _lockOn(bool lockOnTrue, float delta){
         }
         return;
     }
+    if (triggerScript || !IsInstanceValid(lockOn)){// || IsInstanceValid(lockOn)){
+        camera.Call("_findLockOn", 0); //turn off lockOn on camera
+        return;
+    }
     Vector3 target = lockOn.Translation;
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
     float nuRot = Rotation.y;
-    if (angTarget != 0) angTarget = nuRot * -1;
+    if (angTarget != 0){
+        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z);
+        angTarget = nuRot * -1;
+    }
     else{
-        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z); 
+        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z);
         ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
     }
 }
