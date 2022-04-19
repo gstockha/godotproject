@@ -699,8 +699,8 @@ public void _lockOn(bool triggerScript, float delta){
         }
         return;
     }
-    if (triggerScript || !IsInstanceValid(lockOn)){// || IsInstanceValid(lockOn)){
-        camera.Call("_findLockOn", 0); //turn off lockOn on camera
+    if (triggerScript == true || IsInstanceValid(lockOn) == false){// || IsInstanceValid(lockOn)){
+        camera.Call("_findLockOn", new object{}); //turn off lockOn on camera node
         return;
     }
     Vector3 target = lockOn.Translation;

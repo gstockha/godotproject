@@ -204,7 +204,9 @@ func _findLockOn(lockOnMode) -> void:
 	for area in lockScanner.get_overlapping_areas():
 		if (area.get_parent().name == player.name): continue
 		areas.append(area.get_parent())
-	if len(areas) == 0: return
+	if len(areas) == 0:
+		_findLockOn(0)
+		return
 	var myPoint = player.global_transform.origin
 	var spaceState = get_world().direct_space_state
 	var los
@@ -233,10 +235,13 @@ func _findLockOn(lockOnMode) -> void:
 				angDist = enemyAngDist #trigger angle priorty
 				lockOn = enemy
 			player.rotation.y = lastRot
-	if (lockOn == null): return
+	if (lockOn == null):
+		_findLockOn(0)
+		return
 	player.lockOn = lockOn
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	player.angTarget = player.rotation.y * -1
+	player.rotation.y = lastRot
 	lockOn.arrow.visible = true
 	player.camLock = false
 
@@ -281,6 +286,7 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	player.lockOn = lockOn
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	player.angTarget = player.rotation.y * -1
+	player.rotation.y = lastRot
 	lockOn.arrow.visible = true
 	player.camLock = false
 
