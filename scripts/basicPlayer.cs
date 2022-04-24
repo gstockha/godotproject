@@ -1085,14 +1085,18 @@ public void _on_hitBox_area_exited(Area area){
 
 public void _collisionDamage(Node collisionNode){
     Godot.Collections.Array groups = collisionNode.GetGroups();
+    int damage;
+    bool notCrashing = (!dashing || weight <= baseWeight);
+    float vecx, vecz, power;
+    Vector3 launch;
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
             case("goons"):
+                #region
                 if ((bool)collisionNode.Get("invincible")) return;
-                int damage = (int)collisionNode.Get("damage");
+                damage = (int)collisionNode.Get("damage");
                 Vector3 vel = (Vector3)collisionNode.Get("velocity");
-                float power = (damage / baseWeight) * (.4F + (friction * .1F));
-                bool notCrashing = (!dashing || weight <= baseWeight);
+                power = (damage / baseWeight) * (.4F + (friction * .1F));
                 if (dashing){
                     if (notCrashing){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
@@ -1109,9 +1113,43 @@ public void _collisionDamage(Node collisionNode){
                     weight = baseWeight;
                     speed = speedCap;
                 }
-                Vector3 launch = (vel != Vector3.Zero) ? new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F) : new Vector3(velocity.x * -1, 0, velocity.z * -1);
+                if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F);
+                else{
+                    vecx = (velocity.x != 0) ? velocity.x : .1F;
+                    vecz = (velocity.z != 0) ? velocity.z : .1F;
+                    launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
+                }
                 _launch(launch, power, notCrashing);
                 break;
+                #endregion
+            case("moles"):
+                #region
+                if ((bool)collisionNode.Get("invincible")) return;
+                power = baseWeight * (.4F + (friction * .1F)) * 25;
+                Timer springTimer = (Timer)collisionNode.Get("springTimer");
+                if (!springTimer.IsStopped()) power *= 3;
+                if (dashing){
+                    if (notCrashing){
+                        collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
+                        float weightPowerMod = 1 - (baseWeight * .3F);
+                        if (weightPowerMod > 1) weightPowerMod = 1;
+                        power *= weightPowerMod; //don't send me as far
+                    }
+                    else{
+                        collisionNode.Call("_squish", power); //crashing
+                        power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
+                    }
+                    dashtimer.Stop();
+                    dashing = false;
+                    weight = baseWeight;
+                    speed = speedCap;
+                }
+                vecx = (velocity.x != 0) ? velocity.x : .1F;
+                vecz = (velocity.z != 0) ? velocity.z : .1F;
+                launch = new Vector3(vecx * -1 * power * 2, 0, vecz * -1 * power * 2).Normalized();
+                _launch(launch, power, notCrashing);
+                break;
+                #endregion
             }
     }
 }

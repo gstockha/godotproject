@@ -11,7 +11,7 @@ int damage = 20;
 float speed = 9;
 float ang = 0;
 bool invincible = false; //in air
-bool stunned = false; //not super necessary, just used to determine if we should move the mesh up or not
+bool stunned = false; //if we just got hit or not (relevant if we don't die in 1 hit)
 enum states{
     alert,
     search,
@@ -60,14 +60,7 @@ public override void _PhysicsProcess(float delta){
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 25 * delta;
-        if (IsOnFloor()){
-            // stunned = true;
-            // state = states.alert;
-            // pathTimer.Start(3);
-            // invincible = false;
-            deathTimer.Stop();
-            _on_DeathTimer_timeout();
-        }
+        if (IsOnFloor()) _on_DeathTimer_timeout();
         else if (IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
             if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
@@ -162,6 +155,7 @@ public void _on_AngleChecker_timeout(){ //only fire infrequently
 }
 
 public void _on_DeathTimer_timeout(){
+    deathTimer.Stop();
     QueueFree();
     parent.Call("_spawnTimerSet", "goon", spawnPoint, 2);
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);

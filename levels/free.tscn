@@ -10,7 +10,7 @@
 [ext_resource path="res://environments/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/Enemies.gd" type="Script" id=10]
-[ext_resource path="res://scenes/mobs/Goon.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/mobs/Mole.tscn" type="PackedScene" id=11]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -52,13 +52,8 @@ transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 [node name="Enemies" type="Spatial" parent="."]
 script = ExtResource( 10 )
 
-[node name="Goon" parent="Enemies" instance=ExtResource( 11 )]
-
-[node name="Goon2" parent="Enemies" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.5, 2 )
-
-[node name="Goon3" parent="Enemies" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 5 )
+[node name="Mole" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )

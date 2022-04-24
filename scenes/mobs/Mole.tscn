@@ -1,18 +1,31 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://scripts/Mole.cs" type="Script" id=1]
+
+[sub_resource type="CylinderShape" id=3]
 
 [sub_resource type="BoxShape" id=1]
 
 [sub_resource type="CylinderMesh" id=2]
-
-[sub_resource type="CylinderShape" id=3]
 
 [sub_resource type="SpatialMaterial" id=4]
 albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="PrismMesh" id=5]
 
-[node name="Mole" type="KinematicBody"]
+[node name="Mole" type="KinematicBody" groups=["mobs", "moles"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+collision_layer = 4
+script = ExtResource( 1 )
+
+[node name="Hitbox" type="Area" parent="." groups=["mobs"]]
+collision_layer = 0
+collision_mask = 6
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="Hitbox"]
+transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, 0, 0 )
+shape = SubResource( 3 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 0.5, 0, 0, 0, 0.8, 0, 0, 0, 0.5, 0, 0, 0 )
@@ -23,14 +36,16 @@ transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, 0, 0 )
 mesh = SubResource( 2 )
 material/0 = null
 
-[node name="Hitbox" type="Area" parent="."]
-monitoring = false
-
-[node name="CollisionShape" type="CollisionShape" parent="Hitbox"]
-transform = Transform( 0.6, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, 0, 0 )
-shape = SubResource( 3 )
-
 [node name="DeathTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="BurrowTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="ShootTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="SpringTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="Arrow" type="MeshInstance" parent="."]
@@ -40,3 +55,7 @@ material_override = SubResource( 4 )
 cast_shadow = 0
 mesh = SubResource( 5 )
 material/0 = null
+
+[connection signal="timeout" from="DeathTimer" to="." method="_on_DeathTimer_timeout"]
+[connection signal="timeout" from="BurrowTimer" to="." method="_on_BurrowTimer_timeout"]
+[connection signal="timeout" from="ShootTimer" to="." method="_on_ShootTimer_timeout"]
