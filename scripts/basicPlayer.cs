@@ -645,10 +645,9 @@ public void _capSpeed(float high, float low){
 public void _turnDelay(){
     if (angTarget == 0) return;
     camLock = true;
-    if (Math.Sign(ang) != Math.Sign(angTarget)){
+    if (lockOn == null && Math.Sign(ang) != Math.Sign(angTarget)){
         float add = myMath.findDegreeDistance(ang,angTarget);
-        string turnDir = (string)camera.Get("turnDir");
-        if (turnDir == "left") add *= -1;
+        if ((string)camera.Get("turnDir") == "left") add *= -1;
         ang = angTarget + add;
     }
     if (angDelayFriction) ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[traction] * .0007F)));
@@ -692,8 +691,8 @@ public void _lockOn(bool triggerScript, float delta){
     if (lockOn == null){
         if (camLock == false && moveDir[0] != 0 && !wallb){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
-            addAng += (stickDir[0] == 0) ? ((moveDir[0] * 2) * (speed * .05F)) * .01F : ((moveDir[0] * 2) * (speed * .05F)) * .01F;
-            addAng *= (moveDir[1] > 0) ?  1 + moveDir[1] : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
+            addAng += ((moveDir[0] * 2) * (speed * .05F)) * .01F;
+            addAng *= (moveDir[1] > 0) ?  1 + (moveDir[1] * 1.1F) : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
             ang += addAng * delta * 60;
             Rotation = new Vector3(Rotation.x, ang * -1, Rotation.z);
         }
@@ -706,14 +705,13 @@ public void _lockOn(bool triggerScript, float delta){
     Vector3 target = lockOn.Translation;
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
-    float nuRot = Rotation.y;
-    if (angTarget != 0){
-        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z);
-        angTarget = nuRot * -1;
+    if (angTarget != 0 && !dashing){
+        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
+        angTarget = Rotation.y * -1;
     }
     else{
-        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, nuRot, .015F + (tractionList[traction] * .0007F)), Rotation.z);
-        ang = (dashing == false) ? Rotation.y * -1 : nuRot * -1; //lock target for dashing / crashing
+        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
+        ang = Rotation.y * -1;
     }
 }
 
@@ -1026,7 +1024,7 @@ public void _on_hitBox_area_entered(Area area){
                         controlNames["speedrun"] + " to start speedrun mode";
                         break;
                     case "boingTip": str = "Hold " + controlNames["jump"] + "\nto Chargejump"; break;
-                    case "boingTip2": str = "The more you squish,\nthe higher you boing!"; break;
+                    case "boingTip2": str = "Pro tip: Holding " + controlNames["jump"] + " will help you\nget the most out of your jumps!"; break;
                     case "dashTip": str = controlNames["dash"] + " to Dash"; break;
                     case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
                     //case "slideTip2": str = "You can slide super far on glass!"; break;

@@ -49,7 +49,6 @@ func _input(event: InputEvent) -> void:
 	elif (event.is_action_pressed("lock_on")): _findLockOn(lockOn)
 
 func _move_camera(evn) -> void:
-	print()
 	turnRate = 8
 	player.angDelayFriction = true
 #	if ((evn is InputEventMouseMotion) and (cam == 1)): #free cam
@@ -191,9 +190,10 @@ func _process(delta: float) -> void:
 
 func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
-		player.lockOn = null
+		if player.lockOn != null:
+			player.lockOn = null
+			player.angTarget = 0
 		player.ang = player.rotation.y * -1
-		player.angTarget = 0
 		player.camLock = false
 		if lockOn != null: lockOn.arrow.visible = false
 		lockOn = null
@@ -211,9 +211,9 @@ func _findLockOn(lockOnMode) -> void:
 	var spaceState = get_world().direct_space_state
 	var los
 	var distance = 9999
-	var angDist = 1
+	var angDist = .5
 	var checkDistance
-	var distFloor = 10
+	var distFloor = 15
 	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
 	var lastRot = player.rotation.y
 	for enemy in areas:
@@ -223,12 +223,12 @@ func _findLockOn(lockOnMode) -> void:
 			if los["collider"].is_in_group("walls"): continue
 		checkDistance = myPoint.distance_to(enemy.global_transform.origin)
 		# adjacent priority (distFloor) > angle priority (angDist) > distance priority (distance)
-		if (checkDistance < distance && angDist == 1) || checkDistance < distFloor:
+		if (checkDistance < distance && angDist == .5) || checkDistance < distFloor:
 			#if closer than last and haven't set angle priority and haven't set adjacent priority
 			distance = checkDistance
 			lockOn = enemy
 			if checkDistance < distFloor: distFloor = checkDistance #trigger adjacent target priority
-		elif distFloor == 10: #if haven't triggered close target yet
+		elif distFloor == 15: #if haven't triggered close target yet
 			player.look_at(Vector3(enemy.translation.x,enemy.translation.y,enemy.translation.z),Vector3.UP)
 			var enemyAngDist = findDegreeDistance(lastRot, player.rotation.y)
 			if enemyAngDist < angDist:
@@ -240,6 +240,7 @@ func _findLockOn(lockOnMode) -> void:
 		return
 	player.lockOn = lockOn
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
+	if player.angTarget != 0: player.ang = player.angTarget
 	player.angTarget = player.rotation.y * -1
 	player.rotation.y = lastRot
 	lockOn.arrow.visible = true
