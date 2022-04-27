@@ -53,7 +53,19 @@ transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 script = ExtResource( 10 )
 
 [node name="Mole" parent="Enemies" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 3, -4 )
+
+[node name="Mole2" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 3, 7 )
+
+[node name="Mole3" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 3, 0 )
+
+[node name="Mole4" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 3, 3 )
+
+[node name="Mole5" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 3, 3 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )

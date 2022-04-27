@@ -3,7 +3,7 @@ using System;
 
 public class Mole : KinematicBody
 {
-int aggroRange = 30;
+int aggroRange = 40;
 bool invincible = false;
 enum states{
     search,
@@ -25,7 +25,9 @@ Vector3 launchVec;
 float yvelocity;
 Spatial target;
 Spatial parent;
+PackedScene bullet;
 MeshInstance mesh;
+Position3D shooter;
 MeshInstance arrow;
 
 public override void _Ready(){
@@ -36,7 +38,9 @@ public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
     target = GetNode<Spatial>("../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
+    bullet = (PackedScene)GD.Load("res://scenes/mobs/Bullet.tscn");
     parent = GetNode<Spatial>("../../Enemies");
+    shooter = GetNode<Position3D>("Shooter");
     arrow = GetNode<MeshInstance>("Arrow");
     meshY = mesh.Scale.y;
     squishSet[0] = mesh.Scale.x * 1.7F;
@@ -93,6 +97,11 @@ public void _on_BurrowTimer_timeout(){
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) state = states.search;
     else if (state == states.search || state == states.burrowed){
         state = states.attack;
+        Vector3 oldRot = Rotation;
+        float nuRot;
+        LookAt(target.Translation, Vector3.Up);
+        nuRot = Rotation.y;
+        Rotation = new Vector3(oldRot.x, nuRot, oldRot.z);
         shootTimer.Start(.5F);
     }
     else if (state == states.attack){
@@ -107,7 +116,11 @@ public void _on_BurrowTimer_timeout(){
 public void _on_ShootTimer_timeout(){
     shootTimer.Stop();
     if (state != states.attack) return;
-    //shoot here
+    Area blt = (Area)bullet.Instance();
+    parent.AddChild(blt);
+    blt.Translation = shooter.GlobalTransform.origin;
+    blt.RotateY(Rotation.y);
+    blt.Set("trajectory", Rotation.y);
 }
 
 public void _on_DeathTimer_timeout(){

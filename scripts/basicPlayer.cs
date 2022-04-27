@@ -988,6 +988,7 @@ public void _on_hitBox_area_entered(Area area){
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
             case "mobs": _collisionDamage(area.Owner); break;
+            case "hurts": _collisionDamage(area); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
                 if (!area.Name.BeginsWith("delay")) _dieNRespawn();
@@ -1125,13 +1126,13 @@ public void _collisionDamage(Node collisionNode){
             case("moles"):
                 #region
                 if ((bool)collisionNode.Get("invincible")) return;
-                power = baseWeight * (.4F + (friction * .1F)) * 25;
+                power = baseWeight * .5F * 25;
                 Timer springTimer = (Timer)collisionNode.Get("springTimer");
                 if (!springTimer.IsStopped()) power *= 3;
                 if (dashing){
                     if (notCrashing){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
-                        float weightPowerMod = 1 - (baseWeight * .3F);
+                        float weightPowerMod = 1 - (baseWeight * .5F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
                     }
@@ -1148,6 +1149,17 @@ public void _collisionDamage(Node collisionNode){
                 vecz = (velocity.z != 0) ? velocity.z : .1F;
                 launch = new Vector3(vecx * -1 * power * 2, 0, vecz * -1 * power * 2).Normalized();
                 _launch(launch, power, notCrashing);
+                break;
+                #endregion
+            case("hurts"):
+                #region
+                if ((bool)collisionNode.Get("invincible")) return;
+                damage = (int)collisionNode.Get("power");
+                vecx = Mathf.Rad2Deg((float)collisionNode.Get("trajectory"));
+                Vector2 trajectory = new Vector2((float)Math.Cos(vecx) * -1, (float)Math.Sin(vecx) * -1);
+                power = baseWeight * .5F * 25;
+                launch = new Vector3(trajectory.x * power, 0, trajectory.y * power);
+                _launch(launch, power, true);
                 break;
                 #endregion
             }
