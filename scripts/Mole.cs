@@ -86,7 +86,7 @@ public void _squish(float power){ //check power vs health and all that here?
 public void _on_BurrowTimer_timeout(){
     burrowTimer.Stop();
     //if (state == states.launched || state == states.squished) return;
-    burrowTimer.Start(2);
+    burrowTimer.Start(2.5F);
     if (state == states.burrowed){
         if (springTimer.IsStopped()) springTimer.Start(.1F);
         hitbox.Monitorable = true;
@@ -120,7 +120,6 @@ public void _on_ShootTimer_timeout(){
     parent.AddChild(blt);
     blt.Translation = shooter.GlobalTransform.origin;
     blt.RotateY(Rotation.y);
-    blt.Set("trajectory", Rotation.y);
 }
 
 public void _on_DeathTimer_timeout(){

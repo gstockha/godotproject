@@ -3,11 +3,8 @@ onready var deleteTimer = $DeleteTimer
 export var speed = 40
 export var duration = 5
 export var power = 10
-var invincible = true
-var trajectory = 0
 
 func _ready():
-	invincible = false
 	deleteTimer.start(duration)
 
 func _physics_process(delta):

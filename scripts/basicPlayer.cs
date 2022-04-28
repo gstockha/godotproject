@@ -848,6 +848,12 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
         boingCharge = false;
     }
     #endregion
+    if (dashing){
+        dashtimer.Stop();
+        dashing = false;
+        weight = baseWeight;
+        speed = speedCap;
+    }
     if (alterDir){
         wallb = true;
         wallbx = launchVec.x;
@@ -856,6 +862,7 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
         _alterDirection(launchVec.Normalized());
     }
     yvelocity = power;
+    hasJumped = yvelocity >= (bounceBase * jumpforce) ? 1 : hasJumped; //soft has jumped else what it was
     _squishNScale((gravity * .017F), new Vector3(0,0,0), true);
     squishSet = false;
     squishReverb[0] = power * .08F;
@@ -987,7 +994,7 @@ public void _on_hitBox_area_entered(Area area){
     Godot.Collections.Array groups = area.GetGroups();
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
-            case "mobs": _collisionDamage(area.Owner); break;
+            case "mobs": _collisionDamage((Spatial)area.Owner); break;
             case "hurts": _collisionDamage(area); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
@@ -1084,7 +1091,7 @@ public void _on_hitBox_area_exited(Area area){
     }
 }
 
-public void _collisionDamage(Node collisionNode){
+public void _collisionDamage(Spatial collisionNode){
     Godot.Collections.Array groups = collisionNode.GetGroups();
     int damage;
     bool notCrashing = (!dashing || weight <= baseWeight);
@@ -1109,10 +1116,6 @@ public void _collisionDamage(Node collisionNode){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
                     }
-                    dashtimer.Stop();
-                    dashing = false;
-                    weight = baseWeight;
-                    speed = speedCap;
                 }
                 if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F);
                 else{
@@ -1153,13 +1156,13 @@ public void _collisionDamage(Node collisionNode){
                 #endregion
             case("hurts"):
                 #region
-                if ((bool)collisionNode.Get("invincible")) return;
+                //if ((bool)collisionNode.Get("invincible")) return;
                 damage = (int)collisionNode.Get("power");
-                vecx = Mathf.Rad2Deg((float)collisionNode.Get("trajectory"));
-                Vector2 trajectory = new Vector2((float)Math.Cos(vecx) * -1, (float)Math.Sin(vecx) * -1);
+                Vector3 bltTrajectory = collisionNode.Translation.Normalized();
                 power = baseWeight * .5F * 25;
-                launch = new Vector3(trajectory.x * power, 0, trajectory.y * power);
+                launch = new Vector3(bltTrajectory.x * power, 0, bltTrajectory.z * power);
                 _launch(launch, power, true);
+                collisionNode.Call("_on_DeleteTimer_timeout");
                 break;
                 #endregion
             }
