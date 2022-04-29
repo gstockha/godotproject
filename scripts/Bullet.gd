@@ -3,6 +3,7 @@ onready var deleteTimer = $DeleteTimer
 export var speed = 40
 export var duration = 5
 export var power = 10
+var trajectory = Vector3.ZERO
 
 func _ready():
 	deleteTimer.start(duration)

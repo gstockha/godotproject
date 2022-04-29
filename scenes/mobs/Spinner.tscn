@@ -1,0 +1,60 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scenes/mobs/Spinner.cs" type="Script" id=1]
+
+[sub_resource type="CylinderShape" id=9]
+
+[sub_resource type="BoxShape" id=5]
+
+[sub_resource type="SpatialMaterial" id=7]
+albedo_color = Color( 1, 0, 0, 1 )
+
+[sub_resource type="PrismMesh" id=8]
+
+[node name="Spinner" type="KinematicBody" groups=["goons", "mobs"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+collision_layer = 4
+script = ExtResource( 1 )
+
+[node name="Hitbox" type="Area" parent="." groups=["mobs"]]
+transform = Transform( 1, 0, 0, 0, 0.7, 0, 0, 0, 1, 0, 1, 0 )
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="Hitbox"]
+shape = SubResource( 9 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 1, 0 )
+shape = SubResource( 5 )
+
+[node name="CSGCylinder" type="CSGCylinder" parent="."]
+transform = Transform( 1, 0, 0, 0, -1, -8.74228e-08, 0, 8.74228e-08, -1, 0, 0.8, 0 )
+height = 1.5
+sides = 6
+cone = true
+
+[node name="PathTimer" type="Timer" parent="."]
+wait_time = 6.0
+
+[node name="DeathTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="AngleChecker" type="Timer" parent="."]
+
+[node name="RayCast" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1.5, 0, 0, 0, 1, 0, 0, 0 )
+enabled = true
+
+[node name="Arrow" type="MeshInstance" parent="."]
+transform = Transform( -0.3, 4.52987e-08, 0, -4.52987e-08, -0.3, 0, 0, 0, 0.3, 0, 3, 0 )
+visible = false
+material_override = SubResource( 7 )
+cast_shadow = 0
+mesh = SubResource( 8 )
+material/0 = null
+
+[connection signal="timeout" from="PathTimer" to="." method="_on_PathTimer_timeout"]
+[connection signal="timeout" from="DeathTimer" to="." method="_on_DeathTimer_timeout"]
+[connection signal="timeout" from="AngleChecker" to="." method="_on_AngleChecker_timeout"]

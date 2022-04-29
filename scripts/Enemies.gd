@@ -1,7 +1,7 @@
 extends Spatial
 
 onready var player = get_node("../playerNode/PlayerBall")
-var enemyList = {
+var enemyNodes = {
 	"goon": load("res://scenes/mobs/Goon.tscn"),
 	"mole": load("res://scenes/mobs/Mole.tscn")
 }
@@ -18,8 +18,9 @@ var enemies = ["goon", "mole"]
 func _ready():
 	var childName
 	for child in get_children():
+		childName = child.name.to_lower()
 		for enemy in enemies:
-			if child.name.to_lower().begins_with(enemy):
+			if childName.begins_with(enemy):
 				enemyCount[enemy][0] += 1
 				enemyCount[enemy][1] += 1
 				break
@@ -28,7 +29,7 @@ func _ready():
 			enemyPoints[enemies[i]].append(Vector3.ZERO)
 
 func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
-	var spawnedEnemy = enemyList[mobName].instance()
+	var spawnedEnemy = enemyNodes[mobName].instance()
 	add_child(spawnedEnemy)
 	spawnedEnemy.global_transform.origin = point
 	spawnedEnemy.spawnPoint = point

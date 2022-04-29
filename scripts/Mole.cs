@@ -120,6 +120,7 @@ public void _on_ShootTimer_timeout(){
     parent.AddChild(blt);
     blt.Translation = shooter.GlobalTransform.origin;
     blt.RotateY(Rotation.y);
+    blt.Set("trajectory", blt.Translation);
 }
 
 public void _on_DeathTimer_timeout(){

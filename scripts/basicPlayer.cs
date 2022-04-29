@@ -201,7 +201,9 @@ public void _controller(float delta){
     else if (wallb && !dashing) notWall = false;
     else if (dashing){
         mod = dashSpeed;
-        if (angTarget != 0) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized(); //alter direction vector
+        if (angTarget != 0){ //alter direction vector
+            if (lockOn == null || myMath.findDegreeDistance(ang,angTarget) < 2) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized();
+        }
     }
     if (notWall){
         xvel = direction_ground.x * mod;
@@ -705,14 +707,11 @@ public void _lockOn(bool triggerScript, float delta){
     Vector3 target = lockOn.Translation;
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
-    if (angTarget != 0 && !dashing){
-        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
-        angTarget = Rotation.y * -1;
-    }
-    else{
-        Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
-        ang = Rotation.y * -1;
-    }
+    if (angTarget == 0 && myMath.findDegreeDistance(oldRot, Rotation.y) < 2) ang = Rotation.y * -1;
+    angTarget = Rotation.y * -1;
+    Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
+    //if (angTarget != 0 && !dashing) Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
+    //else Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
 }
 
 public void _jump(){
@@ -1158,9 +1157,9 @@ public void _collisionDamage(Spatial collisionNode){
                 #region
                 //if ((bool)collisionNode.Get("invincible")) return;
                 damage = (int)collisionNode.Get("power");
-                Vector3 bltTrajectory = collisionNode.Translation.Normalized();
+                Vector3 bltTrajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
                 power = baseWeight * .5F * 25;
-                launch = new Vector3(bltTrajectory.x * power, 0, bltTrajectory.z * power);
+                launch = new Vector3(bltTrajectory.x * -1 * power, 0, bltTrajectory.z * -1 * power);
                 _launch(launch, power, true);
                 collisionNode.Call("_on_DeleteTimer_timeout");
                 break;
