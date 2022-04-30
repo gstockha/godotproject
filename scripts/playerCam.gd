@@ -145,6 +145,8 @@ func _process(delta: float) -> void:
 			#else: player.rotation_degrees.y = -134
 		player.angTarget = -1 * player.rotation.y
 		if cam == 0:
+			turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
+			player.call("_applyFriction", 0, .5)
 			if customset != 0:
 				cam = customset
 				customset = 0
@@ -171,6 +173,7 @@ func _process(delta: float) -> void:
 		player.camLock = false
 		player.rotation.y = lastAng * -1
 #		player.angTarget = -1 * player.rotation.y
+#		player.call("_applyFriction", 0, .5)
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 	if lerpMove:
 		if heightMove:

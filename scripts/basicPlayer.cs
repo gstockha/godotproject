@@ -190,7 +190,7 @@ public void _controller(float delta){
         stickDir[1] = Mathf.Round(Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
     }
     moving = (stickDir[0] != 0 || stickDir[1] != 0);
-    _applyFriction(delta);
+    _applyFriction(delta, 1);
     direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(ang).Normalized();
     float xvel = 0;
     float yvel = 0;
@@ -202,7 +202,7 @@ public void _controller(float delta){
     else if (dashing){
         mod = dashSpeed;
         if (angTarget != 0){ //alter direction vector
-            if (lockOn == null || myMath.findDegreeDistance(ang,angTarget) < 2) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized();
+            if (lockOn == null || myMath.findDegreeDistance(ang,angTarget) < 1.5F) direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(angTarget).Normalized();
         }
     }
     if (notWall){
@@ -223,17 +223,18 @@ public void _controller(float delta){
     if (xvel != 0 || yvel != 0) _rotateMesh(xvel,yvel,delta);
 }
 
-public void _applyFriction(float delta){
+public void _applyFriction(float delta, float camDrag){
     int current = dirSize - 1;
     int i;
     for (i = 0; i < current; i++){
-        dir[0,i] = dir[0,i+1];
-        dir[1,i] = dir[1,i+1];
+        dir[0,i] = dir[0,i+1] * camDrag;
+        dir[1,i] = dir[1,i+1] * camDrag;
     }
-    dir[0,current] = stickDir[0];
-    dir[1,current] = stickDir[1];
+    dir[0,current] = stickDir[0] * camDrag;
+    dir[1,current] = stickDir[1] * camDrag;
     dir[0,current] = myMath.array2dMean(dir, 0);
     dir[1,current] = myMath.array2dMean(dir, 1);
+    if (camDrag != 1) return;
     int signdir = 0;
     if (moving){
         moveDir[0] = myMath.array2dMean(dir,0);
@@ -494,7 +495,7 @@ public void _isBoinging(float delta){
             if (offset > 1) offset = 1;
             stickDir[0] *= (1 - jumpratio);
             stickDir[1] *= (1 - jumpratio);
-            _applyFriction(delta);
+            _applyFriction(delta, 1);
             float spd = speed * friction * (bounceBase * offset);
             if (boingDash){
                 float dashSpd = (dashSpeed*friction*(dashSpeed/speedCap))*(bounceBase*offset);
@@ -654,7 +655,8 @@ public void _turnDelay(){
     }
     if (angDelayFriction) ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[traction] * .0007F)));
     else ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[0] * .0007F)));
-    if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
+    int roundValue = (lockOn == null) ? 10 : 50;
+    if (myMath.roundTo(ang,roundValue) == myMath.roundTo(angTarget,roundValue)){
         ang = angTarget;
         angTarget = 0;
         angDelayFriction = true;
@@ -707,11 +709,9 @@ public void _lockOn(bool triggerScript, float delta){
     Vector3 target = lockOn.Translation;
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
-    if (angTarget == 0 && myMath.findDegreeDistance(oldRot, Rotation.y) < 2) ang = Rotation.y * -1;
+    //if (angTarget == 0 && myMath.findDegreeDistance(oldRot, Rotation.y) < 1.5F) ang = Rotation.y * -1;
     angTarget = Rotation.y * -1;
     Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
-    //if (angTarget != 0 && !dashing) Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
-    //else Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(oldRot, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
 }
 
 public void _jump(){
