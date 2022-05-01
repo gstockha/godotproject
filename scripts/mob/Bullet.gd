@@ -1,6 +1,6 @@
 extends Area
 onready var deleteTimer = $DeleteTimer
-export var speed = 40
+export var speed = 45
 export var duration = 5
 export var power = 10
 var trajectory = Vector3.ZERO

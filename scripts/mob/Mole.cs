@@ -4,7 +4,7 @@ using System;
 public class Mole : KinematicBody
 {
 int aggroRange = 40;
-bool invincible = false;
+int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 enum states{
     search,
     attack,
@@ -70,7 +70,7 @@ public void _launch(float power, Vector3 cVec){
     yvelocity = power;
     burrowTimer.Stop();
     deathTimer.Start(2);
-    invincible = true;
+    vulnerableClass = 0;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
@@ -78,7 +78,7 @@ public void _squish(float power){ //check power vs health and all that here?
     state = states.squished;
     burrowTimer.Stop();
     deathTimer.Start(1.5F);
-    invincible = true;
+    vulnerableClass = 0;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
@@ -90,7 +90,7 @@ public void _on_BurrowTimer_timeout(){
     if (state == states.burrowed){
         if (springTimer.IsStopped()) springTimer.Start(.1F);
         hitbox.Monitorable = true;
-        invincible = false;
+        vulnerableClass = 2;
         mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
         mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y + 1, mesh.Translation.z);
     }
@@ -107,7 +107,7 @@ public void _on_BurrowTimer_timeout(){
     else if (state == states.attack){
         state = states.burrowed;
         hitbox.Monitorable = false;
-        invincible = true;
+        vulnerableClass = 0;
         mesh.Scale = new Vector3(mesh.Scale.x, 0.1F, mesh.Scale.z);
         mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1, mesh.Translation.z);
     }

@@ -198,7 +198,7 @@ func _findLockOn(lockOnMode) -> void:
 			player.angTarget = 0
 		player.ang = player.rotation.y * -1
 		player.camLock = false
-		if lockOn != null: lockOn.arrow.visible = false
+		if lockOn != null && is_instance_valid(lockOn): lockOn.arrow.visible = false
 		lockOn = null
 		return
 	if lockOn != null: lockOn.arrow.visible = false
@@ -216,11 +216,11 @@ func _findLockOn(lockOnMode) -> void:
 	var distance = 9999
 	var angDist = .5
 	var checkDistance
-	var distFloor = 15
+	var distFloor = 17
 	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
 	var lastRot = player.rotation.y
 	for enemy in areas:
-		if enemy.invincible == true: continue
+		if enemy.vulnerableClass == 0: continue
 		los = spaceState.intersect_ray(player.translation, enemy.translation)
 		if (los.size() > 0):
 			if los["collider"].is_in_group("walls"): continue
@@ -267,7 +267,7 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	var targAngle = player.rotation.y
 	player.rotation.y = lastRot
 	for enemy in areas:
-		if enemy.invincible == true: continue
+		if enemy.vulnerableClass == 0: continue
 		los = spaceState.intersect_ray(player.translation, enemy.translation)
 		if (los.size() > 0):
 			if los["collider"].is_in_group("walls"): continue

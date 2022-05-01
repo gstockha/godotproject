@@ -3,17 +3,20 @@ extends Spatial
 onready var player = get_node("../playerNode/PlayerBall")
 var enemyNodes = {
 	"goon": load("res://scenes/mobs/Goon.tscn"),
-	"mole": load("res://scenes/mobs/Mole.tscn")
+	"mole": load("res://scenes/mobs/Mole.tscn"),
+	"spinner": load("res://scenes/mobs/Spinner.tscn")
 }
 var enemyCount = {
 	"goon": [0,0],
-	"mole": [0,0]
+	"mole": [0,0],
+	"spinner": [0,0]
 }
 var enemyPoints = {
 	"goon": [],
-	"mole": []
+	"mole": [],
+	"spinner": []
 }
-var enemies = ["goon", "mole"]
+var enemies = ["goon", "mole", "spinner"]
 
 func _ready():
 	var childName
@@ -37,7 +40,6 @@ func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
 
 func _spawnTimerSet(mobName: String, point: Vector3, time: float) -> void:
 	enemyCount[mobName][0] -= 1
-	print(enemyCount[mobName][0])
 	enemyPoints[mobName][enemyCount[mobName][0]] = point
 	if (enemyCount[mobName][0] > 0): return
 	enemyCount[mobName][0] = enemyCount[mobName][1]

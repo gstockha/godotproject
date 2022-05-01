@@ -10,7 +10,7 @@ int aggroRange = 20;
 int damage = 20;
 float speed = 11;
 float ang = 0;
-bool invincible = false; //in air
+int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 bool stunned = false; //if we just got hit or not (relevant if we don't die in 1 hit)
 enum states{
     alert,
@@ -23,7 +23,6 @@ enum states{
 states state = states.alert;
 float skrrt = 1;
 float[] squishSet = new float[] {0,0,0};
-
 Timer pathTimer;
 Timer deathTimer;
 Timer angleChecker;
@@ -60,11 +59,7 @@ public override void _PhysicsProcess(float delta){
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 25 * delta;
-        if (IsOnFloor()) _on_DeathTimer_timeout();
-        else if (IsOnWall()){
-            Node collider = (Node)GetSlideCollision(0).Collider;
-            if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
-        }
+        if (IsOnFloor() || IsOnWall()) _on_DeathTimer_timeout();
     }
 }
 
@@ -102,7 +97,7 @@ public void _launch(float power, Vector3 cVec){
     yvelocity = power * 1.5F;
     pathTimer.Stop();
     deathTimer.Start(2);
-    invincible = true;
+    vulnerableClass = 0;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
@@ -110,7 +105,7 @@ public void _squish(float power){ //check power vs health and all that here?
     state = states.squished;
     pathTimer.Stop();
     deathTimer.Start(1.5F);
-    invincible = true;
+    vulnerableClass = 0;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 

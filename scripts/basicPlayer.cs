@@ -655,8 +655,8 @@ public void _turnDelay(){
     }
     if (angDelayFriction) ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[traction] * .0007F)));
     else ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[0] * .0007F)));
-    int roundValue = (lockOn == null) ? 10 : 50;
-    if (myMath.roundTo(ang,roundValue) == myMath.roundTo(angTarget,roundValue)){
+    if (lockOn != null) return;
+    if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
         ang = angTarget;
         angTarget = 0;
         angDelayFriction = true;
@@ -1092,7 +1092,7 @@ public void _on_hitBox_area_exited(Area area){
 
 public void _collisionDamage(Spatial collisionNode){
     Godot.Collections.Array groups = collisionNode.GetGroups();
-    int damage;
+    int damage, vulnerableClass; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
     bool notCrashing = (!dashing || weight <= baseWeight);
     float vecx, vecz, power;
     Vector3 launch;
@@ -1100,18 +1100,19 @@ public void _collisionDamage(Spatial collisionNode){
         switch(groups[i].ToString()){
             case("goons"):
                 #region
-                if ((bool)collisionNode.Get("invincible")) return;
+                vulnerableClass = (int)collisionNode.Get("vulnerableClass");
+                if (vulnerableClass == 0) return;
                 damage = (int)collisionNode.Get("damage");
                 Vector3 vel = (Vector3)collisionNode.Get("velocity");
-                power = (damage / baseWeight) * (.4F + (friction * .1F));
+                power = (damage / baseWeight) * (.45F + (friction * .05F));
                 if (dashing){
-                    if (notCrashing){
+                    if (notCrashing && vulnerableClass > 1){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .3F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
                     }
-                    else{
+                    else if (!notCrashing && vulnerableClass != 3 && Translation.y > collisionNode.Translation.y){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
                     }
@@ -1127,18 +1128,19 @@ public void _collisionDamage(Spatial collisionNode){
                 #endregion
             case("moles"):
                 #region
-                if ((bool)collisionNode.Get("invincible")) return;
+                vulnerableClass = (int)collisionNode.Get("vulnerableClass");
+                if (vulnerableClass == 0) return;
                 power = baseWeight * .5F * 25;
                 Timer springTimer = (Timer)collisionNode.Get("springTimer");
                 if (!springTimer.IsStopped()) power *= 3;
                 if (dashing){
-                    if (notCrashing){
+                    if (notCrashing && vulnerableClass > 1){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .5F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
                     }
-                    else{
+                    else if (!notCrashing && vulnerableClass != 3 && Translation.y > collisionNode.Translation.y){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
                     }
