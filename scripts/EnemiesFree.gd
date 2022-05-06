@@ -4,7 +4,7 @@ onready var player = get_node("../playerNode/PlayerBall")
 var enemyNodes = {
 	"goon": load("res://scenes/mobs/Goon.tscn"),
 	"mole": load("res://scenes/mobs/Mole.tscn"),
-	"spinner": load("res://scenes/mobs/Spinner.tscn")
+	"spinner": load("res://scenes/mobs/Spinner.tscn"),
 }
 var enemyCount = {
 	"goon": [0,0],

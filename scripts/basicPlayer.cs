@@ -25,6 +25,7 @@ bool wallb = false;
 float wallbx = 0;
 float wallby = 0;
 bool idle = true;
+bool smushed = false;
 bool dashing = false;
 int hasJumped = 0; //set to 2 (strong) in jump function, 1 in boing timer timeout (soft) (distinction for leeway jumping) CANCRASH == 2 == HASJUMPED
 int bounceDashing = 0;
@@ -76,6 +77,7 @@ float[] collisionScales;
 Timer boingTimer;
 Timer preBoingTimer;
 Timer dashtimer;
+Timer smushTimer;
 Timer deathtimer;
 MeshInstance mesh;
 MeshInstance shadow;
@@ -98,6 +100,7 @@ public override void _Ready(){
     boingTimer = GetNode<Timer>("boingTimer");
     preBoingTimer = GetNode<Timer>("preBoingTimer");
     dashtimer = GetNode<Timer>("DashTimer");
+    smushTimer = GetNode<Timer>("SmushTimer");
     deathtimer = GetNode<Timer>("hitBox/deathTimer");
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
     shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
@@ -159,6 +162,7 @@ public override void _Ready(){
 }
 
 public override void _PhysicsProcess(float delta){ //run physics
+    if (smushed) return;
     if (boing == 0){ //not boinging
         _controller(delta);
         bool isGrounded = (IsOnFloor() || yvelocity == -1);
@@ -576,6 +580,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
                 }
                 else{ //if wallbounce, alter jiggle pattern
                     squishReverb[2] = 0;
+                    squishReverb[0] *= 1.25F;
                     mod += squishReverb[0];
                 }
             }
@@ -947,8 +952,15 @@ public void _on_preBoingTimer_timeout(){
     basejumpwindow = Mathf.Round(boing * 1.2F);
 }
 
+public void _on_SmushTimer_timeout(){
+    smushed = false;
+    Translate(new Vector3(0, 1.5F, 0));
+    _squishNScale(gravity * .017F, new Vector3(0,0,0), true);
+}
+
 public void _dieNRespawn(){
     idle = true;
+    smushed = false;
     yvelocity = 1;
     stickDir[0] = 0;
     stickDir[1] = 0;
@@ -994,6 +1006,7 @@ public void _on_hitBox_area_entered(Area area){
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
             case "mobs": _collisionDamage((Spatial)area.Owner); break;
+            case "thumps": _collisionDamage((Spatial)area.Owner); break;
             case "hurts": _collisionDamage(area); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
@@ -1155,10 +1168,23 @@ public void _collisionDamage(Spatial collisionNode){
                 _launch(launch, power, notCrashing);
                 break;
                 #endregion
+            case("thumps"):
+                #region
+                damage = (int)collisionNode.Get("damage");
+                smushed = true;
+                collisionScales[0] = 1.7F * collisionBaseScale;
+                collisionScales[1] = .4F * collisionBaseScale;
+                collisionScales[2] = collisionScales[0];
+                collisionShape.Scale = new Vector3(collisionScales[0], collisionScales[1], collisionScales[2]);
+                mesh.Translation = new Vector3(mesh.Translation.x,mesh.Translation.y - .05F, mesh.Translation.z);
+                smushTimer.Stop();
+                smushTimer.Start(damage);
+                break;
+                #endregion
             case("hurts"):
                 #region
                 //if ((bool)collisionNode.Get("invincible")) return;
-                damage = (int)collisionNode.Get("power");
+                damage = (int)collisionNode.Get("damage");
                 Vector3 bltTrajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
                 power = baseWeight * .5F * 25;
                 launch = new Vector3(bltTrajectory.x * -1 * power, 0, bltTrajectory.z * -1 * power);

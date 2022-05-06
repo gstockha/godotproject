@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
@@ -10,8 +10,7 @@
 [ext_resource path="res://environments/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/EnemiesFree.gd" type="Script" id=10]
-[ext_resource path="res://scenes/mobs/Mole.tscn" type="PackedScene" id=11]
-[ext_resource path="res://scenes/mobs/Spinner.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/mobs/Thump.tscn" type="PackedScene" id=11]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -53,31 +52,8 @@ transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 [node name="Enemies" type="Spatial" parent="."]
 script = ExtResource( 10 )
 
-[node name="Mole" parent="Enemies" instance=ExtResource( 11 )]
-
-[node name="Spinner" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 2, 5.25744 )
-
-[node name="Spinner2" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -7.017, 2, 17.5003 )
-
-[node name="Spinner3" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 3.15332, 2, 12.3199 )
-
-[node name="Spinner4" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 3.15332, 2, 19.4891 )
-
-[node name="Spinner5" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -18.9865, 2, 19.4984 )
-
-[node name="Spinner6" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -7.34151, 2, 8.27607 )
-
-[node name="Spinner7" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -2.43653, 2, 23.0035 )
-
-[node name="Spinner8" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -16.0123, 2, 12.3199 )
+[node name="Thump" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 6.03887 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
