@@ -22,6 +22,10 @@ var lerpMove = false
 var heightMove = false
 var angMove = false
 var angMoveTarget = 0
+var shakeMove = false
+var shakeMoveTimer = 0
+var shakeIntensity = 0
+var shakeAlternate = false #smoother shake
 
 func _ready():
 	player.rotation_degrees.y = 45
@@ -190,6 +194,21 @@ func _process(delta: float) -> void:
 				player.ang = angMoveTarget
 				angMove = false
 		lerpMove = heightMove || angMove
+	elif shakeMove:
+		var nextY = baseY + shakeIntensity if (randf() < .5) else baseY - shakeIntensity
+		var nextX = shakeIntensity if (randf() < .5) else -shakeIntensity
+		if shakeAlternate:
+			translation.x = nextX
+			if translation.y != nextY: translation.y = nextY
+		elif !shakeAlternate:
+			translation.y = nextY
+			if translation.x != nextX: translation.x = nextX
+		shakeAlternate = !shakeAlternate
+		shakeMoveTimer -= 60 * delta
+		if shakeMoveTimer < 0:
+			shakeMoveTimer = 0
+			translation.y = baseY
+			translation.x = 0
 
 func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
@@ -334,6 +353,7 @@ func _auto_move_camera(target: int, direction: String) -> void:
 		setDelay.start(3)
 	else:
 		lerpMove = true
+		shakeMove = false
 		if direction == "H":
 			if (target <= 3): target = 3 #some fuck shit
 			elif (target <= 6): target = 6
@@ -368,6 +388,17 @@ func _setToDefaults() -> void:
 	heightMove = false
 	angMove = false
 	lerpMove = false
+	shakeMove = false
+	
+func _shakeMove(setTimer: float, intensity: float, distance: float) -> void:
+	if distance != 0:
+		var distMod = (intensity * 1.5) / distance
+		if distMod < .15: return
+		if distMod > 1: distMod = 1
+		intensity *= distMod
+	shakeMove = true
+	shakeMoveTimer = setTimer
+	shakeIntensity = intensity * .1
 
 func _on_bufferTimer_timeout():
 	bufferTimer.stop()

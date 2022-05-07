@@ -7,6 +7,7 @@ public class basicPlayer : KinematicBody{
 #region basic movement variables
 Vector2 direction_ground;
 Vector3 velocity;
+Vector3 platformStickDifference = Vector3.Zero;
 float gravity = 23.0F;
 float jumpforce = 12.0F;
 float yvelocity = -1;
@@ -49,7 +50,7 @@ float boing = 0;
 bool boingCharge = false;
 bool boingDash = false; //use dashSpeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
 bool squishSet = false; //only run the mesh squish settings once in _squishNScale
-float[] squishReverb = new float[] {0,1,0}; //squishReverb[2] was a bool in gd
+float[] squishReverb = new float[] {0,1,0}; //0 is target jiggle intensity, 1 is the comparison bool guard (so we don't fire the code too much, 2 is a bool for airborne
 #endregion
 
 #region shift variables
@@ -443,9 +444,10 @@ public void _isWall(float delta){
     yvelocity -= (gravity * weight) * delta; //gravity
     bool isWall = false;
     if (GetSlideCount() > 0){
-        Node colliderNode = (Node)GetSlideCollision(0).Collider;
+        Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
         isWall = colliderNode.IsInGroup("walls");
-        if (!isWall && colliderNode.IsInGroup("mobs")) return; //if enemy, leave
+        if (isWall) platformStickDifference = colliderNode.Translation - Translation;
+        else if (!isWall && colliderNode.IsInGroup("mobs")) return; //if enemy, leave
     }
     if (isWall || dashing){
         wallb = true;
@@ -479,9 +481,11 @@ public void _isWall(float delta){
 
 public void _isBoinging(float delta){
     bool isWall = IsOnWall();
+    bool isThump = false;
     if (isWall){
-        Node colliderNode = (Node)GetSlideCollision(0).Collider;
+        Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
         isWall = colliderNode.IsInGroup("walls");
+        isThump = colliderNode.IsInGroup("thumps");
     }
     if (floorCast.IsColliding() || isWall){
         if (jumpwindow < basejumpwindow) jumpwindow += 60 * delta;
@@ -508,6 +512,10 @@ public void _isBoinging(float delta){
             }
             velocity = new Vector3(direction_ground.x*spd, yvelocity, direction_ground.y*spd);
             MoveAndSlide(velocity, Vector3.Up, true);
+        }
+        else if (isThump){ //stick to thump
+            Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
+            Translation = colliderNode.Translation - platformStickDifference;
         }
         if (GetSlideCount() > 0 && collisionScales[0] != collisionShape.Scale.x){
             if (!wallb) _squishNScale(delta, floorCast.GetCollisionNormal(), false);
@@ -720,6 +728,7 @@ public void _lockOn(bool triggerScript, float delta){
 }
 
 public void _jump(){
+    if (smushed) return;
     boingCharge = true;
     if (boing != 0){ //boing jump
         yvelocity = boing;
@@ -1137,6 +1146,7 @@ public void _collisionDamage(Spatial collisionNode){
                     launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
                 }
                 _launch(launch, power, notCrashing);
+                camera.Call("_shakeMove", 10, damage * .1F, 0);
                 break;
                 #endregion
             case("moles"):
@@ -1166,6 +1176,7 @@ public void _collisionDamage(Spatial collisionNode){
                 vecz = (velocity.z != 0) ? velocity.z : .1F;
                 launch = new Vector3(vecx * -1 * power * 2, 0, vecz * -1 * power * 2).Normalized();
                 _launch(launch, power, notCrashing);
+                camera.Call("_shakeMove", 10, 2.5F, 0);
                 break;
                 #endregion
             case("thumps"):
@@ -1176,7 +1187,7 @@ public void _collisionDamage(Spatial collisionNode){
                 collisionScales[1] = .4F * collisionBaseScale;
                 collisionScales[2] = collisionScales[0];
                 collisionShape.Scale = new Vector3(collisionScales[0], collisionScales[1], collisionScales[2]);
-                mesh.Translation = new Vector3(mesh.Translation.x,mesh.Translation.y - .05F, mesh.Translation.z);
+                mesh.Translation = new Vector3(mesh.Translation.x, -.05F, mesh.Translation.z);
                 smushTimer.Stop();
                 smushTimer.Start(damage);
                 break;
@@ -1190,6 +1201,7 @@ public void _collisionDamage(Spatial collisionNode){
                 launch = new Vector3(bltTrajectory.x * -1 * power, 0, bltTrajectory.z * -1 * power);
                 _launch(launch, power, true);
                 collisionNode.Call("_on_DeleteTimer_timeout");
+                camera.Call("_shakeMove", 10, damage * .2F, 0);
                 break;
                 #endregion
             }
