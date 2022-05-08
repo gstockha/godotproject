@@ -4,7 +4,7 @@ public class Spinner : KinematicBody{
 Vector3 velocity = Vector3.Zero;
 Vector3 launchVec = Vector3.Zero;
 float yvelocity = 0;
-int damage = 28;
+int damage = 23;
 float speed = 9.7F;
 float ang = 0;
 int vulnerableClass = 1; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash

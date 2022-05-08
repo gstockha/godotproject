@@ -16,6 +16,7 @@ Timer fallTimer;
 Timer shakeTimer;
 MeshInstance mesh;
 RayCast floorCast;
+Position3D bottomPosition;
 Area crushBox;
 CollisionShape shakeBox;
 
@@ -24,6 +25,7 @@ public override void _Ready(){
     shakeTimer = GetNode<Timer>("ShakeTimer");
     mesh = GetNode<MeshInstance>("MeshInstance");
     floorCast = GetNode<RayCast>("FallCast");
+    bottomPosition = GetNode<Position3D>("BottomPosition");
     crushBox = GetNode<Area>("Crushbox");
     shakeBox = GetNode<CollisionShape>("Shakebox/CollisionShape");
     originY = GlobalTransform.origin.y;

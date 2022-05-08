@@ -7,7 +7,7 @@ public class basicPlayer : KinematicBody{
 #region basic movement variables
 Vector2 direction_ground;
 Vector3 velocity;
-Vector3 platformStickDifference = Vector3.Zero;
+Vector3 platformStickDifference = Vector3.Zero; //stick on thumps and stuff
 float gravity = 23.0F;
 float jumpforce = 12.0F;
 float yvelocity = -1;
@@ -27,12 +27,13 @@ float wallbx = 0;
 float wallby = 0;
 bool idle = true;
 bool smushed = false;
+bool launched = false;
 bool dashing = false;
 int hasJumped = 0; //set to 2 (strong) in jump function, 1 in boing timer timeout (soft) (distinction for leeway jumping) CANCRASH == 2 == HASJUMPED
-int bounceDashing = 0;
+int bounceDashing = 0; //determine if you're crashing or can crash
 bool walldashing = false; //for speed boost after dashing into a wall
-bool rolling = true;
-bool moving = false;
+bool rolling = true; //ball is rolling
+bool moving = false; //you're actually moving the ball
 static int dirSize = 13;
 float[,] dir = new float[2,dirSize];
 float[] stickDir = new float[] {0,0};
@@ -366,6 +367,7 @@ public void _isRolling(float delta){
 	wallb = false;
 	hasJumped = 0;
 	idle = false;
+    launched = false;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
             bounce = bounceBase;
@@ -452,8 +454,6 @@ public void _isWall(float delta){
     if (isWall || dashing){
         wallb = true;
         wallFriction = 0;
-        wallbx = GetSlideCollision(0).Normal.x * 2;
-        wallby = GetSlideCollision(0).Normal.z * 2;
         _alterDirection(GetSlideCollision(0).Normal);
         if (dashing && !walldashing){
             dashtimer.Stop();
@@ -464,14 +464,24 @@ public void _isWall(float delta){
             walldashing = true;
         }
         if (isWall){
-            float fricMod = (friction > .4F) ? friction * .75F : .4F * .75F;
-            boing = speed * .7F * fricMod;
-            if (boing < 3) boing = 3;
-            jumpwindow = 0;
-            basejumpwindow = Mathf.Round(boing * 6);
-            boingTimer.Stop();
-            boingTimer.Start(boing * .1F);
+            if (!launched){
+                float fricMod = (friction > .4F) ? friction * .75F : .4F * .75F;
+                boing = speed * .7F * fricMod;
+                if (boing < 3) boing = 3;
+                jumpwindow = 0;
+                basejumpwindow = Mathf.Round(boing * 6);
+                boingTimer.Stop();
+                boingTimer.Start(boing * .1F);
+            }
+            else{
+                wallbx = GetSlideCollision(0).Normal.x * Mathf.Abs(wallbx);
+                wallby = GetSlideCollision(0).Normal.z * Mathf.Abs(wallby);
+                launched = false;
+                return;
+            }
         }
+        wallbx = GetSlideCollision(0).Normal.x * 2;
+        wallby = GetSlideCollision(0).Normal.z * 2;
     }
     else if (!isWall){
         wallb = false;
@@ -874,8 +884,9 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
         wallFriction = 0;
         _alterDirection(launchVec.Normalized());
     }
+    launched = true;
     yvelocity = power;
-    hasJumped = yvelocity >= (bounceBase * jumpforce) ? 1 : hasJumped; //soft has jumped else what it was
+    hasJumped = yvelocity >= (bounceBase * jumpforce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
     _squishNScale((gravity * .017F), new Vector3(0,0,0), true);
     squishSet = false;
     squishReverb[0] = power * .08F;
@@ -900,7 +911,7 @@ public override void _Input(InputEvent @event){
     else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
     else if (@event.IsActionPressed("speedrun_reset")){
         Area checkpnt = (Area)GetNode("../checkpoints/checkpoint1");
-        Translation = checkpnt.Translation;
+        Translation = checkpnt.GlobalTransform.origin;
         if (!speedRun){
             _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
             speedRun = true;
@@ -948,7 +959,7 @@ public void _on_boingTimer_timeout(){
         squishReverb[0] = boing * .12F;
         squishReverb[2] = 1; //proc wall wiggle
     }
-    hasJumped = yvelocity >= (bounceBase * jumpforce) ? 1 : hasJumped; //soft has jumped else what it was
+    hasJumped = yvelocity >= (bounceBase * jumpforce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
     boingDash = false;
     jumpwindow = 0;
     boing = 0;
@@ -1024,7 +1035,7 @@ public void _on_hitBox_area_entered(Area area){
                 break;
             case "warps":
                 Area checkpoint1 = (Area)GetNode("../checkpoints/checkpoint1");
-                Translation = checkpoint1.Translation;
+                Translation = checkpoint1.GlobalTransform.origin;
                 if (speedRun){
                     if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
                         prNote.Text = "PR: " + speedrunNote.Text;
@@ -1115,6 +1126,7 @@ public void _on_hitBox_area_exited(Area area){
 public void _collisionDamage(Spatial collisionNode){
     Godot.Collections.Array groups = collisionNode.GetGroups();
     int damage, vulnerableClass; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
+    bool doShake = true;
     bool notCrashing = (!dashing || weight <= baseWeight);
     float vecx, vecz, power;
     Vector3 launch;
@@ -1126,17 +1138,19 @@ public void _collisionDamage(Spatial collisionNode){
                 if (vulnerableClass == 0) return;
                 damage = (int)collisionNode.Get("damage");
                 Vector3 vel = (Vector3)collisionNode.Get("velocity");
-                power = (damage / baseWeight) * (.45F + (friction * .05F));
+                power = (damage / baseWeight) * .5F;
                 if (dashing){
                     if (notCrashing && vulnerableClass > 1){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .3F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
+                        doShake = false;
                     }
                     else if (!notCrashing && vulnerableClass != 3 && Translation.y > collisionNode.Translation.y){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
+                        doShake = false;
                     }
                 }
                 if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F);
@@ -1146,7 +1160,7 @@ public void _collisionDamage(Spatial collisionNode){
                     launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
                 }
                 _launch(launch, power, notCrashing);
-                camera.Call("_shakeMove", 10, damage * .1F, 0);
+                if (doShake) camera.Call("_shakeMove", 10, damage * .1F, 0);
                 break;
                 #endregion
             case("moles"):
@@ -1162,10 +1176,12 @@ public void _collisionDamage(Spatial collisionNode){
                         float weightPowerMod = 1 - (baseWeight * .5F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
+                        doShake = false;
                     }
                     else if (!notCrashing && vulnerableClass != 3 && Translation.y > collisionNode.Translation.y){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
+                        doShake = false;
                     }
                     dashtimer.Stop();
                     dashing = false;
@@ -1176,11 +1192,17 @@ public void _collisionDamage(Spatial collisionNode){
                 vecz = (velocity.z != 0) ? velocity.z : .1F;
                 launch = new Vector3(vecx * -1 * power * 2, 0, vecz * -1 * power * 2).Normalized();
                 _launch(launch, power, notCrashing);
-                camera.Call("_shakeMove", 10, 2.5F, 0);
+                if (doShake) camera.Call("_shakeMove", 10, 2.5F, 0);
                 break;
                 #endregion
             case("thumps"):
                 #region
+                if (smushed) break;
+                boingCharge = false;
+                boingTimer.Stop();
+                preBoingTimer.Stop();
+                Position3D thumpBottomPos = (Position3D)collisionNode.Get("bottomPosition");
+                Translation = new Vector3(Translation.x, thumpBottomPos.GlobalTransform.origin.y, Translation.z);
                 damage = (int)collisionNode.Get("damage");
                 smushed = true;
                 collisionScales[0] = 1.7F * collisionBaseScale;

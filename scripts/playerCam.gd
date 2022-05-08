@@ -3,7 +3,7 @@ onready var player = get_node("../../")
 onready var mesh = get_node('../../CollisionShape/BallSkin')
 onready var lockScanner = get_node('../../lockOnScanner')
 onready var setDelay = get_node("setDelay")
-onready var bufferTimer = get_node("bufferTimer")
+onready var bufferTimer = get_node("bufferTimer") #for camset node
 var cam = 0 #rotate mode
 var camsets = [135,45,-45,-135]
 var camsetarray = 1
@@ -118,6 +118,37 @@ func _move_camera(evn) -> void:
 		#stickMove = false
 
 func _process(delta: float) -> void:
+	if lerpMove:
+		if heightMove:
+			translation.y = lerp(translation.y, targetY, .05)
+			rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
+			if (translation.y > targetY - .1 && translation.y < targetY + .1):
+				translation.y = targetY
+				if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
+					rotation_degrees.x = targetRotX
+					heightMove = false
+		if angMove:
+			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
+			if (player.ang > angMoveTarget - .02 && player.ang < angMoveTarget + .02):
+				player.ang = angMoveTarget
+				angMove = false
+		lerpMove = heightMove || angMove
+	elif shakeMove:
+		var nextY = baseY + shakeIntensity if (randf() < .5) else baseY - shakeIntensity
+		var nextX = shakeIntensity if (randf() < .5) else -shakeIntensity
+		if shakeAlternate:
+			translation.x = nextX
+			if translation.y != nextY: translation.y = nextY
+		elif !shakeAlternate:
+			translation.y = nextY
+			if translation.x != nextX: translation.x = nextX
+		shakeAlternate = !shakeAlternate
+		shakeMoveTimer -= 60 * delta
+		if shakeMoveTimer < 0:
+			shakeMove = false
+			shakeMoveTimer = 0
+			translation.y = baseY
+			translation.x = 0
 	if (lockOn != null): return
 	if cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
 		var proty = player.rotation_degrees.y
@@ -155,7 +186,6 @@ func _process(delta: float) -> void:
 				cam = customset
 				customset = 0
 				return
-#			print(camsetarray)
 	elif Input.get_action_strength("move_camera_right") > 0 or Input.get_action_strength("move_camera_left") > 0:
 #		if stickMove == false:
 #			lastAng = -1 * player.rotation.y
@@ -179,36 +209,6 @@ func _process(delta: float) -> void:
 #		player.angTarget = -1 * player.rotation.y
 #		player.call("_applyFriction", 0, .5)
 #		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-	if lerpMove:
-		if heightMove:
-			translation.y = lerp(translation.y, targetY, .05)
-			rotation_degrees.x = lerp(rotation_degrees.x, targetRotX, .05)
-			if (translation.y > targetY - .1 && translation.y < targetY + .1):
-				translation.y = targetY
-				if (rotation_degrees.x > targetRotX - .1 && rotation_degrees.x < targetRotX + .1):
-					rotation_degrees.x = targetRotX
-					heightMove = false
-		if angMove:
-			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
-			if (player.ang > angMoveTarget - .02 && player.ang < angMoveTarget + .02):
-				player.ang = angMoveTarget
-				angMove = false
-		lerpMove = heightMove || angMove
-	elif shakeMove:
-		var nextY = baseY + shakeIntensity if (randf() < .5) else baseY - shakeIntensity
-		var nextX = shakeIntensity if (randf() < .5) else -shakeIntensity
-		if shakeAlternate:
-			translation.x = nextX
-			if translation.y != nextY: translation.y = nextY
-		elif !shakeAlternate:
-			translation.y = nextY
-			if translation.x != nextX: translation.x = nextX
-		shakeAlternate = !shakeAlternate
-		shakeMoveTimer -= 60 * delta
-		if shakeMoveTimer < 0:
-			shakeMoveTimer = 0
-			translation.y = baseY
-			translation.x = 0
 
 func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
