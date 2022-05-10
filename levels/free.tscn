@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
@@ -10,8 +10,6 @@
 [ext_resource path="res://environments/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/EnemiesFree.gd" type="Script" id=10]
-[ext_resource path="res://scenes/mobs/Goon.tscn" type="PackedScene" id=12]
-[ext_resource path="res://scenes/mobs/Spinner.tscn" type="PackedScene" id=13]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -30,7 +28,7 @@ size = 24
 use_filter = true
 font_data = ExtResource( 9 )
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="DynamicFont" id=7]
 size = 24
 outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
@@ -43,32 +41,89 @@ font_data = ExtResource( 9 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 4, 15 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -43.9523, 25.9904, -4.32103 )
 
-[node name="checkpoints" type="Spatial" parent="playerNode"]
-
-[node name="checkpoint1" parent="playerNode/checkpoints" instance=ExtResource( 7 )]
-transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
+[node name="checkpoint1" parent="playerNode" instance=ExtResource( 7 )]
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, -44.4111, 29.9536, 4.4323 )
 
 [node name="Enemies" type="Spatial" parent="."]
 script = ExtResource( 10 )
 
-[node name="Spinner" parent="Enemies" instance=ExtResource( 13 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 2, 9.89823 )
+[node name="Pyramid" type="Spatial" parent="."]
 
-[node name="Goon3" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.852303, 2.5, 4.57063 )
+[node name="BaseWalls" type="Spatial" parent="Pyramid"]
 
-[node name="Goon2" parent="Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.13608, 2.5, 0 )
+[node name="BaseWall4" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 10, 0, 0, 0, 28.5, 55, 2, 0 )
 
-[node name="Goon" parent="Enemies" instance=ExtResource( 12 )]
+[node name="BaseWall3" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 10, 0, 0, 0, 28.5, -55, 2, 0 )
+
+[node name="BaseWall6" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, -28.5, 0, 10, 0, 1, 0, -1.24577e-06, 0, 2, -55 )
+
+[node name="BaseWall2" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, -12, 0, 10, 0, 1, 0, -5.24537e-07, 33, 2, 55 )
+
+[node name="BaseWall" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+transform = Transform( -4.37114e-08, 0, -12, 0, 10, 0, 1, 0, -5.24537e-07, -33, 2, 55 )
+
+[node name="ShiftSlides" type="Spatial" parent="Pyramid"]
+
+[node name="StraightSide" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 25.7, -55.5, 12, 12.8 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+
+[node name="CornerSideR" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
+transform = Transform( -4.37114e-08, 0.81808, -1.3515, 0, 0.575105, 1.92249, 1, 3.57594e-08, -5.90758e-08, -57, 12, 16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+
+[node name="CornerSideL" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
+transform = Transform( 4.37114e-08, 0.818611, -1.34972, 0, 0.574348, 1.92374, -1, 3.57826e-08, -5.89981e-08, -57, 12, -16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+
+[node name="CornerSideL2" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
+transform = Transform( -4.37114e-08, -0.818611, -1.34972, 0, 0.574348, -1.92374, 1, -3.57826e-08, -5.89981e-08, 57, 9.17, 16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+
+[node name="CornerSideR2" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
+transform = Transform( 1.47063e-07, -0.818611, -1.34972, -5.02111e-08, 0.574348, -1.92374, -1, -1.49226e-07, -1.01901e-07, 57, 12, -16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+
+[node name="StraightSide2" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+transform = Transform( -4.37114e-08, 0, 25.7, 0, 1, 0, -1, 0, -1.12338e-06, 12.8, 12, 55.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+
+[node name="StraightSide3" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+transform = Transform( -1, 0, -2.24677e-06, 0, 1, 0, 8.74228e-08, 0, -25.7, 55.5, 12, -12.8 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+
+[node name="StraightSide4" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+transform = Transform( -4.37114e-08, 0, -25.7, 0, 1, 0, 1, 0, -1.12338e-06, -12.8, 12, -55.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
-transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
-
-[node name="wallBlock" parent="." instance=ExtResource( 6 )]
-transform = Transform( -4.37114e-08, 0, -10, 0, 10, 0, 1, 0, -4.37114e-07, -0.411777, 2, -13.1633 )
+transform = Transform( 40, 0, 0, 0, 1, 0, 0, 0, 40, 0, 0, 0 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -128,7 +183,7 @@ margin_top = -51.0
 margin_right = 41.4454
 margin_bottom = -23.0024
 custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 align = 1
 script = ExtResource( 5 )
 __meta__ = {
@@ -138,7 +193,7 @@ __meta__ = {
 [node name="DefaultWorld" parent="." instance=ExtResource( 8 )]
 
 [node name="killboxMain" type="Area" parent="." groups=["killboxes"]]
-transform = Transform( 30, 0, 0, 0, 1, 0, 0, 0, 30, -3, -15, 4 )
+transform = Transform( 60, 0, 0, 0, 1, 0, 0, 0, 60, -3, -15, 4 )
 gravity = 0.0
 
 [node name="CollisionShape" type="CollisionShape" parent="killboxMain"]

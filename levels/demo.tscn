@@ -78,127 +78,127 @@ gravity = 0.0
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 1 )
 
-[node name="playerNode" type="Spatial" parent="."]
+[node name="checkpoints" type="Spatial" parent="."]
 
-[node name="checkpoints" type="Spatial" parent="playerNode"]
-
-[node name="checkpoint1" parent="playerNode/checkpoints" instance=ExtResource( 12 )]
-transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 97.336, 20.104, 202.068 )
-
-[node name="checkpoint2" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint2" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, -24, 23.23, 113.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint2"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint3" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint3" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3.5, -128.5, 4.23, 92.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint3"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint3"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint4" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint4" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.12132, 0, -1.06066, 0, 1, 0, 2.12132, 0, 1.06066, -127.5, 14.23, -58.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint4"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint5" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint5" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.12132, 0, 2.12132, 0, 0.75, 0, -2.12132, 0, 2.12132, -88.298, 16.23, -94.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint5"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint5-2" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint5-2" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.5, 0, 0, 0, 0.75, 0, 0, 0, 1.99999, 0.702, 16.23, -79.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint5-2"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint5-2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint6" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint6" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.5, 0, 0, 0, 1, 0, 0, 0, 3, 2.2019, 16.23, -150.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint6"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint6"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint6-2" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint6-2" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 1, 67.2019, 34.23, -149.122 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint6-2"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint6-2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint6-3" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint6-3" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 3, 117.902, 72.9259, -169.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint6-3"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint6-3"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint7" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint7" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 4, 0, 0, 0, 1, 0, 0, 0, 4, 137.202, 35.23, -61.5 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint7"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint8" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint8" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.5, 0, 0, 0, 1, 0, 0, 0, 2.5, 98.0103, 50.2751, -38.03 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint8"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint8"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint9" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint9" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2, 0, 0, 0, 1.5, 0, 0, 0, 2, -19.8022, 65.1051, -2.62147 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint9"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint9"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint10" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint10" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.5, 0, 0, 0, 1.5, 0, 0, 0, 1.99999, -40.1844, 65.1051, 41.8714 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint10"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint10"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148705, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpoint11" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpoint11" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.5, 0, 0, 0, 1.5, 0, 0, 0, 1.99999, -5.68757, 65.1051, 42.5067 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpoint11"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint11"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148705, 0 )
 shape = SubResource( 4 )
 
-[node name="checkpointEnd" type="Area" parent="playerNode/checkpoints" groups=["checkpoints"]]
+[node name="checkpointEnd" type="Area" parent="checkpoints" groups=["checkpoints"]]
 transform = Transform( 2.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 100.31, 57.7511, 42.9108 )
 monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="playerNode/checkpoints/checkpointEnd"]
+[node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpointEnd"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
 shape = SubResource( 4 )
 
+[node name="playerNode" type="Spatial" parent="."]
+
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 98.523, 18.104, 203.267 )
+
+[node name="checkpoint1" parent="playerNode" instance=ExtResource( 12 )]
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 97.336, 20.104, 202.068 )
 
 [node name="envStarting" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.23, 26 )

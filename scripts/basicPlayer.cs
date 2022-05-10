@@ -110,7 +110,7 @@ public override void _Ready(){
     floorCast = GetNode<RayCast>("floorCast");
     leewayCast = GetNode<RayCast>("leewayCast");
     shadowCast = GetNode<RayCast>("shadowCast");
-    checkpoint = GetNode<Area>("../checkpoints/checkpoint1");
+    checkpoint = GetNode<Area>("../checkpoint1");
     camera = GetNode<Camera>("Position3D/playerCam");
     moveNote = GetNode<Label>("../../moveNote");
     tipNote = GetNode<Label>("../../tipNote");
