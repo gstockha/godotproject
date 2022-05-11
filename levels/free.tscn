@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
@@ -7,9 +7,20 @@
 [ext_resource path="res://src/moveNote.gd" type="Script" id=5]
 [ext_resource path="res://scenes/geography/wallBlock.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=7]
-[ext_resource path="res://environments/DefaultWorld.tscn" type="PackedScene" id=8]
+[ext_resource path="res://environments/env1.tres" type="Environment" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/EnemiesFree.gd" type="Script" id=10]
+[ext_resource path="res://scenes/geography/wallSmall.tscn" type="PackedScene" id=11]
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SpatialMaterial" id=9]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SphereMesh" id=10]
+
+[sub_resource type="SphereShape" id=11]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -49,81 +60,153 @@ transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, -44.4111, 29.9536, 4.4323 )
 [node name="Enemies" type="Spatial" parent="."]
 script = ExtResource( 10 )
 
+[node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
+transform = Transform( 40, 0, 0, 0, 1, 0, 0, 0, 40, 0, 0, 0 )
+
 [node name="Pyramid" type="Spatial" parent="."]
 
-[node name="BaseWalls" type="Spatial" parent="Pyramid"]
+[node name="PyramidInternal" type="Spatial" parent="Pyramid"]
 
-[node name="BaseWall4" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+[node name="PyramidExternal" type="Spatial" parent="Pyramid"]
+
+[node name="BaseWall4" parent="Pyramid/PyramidExternal" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 10, 0, 0, 0, 28.5, 55, 2, 0 )
 
-[node name="BaseWall3" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+[node name="BaseWall3" parent="Pyramid/PyramidExternal" instance=ExtResource( 6 )]
 transform = Transform( 1, 0, 0, 0, 10, 0, 0, 0, 28.5, -55, 2, 0 )
 
-[node name="BaseWall6" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+[node name="BaseWall6" parent="Pyramid/PyramidExternal" instance=ExtResource( 6 )]
 transform = Transform( -4.37114e-08, 0, -28.5, 0, 10, 0, 1, 0, -1.24577e-06, 0, 2, -55 )
 
-[node name="BaseWall2" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+[node name="BaseWall2" parent="Pyramid/PyramidExternal" instance=ExtResource( 6 )]
 transform = Transform( -4.37114e-08, 0, -12, 0, 10, 0, 1, 0, -5.24537e-07, 33, 2, 55 )
 
-[node name="BaseWall" parent="Pyramid/BaseWalls" instance=ExtResource( 6 )]
+[node name="BaseWall" parent="Pyramid/PyramidExternal" instance=ExtResource( 6 )]
 transform = Transform( -4.37114e-08, 0, -12, 0, 10, 0, 1, 0, -5.24537e-07, -33, 2, 55 )
 
-[node name="ShiftSlides" type="Spatial" parent="Pyramid"]
-
-[node name="StraightSide" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+[node name="StraightSide" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 25.7, -55.5, 12, 12.8 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
 
-[node name="CornerSideR" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
+[node name="CornerSideR" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
 transform = Transform( -4.37114e-08, 0.81808, -1.3515, 0, 0.575105, 1.92249, 1, 3.57594e-08, -5.90758e-08, -57, 12, 16.783 )
 operation = 1
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
 
-[node name="CornerSideL" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
-transform = Transform( 4.37114e-08, 0.818611, -1.34972, 0, 0.574348, 1.92374, -1, 3.57826e-08, -5.89981e-08, -57, 12, -16.783 )
+[node name="CornerSideL" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( -4.37114e-08, 0.818611, 1.34972, 0, 0.574348, -1.92374, -1, -3.57826e-08, -5.89982e-08, -55.714, 10.061, -16.783 )
 operation = 1
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
 
-[node name="CornerSideL2" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
-transform = Transform( -4.37114e-08, -0.818611, -1.34972, 0, 0.574348, -1.92374, 1, -3.57826e-08, -5.89981e-08, 57, 9.17, 16.783 )
-operation = 1
-use_collision = true
-collision_mask = 0
-polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
-
-[node name="CornerSideR2" type="CSGPolygon" parent="Pyramid/ShiftSlides"]
-transform = Transform( 1.47063e-07, -0.818611, -1.34972, -5.02111e-08, 0.574348, -1.92374, -1, -1.49226e-07, -1.01901e-07, 57, 12, -16.783 )
-operation = 1
-use_collision = true
-collision_mask = 0
-polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
-
-[node name="StraightSide2" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+[node name="StraightSide2" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
 transform = Transform( -4.37114e-08, 0, 25.7, 0, 1, 0, -1, 0, -1.12338e-06, 12.8, 12, 55.5 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
 
-[node name="StraightSide3" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+[node name="CornerSideR2" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( 1, 0, 0, 0, 0.575105, 1.92249, 0, -0.81808, 1.3515, 16.8, 12, 57.007 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideL2" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( -1, 7.15188e-08, 1.18152e-07, 0, 0.575105, -1.92249, -8.74228e-08, -0.81808, -1.3515, -16.734, 10.093, 55.629 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="StraightSide3" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
 transform = Transform( -1, 0, -2.24677e-06, 0, 1, 0, 8.74228e-08, 0, -25.7, 55.5, 12, -12.8 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
 
-[node name="StraightSide4" type="CSGPolygon" parent="Pyramid/ShiftSlides" groups=["shifts"]]
+[node name="CornerSideR3" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( -4.37114e-08, -0.818611, 1.34972, 0, 0.574348, 1.92374, -1, 3.57826e-08, -5.89982e-08, 57, 12, -16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideL3" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( -4.37114e-08, -0.818611, -1.34972, 0, 0.574348, -1.92374, 1, -3.57826e-08, -5.89981e-08, 55.711, 10.069, 16.886 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="StraightSide4" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
 transform = Transform( -4.37114e-08, 0, -25.7, 0, 1, 0, 1, 0, -1.12338e-06, -12.8, 12, -55.5 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
 
-[node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
-transform = Transform( 40, 0, 0, 0, 1, 0, 0, 0, 40, 0, 0, 0 )
+[node name="CornerSideL4" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( 1, 0, 0, 0, 0.575105, -1.92249, 0, 0.81808, 1.3515, 16.8, 10.085, -55.593 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideR4" type="CSGPolygon" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( -1, 7.15188e-08, -1.18152e-07, 0, 0.575105, 1.92249, 8.74228e-08, 0.81808, -1.3515, -16.724, 12.046, -56.821 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="PyramidTop" type="CSGCylinder" parent="Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( 14.1421, 0, 14.1421, 0, 6.5, 0, -14.1421, 0, 14.1421, 0, 54, 0 )
+use_collision = true
+collision_mask = 0
+height = 1.6
+sides = 4
+cone = true
+material = SubResource( 9 )
+
+[node name="PyramidTopPillar" parent="Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 11 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, 13.117, 42, 13.121 )
+
+[node name="PyramidTopPillar2" parent="Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 11 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, 13.117, 42, -13.121 )
+
+[node name="PyramidTopPillar3" parent="Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 11 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, -13.117, 42, -13.121 )
+
+[node name="PyramidTopPillar4" parent="Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 11 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, -13.117, 42, 13.121 )
+
+[node name="PyramidTopRound" type="StaticBody" parent="Pyramid/PyramidExternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60.2777, 0 )
+collision_mask = 0
+
+[node name="MeshInstance" type="MeshInstance" parent="Pyramid/PyramidExternal/PyramidTopRound"]
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Pyramid/PyramidExternal/PyramidTopRound"]
+shape = SubResource( 11 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -190,7 +273,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="DefaultWorld" parent="." instance=ExtResource( 8 )]
+[node name="DefaultWorld" type="WorldEnvironment" parent="."]
+environment = ExtResource( 8 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="DefaultWorld"]
+transform = Transform( 0.447915, -0.894076, -4.2222e-08, 8.79687e-09, -4.2817e-08, 1, -0.894076, -0.447915, -1.13133e-08, -2.665, 45, 11.267 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+light_bake_mode = 0
+shadow_enabled = true
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
+
+[node name="TerrainOnly" type="DirectionalLight" parent="DefaultWorld"]
+transform = Transform( -0.406585, -0.509576, -0.758301, -0.48654, 0.823285, -0.292372, 0.773283, 0.25007, -0.582665, 13.335, 108.74, 7.36351 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+light_bake_mode = 0
+light_cull_mask = 4293918721
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
+
+[node name="TerrainOnly2" type="DirectionalLight" parent="DefaultWorld"]
+transform = Transform( -0.168331, -0.649792, 0.741239, 0.55258, -0.68491, -0.474925, 0.816284, 0.329649, 0.474354, 13.335, 108.74, 115.521 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+light_bake_mode = 0
+light_cull_mask = 4293918721
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
 
 [node name="killboxMain" type="Area" parent="." groups=["killboxes"]]
 transform = Transform( 60, 0, 0, 0, 1, 0, 0, 0, 60, -3, -15, 4 )
