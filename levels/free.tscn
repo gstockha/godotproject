@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
@@ -11,6 +11,9 @@
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/EnemiesFree.gd" type="Script" id=10]
 [ext_resource path="res://scenes/geography/wallSmall.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/geography/cyPlat.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/geography/windowWall.tscn" type="PackedScene" id=13]
+[ext_resource path="res://scenes/geography/obstacle.tscn" type="PackedScene" id=14]
 
 [sub_resource type="SpatialMaterial" id=8]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -20,7 +23,12 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 
 [sub_resource type="SphereMesh" id=10]
 
+[sub_resource type="ShaderMaterial" id=12]
+
 [sub_resource type="SphereShape" id=11]
+
+[sub_resource type="SpatialMaterial" id=13]
+albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -52,10 +60,10 @@ font_data = ExtResource( 9 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -43.9523, 25.9904, -4.32103 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.222411, 17.0848, -0.471444 )
 
 [node name="checkpoint1" parent="playerNode" instance=ExtResource( 7 )]
-transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, -44.4111, 29.9536, 4.4323 )
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, -15.4429, 7.58938, -23.0114 )
 
 [node name="Enemies" type="Spatial" parent="."]
 script = ExtResource( 10 )
@@ -64,8 +72,6 @@ script = ExtResource( 10 )
 transform = Transform( 40, 0, 0, 0, 1, 0, 0, 0, 40, 0, 0, 0 )
 
 [node name="Pyramid" type="Spatial" parent="."]
-
-[node name="PyramidInternal" type="Spatial" parent="Pyramid"]
 
 [node name="PyramidExternal" type="Spatial" parent="Pyramid"]
 
@@ -178,6 +184,7 @@ material = SubResource( 8 )
 
 [node name="PyramidTop" type="CSGCylinder" parent="Pyramid/PyramidExternal" groups=["shifts"]]
 transform = Transform( 14.1421, 0, 14.1421, 0, 6.5, 0, -14.1421, 0, 14.1421, 0, 54, 0 )
+cast_shadow = 0
 use_collision = true
 collision_mask = 0
 height = 1.6
@@ -202,11 +209,89 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60.2777, 0 )
 collision_mask = 0
 
 [node name="MeshInstance" type="MeshInstance" parent="Pyramid/PyramidExternal/PyramidTopRound"]
+cast_shadow = 0
 mesh = SubResource( 10 )
-material/0 = null
+material/0 = SubResource( 12 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Pyramid/PyramidExternal/PyramidTopRound"]
 shape = SubResource( 11 )
+
+[node name="PyramidInternal" type="Spatial" parent="Pyramid"]
+
+[node name="center" type="Spatial" parent="Pyramid/PyramidInternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0 )
+
+[node name="centerPlat" parent="Pyramid/PyramidInternal/center" groups=["flats"] instance=ExtResource( 12 )]
+transform = Transform( 1.41421, 0, 1.41421, 0, 0.5, 0, -1.41421, 0, 1.41421, 0, 20, 0 )
+
+[node name="glassBeam" parent="Pyramid/PyramidInternal/center" groups=["flats", "slides"] instance=ExtResource( 13 )]
+transform = Transform( 21.9203, 0, 1.06066, 0, 0.3, 0, -21.9203, 0, 1.06066, 0, 20.65, 0 )
+
+[node name="glassSlope" parent="Pyramid/PyramidInternal/center" groups=["shifts", "slides"] instance=ExtResource( 13 )]
+transform = Transform( 6.12372, -0.106066, -1.06066, 5, 0.259808, 0, 6.12372, -0.106066, 1.06066, 8.8, 25.531, 8.8 )
+
+[node name="upperLevel" type="Spatial" parent="Pyramid/PyramidInternal"]
+
+[node name="cornerL" type="CSGPolygon" parent="Pyramid/PyramidInternal/upperLevel" groups=["flats"]]
+transform = Transform( -4.37114e-07, -10, -4.37114e-08, 0, -4.37114e-07, 1, -10, 4.37114e-07, 1.91069e-15, -25, 15.95, 35.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -3, -1.3, 2.3, 4, 2.3 )
+material = SubResource( 13 )
+
+[node name="cornerR" type="CSGPolygon" parent="Pyramid/PyramidInternal/upperLevel" groups=["flats"]]
+transform = Transform( -4.37114e-07, 10, 4.37114e-08, 0, -4.37114e-07, 1, 10, 4.37114e-07, 1.91069e-15, 25, 15.95, -35.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -3, -1.3, 2.3, 4, 2.3 )
+material = SubResource( 13 )
+
+[node name="cornerUpper" type="CSGPolygon" parent="Pyramid/PyramidInternal/upperLevel" groups=["flats"]]
+transform = Transform( -10, -8.74228e-07, -3.82137e-15, 0, -4.37114e-07, 1, -8.74228e-07, 10, 4.37114e-08, 21.953, 25.766, 11.841 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -1.72, -1.3, 2.3, 2.72, 2.3 )
+material = SubResource( 13 )
+
+[node name="upperPlatStraight" parent="Pyramid/PyramidInternal/upperLevel" groups=["flats"] instance=ExtResource( 2 )]
+transform = Transform( 0.707107, 0, 2.12132, 0, 0.2, 0, -0.707107, 0, 2.12132, -40.628, 11.594, -40.5 )
+
+[node name="upperPlatBase" parent="Pyramid/PyramidInternal/upperLevel" groups=["flats"] instance=ExtResource( 2 )]
+transform = Transform( 3.6, 0, 0, 0, 0.2, 0, 0, 0, 3.5, -30.462, 11.787, -30.629 )
+
+[node name="upperPlatBase3" parent="Pyramid/PyramidInternal/upperLevel" groups=["flats"] instance=ExtResource( 2 )]
+transform = Transform( 1.8, 0, 0, 0, 0.2, 0, 0, 0, 8, -44.4255, 15.6, -12.7232 )
+
+[node name="lowerLevel" type="Spatial" parent="Pyramid/PyramidInternal"]
+
+[node name="cornerStairs" type="Spatial" parent="Pyramid/PyramidInternal/lowerLevel"]
+
+[node name="stairBase" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( 5, 0, 0, 0, 5, 0, 0, 0, 5, -48.116, 7, -47.964 )
+
+[node name="stairL" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( 4.5, 0, 0, 0, 4, 0, 0, 0, 3, -48.6881, 5.8, -40.006 )
+
+[node name="stairL2" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( 4, 0, 0, 0, 3, 0, 0, 0, 3, -49.1881, 4.9, -34.155 )
+
+[node name="stairL3" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( 3.5, 0, 0, 0, 2, 0, 0, 0, 3, -49.6881, 3.9, -28.271 )
+
+[node name="stairL4" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, -50.1881, 3, -22.283 )
+
+[node name="stairR" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( -1.96701e-07, 0, 3, 0, 4, 0, -4.5, 0, -1.31134e-07, -40.0814, 5.8, -48.5 )
+
+[node name="stairR2" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( -1.74846e-07, 0, 3, 0, 3, 0, -4, 0, -1.31134e-07, -34, 4.9, -49 )
+
+[node name="stairR3" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( -1.5299e-07, 0, 3, 0, 2, 0, -3.5, 0, -1.31134e-07, -28, 3.9, -49.5 )
+
+[node name="stairR4" parent="Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 14 )]
+transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -22, 3, -50 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
