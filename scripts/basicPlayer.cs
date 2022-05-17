@@ -78,7 +78,7 @@ float collisionBaseScale = .6F;
 float[] collisionScales;
 Timer boingTimer;
 Timer preBoingTimer;
-Timer dashtimer;
+Timer dashTimer;
 Timer smushTimer;
 Timer deathtimer;
 MeshInstance mesh;
@@ -101,7 +101,7 @@ public override void _Ready(){
     #region load nodes
     boingTimer = GetNode<Timer>("boingTimer");
     preBoingTimer = GetNode<Timer>("preBoingTimer");
-    dashtimer = GetNode<Timer>("DashTimer");
+    dashTimer = GetNode<Timer>("DashTimer");
     smushTimer = GetNode<Timer>("SmushTimer");
     deathtimer = GetNode<Timer>("hitBox/deathTimer");
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
@@ -110,7 +110,7 @@ public override void _Ready(){
     floorCast = GetNode<RayCast>("floorCast");
     leewayCast = GetNode<RayCast>("leewayCast");
     shadowCast = GetNode<RayCast>("shadowCast");
-    checkpoint = GetNode<Area>("../checkpoint1");
+    checkpoint = GetNode<Area>("../../checkpoints/checkpoint1");
     camera = GetNode<Camera>("Position3D/playerCam");
     moveNote = GetNode<Label>("../../moveNote");
     tipNote = GetNode<Label>("../../tipNote");
@@ -305,6 +305,7 @@ public void _applyShift(float delta, bool isGrounded){
             shiftedSticky = 0;
             floorCastTouching = true; //so we don't apply it twice (below)
         }
+        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.3F);
     }
     else if (shiftedBoost[0] > 0){ //shift linger
         shiftedLinger = true;
@@ -371,7 +372,7 @@ public void _isRolling(float delta){
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
             bounce = bounceBase;
-            dashtimer.Stop();
+            dashTimer.Stop();
             boingDash = true;
             dashing = false;
             if (weight != baseWeight) bounceDashing = 2; //so you can't crash out of dash
@@ -398,7 +399,7 @@ public void _isRolling(float delta){
             if (rolling){
                 _alterDirection(GetSlideCollision(0).Normal); //reverse direction
                 if (dashing){
-                    dashtimer.Stop();
+                    dashTimer.Stop();
                     dashing = false;
                     speed = speedCap;
                 }
@@ -408,7 +409,8 @@ public void _isRolling(float delta){
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         if ((yvelocity * bounce) * -1 > bouncethreshold && yvelocity != -1){
-            if ((GetSlideCollision(0).Normal.y > .95F && GetSlideCollision(0).Normal.y < 1.05F) || boingCharge || bounceDashing == 2){
+            Node colliderNode = (Node)GetSlideCollision(0).Collider;
+            if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
                     bounceDashing = 0;
@@ -456,7 +458,7 @@ public void _isWall(float delta){
         wallFriction = 0;
         _alterDirection(GetSlideCollision(0).Normal);
         if (dashing && !walldashing){
-            dashtimer.Stop();
+            dashTimer.Stop();
             dashing = false;
             weight = baseWeight;
             speed = speedCap;
@@ -523,7 +525,7 @@ public void _isBoinging(float delta){
             velocity = new Vector3(direction_ground.x*spd, yvelocity, direction_ground.y*spd);
             MoveAndSlide(velocity, Vector3.Up, true);
         }
-        else if (isThump){ //stick to thump
+        else if (isThump && GetSlideCount() < 2){ //stick to thump
             Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
             Translation = colliderNode.Translation - platformStickDifference;
         }
@@ -692,21 +694,23 @@ public void _alterDirection(Vector3 alterNormal){
     int camArray = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
     if (camArray == 1 || camArray == 3) wallbang.z *= -1;
     else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    #region set angTarget (DEFUNCT)
-    // int[] camAngs = new int[] {135,45,-45,-135};
-    // float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
-    // if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
-    //     float lastAng = myMath.roundTo(Mathf.Rad2Deg(ang), 100) + 180;
-    //     float targAng = camAngs[camArray] + 180;
-    //     string turnDir = "";
-    //     if (camArray == 1 || camArray == 2) turnDir = (lastAng < targAng) ? "right" : "left";
-    //     else if (camArray == 0) turnDir = (lastAng < targAng && lastAng > 225) ? "right" : "left";
-    //     else turnDir = (lastAng < targAng || lastAng > 315) ? "right" : "left";
-    //     angTarget = Rotation.y * -1;
-    //     angDelayFriction = true;
-    //     GD.Print(targAng);
-    //     ang = camAng;
-    // }
+    #region set angTarget if shift launch
+    if (lockOn == null && wallb && shiftedDir != 0){
+        int[] camAngs = new int[] {135,45,-45,-135};
+        float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
+        if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
+            float lastAng = myMath.roundTo(Mathf.Rad2Deg(ang), 100) + 180;
+            float targAng = camAngs[camArray] + 180;
+            string turnDir = "";
+            if (camArray == 1 || camArray == 2) turnDir = (lastAng < targAng) ? "right" : "left";
+            else if (camArray == 0) turnDir = (lastAng < targAng && lastAng > 225) ? "right" : "left";
+            else turnDir = (lastAng < targAng || lastAng > 315) ? "right" : "left";
+            camera.Set("turnDir", turnDir);
+            angTarget = Rotation.y * -1;
+            angDelayFriction = true;
+            ang = camAng;
+        }
+    }
     #endregion
     for (int i = 0; i < dirSize; i++){
         dir[0,i] = wallbang.z;
@@ -752,8 +756,8 @@ public void _jump(){
         if (shiftedDir != 0){ //boing jump off a slope
             Vector3 wallbang = velocity.Bounce(floorCast.GetCollisionNormal());
             Vector2 wallang = new Vector2(wallbang.x, wallbang.z);
-            _alterDirection(floorCast.GetCollisionNormal());
             wallb = true;
+            _alterDirection(floorCast.GetCollisionNormal());
             wallFriction = 0;
             slopeSquish = true;
             wallbx = wallang.x * .5F;
@@ -842,13 +846,12 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             _drawMoveNote("dash");
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
-            dashtimer.Stop();
+            dashTimer.Stop();
             weight = baseWeight * 3;
             shiftedDir = 0; // don't need to apply shifted gravity anymore if doing this
             _drawMoveNote("crash");
         }
         else if (shiftedDir != 0){ // is on shift
-            dashtimer.Start(.3F);
             dashSpeed = speedCap * 2;
             _drawMoveNote("slope dash");
         }
@@ -872,7 +875,7 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
     }
     #endregion
     if (dashing){
-        dashtimer.Stop();
+        dashTimer.Stop();
         dashing = false;
         weight = baseWeight;
         speed = speedCap;
@@ -910,7 +913,7 @@ public override void _Input(InputEvent @event){
     else if (@event.IsActionPressed("dash")) _dash();
     else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
     else if (@event.IsActionPressed("speedrun_reset")){
-        Area checkpnt = (Area)GetNode("../checkpoints/checkpoint1");
+        Area checkpnt = (Area)GetNode("../../checkpoints/checkpoint1");
         Translation = checkpnt.GlobalTransform.origin;
         if (!speedRun){
             _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
@@ -986,7 +989,7 @@ public void _dieNRespawn(){
     stickDir[1] = 0;
     weight = baseWeight;
     dashing = false;
-    dashtimer.Stop();
+    dashTimer.Stop();
     walldashing = false;
     dashSpeed = speedCap * 1.5F;
     wallb = false;
@@ -1183,7 +1186,7 @@ public void _collisionDamage(Spatial collisionNode){
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
                         doShake = false;
                     }
-                    dashtimer.Stop();
+                    dashTimer.Stop();
                     dashing = false;
                     weight = baseWeight;
                     speed = speedCap;

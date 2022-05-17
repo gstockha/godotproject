@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=2]
@@ -10,6 +10,10 @@
 [ext_resource path="res://environments/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://scripts/EnemiesFree.gd" type="Script" id=10]
+[ext_resource path="res://scenes/mobs/Spinner.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scenes/mobs/Goon.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/mobs/Mole.tscn" type="PackedScene" id=13]
+[ext_resource path="res://scenes/mobs/Thump.tscn" type="PackedScene" id=14]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -50,6 +54,24 @@ transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 
 [node name="Enemies" type="Spatial" parent="."]
 script = ExtResource( 10 )
+
+[node name="Goon" parent="Enemies" instance=ExtResource( 12 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 6.93362 )
+
+[node name="Goon2" parent="Enemies" instance=ExtResource( 12 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -5.30711 )
+
+[node name="Mole" parent="Enemies" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.18352, 3, 0 )
+
+[node name="Mole2" parent="Enemies" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8.27503, 3, 8.35538 )
+
+[node name="Spinner" parent="Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -20.1574, 2, 14.4589 )
+
+[node name="Thump" parent="Enemies" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 23.997, 10, 25.1689 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )

@@ -1,0 +1,545 @@
+[gd_scene load_steps=36 format=2]
+
+[ext_resource path="res://environments/env1.tres" type="Environment" id=1]
+[ext_resource path="res://src/tipNote.gd" type="Script" id=2]
+[ext_resource path="res://src/speedrunNote.gd" type="Script" id=3]
+[ext_resource path="res://scenes/geography/wallBlock.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/geography/cyPlat.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/player/PlayerBall.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/geography/obstacle.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/geography/windowWall.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scenes/geography/wallSmall.tscn" type="PackedScene" id=10]
+[ext_resource path="res://scenes/checkpoint.tscn" type="PackedScene" id=11]
+[ext_resource path="res://scripts/EnemiesFree.gd" type="Script" id=12]
+[ext_resource path="res://src/moveNote.gd" type="Script" id=13]
+[ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=14]
+[ext_resource path="res://scripts/mob/Thump.cs" type="Script" id=15]
+
+[sub_resource type="BoxShape" id=3]
+
+[sub_resource type="BoxShape" id=4]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="SpatialMaterial" id=18]
+albedo_color = Color( 0, 1, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=16]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SpatialMaterial" id=17]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SpatialMaterial" id=15]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SpatialMaterial" id=14]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SpatialMaterial" id=9]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="SphereMesh" id=10]
+
+[sub_resource type="ShaderMaterial" id=12]
+
+[sub_resource type="SphereShape" id=11]
+
+[sub_resource type="SpatialMaterial" id=13]
+albedo_color = Color( 0, 1, 0.882353, 1 )
+
+[sub_resource type="DynamicFont" id=19]
+size = 42
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 14 )
+
+[sub_resource type="DynamicFont" id=20]
+size = 36
+use_filter = true
+font_data = ExtResource( 14 )
+
+[sub_resource type="DynamicFont" id=21]
+size = 24
+use_filter = true
+font_data = ExtResource( 14 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 24
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 14 )
+
+[sub_resource type="BoxShape" id=6]
+
+[node name="World" type="Spatial"]
+
+[node name="playerNode" type="Spatial" parent="."]
+
+[node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.222411, 17.0848, -0.471444 )
+
+[node name="Enemies" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0 )
+script = ExtResource( 12 )
+
+[node name="Thump" type="StaticBody" parent="Enemies" groups=["thumps", "walls"]]
+transform = Transform( 2, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 52.08, 5, 29.615 )
+collision_mask = 0
+script = ExtResource( 15 )
+
+[node name="Crushbox" type="Area" parent="Enemies/Thump" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="Enemies/Thump/Crushbox"]
+transform = Transform( 1, 0, 0, 0, 0.1, 0, 0, 0, 1.2, 0, -1, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="Enemies/Thump"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="Enemies/Thump/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="Enemies/Thump"]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.7, 0, 0, 0 )
+mesh = SubResource( 2 )
+skeleton = NodePath("../CollisionShape")
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Enemies/Thump"]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.7, 0, 0, 0 )
+shape = SubResource( 1 )
+
+[node name="FallTimer" type="Timer" parent="Enemies/Thump"]
+one_shot = true
+
+[node name="ShakeTimer" type="Timer" parent="Enemies/Thump"]
+
+[node name="FallCast" type="RayCast" parent="Enemies/Thump"]
+transform = Transform( 1, 0, 0, 0, 20, 0, 0, 0, 1, 0, 0, 0 )
+enabled = true
+
+[node name="BottomPosition" type="Position3D" parent="Enemies/Thump"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="environment" type="Spatial" parent="."]
+
+[node name="subLevel" type="CSGPolygon" parent="environment" groups=["flats", "walls"]]
+transform = Transform( 200, 0, 0, 0, 2, 0, 0, 0, 200, -100, 0, 100 )
+use_collision = true
+collision_mask = 0
+material = SubResource( 18 )
+
+[node name="groundGround" type="CSGBox" parent="environment/subLevel" groups=["flats"]]
+transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 0.1, 0.425, -5.05, -0.391 )
+use_collision = true
+collision_mask = 0
+width = 7.5
+height = 1.2
+depth = 3.5
+material = SubResource( 18 )
+
+[node name="groundHole" type="CSGPolygon" parent="environment/subLevel"]
+transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, 1.05, -0.25 )
+operation = 2
+polygon = PoolVector2Array( -3, -3, -3, 55, 26.776, 46.1782, 33.9081, 35.093, 30.0509, 16.2357, 35, -3 )
+depth = 15.0
+
+[node name="groundDeepest" type="CSGPolygon" parent="environment/subLevel" groups=["flats"]]
+transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, -3.95, -0.205 )
+operation = 2
+polygon = PoolVector2Array( 26.9371, 55.0279, 74.4795, 65.459, 98.969, 32.252, 104.92, 32.346, 105.032, 26.389, 99, 26.275, 75.5152, 2.58844, 29.4496, 8.06882 )
+depth = 5.0
+
+[node name="fallHole" type="CSGBox" parent="environment/subLevel" groups=["walls"]]
+transform = Transform( 0.015, 0, 0, 0, -6.55671e-10, 0.5, 0, -0.015, -2.18557e-08, 0.76, -3.95, -0.352 )
+operation = 2
+depth = 20.0
+
+[node name="Pyramid" type="Spatial" parent="environment"]
+
+[node name="PyramidExternal" type="Spatial" parent="environment/Pyramid"]
+
+[node name="BaseWall4" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -6.23324e-07, 0, 2, 0, 1, 0, -14.26, 0, -8.74228e-08, 57.018, 5.964, 0 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, -4, -4, 6, 4, 6, 4, -4 )
+material = SubResource( 16 )
+
+[node name="Hole" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/BaseWall4"]
+transform = Transform( 0.0699509, 0, 4.21481e-07, 0, 10, 0, 2.10361e-08, 0, 2.5, 2.52, -4, 0.328 )
+operation = 2
+polygon = PoolVector2Array( 0.218098, 0.308229, 3.16474, 0.525593, 8.67791, 0.345856, 9.865, 0, 0, 0 )
+material = SubResource( 17 )
+
+[node name="BaseWall3" parent="environment/Pyramid/PyramidExternal" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 10, 0, 0, 0, 28.5, -55, 2, 0 )
+
+[node name="BaseWall2" parent="environment/Pyramid/PyramidExternal" instance=ExtResource( 4 )]
+transform = Transform( -4.37114e-08, 0, -28.5, 0, 10, 0, 1, 0, -1.24577e-06, 0, 2, -55 )
+
+[node name="BaseWallR" parent="environment/Pyramid/PyramidExternal" instance=ExtResource( 4 )]
+transform = Transform( -4.37114e-08, 0, -12, 0, 10, 0, 1, 0, -5.24537e-07, 33, 2, 55 )
+
+[node name="BaseWallL" parent="environment/Pyramid/PyramidExternal" instance=ExtResource( 4 )]
+transform = Transform( -4.37114e-08, 0, -12, 0, 10, 0, 1, 0, -5.24537e-07, -33, 2, 55 )
+
+[node name="StraightSide" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 25.7, -55.5, 12, 12.8 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideR" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -4.37114e-08, 0.81808, -1.3515, 0, 0.575105, 1.92249, 1, 3.57594e-08, -5.90758e-08, -57, 12, 16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideL" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -4.37114e-08, 0.818611, 1.34972, 0, 0.574348, -1.92374, -1, -3.57826e-08, -5.89982e-08, -55.714, 10.061, -16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="StraightSide2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -4.37114e-08, 0, 25.7, 0, 1, 0, -1, 0, -1.12338e-06, 12.8, 12, 55.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideR2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( 1, 0, 0, 0, 0.575105, 1.92249, 0, -0.81808, 1.3515, 16.8, 12, 57.007 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideL2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -1, 7.15188e-08, 1.18152e-07, 0, 0.575105, -1.92249, -8.74228e-08, -0.81808, -1.3515, -16.734, 10.093, 55.629 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="StraightSide3" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -1, 0, -2.24677e-06, 0, 1, 0, 8.74228e-08, 0, -25.7, 55.5, 12, -12.8 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideR3" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -4.37114e-08, -0.818611, 1.34972, 0, 0.574348, 1.92374, -1, 3.57826e-08, -5.89982e-08, 57, 12, -16.783 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideL3" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( -4.37114e-08, -0.818611, -1.34972, 0, 0.574348, -1.92374, 1, -3.57826e-08, -5.89981e-08, 55.711, 10.069, 16.886 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="tunnelSlide" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/CornerSideL3" groups=["shifts"]]
+transform = Transform( 1.3, -6.04896e-06, -1.02494e-07, 1.47205e-06, -4.05312e-06, 1.3, -8.92807e-07, -1.5, -6.25849e-07, 2.1543, 41.7266, -0.483627 )
+material = SubResource( 15 )
+
+[node name="tunnelSlideHole" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/CornerSideL3/tunnelSlide" groups=["shifts"]]
+transform = Transform( 1, 4.54747e-13, 7.10543e-14, 0, 1, 6.71638e-14, 1.13687e-13, 1.19215e-07, 1, 0, 0, 0 )
+operation = 2
+radius = 0.85
+material = SubResource( 15 )
+
+[node name="tunnelWallHole" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/CornerSideL3" groups=["shifts"]]
+transform = Transform( 1.3, -6.04896e-06, -1.02494e-07, 1.43782e-06, -4.05312e-06, 1.3, -8.72044e-07, -1.5, -6.25849e-07, 2.1543, 41.7266, -0.483627 )
+operation = 2
+radius = 0.85
+height = 0.85
+material = SubResource( 15 )
+
+[node name="StraightSide4" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -4.37114e-08, 0, -25.7, 0, 1, 0, 1, 0, -1.12338e-06, -12.8, 12, -55.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.5, 0, 42.7, 31, 42.7, 28, 2.5, 0 )
+material = SubResource( 8 )
+
+[node name="CornerSideL4" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( 1, 0, 0, 0, 0.575105, -1.92249, 0, 0.81808, 1.3515, 16.8, 10.085, -55.593 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="Hole" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/CornerSideL4"]
+transform = Transform( -2, 4.61292e-07, 4.02722e-14, -3.01988e-07, -3.05496, 0.0102971, 1.5548e-09, 0.0157282, 1.99997, 8.4691, 14.0362, 0.724216 )
+operation = 2
+polygon = PoolVector2Array( -3.52821, -0.991683, -2.29045, 0.489417, 1.42933, 0.313988, 1.49207, -1.46282, -0.128308, -2.29435, -2.45831, -2.20235 )
+material = SubResource( 14 )
+
+[node name="CornerSideR4" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
+transform = Transform( -1, 7.15188e-08, -1.18152e-07, 0, 0.575105, 1.92249, 8.74228e-08, 0.81808, -1.3515, -16.724, 12.046, -56.821 )
+operation = 1
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
+material = SubResource( 8 )
+
+[node name="PyramidTop" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( 14.1421, 0, 14.1421, 0, 6.5, 0, -14.1421, 0, 14.1421, 0, 54, 0 )
+cast_shadow = 0
+use_collision = true
+collision_mask = 0
+height = 1.6
+sides = 4
+cone = true
+material = SubResource( 9 )
+
+[node name="PyramidTopPillar" parent="environment/Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 10 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, 13.117, 42, 13.121 )
+
+[node name="PyramidTopPillar2" parent="environment/Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 10 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, 13.117, 42, -13.121 )
+
+[node name="PyramidTopPillar3" parent="environment/Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 10 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, -13.117, 42, -13.121 )
+
+[node name="PyramidTopPillar4" parent="environment/Pyramid/PyramidExternal" groups=["walls"] instance=ExtResource( 10 )]
+transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, -13.117, 42, 13.121 )
+
+[node name="PyramidTopRound" type="StaticBody" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60.2777, 0 )
+collision_mask = 0
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Pyramid/PyramidExternal/PyramidTopRound"]
+cast_shadow = 0
+mesh = SubResource( 10 )
+material/0 = SubResource( 12 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidExternal/PyramidTopRound"]
+shape = SubResource( 11 )
+
+[node name="PyramidInternal" type="Spatial" parent="environment/Pyramid"]
+
+[node name="center" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0 )
+
+[node name="centerPlat" parent="environment/Pyramid/PyramidInternal/center" groups=["flats"] instance=ExtResource( 5 )]
+transform = Transform( 1.41421, 0, 1.41421, 0, 0.5, 0, -1.41421, 0, 1.41421, 0, 20, 0 )
+
+[node name="glassBeam" parent="environment/Pyramid/PyramidInternal/center" groups=["flats", "slides"] instance=ExtResource( 9 )]
+transform = Transform( 21.9203, 0, 1.41421, 0, 0.3, 0, -21.9203, 0, 1.41421, 0, 20.65, 0 )
+
+[node name="glassSlope" parent="environment/Pyramid/PyramidInternal/center" groups=["shifts", "slides"] instance=ExtResource( 9 )]
+transform = Transform( 6.12372, -0.106066, -1.41421, 5, 0.259808, 0, 6.12372, -0.106066, 1.41421, 8.8, 25.531, 8.8 )
+
+[node name="upperLevel" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
+
+[node name="cornerL" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/upperLevel" groups=["flats"]]
+transform = Transform( -4.37114e-07, -10, -4.37114e-08, 0, -4.37114e-07, 1, -10, 4.37114e-07, 1.91069e-15, -25, 15.95, 35.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -3, -1.3, 2.3, 4, 2.3 )
+material = SubResource( 13 )
+
+[node name="cornerR" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/upperLevel" groups=["flats"]]
+transform = Transform( -4.37114e-07, 10, 4.37114e-08, 0, -4.37114e-07, 1, 10, 4.37114e-07, 1.91069e-15, 25, 15.95, -35.5 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -3, -1.3, 2.3, 4, 2.3 )
+material = SubResource( 13 )
+
+[node name="cornerConnectR" parent="environment/Pyramid/PyramidInternal/upperLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 1.8, 0, 0, 0, 0.5, 0, 0, 0, 7.5, -44.425, 14.948, -12.3 )
+
+[node name="lowerLevel" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
+
+[node name="cornerStairs" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel"]
+
+[node name="stairBase" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( 5, 0, 0, 0, 5, 0, 0, 0, 5, -48.116, 7, -47.964 )
+
+[node name="stairL" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( 4.5, 0, 0, 0, 4, 0, 0, 0, 3, -48.6881, 5.8, -40.006 )
+
+[node name="stairL2" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( 4, 0, 0, 0, 3, 0, 0, 0, 3, -49.1881, 4.9, -34.155 )
+
+[node name="stairL3" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( 3.5, 0, 0, 0, 2, 0, 0, 0, 3, -49.6881, 3.9, -28.271 )
+
+[node name="stairL4" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, -50.1881, 3, -22.283 )
+
+[node name="stairR" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( -1.96701e-07, 0, 3, 0, 4, 0, -4.5, 0, -1.31134e-07, -40.0814, 5.8, -48.5 )
+
+[node name="stairR2" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( -1.74846e-07, 0, 3, 0, 3, 0, -4, 0, -1.31134e-07, -34, 4.9, -49 )
+
+[node name="stairR3" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( -1.5299e-07, 0, 3, 0, 2, 0, -3.5, 0, -1.31134e-07, -28, 3.9, -49.5 )
+
+[node name="stairR4" parent="environment/Pyramid/PyramidInternal/lowerLevel/cornerStairs" instance=ExtResource( 8 )]
+transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -22, 3, -50 )
+
+[node name="upperPlatStraight" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 0.707107, 0, 2.12132, 0, 0.2, 0, -0.707107, 0, 2.12132, -40.628, 11.594, -40.5 )
+
+[node name="wallSmall" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["walls"] instance=ExtResource( 10 )]
+transform = Transform( 0.75, 0, 0, 0, 9.5, 0, 0, 0, 0.75, -30, 2, -30 )
+
+[node name="upperPlatBase" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 3.6, 0, 0, 0, 0.2, 0, 0, 0, 3.5, -30.6, 11.6, -30.629 )
+
+[node name="cornerUpper" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"]]
+transform = Transform( -10, -8.74228e-07, -3.82137e-15, 0, -4.37114e-07, 1, -8.74228e-07, 10, 4.37114e-08, 21.953, 25.766, 11.841 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -1.72, -1.3, 2.3, 2.72, 2.3 )
+material = SubResource( 13 )
+
+[node name="tipNote" type="Label" parent="."]
+anchor_top = 0.124
+anchor_right = 1.0
+anchor_bottom = 0.26
+margin_top = -0.280006
+margin_bottom = 10.8
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 3
+custom_constants/shadow_as_outline = 0
+custom_fonts/font = SubResource( 19 )
+align = 1
+valign = 1
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Timer" parent="tipNote"]
+one_shot = true
+
+[node name="speedrunNote" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -322.0
+margin_top = 6.0
+margin_right = -17.0
+margin_bottom = 52.0
+custom_fonts/font = SubResource( 20 )
+align = 2
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="prNote" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -234.0
+margin_top = 42.0
+margin_right = -18.0
+margin_bottom = 60.0
+custom_colors/font_color = Color( 0.894118, 0.733333, 0, 1 )
+custom_fonts/font = SubResource( 21 )
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="moveNote" type="Label" parent="."]
+anchor_left = 0.499652
+anchor_top = 1.0
+anchor_right = 0.499652
+anchor_bottom = 1.00417
+margin_left = -84.5546
+margin_top = -51.0
+margin_right = 41.4454
+margin_bottom = -23.0024
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 7 )
+align = 1
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DefaultWorld" type="WorldEnvironment" parent="."]
+environment = ExtResource( 1 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="DefaultWorld"]
+transform = Transform( 0.447915, -0.894076, -4.2222e-08, 8.79687e-09, -4.2817e-08, 1, -0.894076, -0.447915, -1.13133e-08, -2.665, 45, 11.267 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+light_bake_mode = 0
+shadow_enabled = true
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
+
+[node name="TerrainOnly" type="DirectionalLight" parent="DefaultWorld"]
+transform = Transform( -0.406585, -0.509576, -0.758301, -0.48654, 0.823285, -0.292372, 0.773283, 0.25007, -0.582665, 13.335, 108.74, 7.36351 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+light_bake_mode = 0
+light_cull_mask = 4293918721
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
+
+[node name="TerrainOnly2" type="DirectionalLight" parent="DefaultWorld"]
+transform = Transform( -0.168331, -0.649792, 0.741239, 0.55258, -0.68491, -0.474925, 0.816284, 0.329649, 0.474354, 13.335, 108.74, 115.521 )
+light_indirect_energy = 0.0
+light_specular = 0.0
+light_bake_mode = 0
+light_cull_mask = 4293918721
+shadow_color = Color( 0.737255, 0.698039, 0.764706, 1 )
+directional_shadow_mode = 0
+
+[node name="killboxMain" type="Area" parent="." groups=["killboxes"]]
+transform = Transform( 60, 0, 0, 0, 1, 0, 0, 0, 60, -3, -22.0114, 4 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="killboxMain"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 6 )
+
+[node name="checkpoints" type="Spatial" parent="."]
+
+[node name="checkpoint1" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 26.9916, 40.3675, -4.45594 )
+
+[connection signal="area_entered" from="Enemies/Thump/Crushbox" to="Enemies/Thump" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="Enemies/Thump/Shakebox" to="Enemies/Thump" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="Enemies/Thump/FallTimer" to="Enemies/Thump" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="Enemies/Thump/ShakeTimer" to="Enemies/Thump" method="_on_ShakeTimer_timeout"]
+[connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]

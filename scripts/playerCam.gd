@@ -128,8 +128,13 @@ func _process(delta: float) -> void:
 					rotation_degrees.x = targetRotX
 					heightMove = false
 		if angMove:
+			if sign(player.ang) != sign(angMoveTarget):
+				var add = findDegreeDistance(player.ang, angMoveTarget);
+				if (turnDir == "left"): add *= -1;
+				player.ang = angMoveTarget + add
 			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
-			if (player.ang > angMoveTarget - .02 && player.ang < angMoveTarget + .02):
+			print(player.ang)
+			if (player.ang > angMoveTarget - .005 && player.ang < angMoveTarget + .005):
 				player.ang = angMoveTarget
 				angMove = false
 		lerpMove = heightMove || angMove
@@ -368,6 +373,9 @@ func _auto_move_camera(target: int, direction: String) -> void:
 				heightMove = true
 			angMoveTarget = deg2rad(target - 180) #target goes to the angMove
 			angMove = true
+			player.angTarget = 0
+			player.camLock = false
+			turnDir = 'left' if (player.ang + 3 > angMoveTarget + 3) else 'right'
 		elif direction == "O": #height animation reset
 			targetY = baseY
 			targetRotX = baseRotX
@@ -376,6 +384,9 @@ func _auto_move_camera(target: int, direction: String) -> void:
 		elif direction == "A":
 			angMoveTarget = deg2rad(target - 180)
 			angMove = true
+			player.angTarget = 0
+			player.camLock = false
+			turnDir = 'left' if (player.ang + 3 > angMoveTarget + 3) else 'right'
 	autoBuffer = false #tigger the buffer off
 
 func _setToDefaults() -> void:

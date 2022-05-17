@@ -52,7 +52,7 @@ one_shot = true
 [node name="ShakeTimer" type="Timer" parent="."]
 
 [node name="FallCast" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 10, 0, 0, 0, 1, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 20, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
 
 [node name="BottomPosition" type="Position3D" parent="."]
