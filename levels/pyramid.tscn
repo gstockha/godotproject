@@ -27,6 +27,9 @@
 [sub_resource type="SpatialMaterial" id=18]
 albedo_color = Color( 0, 1, 0.882353, 1 )
 
+[sub_resource type="SpatialMaterial" id=15]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
 [sub_resource type="SpatialMaterial" id=16]
 albedo_color = Color( 1, 0, 0.890196, 1 )
 
@@ -34,9 +37,6 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 albedo_color = Color( 1, 0, 0.890196, 1 )
 
 [sub_resource type="SpatialMaterial" id=8]
-albedo_color = Color( 1, 0, 0.890196, 1 )
-
-[sub_resource type="SpatialMaterial" id=15]
 albedo_color = Color( 1, 0, 0.890196, 1 )
 
 [sub_resource type="SpatialMaterial" id=14]
@@ -91,7 +91,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0 )
 script = ExtResource( 12 )
 
 [node name="Thump" type="StaticBody" parent="Enemies" groups=["thumps", "walls"]]
-transform = Transform( 2, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 52.08, 5, 29.615 )
+transform = Transform( 1.8, 0, 0, 0, 1.5, 0, 0, 0, 1.6, 52.08, 5, 29.615 )
 collision_mask = 0
 script = ExtResource( 15 )
 
@@ -107,7 +107,7 @@ transform = Transform( 1, 0, 0, 0, 0.1, 0, 0, 0, 1.2, 0, -1, 0 )
 shape = SubResource( 3 )
 
 [node name="Shakebox" type="Area" parent="Enemies/Thump"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
 collision_layer = 0
 collision_mask = 16
 monitorable = false
@@ -144,37 +144,55 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
 transform = Transform( 200, 0, 0, 0, 2, 0, 0, 0, 200, -100, 0, 100 )
 use_collision = true
 collision_mask = 0
+depth = 1.5
 material = SubResource( 18 )
 
-[node name="groundGround" type="CSGBox" parent="environment/subLevel" groups=["flats"]]
-transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 0.1, 0.425, -5.05, -0.391 )
+[node name="groundBase" type="CSGBox" parent="environment/subLevel"]
+transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 0.1, 0.425, -5.05, -0.664814 )
 use_collision = true
 collision_mask = 0
 width = 7.5
 height = 1.2
-depth = 3.5
+depth = 9.0
 material = SubResource( 18 )
 
-[node name="groundHole" type="CSGPolygon" parent="environment/subLevel"]
+[node name="groundHole" type="CSGPolygon" parent="environment/subLevel" groups=["flats"]]
 transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, 1.05, -0.25 )
 operation = 2
-polygon = PoolVector2Array( -3, -3, -3, 55, 26.776, 46.1782, 33.9081, 35.093, 30.0509, 16.2357, 35, -3 )
+polygon = PoolVector2Array( -3, -3, -3.18093, 55.0663, 26.776, 46.1782, 33.9081, 35.093, 30.0509, 16.2357, 35, -3 )
 depth = 15.0
 
 [node name="groundDeepest" type="CSGPolygon" parent="environment/subLevel" groups=["flats"]]
-transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, -3.95, -0.205 )
+transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, -2.95, -0.205 )
 operation = 2
-polygon = PoolVector2Array( 26.9371, 55.0279, 74.4795, 65.459, 98.969, 32.252, 104.92, 32.346, 105.032, 26.389, 99, 26.275, 75.5152, 2.58844, 29.4496, 8.06882 )
-depth = 5.0
+polygon = PoolVector2Array( 56.0544, 139.706, 74.4882, 80.3529, 98.969, 32.252, 104.92, 32.346, 105.032, 26.389, 99, 26.275, 75.5152, 2.58844, 29.4496, 8.06882, 27.0934, 51.8269, 57.9509, 84.4666, 45.3901, 136.389, 31.8784, 152.322, 39.0227, 167.563, 56.3262, 166.521, 60.5494, 152.431 )
+depth = 7.0
 
-[node name="fallHole" type="CSGBox" parent="environment/subLevel" groups=["walls"]]
+[node name="wellFallHole" type="CSGBox" parent="environment/subLevel"]
 transform = Transform( 0.015, 0, 0, 0, -6.55671e-10, 0.5, 0, -0.015, -2.18557e-08, 0.76, -3.95, -0.352 )
 operation = 2
 depth = 20.0
 
+[node name="wellHole3" type="CSGCylinder" parent="environment/subLevel" groups=["shifts"]]
+transform = Transform( 0.0065, 0, 0, 0, 1.7625, 0, 0, 0, 0.00652878, 0.509, -0.624, -1 )
+operation = 2
+height = 3.6
+
 [node name="Pyramid" type="Spatial" parent="environment"]
 
 [node name="PyramidExternal" type="Spatial" parent="environment/Pyramid"]
+
+[node name="tunnelSlide" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal" groups=["shifts"]]
+transform = Transform( -5.68217e-08, 2.02458, -1.06419, 2.563e-06, 2.88561, 0.746654, 1.3, -5.96046e-06, -1.49011e-07, 22.2059, 34.965, 19.0403 )
+use_collision = true
+collision_mask = 0
+material = SubResource( 15 )
+
+[node name="tunnelSlideHole" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/tunnelSlide" groups=["shifts"]]
+transform = Transform( 1, 4.54747e-13, 7.10543e-14, 0, 1, 6.71638e-14, 1.13687e-13, 1.19215e-07, 1, 0, 0, 0 )
+operation = 2
+radius = 0.85
+material = SubResource( 15 )
 
 [node name="BaseWall4" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal" groups=["walls"]]
 transform = Transform( -6.23324e-07, 0, 2, 0, 1, 0, -14.26, 0, -8.74228e-08, 57.018, 5.964, 0 )
@@ -269,16 +287,6 @@ use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -4, 0, -4, 54, 40.2, 0 )
 material = SubResource( 8 )
-
-[node name="tunnelSlide" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/CornerSideL3" groups=["shifts"]]
-transform = Transform( 1.3, -6.04896e-06, -1.02494e-07, 1.47205e-06, -4.05312e-06, 1.3, -8.92807e-07, -1.5, -6.25849e-07, 2.1543, 41.7266, -0.483627 )
-material = SubResource( 15 )
-
-[node name="tunnelSlideHole" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/CornerSideL3/tunnelSlide" groups=["shifts"]]
-transform = Transform( 1, 4.54747e-13, 7.10543e-14, 0, 1, 6.71638e-14, 1.13687e-13, 1.19215e-07, 1, 0, 0, 0 )
-operation = 2
-radius = 0.85
-material = SubResource( 15 )
 
 [node name="tunnelWallHole" type="CSGCylinder" parent="environment/Pyramid/PyramidExternal/CornerSideL3" groups=["shifts"]]
 transform = Transform( 1.3, -6.04896e-06, -1.02494e-07, 1.43782e-06, -4.05312e-06, 1.3, -8.72044e-07, -1.5, -6.25849e-07, 2.1543, 41.7266, -0.483627 )
@@ -430,6 +438,24 @@ collision_mask = 0
 polygon = PoolVector2Array( -1.3, -1.72, -1.3, 2.3, 2.72, 2.3 )
 material = SubResource( 13 )
 
+[node name="Outside" type="Spatial" parent="environment"]
+
+[node name="well" type="Spatial" parent="environment/Outside"]
+
+[node name="wellHole" type="CSGCylinder" parent="environment/Outside/well" groups=["shifts"]]
+transform = Transform( 1.3, 0, 0, 0, 3.525, 0, 0, 0, 1.30576, 1.8, -1.248, -100 )
+use_collision = true
+collision_mask = 0
+height = 3.5
+material = SubResource( 15 )
+
+[node name="hole" type="CSGCylinder" parent="environment/Outside/well/wellHole" groups=["shifts"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+operation = 2
+radius = 0.8
+height = 3.6
+material = SubResource( 15 )
+
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
 anchor_right = 1.0
@@ -536,7 +562,7 @@ shape = SubResource( 6 )
 [node name="checkpoints" type="Spatial" parent="."]
 
 [node name="checkpoint1" parent="checkpoints" instance=ExtResource( 11 )]
-transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 26.9916, 40.3675, -4.45594 )
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 6.04106, 7.55718, -96.3511 )
 
 [connection signal="area_entered" from="Enemies/Thump/Crushbox" to="Enemies/Thump" method="_on_Crushbox_area_entered"]
 [connection signal="area_entered" from="Enemies/Thump/Shakebox" to="Enemies/Thump" method="_on_Shakebox_area_entered"]

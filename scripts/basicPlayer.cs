@@ -525,9 +525,19 @@ public void _isBoinging(float delta){
             velocity = new Vector3(direction_ground.x*spd, yvelocity, direction_ground.y*spd);
             MoveAndSlide(velocity, Vector3.Up, true);
         }
-        else if (isThump && GetSlideCount() < 2){ //stick to thump
-            Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
-            Translation = colliderNode.Translation - platformStickDifference;
+        else if (isThump){ //stick to thump
+            if (!floorCast.IsColliding()){
+                Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
+                Translation = colliderNode.Translation - platformStickDifference;
+            }
+            else{
+                boingDash = false;
+                jumpwindow = 0;
+                _squishNScale((gravity * 0.017F), new Vector3(0,0,0), true);
+                squishSet = false;
+                boing = 0;
+                boingTimer.Stop();
+            }
         }
         if (GetSlideCount() > 0 && collisionScales[0] != collisionShape.Scale.x){
             if (!wallb) _squishNScale(delta, floorCast.GetCollisionNormal(), false);
@@ -844,6 +854,8 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
         if (leewayCast.IsColliding() && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
+            dashTimer.Stop();
+            dashTimer.Start(.3F);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
