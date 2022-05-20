@@ -3,6 +3,7 @@ using Godot;
 public class Thump : StaticBody
 {
 float yvelocity = 0;
+bool slow = false;
 int damage = 3;
 enum states{
     ready,
@@ -30,28 +31,34 @@ public override void _Ready(){
     shakeBox = GetNode<CollisionShape>("Shakebox/CollisionShape");
     originY = GlobalTransform.origin.y;
     fallTimer.Start(2);
+    slow = Name.BeginsWith("slow");
+    if (slow) floorCast.Scale = new Vector3(floorCast.Scale.x, Mathf.Floor(Scale.y * 2), floorCast.Scale.z);
 }
 
 public override void _PhysicsProcess(float delta){
     if (state == states.ready || state == states.grounded) return;
-    Vector3 floorCastPoint = floorCast.GetCollisionPoint();
     if (state == states.crush){
-        yvelocity += 5 * delta;
+        yvelocity = (!slow) ? yvelocity + 5 * delta : 5 * delta;
         Translation = new Vector3(Translation.x, Translation.y - yvelocity, Translation.z);
-        if (floorCastPoint.y > Translation.y - 1.5F){
+        if ((!slow && floorCast.GetCollisionPoint().y > Translation.y - 1.5F) || (slow && floorCast.IsColliding())){
             state = states.grounded;
             crushBox.Monitorable = true;
-            shakeBox.Disabled = false;
-            fallTimer.Start(2);
-            shakeTimer.Start(.1F);
-            Translation = new Vector3(Translation.x, floorCastPoint.y + mesh.Scale.y, Translation.z);
+            if (!slow){
+                Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + mesh.Scale.y, Translation.z);
+                fallTimer.Start(2);
+                shakeTimer.Start(.1F);
+                shakeBox.Disabled = false;
+            }
+            else fallTimer.Start(3);
         }
     }
     else if (state == states.ascend){
-        Translation = new Vector3(Translation.x, Translation.y + (10 * delta), Translation.z);
+        float fallRate = (slow == false) ? 10 * delta : 5 * delta;
+        Translation = new Vector3(Translation.x, Translation.y + fallRate, Translation.z);
         if (GlobalTransform.origin.y >= originY){
             state = states.ready;
-            fallTimer.Start(2);
+            if (!slow) fallTimer.Start(2);
+            else fallTimer.Start(3);
         }
     }
 }

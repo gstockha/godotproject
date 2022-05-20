@@ -24,9 +24,6 @@
 
 [sub_resource type="BoxShape" id=1]
 
-[sub_resource type="SpatialMaterial" id=18]
-albedo_color = Color( 0, 1, 0.882353, 1 )
-
 [sub_resource type="SpatialMaterial" id=15]
 albedo_color = Color( 1, 0, 0.890196, 1 )
 
@@ -52,6 +49,9 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 [sub_resource type="SphereShape" id=11]
 
 [sub_resource type="SpatialMaterial" id=13]
+albedo_color = Color( 0, 1, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=18]
 albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [sub_resource type="DynamicFont" id=19]
@@ -90,93 +90,55 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.222411, 17.0848, -0.471444 
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0 )
 script = ExtResource( 12 )
 
-[node name="Thump" type="StaticBody" parent="Enemies" groups=["thumps", "walls"]]
-transform = Transform( 1.8, 0, 0, 0, 1.5, 0, 0, 0, 1.6, 52.08, 5, 29.615 )
+[node name="slowThump" type="StaticBody" parent="Enemies" groups=["thumps", "walls"]]
+transform = Transform( 1.8, 0, 0, 0, 1.25, 0, 0, 0, 1.6, 52.08, -1.5, 29.615 )
 collision_mask = 0
 script = ExtResource( 15 )
 
-[node name="Crushbox" type="Area" parent="Enemies/Thump" groups=["thumps"]]
+[node name="Crushbox" type="Area" parent="Enemies/slowThump" groups=["thumps"]]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
 collision_layer = 0
 collision_mask = 16
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape" type="CollisionShape" parent="Enemies/Thump/Crushbox"]
+[node name="CollisionShape" type="CollisionShape" parent="Enemies/slowThump/Crushbox"]
 transform = Transform( 1, 0, 0, 0, 0.1, 0, 0, 0, 1.2, 0, -1, 0 )
 shape = SubResource( 3 )
 
-[node name="Shakebox" type="Area" parent="Enemies/Thump"]
+[node name="Shakebox" type="Area" parent="Enemies/slowThump"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
 collision_layer = 0
 collision_mask = 16
 monitorable = false
 
-[node name="CollisionShape" type="CollisionShape" parent="Enemies/Thump/Shakebox"]
+[node name="CollisionShape" type="CollisionShape" parent="Enemies/slowThump/Shakebox"]
 shape = SubResource( 4 )
 disabled = true
 
-[node name="MeshInstance" type="MeshInstance" parent="Enemies/Thump"]
+[node name="MeshInstance" type="MeshInstance" parent="Enemies/slowThump"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.7, 0, 0, 0 )
 mesh = SubResource( 2 )
 skeleton = NodePath("../CollisionShape")
 material/0 = null
 
-[node name="CollisionShape" type="CollisionShape" parent="Enemies/Thump"]
+[node name="CollisionShape" type="CollisionShape" parent="Enemies/slowThump"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.7, 0, 0, 0 )
 shape = SubResource( 1 )
 
-[node name="FallTimer" type="Timer" parent="Enemies/Thump"]
+[node name="FallTimer" type="Timer" parent="Enemies/slowThump"]
 one_shot = true
 
-[node name="ShakeTimer" type="Timer" parent="Enemies/Thump"]
+[node name="ShakeTimer" type="Timer" parent="Enemies/slowThump"]
 
-[node name="FallCast" type="RayCast" parent="Enemies/Thump"]
-transform = Transform( 1, 0, 0, 0, 20, 0, 0, 0, 1, 0, 0, 0 )
+[node name="FallCast" type="RayCast" parent="Enemies/slowThump"]
+transform = Transform( 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
 
-[node name="BottomPosition" type="Position3D" parent="Enemies/Thump"]
+[node name="BottomPosition" type="Position3D" parent="Enemies/slowThump"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
 
 [node name="environment" type="Spatial" parent="."]
-
-[node name="subLevel" type="CSGPolygon" parent="environment" groups=["flats", "walls"]]
-transform = Transform( 200, 0, 0, 0, 2, 0, 0, 0, 200, -100, 0, 100 )
-use_collision = true
-collision_mask = 0
-depth = 1.5
-material = SubResource( 18 )
-
-[node name="groundBase" type="CSGBox" parent="environment/subLevel"]
-transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 0.1, 0.425, -5.05, -0.664814 )
-use_collision = true
-collision_mask = 0
-width = 7.5
-height = 1.2
-depth = 9.0
-material = SubResource( 18 )
-
-[node name="groundHole" type="CSGPolygon" parent="environment/subLevel" groups=["flats"]]
-transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, 1.05, -0.25 )
-operation = 2
-polygon = PoolVector2Array( -3, -3, -3.18093, 55.0663, 26.776, 46.1782, 33.9081, 35.093, 30.0509, 16.2357, 35, -3 )
-depth = 15.0
-
-[node name="groundDeepest" type="CSGPolygon" parent="environment/subLevel" groups=["flats"]]
-transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, -2.95, -0.205 )
-operation = 2
-polygon = PoolVector2Array( 56.0544, 139.706, 74.4882, 80.3529, 98.969, 32.252, 104.92, 32.346, 105.032, 26.389, 99, 26.275, 75.5152, 2.58844, 29.4496, 8.06882, 27.0934, 51.8269, 57.9509, 84.4666, 45.3901, 136.389, 31.8784, 152.322, 39.0227, 167.563, 56.3262, 166.521, 60.5494, 152.431 )
-depth = 7.0
-
-[node name="wellFallHole" type="CSGBox" parent="environment/subLevel"]
-transform = Transform( 0.015, 0, 0, 0, -6.55671e-10, 0.5, 0, -0.015, -2.18557e-08, 0.76, -3.95, -0.352 )
-operation = 2
-depth = 20.0
-
-[node name="wellHole3" type="CSGCylinder" parent="environment/subLevel" groups=["shifts"]]
-transform = Transform( 0.0065, 0, 0, 0, 1.7625, 0, 0, 0, 0.00652878, 0.509, -0.624, -1 )
-operation = 2
-height = 3.6
 
 [node name="Pyramid" type="Spatial" parent="environment"]
 
@@ -389,7 +351,17 @@ polygon = PoolVector2Array( -1.3, -3, -1.3, 2.3, 4, 2.3 )
 material = SubResource( 13 )
 
 [node name="cornerConnectR" parent="environment/Pyramid/PyramidInternal/upperLevel" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 1.8, 0, 0, 0, 0.5, 0, 0, 0, 7.5, -44.425, 14.948, -12.3 )
+transform = Transform( 2, 0, 0, 0, 0.5, 0, 0, 0, 7.8, -43.665, 14.948, -11.5 )
+
+[node name="cornerConnectR2" parent="environment/Pyramid/PyramidInternal/upperLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -6.28631e-06, 0, 7.8, 0, 0.5, 0, -2, 0, -2.45166e-05, -11.507, 14.948, -43.519 )
+
+[node name="cornerUpper" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/upperLevel" groups=["flats"]]
+transform = Transform( -10, -8.74228e-07, -3.82137e-15, 0, -4.37114e-07, 1, -8.74228e-07, 10, 4.37114e-08, 21.953, 25.766, 11.841 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.3, -1.72, -1.3, 2.3, 2.72, 2.3 )
+material = SubResource( 13 )
 
 [node name="lowerLevel" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
 
@@ -423,20 +395,52 @@ transform = Transform( -1.5299e-07, 0, 3, 0, 2, 0, -3.5, 0, -1.31134e-07, -28, 3
 transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -22, 3, -50 )
 
 [node name="upperPlatStraight" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.707107, 0, 2.12132, 0, 0.2, 0, -0.707107, 0, 2.12132, -40.628, 11.594, -40.5 )
+transform = Transform( 0.707107, 0, 2.12132, 0, 0.3, 0, -0.707107, 0, 2.12132, -40.628, 11.41, -40.5 )
 
-[node name="wallSmall" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["walls"] instance=ExtResource( 10 )]
-transform = Transform( 0.75, 0, 0, 0, 9.5, 0, 0, 0, 0.75, -30, 2, -30 )
+[node name="upperPlatBase2" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 3.6, 0, 0, 0, 0.3, 0, 0, 0, 0.5, -30.9417, 11.41, -37.019 )
 
-[node name="upperPlatBase" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 3.6, 0, 0, 0, 0.2, 0, 0, 0, 3.5, -30.6, 11.6, -30.629 )
+[node name="upperPlatBase3" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 3.6, 0, 0, 0, 0.3, 0, 0, 0, 0.5, -30.9416, 11.41, -24.6104 )
 
-[node name="cornerUpper" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"]]
-transform = Transform( -10, -8.74228e-07, -3.82137e-15, 0, -4.37114e-07, 1, -8.74228e-07, 10, 4.37114e-08, 21.953, 25.766, 11.841 )
-use_collision = true
-collision_mask = 0
-polygon = PoolVector2Array( -1.3, -1.72, -1.3, 2.3, 2.72, 2.3 )
-material = SubResource( 13 )
+[node name="upperPlatBase4" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -1.13154e-05, 0, 0.5, 0, 0.3, 0, -3.6, 0, -1.57158e-06, -24.7407, 11.41, -30.829 )
+
+[node name="upperPlatBase5" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -1.13154e-05, 0, 0.5, 0, 0.3, 0, -3.6, 0, -1.57158e-06, -37.1397, 11.41, -30.829 )
+
+[node name="upperPlatBase6" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats", "shifts"] instance=ExtResource( 7 )]
+transform = Transform( -1.41547e-05, 4.71474e-07, -0.5, 2.6, 0.259807, 0, 4.50333, -0.15, -1.57158e-06, -24.893, 16.513, -14.654 )
+
+[node name="upperPlatBase7" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats", "shifts"] instance=ExtResource( 7 )]
+transform = Transform( 4.50333, -0.15, 0, 2.6, 0.259807, 0, 0, 0, 0.5, -14.729, 16.617, -24.604 )
+
+[node name="upperPlatBase8" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -1.57158e-06, 0, 0.5, 0, 0.3, 0, -0.5, 0, -1.57158e-06, -5.017, 21.734, -24.607 )
+
+[node name="upperPlatBase9" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats", "shifts"] instance=ExtResource( 7 )]
+transform = Transform( -9.84234e-08, 6.55671e-09, -0.5, 1.3, 0.259808, 0, 2.25167, -0.15, -2.18557e-08, -5.016, 24.344, -19.123 )
+
+[node name="upperPlatBase10" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -0.5, 0, -3.14315e-06, 0, 0.3, 0, 3.14315e-06, 0, -0.5, -24.895, 21.627, -4.961 )
+
+[node name="upperPlatBase11" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats", "shifts"] instance=ExtResource( 7 )]
+transform = Transform( 2.25167, -0.15, 1.54972e-06, 1.3, 0.259808, 0, -6.97891e-06, 4.64916e-07, 0.5, -19.411, 24.232, -4.962 )
+
+[node name="upperPlatBase12" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -1.57158e-06, 0, 0.5, 0, 0.3, 0, -0.5, 0, -1.57158e-06, -5.017, 26.853, -13.936 )
+
+[node name="upperPlatBase13" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats", "shifts"] instance=ExtResource( 7 )]
+transform = Transform( 2.57002, 0.167758, 0, -1.7335, 0.248711, 0, 0, 0, 0.5, -11.074, 30.278, -13.886 )
+
+[node name="upperPlatBase14" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 0.5, 0, 0, 0, 0.3, 0, 0, 0, 0.5, -14.2699, 26.72, -4.95652 )
+
+[node name="scaffoldBeam" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( 1.5, 0, 0, 0, 0.5, 0, 0, 0, 11, -18.8364, 33.2426, -0.550016 )
+
+[node name="scaffoldBeam2" parent="environment/Pyramid/PyramidInternal/lowerLevel" groups=["flats"] instance=ExtResource( 7 )]
+transform = Transform( -6.55671e-08, 0, 11, 0, 0.5, 0, -1.5, 0, -4.80825e-07, -0.131, 33.243, -18.791 )
 
 [node name="Outside" type="Spatial" parent="environment"]
 
@@ -450,11 +454,85 @@ height = 3.5
 material = SubResource( 15 )
 
 [node name="hole" type="CSGCylinder" parent="environment/Outside/well/wellHole" groups=["shifts"]]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 operation = 2
 radius = 0.8
 height = 3.6
 material = SubResource( 15 )
+
+[node name="Cave" type="Spatial" parent="environment"]
+
+[node name="subLevel" type="CSGPolygon" parent="environment/Cave" groups=["flats", "walls"]]
+transform = Transform( 200, 0, 0, 0, 2, 0, 0, 0, 200, -100, 0, 100 )
+use_collision = true
+collision_mask = 0
+depth = 1.5
+material = SubResource( 18 )
+
+[node name="groundBase" type="CSGBox" parent="environment/Cave/subLevel"]
+transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 0.1, 0.425, -5.05, -0.664814 )
+use_collision = true
+collision_mask = 0
+width = 7.5
+height = 1.2
+depth = 9.0
+material = SubResource( 18 )
+
+[node name="groundHole" type="CSGPolygon" parent="environment/Cave/subLevel" groups=["flats"]]
+transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, 1.05, -0.25 )
+operation = 2
+polygon = PoolVector2Array( -3, -3, -3.18093, 55.0663, 26.776, 46.1782, 33.9081, 35.093, 30.0509, 16.2357, 28, -3 )
+depth = 15.0
+
+[node name="groundDeepest" type="CSGPolygon" parent="environment/Cave/subLevel" groups=["flats"]]
+transform = Transform( 0.005, 0, 0, 0, -2.18557e-10, 0.5, 0, -0.005, -2.18557e-08, 0.25, -2.95, -0.205 )
+operation = 2
+polygon = PoolVector2Array( 56.0544, 139.706, 74.4882, 80.3529, 98.9107, 32.263, 104.92, 32.346, 105.032, 26.389, 99, 26.275, 75.5152, 2.58844, 26.2265, 8.745, 27.0934, 51.8269, 57.9509, 84.4666, 45.3901, 136.389, 31.8784, 152.322, 39.0227, 167.563, 56.3262, 166.521, 60.5494, 152.431 )
+depth = 7.0
+
+[node name="thumpHole" type="CSGBox" parent="environment/Cave/subLevel"]
+transform = Transform( 0.015, 0, 0, 0, -6.55671e-10, 0.2, 0, -0.015, -8.74228e-09, 0.76, -0.972, -0.352 )
+operation = 2
+depth = 20.0
+
+[node name="thumpHoleextension" type="CSGBox" parent="environment/Cave/subLevel"]
+transform = Transform( 0.015, 0, 0, 0, -6.55671e-10, 0.19, 0, -0.015, -8.30516e-09, 0.730743, -1.07565, -0.352 )
+operation = 2
+depth = 20.0
+
+[node name="wellHole3" type="CSGCylinder" parent="environment/Cave/subLevel" groups=["shifts"]]
+transform = Transform( 0.0065, 0, 0, 0, 1.7625, 0, 0, 0, 0.00652878, 0.509, -0.624, -1 )
+operation = 2
+height = 3.6
+
+[node name="caveStairs" type="Spatial" parent="environment/Cave" groups=["flats", "obstacles"]]
+
+[node name="caveStair" type="CSGPolygon" parent="environment/Cave/caveStairs"]
+transform = Transform( 1.91795, 0.566993, 2.47841e-08, 0, -8.74228e-08, 2, 0.566993, -1.91795, -8.38361e-08, -39.382, -10, 1.061 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -5.58031, -5.60473, -7.57977, 0.929187, 8.09206, 1.0483, 4.32578, -4.42692, 1.29805, -6.13159, -3.43425, -6.34583 )
+depth = 1.5
+
+[node name="caveStair2" type="CSGPolygon" parent="environment/Cave/caveStairs"]
+transform = Transform( 1.91795, 0.566993, 2.47841e-08, 0, -8.74228e-08, 2, 0.566993, -1.91795, -8.38361e-08, -39.382, -7, 1.061 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -6.20437, -3.56048, -7.57977, 0.929187, 5.97616, 0.973792, 3.88974, -2.33553, -0.426765, -4.51618, -3.63772, -5.02543 )
+depth = 1.5
+
+[node name="caveStair3" type="CSGPolygon" parent="environment/Cave/caveStairs"]
+transform = Transform( 1.91795, 0.566993, 2.47841e-08, 0, -8.74228e-08, 2, 0.566993, -1.91795, -8.38361e-08, -39.382, -4, 1.061 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -6.71428, -1.73206, -7.57977, 0.929187, 3.18277, 0.985122, 0.827904, -1.88705, -0.50655, -2.63862, -4.34766, -2.76898 )
+depth = 1.5
+
+[node name="caveStair4" type="CSGPolygon" parent="environment/Cave/caveStairs"]
+transform = Transform( 1.91795, 0.566993, 2.47841e-08, 0, -8.74228e-08, 2, 0.566993, -1.91795, -8.38361e-08, -39.382, -1, 1.061 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -7.35139, 0.329834, -7.57977, 0.929187, 0.615633, 1.06942, -0.579666, -1.18221, -4.05548, -0.937375 )
+depth = 1.5
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -564,8 +642,8 @@ shape = SubResource( 6 )
 [node name="checkpoint1" parent="checkpoints" instance=ExtResource( 11 )]
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 6.04106, 7.55718, -96.3511 )
 
-[connection signal="area_entered" from="Enemies/Thump/Crushbox" to="Enemies/Thump" method="_on_Crushbox_area_entered"]
-[connection signal="area_entered" from="Enemies/Thump/Shakebox" to="Enemies/Thump" method="_on_Shakebox_area_entered"]
-[connection signal="timeout" from="Enemies/Thump/FallTimer" to="Enemies/Thump" method="_on_FallTimer_timeout"]
-[connection signal="timeout" from="Enemies/Thump/ShakeTimer" to="Enemies/Thump" method="_on_ShakeTimer_timeout"]
+[connection signal="area_entered" from="Enemies/slowThump/Crushbox" to="Enemies/slowThump" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="Enemies/slowThump/Shakebox" to="Enemies/slowThump" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="Enemies/slowThump/FallTimer" to="Enemies/slowThump" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="Enemies/slowThump/ShakeTimer" to="Enemies/slowThump" method="_on_ShakeTimer_timeout"]
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
