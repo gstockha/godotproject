@@ -57,6 +57,13 @@ enabled = true
 transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
 
+[node name="trampolineCast" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0 )
+enabled = true
+collision_mask = 32
+collide_with_areas = true
+collide_with_bodies = false
+
 [node name="shadowCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true

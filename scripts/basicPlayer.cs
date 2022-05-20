@@ -86,6 +86,7 @@ MeshInstance shadow;
 Spatial collisionShape;
 RayCast floorCast;
 RayCast leewayCast;
+RayCast trampolineCast;
 RayCast shadowCast;
 Area checkpoint;
 Camera camera;
@@ -109,6 +110,7 @@ public override void _Ready(){
     collisionShape = GetNode<Spatial>("CollisionShape");
     floorCast = GetNode<RayCast>("floorCast");
     leewayCast = GetNode<RayCast>("leewayCast");
+    trampolineCast = GetNode<RayCast>("trampolineCast");
     shadowCast = GetNode<RayCast>("shadowCast");
     checkpoint = GetNode<Area>("../../checkpoints/checkpoint1");
     camera = GetNode<Camera>("Position3D/playerCam");
@@ -441,7 +443,7 @@ public void _isRolling(float delta){
 public void _isAirborne(float delta){
 	yvelocity -= (gravity * weight) * delta; //gravity
 	rolling = false;
-	_capSpeed(22,50);
+	_capSpeed(50,50);
 }
 
 public void _isWall(float delta){
@@ -754,6 +756,7 @@ public void _lockOn(bool triggerScript, float delta){
 public void _jump(){
     if (smushed) return;
     boingCharge = true;
+    if (trampolineCast.IsColliding()) boing = yvelocity;
     if (boing != 0){ //boing jump
         yvelocity = boing;
         boingDash = false;
@@ -774,7 +777,7 @@ public void _jump(){
             wallby = wallang.y * .5F;
         }
         float lastyvel = yvelocity + (gravity * .017F); //yvel times rough delta estimate
-        if (lastyvel > 20) lastyvel = 20;
+        if (lastyvel > 20 && !trampolineCast.IsColliding()) lastyvel = 20;
         int combo = bounceCombo;
         if (combo > bounceComboCap) combo = bounceComboCap;
         if (basejumpwindow < 1) basejumpwindow = 1;
@@ -826,7 +829,7 @@ public void _jump(){
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
         squishReverb[0] = yvelocity * .035F;
-        _capSpeed(22, 50);
+        _capSpeed(50, 50);
         jumpwindow = 0;
         bounce = bounceBase;
     }
@@ -855,7 +858,7 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
             dashTimer.Stop();
-            dashTimer.Start(.3F);
+            dashTimer.Start(.5F);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -1042,6 +1045,11 @@ public void _on_hitBox_area_entered(Area area){
         switch(groups[i].ToString()){
             case "mobs": _collisionDamage((Spatial)area.Owner); break;
             case "thumps": _collisionDamage((Spatial)area.Owner); break;
+            case "trampolines":
+                float boingPower = !area.Owner.Name.BeginsWith("big") ? 20 : 40;
+                boingPower += Mathf.Abs(yvelocity * .25F);
+                _launch(Vector3.Zero, boingPower, false);
+                break;
             case "hurts": _collisionDamage(area); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
@@ -1227,6 +1235,7 @@ public void _collisionDamage(Spatial collisionNode){
                 mesh.Translation = new Vector3(mesh.Translation.x, -.05F, mesh.Translation.z);
                 smushTimer.Stop();
                 smushTimer.Start(damage);
+                GD.Print("smush");
                 break;
                 #endregion
             case("hurts"):

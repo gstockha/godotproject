@@ -211,6 +211,7 @@ lock_on={
 3d_physics/layer_3="Enemies"
 3d_physics/layer_4="Bullets"
 3d_physics/layer_5="Platforms"
+3d_physics/layer_6="Trampolines"
 
 [physics]
 

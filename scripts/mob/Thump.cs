@@ -42,9 +42,9 @@ public override void _PhysicsProcess(float delta){
         Translation = new Vector3(Translation.x, Translation.y - yvelocity, Translation.z);
         if ((!slow && floorCast.GetCollisionPoint().y > Translation.y - 1.5F) || (slow && floorCast.IsColliding())){
             state = states.grounded;
-            crushBox.Monitorable = true;
             if (!slow){
                 Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + mesh.Scale.y, Translation.z);
+                crushBox.Monitorable = true;
                 fallTimer.Start(2);
                 shakeTimer.Start(.1F);
                 shakeBox.Disabled = false;
