@@ -443,7 +443,8 @@ public void _isRolling(float delta){
 public void _isAirborne(float delta){
 	yvelocity -= (gravity * weight) * delta; //gravity
 	rolling = false;
-	_capSpeed(50,50);
+    if (yvelocity < -50) yvelocity = -50;
+	//_capSpeed(22,50);
 }
 
 public void _isWall(float delta){
@@ -677,10 +678,10 @@ public void _rotateMesh(float xvel, float yvel, float delta){
     mesh.Rotation = new Vector3(meshRotation.x + turn, angy, meshRotation.z);
 }
 
-public void _capSpeed(float high, float low){
-    if (yvelocity < -low) yvelocity = -low;
-	else if (yvelocity > high) yvelocity = high;
-}
+// public void _capSpeed(float high, float low){
+//     if (yvelocity < -low) yvelocity = -low;
+// 	else if (yvelocity > high) yvelocity = high;
+// }
 
 public void _turnDelay(){
     if (angTarget == 0) return;
@@ -756,7 +757,11 @@ public void _lockOn(bool triggerScript, float delta){
 public void _jump(){
     if (smushed) return;
     boingCharge = true;
-    if (trampolineCast.IsColliding()) boing = yvelocity;
+    bool trampolined = trampolineCast.IsColliding();
+    if (trampolined){
+        boing = yvelocity * 1.25F;
+        if (boing < 15) boing = 15;
+    }
     if (boing != 0){ //boing jump
         yvelocity = boing;
         boingDash = false;
@@ -777,7 +782,7 @@ public void _jump(){
             wallby = wallang.y * .5F;
         }
         float lastyvel = yvelocity + (gravity * .017F); //yvel times rough delta estimate
-        if (lastyvel > 20 && !trampolineCast.IsColliding()) lastyvel = 20;
+        if (lastyvel > 20 && !trampolined) lastyvel = 20;
         int combo = bounceCombo;
         if (combo > bounceComboCap) combo = bounceComboCap;
         if (basejumpwindow < 1) basejumpwindow = 1;
@@ -829,7 +834,8 @@ public void _jump(){
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
         squishReverb[0] = yvelocity * .035F;
-        _capSpeed(50, 50);
+        //_capSpeed(22, 50);
+        if (!trampolined && yvelocity > 22) yvelocity = 22;
         jumpwindow = 0;
         bounce = bounceBase;
     }
@@ -1046,7 +1052,7 @@ public void _on_hitBox_area_entered(Area area){
             case "mobs": _collisionDamage((Spatial)area.Owner); break;
             case "thumps": _collisionDamage((Spatial)area.Owner); break;
             case "trampolines":
-                float boingPower = !area.Owner.Name.BeginsWith("big") ? 20 : 40;
+                float boingPower = !area.Owner.Name.BeginsWith("big") ? 15 : 30;
                 boingPower += Mathf.Abs(yvelocity * .25F);
                 _launch(Vector3.Zero, boingPower, false);
                 break;
