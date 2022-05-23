@@ -32,7 +32,7 @@ public override void _Ready(){
     originY = GlobalTransform.origin.y;
     fallTimer.Start(2);
     slow = Name.BeginsWith("slow");
-    if (slow) floorCast.Scale = new Vector3(floorCast.Scale.x, Mathf.Floor(Scale.y * 2), floorCast.Scale.z);
+    //if (slow) floorCast.Scale = new Vector3(floorCast.Scale.x, Scale.y, floorCast.Scale.z);
 }
 
 public override void _PhysicsProcess(float delta){
