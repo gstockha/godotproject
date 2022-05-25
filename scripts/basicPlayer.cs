@@ -10,6 +10,7 @@ Vector3 velocity;
 Vector3 platformStickDifference = Vector3.Zero; //stick on thumps and stuff
 float gravity = 23.0F;
 float jumpforce = 12.0F;
+float baseJumpforce = 12.0F;
 float yvelocity = -1;
 static float bounceBase = .7F;
 float bounce = bounceBase;
@@ -835,7 +836,7 @@ public void _jump(){
         }
         squishReverb[0] = yvelocity * .035F;
         //_capSpeed(22, 50);
-        if (!trampolined && yvelocity > 22) yvelocity = 22;
+        if (!trampolined && yvelocity > (jumpforce + 10)) yvelocity = jumpforce + 10;
         jumpwindow = 0;
         bounce = bounceBase;
     }
@@ -1052,11 +1053,12 @@ public void _on_hitBox_area_entered(Area area){
             case "mobs": _collisionDamage((Spatial)area.Owner); break;
             case "thumps": _collisionDamage((Spatial)area.Owner); break;
             case "trampolines":
-                float boingPower = !area.Owner.Name.BeginsWith("big") ? 15 : 30;
+                float boingPower = !area.Owner.Name.BeginsWith("big") ? 16 : 30;
                 boingPower += Mathf.Abs(yvelocity * .25F);
                 _launch(Vector3.Zero, boingPower, false);
                 break;
-            case "hurts": _collisionDamage(area); break;
+            case "projectiles": _collisionDamage(area); break;
+            case "lavas": _collisionDamage(area); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
                 if (!area.Name.BeginsWith("delay")) _dieNRespawn();
@@ -1244,16 +1246,24 @@ public void _collisionDamage(Spatial collisionNode){
                 GD.Print("smush");
                 break;
                 #endregion
-            case("hurts"):
+            case("projectiles"):
                 #region
                 //if ((bool)collisionNode.Get("invincible")) return;
                 damage = (int)collisionNode.Get("damage");
-                Vector3 bltTrajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
+                Vector3 trajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
                 power = baseWeight * .5F * 25;
-                launch = new Vector3(bltTrajectory.x * -1 * power, 0, bltTrajectory.z * -1 * power);
+                launch = new Vector3(trajectory.x * -1 * power, 0, trajectory.z * -1 * power);
                 _launch(launch, power, true);
                 collisionNode.Call("_on_DeleteTimer_timeout");
                 camera.Call("_shakeMove", 10, damage * .2F, 0);
+                break;
+                #endregion
+            case("lavas"):
+                #region
+                //if ((bool)collisionNode.Get("invincible")) return;
+                damage = 25;
+                _launch(Vector3.Zero, damage, false);
+                camera.Call("_shakeMove", 10, damage * .1F, 0);
                 break;
                 #endregion
             }
