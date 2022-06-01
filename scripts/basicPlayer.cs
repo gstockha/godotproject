@@ -16,7 +16,7 @@ static float bounceBase = .7F;
 float bounce = bounceBase;
 int bounceCombo = 0;
 int bounceComboCap = 3;
-float bouncethreshold = 3; //how much yvelocity you need to bounce
+float bouncethreshold = 9; //how much yvelocity you need to bounce
 float basejumpwindow = 0;
 float jumpwindow = 0;
 float ang = 0;
@@ -411,7 +411,7 @@ public void _isRolling(float delta){
     }
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
-        if ((yvelocity * bounce) * -1 > bouncethreshold && yvelocity != -1){
+        if (boingCharge || (((yvelocity * bounce) * -1 > bouncethreshold || bounceDashing == 2) && yvelocity != -1)){
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)

@@ -1,10 +1,9 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=46 format=2]
 
 [ext_resource path="res://environments/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
 [ext_resource path="res://src/speedrunNote.gd" type="Script" id=3]
 [ext_resource path="res://scenes/geography/wallBlock.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scenes/geography/cyPlat.tscn" type="PackedScene" id=5]
 [ext_resource path="res://scenes/player/PlayerBall.tscn" type="PackedScene" id=6]
 [ext_resource path="res://scenes/geography/cyFlat.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/geography/obstacle.tscn" type="PackedScene" id=8]
@@ -35,15 +34,21 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 
 [sub_resource type="SphereShape" id=11]
 
-[sub_resource type="SpatialMaterial" id=13]
+[sub_resource type="SpatialMaterial" id=33]
 albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [sub_resource type="CubeMesh" id=2]
 
 [sub_resource type="SpatialMaterial" id=24]
-albedo_color = Color( 0.384314, 0.8, 1, 1 )
+albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [sub_resource type="BoxShape" id=1]
+
+[sub_resource type="SpatialMaterial" id=32]
+albedo_color = Color( 0, 1, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=13]
+albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [sub_resource type="SpatialMaterial" id=22]
 albedo_color = Color( 0.384314, 0.8, 1, 1 )
@@ -76,6 +81,9 @@ size = Vector3( 4, 1, 4 )
 albedo_color = Color( 0.384314, 0.8, 1, 1 )
 
 [sub_resource type="SpatialMaterial" id=18]
+albedo_color = Color( 0, 1, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=31]
 albedo_color = Color( 0, 1, 0.882353, 1 )
 
 [sub_resource type="DynamicFont" id=19]
@@ -304,14 +312,66 @@ shape = SubResource( 11 )
 [node name="center" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0 )
 
-[node name="centerPlat" parent="environment/Pyramid/PyramidInternal/center" groups=["flats"] instance=ExtResource( 5 )]
-transform = Transform( 1.41421, 0, 1.41421, 0, 0.5, 0, -1.41421, 0, 1.41421, 0, 20, 0 )
+[node name="centerPlat" type="CSGBox" parent="environment/Pyramid/PyramidInternal/center" groups=["flats"]]
+transform = Transform( 2.82843, 0, 2.82843, 0, 0.45, 0, -2.82843, 0, 2.82843, 0, 20.58, 0 )
+use_collision = true
+collision_mask = 0
+material = SubResource( 33 )
+
+[node name="liftHole" type="CSGBox" parent="environment/Pyramid/PyramidInternal/center/centerPlat"]
+transform = Transform( 0.51, 0, 0, 0, 2, 0, 0, 0, 0.51, 0, 0, 0 )
+operation = 2
+material = SubResource( 33 )
+
+[node name="centerLift" type="StaticBody" parent="environment/Pyramid/PyramidInternal/center" groups=["thumps"]]
+transform = Transform( 0.989948, 0, 0.91924, 0, 0.3, 0, -0.989951, 0, 0.919237, 0, 20.5789, 0 )
+collision_mask = 0
+script = ExtResource( 15 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Pyramid/PyramidInternal/center/centerLift"]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.7, 0, 0, 0 )
+mesh = SubResource( 2 )
+skeleton = NodePath("../CollisionShape")
+material/0 = SubResource( 24 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidInternal/center/centerLift"]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.7, 0, 0, 0 )
+shape = SubResource( 1 )
+
+[node name="FallTimer" type="Timer" parent="environment/Pyramid/PyramidInternal/center/centerLift"]
+one_shot = true
+
+[node name="FallCast" type="RayCast" parent="environment/Pyramid/PyramidInternal/center/centerLift"]
+transform = Transform( 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
+enabled = true
 
 [node name="glassBeam" parent="environment/Pyramid/PyramidInternal/center" groups=["flats", "slides"] instance=ExtResource( 9 )]
 transform = Transform( 9.8995, 0, 1.41421, 0, 0.3, 0, -9.8995, 0, 1.41421, -12.4, 20.65, 12.273 )
 
 [node name="glassSlope" parent="environment/Pyramid/PyramidInternal/center" groups=["shifts", "slides"] instance=ExtResource( 9 )]
 transform = Transform( 6.12372, -0.106066, -1.41421, 5, 0.259808, 0, 6.12372, -0.106066, 1.41421, 8.8, 25.531, 8.8 )
+
+[node name="CSGBox" type="CSGBox" parent="environment/Pyramid/PyramidInternal/center" groups=["flats", "obstacles"]]
+transform = Transform( 12, 0, 0, 0, 2.1, 0, 0, 0, 12, 0, 4.9, 0 )
+use_collision = true
+collision_mask = 0
+material = SubResource( 32 )
+
+[node name="CSGBox2" type="CSGBox" parent="environment/Pyramid/PyramidInternal/center/CSGBox"]
+transform = Transform( 0.958333, 0, 0, 0, 1, 0, 0, 0, 0.958333, 0, 0, 0 )
+operation = 2
+material = SubResource( 32 )
+
+[node name="CSGBox2" type="CSGBox" parent="environment/Pyramid/PyramidInternal/center" groups=["flats", "obstacles"]]
+transform = Transform( 9.35, 0, 0, 0, 2.1, 0, 0, 0, 9.35, 0, 2.74814, 0 )
+use_collision = true
+collision_mask = 0
+material = SubResource( 32 )
+
+[node name="CSGBox2" type="CSGBox" parent="environment/Pyramid/PyramidInternal/center/CSGBox2"]
+transform = Transform( 0.958333, 0, 0, 0, 1, 0, 0, 0, 0.958333, 0, 0, 0 )
+operation = 2
+material = SubResource( 32 )
 
 [node name="upperLevel" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
 
@@ -621,6 +681,28 @@ transform = Transform( 0.0065, 0, 0, 0, 1.7625, 0, 0, 0, 0.00652878, 0.509, -0.3
 operation = 2
 height = 3.0
 
+[node name="CenterDip" type="CSGBox" parent="environment/Cave/subLevel"]
+transform = Transform( 0.06, 0, 0, 0, 1, 0, 0, 0, 0.06, 0.5, 0.05, -0.5 )
+operation = 2
+width = 1.5
+depth = 1.5
+material = SubResource( 31 )
+
+[node name="CenterDip2" type="CSGBox" parent="environment/Cave/subLevel/CenterDip"]
+transform = Transform( 0.235467, 0, -0.235467, 0, 1.1, 0, 0.235467, 0, 0.235467, 0, -0.8, 0 )
+operation = 2
+material = SubResource( 31 )
+
+[node name="CenterDip2" type="CSGBox" parent="environment/Cave/subLevel"]
+transform = Transform( 0.06, 0, 0, 0, 0.6, 0, 0, 0, 0.06, 0.5, 0.519, -0.5 )
+operation = 2
+material = SubResource( 31 )
+
+[node name="CenterDip2" type="CSGBox" parent="environment/Cave/subLevel/CenterDip2"]
+transform = Transform( 0.235467, 0, -0.235467, 0, 1.1, 0, 0.235467, 0, 0.235467, 0, -0.8, 0 )
+operation = 2
+material = SubResource( 31 )
+
 [node name="caveStairs" type="Spatial" parent="environment/Cave" groups=["flats", "obstacles"]]
 
 [node name="caveStair" type="CSGPolygon" parent="environment/Cave/caveStairs"]
@@ -754,5 +836,6 @@ gravity = 0.0
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 6 )
 
+[connection signal="timeout" from="environment/Pyramid/PyramidInternal/center/centerLift/FallTimer" to="environment/Pyramid/PyramidInternal/center/centerLift" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/lowerLevel/cornerBlocks/Lift/FallTimer" to="environment/Pyramid/PyramidInternal/lowerLevel/cornerBlocks/Lift" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
