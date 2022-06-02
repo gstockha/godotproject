@@ -371,7 +371,6 @@ public void _isRolling(float delta){
 	wallb = false;
 	hasJumped = 0;
 	idle = false;
-    launched = false;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
             bounce = bounceBase;
@@ -411,7 +410,8 @@ public void _isRolling(float delta){
     }
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
-        if (boingCharge || (((yvelocity * bounce) * -1 > bouncethreshold || bounceDashing == 2) && yvelocity != -1)){
+        //if (boingCharge || (((yvelocity * bounce) * -1 > bouncethreshold || bounceDashing == 2) && yvelocity != -1)){
+        if (boingCharge || (bounceDashing == 2 || launched) && yvelocity != -1){
             Node colliderNode = (Node)GetSlideCollision(0).Collider;
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
@@ -439,6 +439,7 @@ public void _isRolling(float delta){
         }
     }
     else if (shiftedDir > 1) yvelocity = -1; //prevents slope cheesing
+    launched = false;
 }
 
 public void _isAirborne(float delta){
@@ -482,7 +483,7 @@ public void _isWall(float delta){
             else{
                 wallbx = GetSlideCollision(0).Normal.x * Mathf.Abs(wallbx);
                 wallby = GetSlideCollision(0).Normal.z * Mathf.Abs(wallby);
-                launched = false;
+                //launched = false;
                 return;
             }
         }
