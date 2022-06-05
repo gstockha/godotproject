@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=2]
+[gd_scene load_steps=47 format=2]
 
 [ext_resource path="res://environments/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
@@ -80,6 +80,10 @@ size = Vector3( 4, 1, 4 )
 [sub_resource type="SpatialMaterial" id=4]
 albedo_color = Color( 0.384314, 0.8, 1, 1 )
 
+[sub_resource type="SpatialMaterial" id=34]
+flags_transparent = true
+albedo_color = Color( 0, 0.856445, 1, 0.352941 )
+
 [sub_resource type="SpatialMaterial" id=18]
 albedo_color = Color( 0, 1, 0.882353, 1 )
 
@@ -116,7 +120,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.222411, 17.0848, -0.471444 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0351836, 17.0848, -0.0525244 )
 
 [node name="checkpoints" type="Spatial" parent="."]
 
@@ -616,6 +620,88 @@ shape = SubResource( 29 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 mesh = SubResource( 3 )
 material/0 = SubResource( 4 )
+
+[node name="hut" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.40228, 0, 0 )
+
+[node name="glassWall" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["obstacles"]]
+transform = Transform( 15, 0, 0, 0, 4.78, 0, 0, 0, 0.6, -9.63146, 6.741, -37.782 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="frontHole" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/glassWall"]
+transform = Transform( 0.125, 0, 0, 0, 0.32, 0, 0, 0, 1.3, 0.025, -0.673, 0.145 )
+operation = 2
+
+[node name="glassWall2" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["obstacles"]]
+transform = Transform( 2.12132, 0, 0.424264, 0, 4.78, 0, -2.12132, 0, 0.424264, 7.05654, 6.741, -39.723 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="glassWall4" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["obstacles"]]
+transform = Transform( -2.53526e-07, 0, 0.6, 0, 4.78, 0, -5.8, 0, -2.62268e-08, 9, 6.741, -47.247 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="frontHole" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/glassWall4"]
+transform = Transform( 0.27, 0, 0, 0, 0.32, 0, -7.10543e-14, 0, 1.3, 0.0683489, -0.673, -0.145066 )
+operation = 2
+
+[node name="glassWall6" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["obstacles"]]
+transform = Transform( -2.53526e-07, 0, 0.6, 0, 4.78, 0, -5.8, 0, -2.62268e-08, -28.214, 6.741, -47.247 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="glassWall3" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["obstacles"]]
+transform = Transform( 2.12132, 0, -0.424264, 0, 4.78, 0, 2.12132, 0, 0.424264, -26.278, 6.741, -39.723 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="glassRoof" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["flats", "slides"]]
+transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 11.627, -37.242 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.28, 3.517, 1.282, 3.498, 1.28, 0.923, 0.997, -0.017, -1, -0.013, -1.281, 0.922 )
+
+[node name="glassLayer2" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["flats", "slides"]]
+transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 8.5, -37.242 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.28, 3.517, 1.282, 3.498, 1.28, 0.923, 1.003, 0, -1, -0.013, -1.281, 0.922 )
+
+[node name="layerGround" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut"]
+
+[node name="glassLayer" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerGround" groups=["flats", "slides"]]
+transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 5.25, -36.9379 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -1.28, 3.517, 1.282, 3.498, 1.28, 0.923, 1.003, 0, -1, -0.013, -1.281, 0.922 )
+
+[node name="glassWall7" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerGround" groups=["obstacles"]]
+transform = Transform( 10.5, 0, 0, 0, 1.55, -1.87959e-07, 0, 1.45668e-06, 0.2, -7, 3.53, -41.6857 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="glassWall8" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerGround" groups=["obstacles"]]
+transform = Transform( 9, 0, 0, 0, 1.55, -1.87959e-07, 0, 1.45668e-06, 0.2, -0.6, 3.53, -45.612 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
+
+[node name="glassWall9" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerGround" groups=["obstacles"]]
+transform = Transform( 11, 0, 0, 0, 1.55, -1.87959e-07, 0, 1.45668e-06, 0.2, -2.7, 3.53, -49.612 )
+material_override = SubResource( 34 )
+use_collision = true
+collision_mask = 0
 
 [node name="Outside" type="Spatial" parent="environment"]
 
