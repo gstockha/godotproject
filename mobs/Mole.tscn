@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://scripts/mob/Mole.cs" type="Script" id=1]
+[ext_resource path="res://mobs/scripts/Mole.cs" type="Script" id=1]
 
 [sub_resource type="CylinderShape" id=3]
 

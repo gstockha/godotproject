@@ -3,7 +3,6 @@ using Godot;
 public class Thump : StaticBody
 {
 float yvelocity = 0;
-bool slow = false;
 int damage = 3;
 enum states{
     ready,
@@ -13,10 +12,13 @@ enum states{
 }
 states state = states.ready;
 float originY;
+bool fallMode = false;
+int[] pushDir = new int[] {0,0};
+float pushAng = 0;
 Timer fallTimer;
 Timer shakeTimer;
-MeshInstance mesh;
-RayCast floorCast;
+Position3D anchor;
+Vector3 anchorOrigin;
 Position3D bottomPosition;
 Area crushBox;
 CollisionShape shakeBox;
@@ -24,41 +26,51 @@ CollisionShape shakeBox;
 public override void _Ready(){
     fallTimer = GetNode<Timer>("FallTimer");
     shakeTimer = GetNode<Timer>("ShakeTimer");
-    mesh = GetNode<MeshInstance>("MeshInstance");
-    floorCast = GetNode<RayCast>("FallCast");
+    anchor = GetNode<Position3D>("Anchor");
     bottomPosition = GetNode<Position3D>("BottomPosition");
     crushBox = GetNode<Area>("Crushbox");
     shakeBox = GetNode<CollisionShape>("Shakebox/CollisionShape");
-    originY = GlobalTransform.origin.y;
     fallTimer.Start(2);
-    slow = Name.BeginsWith("slow");
-    //if (slow) floorCast.Scale = new Vector3(floorCast.Scale.x, Scale.y, floorCast.Scale.z);
+    fallMode = !Name.BeginsWith("push");
+    anchorOrigin = anchor.GlobalTransform.origin;
+    originY = (fallMode) ? GlobalTransform.origin.y : GlobalTransform.origin.x;
+    if (!fallMode){
+        if (anchorOrigin.x != Translation.x) pushDir[0] = (anchorOrigin.x > Translation.x) ?  1 : -1;
+        if (anchorOrigin.z != Translation.z) pushDir[1] = (anchorOrigin.z > Translation.z) ?  1 : -1;
+    }
 }
 
 public override void _PhysicsProcess(float delta){
     if (state == states.ready || state == states.grounded) return;
     if (state == states.crush){
-        yvelocity = (!slow) ? yvelocity + 5 * delta : 5 * delta;
-        Translation = new Vector3(Translation.x, Translation.y - yvelocity, Translation.z);
-        if ((!slow && floorCast.GetCollisionPoint().y > Translation.y - 1.5F) || (slow && floorCast.IsColliding())){
+        if (fallMode){
+            yvelocity = yvelocity + 5 * delta;
+            Translation = new Vector3(Translation.x, Translation.y - yvelocity, Translation.z);
+        }
+        else{
+            yvelocity = yvelocity + 2.5F * delta;
+            Translation = new Vector3(Translation.x + (yvelocity * pushDir[0]), Translation.y, Translation.z + (yvelocity * pushDir[1]));
+        }
+        if (fallMode && Translation.y < anchorOrigin.y ||
+        !fallMode && (pushDir[0] == 0 || Translation.x > anchorOrigin.x) && (pushDir[1] == 0 || Translation.z < anchorOrigin.z)){
             state = states.grounded;
-            if (!slow){
-                Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + mesh.Scale.y, Translation.z);
+            fallTimer.Start(2);
+            if (fallMode){
+                Translation = new Vector3(Translation.x, anchorOrigin.y, Translation.z);
                 crushBox.Monitorable = true;
-                fallTimer.Start(2);
                 shakeTimer.Start(.1F);
                 shakeBox.Disabled = false;
             }
-            else fallTimer.Start(3);
+            //else Translation = new Vector3(anchorOrigin.x, Translation.y, anchorOrigin.z);
         }
     }
     else if (state == states.ascend){
-        float fallRate = (slow == false) ? 10 * delta : 5 * delta;
-        Translation = new Vector3(Translation.x, Translation.y + fallRate, Translation.z);
-        if (GlobalTransform.origin.y >= originY){
+        if (fallMode) Translation = new Vector3(Translation.x,Translation.y+(10*delta),Translation.z);
+        else Translation = new Vector3(Translation.x+(5*delta*pushDir[0]),Translation.y,Translation.z+(5*delta*pushDir[0]));
+        float originCheck = (fallMode) ? GlobalTransform.origin.y : GlobalTransform.origin.x;
+        if (originCheck >= originY){
             state = states.ready;
-            if (!slow) fallTimer.Start(2);
-            else fallTimer.Start(3);
+            fallTimer.Start(2);
         }
     }
 }
@@ -84,7 +96,7 @@ public void _on_FallTimer_timeout(){
     fallTimer.Stop();
     if (state == states.crush) return;
     yvelocity = 0;
-    crushBox.Monitorable = false;
+    if (fallMode) crushBox.Monitorable = false;
     if (state == states.grounded) state = states.ascend;
     else if (state == states.ready){
         yvelocity = 0;
