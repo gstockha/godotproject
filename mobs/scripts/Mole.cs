@@ -35,7 +35,7 @@ public override void _Ready(){
     springTimer = GetNode<Timer>("SpringTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
     hitbox = GetNode<Area>("Hitbox");
-    target = GetNode<Spatial>("../../playerNode/PlayerBall");
+    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bullet = (PackedScene)GD.Load("res://scenes/mobs/Bullet.tscn");
     parent = GetNode<Spatial>("../../Enemies");

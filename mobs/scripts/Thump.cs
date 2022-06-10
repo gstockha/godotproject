@@ -56,19 +56,19 @@ public override void _PhysicsProcess(float delta){
             state = states.grounded;
             fallTimer.Start(2);
             if (fallMode){
-                Translation = new Vector3(Translation.x, anchorOrigin.y, Translation.z);
                 crushBox.Monitorable = true;
+                Translation = new Vector3(Translation.x, anchorOrigin.y, Translation.z);
                 shakeTimer.Start(.1F);
                 shakeBox.Disabled = false;
             }
-            //else Translation = new Vector3(anchorOrigin.x, Translation.y, anchorOrigin.z);
+            else crushBox.Monitorable = false;
         }
     }
     else if (state == states.ascend){
         if (fallMode) Translation = new Vector3(Translation.x,Translation.y+(10*delta),Translation.z);
-        else Translation = new Vector3(Translation.x+(5*delta*pushDir[0]),Translation.y,Translation.z+(5*delta*pushDir[0]));
+        else Translation = new Vector3(Translation.x-(5*delta*pushDir[0]),Translation.y,Translation.z-(5*delta*pushDir[1]));
         float originCheck = (fallMode) ? GlobalTransform.origin.y : GlobalTransform.origin.x;
-        if (originCheck >= originY){
+        if (fallMode && originCheck >= originY || !fallMode && (pushDir[0] <= 0 && originCheck >= originY || pushDir[0] > 0 && originCheck <= originY)){
             state = states.ready;
             fallTimer.Start(2);
         }
@@ -101,6 +101,7 @@ public void _on_FallTimer_timeout(){
     else if (state == states.ready){
         yvelocity = 0;
         state = states.crush;
+        if (!fallMode) crushBox.Monitorable = true;
     }
 }
 

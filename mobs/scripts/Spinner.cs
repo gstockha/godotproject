@@ -24,7 +24,7 @@ MeshInstance arrow;
 // Called when the node enters the scene tree for the first time.
 public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
-    target = GetNode<Spatial>("../../playerNode/PlayerBall");
+    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<CSGCylinder>("CSGCylinder");
     parent = GetNode<Spatial>("../../Enemies");
     arrow = GetNode<MeshInstance>("Arrow");
@@ -76,7 +76,7 @@ public void _squish(float power){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", "spinner", spawnPoint, 2);
+    // parent.Call("_spawnTimerSet", "spinner", spawnPoint, 2);
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }
 

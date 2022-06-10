@@ -12,7 +12,7 @@ albedo_color = Color( 1, 0, 0, 1 )
 [sub_resource type="PrismMesh" id=8]
 
 [node name="Spinner" type="KinematicBody" groups=["goons", "mobs"]]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 2, 0 )
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
 collision_layer = 4
 script = ExtResource( 1 )
 

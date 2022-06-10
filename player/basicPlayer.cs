@@ -409,9 +409,10 @@ public void _isRolling(float delta){
     }
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
-        if (yvelocity != -1 && (boingCharge || bounceDashing == 2 || (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight))){
+        Node colliderNode = (Node)GetSlideCollision(0).Collider;
+        if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight * .5F) || 
+        (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight))){
         //if (boingCharge || (bounceDashing == 2 || launched) && yvelocity != -1){
-            Node colliderNode = (Node)GetSlideCollision(0).Collider;
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
@@ -453,14 +454,13 @@ public void _isWall(float delta){
     bool isWall = false;
     if (GetSlideCount() > 0){
         Spatial colliderNode = (Spatial)GetSlideCollision(0).Collider;
-        isWall = colliderNode.IsInGroup("walls");
+        isWall = colliderNode.IsInGroup("walls") || launched;
         if (isWall) platformStickDifference = colliderNode.Translation - Translation;
         else if (!isWall && colliderNode.IsInGroup("mobs")) return; //if enemy, leave
     }
     if (isWall || dashing){
         wallb = true;
         wallFriction = 0;
-        _alterDirection(GetSlideCollision(0).Normal);
         if (dashing && !walldashing){
             dashTimer.Stop();
             dashing = false;
@@ -478,6 +478,7 @@ public void _isWall(float delta){
                 basejumpwindow = Mathf.Round(boing * 6);
                 boingTimer.Stop();
                 boingTimer.Start(boing * .1F);
+                GD.Print(GetSlideCollision(0).Normal);
             }
             else{
                 wallbx = GetSlideCollision(0).Normal.x * Mathf.Abs(wallbx);
@@ -747,7 +748,7 @@ public void _lockOn(bool triggerScript, float delta){
         camera.Call("_findLockOn", new object{}); //turn off lockOn on camera node
         return;
     }
-    Vector3 target = lockOn.Translation;
+    Vector3 target = lockOn.GlobalTransform.origin;
     float oldRot = Rotation.y;
     LookAt(new Vector3(target.x, Translation.y, target.z), Vector3.Up);
     //if (angTarget == 0 && myMath.findDegreeDistance(oldRot, Rotation.y) < 1.5F) ang = Rotation.y * -1;
@@ -1050,8 +1051,8 @@ public void _on_hitBox_area_entered(Area area){
     Godot.Collections.Array groups = area.GetGroups();
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
-            case "mobs": _collisionDamage((Spatial)area.Owner); break;
-            case "thumps": _collisionDamage((Spatial)area.Owner); break;
+            case "mobs": _collisionDamage((Spatial)area.GetParentSpatial()); break;
+            case "thumps": _collisionDamage((Spatial)area.GetParentSpatial()); break;
             case "trampolines":
                 float boingPower = !area.Owner.Name.BeginsWith("big") ? 16 : 30;
                 boingPower += Mathf.Abs(yvelocity * .25F);
@@ -1134,26 +1135,6 @@ public void _on_hitBox_area_entered(Area area){
     }
 }
 
-public void _on_hitBox_area_exited(Area area){
-    Godot.Collections.Array groups = area.GetGroups();
-    for (int i = 0; i < groups.Count; i++){
-        switch(groups[i].ToString()){
-            case "checkpoints":
-                if (speedRun && area.Name == "checkpoint1"){
-                    speedrunNote.Set("timerOn", true);
-                    speedrunNote.Set("time", 0);
-                }
-                break;
-            case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
-            case "tips": 
-                Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
-                if (!textTimer.IsStopped()) textTimer.Stop();
-                textTimer.Start(2);
-                break;
-        }
-    }
-}
-
 public void _collisionDamage(Spatial collisionNode){
     Godot.Collections.Array groups = collisionNode.GetGroups();
     int damage, vulnerableClass; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
@@ -1228,22 +1209,34 @@ public void _collisionDamage(Spatial collisionNode){
                 #endregion
             case("thumps"):
                 #region
-                if (smushed) break;
-                boingCharge = false;
-                boingTimer.Stop();
-                preBoingTimer.Stop();
-                Position3D thumpBottomPos = (Position3D)collisionNode.Get("bottomPosition");
-                Translation = new Vector3(Translation.x, thumpBottomPos.GlobalTransform.origin.y, Translation.z);
-                damage = (int)collisionNode.Get("damage");
-                smushed = true;
-                collisionScales[0] = 1.7F * collisionBaseScale;
-                collisionScales[1] = .4F * collisionBaseScale;
-                collisionScales[2] = collisionScales[0];
-                collisionShape.Scale = new Vector3(collisionScales[0], collisionScales[1], collisionScales[2]);
-                mesh.Translation = new Vector3(mesh.Translation.x, -.05F, mesh.Translation.z);
-                smushTimer.Stop();
-                smushTimer.Start(damage);
-                GD.Print("smush");
+                if (!collisionNode.Name.BeginsWith("push")){
+                    if (smushed) break;
+                    boingCharge = false;
+                    boingTimer.Stop();
+                    preBoingTimer.Stop();
+                    Position3D thumpBottomPos = (Position3D)collisionNode.Get("bottomPosition");
+                    Translation = new Vector3(Translation.x, thumpBottomPos.GlobalTransform.origin.y, Translation.z);
+                    damage = (int)collisionNode.Get("damage");
+                    smushed = true;
+                    collisionScales[0] = 1.7F * collisionBaseScale;
+                    collisionScales[1] = .4F * collisionBaseScale;
+                    collisionScales[2] = collisionScales[0];
+                    collisionShape.Scale = new Vector3(collisionScales[0], collisionScales[1], collisionScales[2]);
+                    mesh.Translation = new Vector3(mesh.Translation.x, -.05F, mesh.Translation.z);
+                    smushTimer.Stop();
+                    smushTimer.Start(damage);
+                }
+                else{
+                    string name = collisionNode.Name;
+                    power = (!name.Contains("slow")) ? 15 : 5;
+                    vecx = -1;
+                    vecz = -1;
+                    if (name.BeginsWith("pushOO")){ vecx = 1; vecz = 1; } //retard logic
+                    else if (name.BeginsWith("pushON")){ vecx = 1; vecz = -1; }
+                    else if (name.BeginsWith("pushNO")){ vecx = -1; vecz =1; }
+                    launch = new Vector3(vecx * power, 0, vecz * power);
+                    _launch(launch, power, notCrashing);
+                }
                 break;
                 #endregion
             case("projectiles"):
@@ -1267,6 +1260,26 @@ public void _collisionDamage(Spatial collisionNode){
                 break;
                 #endregion
             }
+    }
+}
+
+public void _on_hitBox_area_exited(Area area){
+    Godot.Collections.Array groups = area.GetGroups();
+    for (int i = 0; i < groups.Count; i++){
+        switch(groups[i].ToString()){
+            case "checkpoints":
+                if (speedRun && area.Name == "checkpoint1"){
+                    speedrunNote.Set("timerOn", true);
+                    speedrunNote.Set("time", 0);
+                }
+                break;
+            case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
+            case "tips": 
+                Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+                if (!textTimer.IsStopped()) textTimer.Stop();
+                textTimer.Start(2);
+                break;
+        }
     }
 }
 

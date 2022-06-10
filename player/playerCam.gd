@@ -245,10 +245,12 @@ func _findLockOn(lockOnMode) -> void:
 	var lastRot = player.rotation.y
 	for enemy in areas:
 		if enemy.vulnerableClass == 0: continue
-		los = spaceState.intersect_ray(player.translation, enemy.translation)
+		var eLocation = enemy.global_transform.origin
+		los = spaceState.intersect_ray(player.translation, eLocation)
 		if (los.size() > 0):
-			if los["collider"].is_in_group("walls"): continue
-		checkDistance = myPoint.distance_to(enemy.global_transform.origin)
+			if los["collider"].is_in_group("walls"):
+				continue
+		checkDistance = myPoint.distance_to(eLocation)
 		# adjacent priority (distFloor) > angle priority (angDist) > distance priority (distance)
 		if (checkDistance < distance && angDist == .5) || checkDistance < distFloor:
 			#if closer than last and haven't set angle priority and haven't set adjacent priority
@@ -256,7 +258,7 @@ func _findLockOn(lockOnMode) -> void:
 			lockOn = enemy
 			if checkDistance < distFloor: distFloor = checkDistance #trigger adjacent target priority
 		elif distFloor == 15: #if haven't triggered close target yet
-			player.look_at(Vector3(enemy.translation.x,enemy.translation.y,enemy.translation.z),Vector3.UP)
+			player.look_at(Vector3(eLocation.x,eLocation.y,eLocation.z),Vector3.UP)
 			var enemyAngDist = findDegreeDistance(lastRot, player.rotation.y)
 			if enemyAngDist < angDist:
 				angDist = enemyAngDist #trigger angle priorty
@@ -292,10 +294,11 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	player.rotation.y = lastRot
 	for enemy in areas:
 		if enemy.vulnerableClass == 0: continue
-		los = spaceState.intersect_ray(player.translation, enemy.translation)
+		var eLocation = enemy.global_transform.origin
+		los = spaceState.intersect_ray(player.translation, eLocation)
 		if (los.size() > 0):
 			if los["collider"].is_in_group("walls"): continue
-		player.look_at(Vector3(enemy.translation.x,enemy.translation.y,enemy.translation.z),Vector3.UP)
+		player.look_at(Vector3(eLocation.x,eLocation.y,eLocation.z),Vector3.UP)
 		if (direction=="L"&&player.rotation.y+3>targAngle+3)||(direction=="R"&&player.rotation.y+3<targAngle+3):
 			enemyAngDist = findDegreeDistance(player.rotation.y, targAngle)
 			if (closest && enemyAngDist < angDist) || (!closest && enemyAngDist > angDist):
