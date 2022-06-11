@@ -6,10 +6,10 @@
 [ext_resource path="res://src/speedrunNote.gd" type="Script" id=4]
 [ext_resource path="res://src/moveNote.gd" type="Script" id=5]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=6]
-[ext_resource path="res://geography/checkpoint.tscn" type="PackedScene" id=7]
+[ext_resource path="res://geography/misc/checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://world/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
-[ext_resource path="res://mobs/controllers/EnemiesFree.gd" type="Script" id=10]
+[ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=10]
 [ext_resource path="res://mobs/Spinner.tscn" type="PackedScene" id=11]
 [ext_resource path="res://mobs/Goon.tscn" type="PackedScene" id=12]
 

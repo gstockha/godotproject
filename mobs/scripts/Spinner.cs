@@ -7,6 +7,7 @@ float yvelocity = 0;
 int damage = 23;
 float speed = 9.7F;
 float ang = 0;
+float angMod = 1;
 int vulnerableClass = 1; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 enum states{
     spin,
@@ -26,18 +27,19 @@ public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<CSGCylinder>("CSGCylinder");
-    parent = GetNode<Spatial>("../../Enemies");
+    parent = GetNode<Spatial>("../.");
     arrow = GetNode<MeshInstance>("Arrow");
     squishSet[0] = mesh.Scale.x * 1.3F;
     squishSet[1] = mesh.Scale.y * .7F;
     squishSet[2] = mesh.Scale.z * 1.3F;
     spawnPoint = GlobalTransform.origin;
-    speed *= (GD.Randf() < .5F) ? 1 : -1;
+    angMod = (Name.Contains("z")) ? .5F : (Name.Contains("a")) ? 1.5F : 1;
+    speed *= (Name.Contains("V")) ? -1 : 1;
 }
 
 public override void _PhysicsProcess(float delta){
     if (state == states.spin){
-        Vector2 spinVel = new Vector2(speed, speed).Rotated(ang);
+        Vector2 spinVel = new Vector2(speed, speed).Rotated(ang*angMod);
         velocity = new Vector3(spinVel.x, 0, spinVel.y);
         MoveAndSlide(new Vector3(velocity.x, 0, velocity.z), Vector3.Up);
         ang = Mathf.LerpAngle(ang, ang + .01F, 3);
@@ -76,7 +78,7 @@ public void _squish(float power){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    // parent.Call("_spawnTimerSet", "spinner", spawnPoint, 2);
+    parent.Call("_spawnTimerSet", "spinner", spawnPoint);
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }
 

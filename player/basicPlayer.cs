@@ -478,7 +478,6 @@ public void _isWall(float delta){
                 basejumpwindow = Mathf.Round(boing * 6);
                 boingTimer.Stop();
                 boingTimer.Start(boing * .1F);
-                GD.Print(GetSlideCollision(0).Normal);
             }
             else{
                 wallbx = GetSlideCollision(0).Normal.x * Mathf.Abs(wallbx);

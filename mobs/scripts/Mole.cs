@@ -37,8 +37,8 @@ public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
-    bullet = (PackedScene)GD.Load("res://scenes/mobs/Bullet.tscn");
-    parent = GetNode<Spatial>("../../Enemies");
+    bullet = (PackedScene)GD.Load("res://mobs/Bullet.tscn");
+    parent = GetNode<Spatial>("../.");
     shooter = GetNode<Position3D>("Shooter");
     arrow = GetNode<MeshInstance>("Arrow");
     meshY = mesh.Scale.y;
@@ -117,15 +117,15 @@ public void _on_ShootTimer_timeout(){
     if (state != states.attack) return;
     Area blt = (Area)bullet.Instance();
     parent.AddChild(blt);
-    blt.Translation = shooter.GlobalTransform.origin;
+    blt.Translation = shooter.Translation;
     blt.RotateY(Rotation.y);
-    blt.Set("trajectory", blt.Translation);
+    blt.Set("trajectory", shooter.GlobalTransform.origin);
 }
 
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", "mole", spawnPoint, 2.5F);
+    parent.Call("_spawnTimerSet", "mole", spawnPoint);
 }
 
 }
