@@ -48,6 +48,7 @@ material/0 = null
 one_shot = true
 
 [node name="ShakeTimer" type="Timer" parent="."]
+one_shot = true
 
 [node name="BottomPosition" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )

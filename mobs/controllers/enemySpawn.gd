@@ -6,9 +6,10 @@ var enemyNodes = {}
 var enemyCount = {
 	"goon": [0,0],
 	"mole": [0,0],
-	"spinner": [0,0]
+	"spinner": [0,0],
+	"hopper": [0,0]
 }
-var enemies = ["goon", "mole", "spinner"]
+var enemies = ["goon", "mole", "spinner", "hopper"]
 
 func _ready():
 	var childName

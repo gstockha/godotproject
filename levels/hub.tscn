@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=2]
@@ -10,8 +10,7 @@
 [ext_resource path="res://world/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=10]
-[ext_resource path="res://mobs/Spinner.tscn" type="PackedScene" id=11]
-[ext_resource path="res://mobs/Goon.tscn" type="PackedScene" id=12]
+[ext_resource path="res://mobs/Hopper.tscn" type="PackedScene" id=11]
 
 [sub_resource type="DynamicFont" id=2]
 size = 42
@@ -136,13 +135,7 @@ shape = SubResource( 6 )
 [node name="Enemies" type="Spatial" parent="Enemies"]
 script = ExtResource( 10 )
 
-[node name="Goon" parent="Enemies/Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 6.93362 )
-
-[node name="Goon2" parent="Enemies/Enemies" instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -5.30711 )
-
-[node name="Spinner" parent="Enemies/Enemies" instance=ExtResource( 11 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -6.91294, 2, 9.52835 )
+[node name="Hopper" parent="Enemies/Enemies" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]

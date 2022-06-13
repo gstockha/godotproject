@@ -50,6 +50,7 @@ public override void _Ready(){
 }
 
 public override void _PhysicsProcess(float delta){
+    if (state == states.search) return;
     if (state == states.squished) mesh.Scale = new Vector3(Mathf.Lerp(mesh.Scale.x,squishSet[0],.2F),Mathf.Lerp(mesh.Scale.y, squishSet[1],.2F),Mathf.Lerp(mesh.Scale.x,squishSet[2],.2F));
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
@@ -83,9 +84,7 @@ public void _squish(float power){ //check power vs health and all that here?
 }
 
 public void _on_BurrowTimer_timeout(){
-    burrowTimer.Stop();
-    //if (state == states.launched || state == states.squished) return;
-    burrowTimer.Start(2.5F);
+    float timerSet = 2.5F;
     if (state == states.burrowed){
         if (springTimer.IsStopped()) springTimer.Start(.1F);
         hitbox.Monitorable = true;
@@ -98,10 +97,11 @@ public void _on_BurrowTimer_timeout(){
         state = states.attack;
         Vector3 oldRot = Rotation;
         float nuRot;
-        LookAt(target.Translation, Vector3.Up);
+        LookAt(target.GlobalTransform.origin, Vector3.Up);
         nuRot = Rotation.y;
         Rotation = new Vector3(oldRot.x, nuRot, oldRot.z);
         shootTimer.Start(.5F);
+        timerSet += 1;
     }
     else if (state == states.attack){
         state = states.burrowed;
@@ -109,7 +109,9 @@ public void _on_BurrowTimer_timeout(){
         vulnerableClass = 0;
         mesh.Scale = new Vector3(mesh.Scale.x, 0.1F, mesh.Scale.z);
         mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1, mesh.Translation.z);
+        timerSet -= .5F;
     }
+    burrowTimer.Start(timerSet);
 }
 
 public void _on_ShootTimer_timeout(){
@@ -117,9 +119,8 @@ public void _on_ShootTimer_timeout(){
     if (state != states.attack) return;
     Area blt = (Area)bullet.Instance();
     parent.AddChild(blt);
-    blt.Translation = shooter.Translation;
-    blt.RotateY(Rotation.y);
     blt.Set("trajectory", shooter.GlobalTransform.origin);
+    blt.RotateY(Rotation.y);
 }
 
 public void _on_DeathTimer_timeout(){
