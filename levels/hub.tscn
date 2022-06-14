@@ -136,6 +136,6 @@ shape = SubResource( 6 )
 script = ExtResource( 10 )
 
 [node name="Hopper" parent="Enemies/Enemies" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 2.3, 0 )
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]

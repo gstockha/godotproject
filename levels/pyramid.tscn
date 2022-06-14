@@ -146,7 +146,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0351836, 17.0848, -0.0525244 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9612, 3.26565, 8.39342 )
 
 [node name="checkpoints" type="Spatial" parent="."]
 
@@ -163,7 +163,16 @@ script = ExtResource( 12 )
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -55.1708, 2, -39.6247 )
 
 [node name="Hopper" parent="Enemies/mainFloor060" instance=ExtResource( 19 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 7.19576, 2.35697, -4.57758 )
+
+[node name="Hopper2" parent="Enemies/mainFloor060" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -11.2673, 2.35697, -40.4451 )
+
+[node name="Hopper3" parent="Enemies/mainFloor060" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -53.2946, 2.35697, -22.2106 )
+
+[node name="Hopper4" parent="Enemies/mainFloor060" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -15.5012, 2.35697, 31.7555 )
 
 [node name="upperCorner120" type="Spatial" parent="Enemies"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2658, 26.1051, 16.7752 )
@@ -198,6 +207,48 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.436756, 0, 4.61429 )
 
 [node name="Mole3" parent="Enemies/upperWalkway060" instance=ExtResource( 18 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.436756, 0, 0.181211 )
+
+[node name="cave060" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -11.9, 16 )
+
+[node name="Mole" parent="Enemies/cave060" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 25.3724, 0, 32.03 )
+
+[node name="Mole2" parent="Enemies/cave060" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.9959, 0, -12.9077 )
+
+[node name="Mole3" parent="Enemies/cave060" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5346, 0, 7.30299 )
+
+[node name="Mole4" parent="Enemies/cave060" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.72776, 0, -79.81 )
+
+[node name="Goon" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.95288, 0, 0 )
+
+[node name="Goon2" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8583, 0, 17.4113 )
+
+[node name="Goon3" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0874, 0, 25.5553 )
+
+[node name="Goon4" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11.606, 0, -15.4444 )
+
+[node name="Goon5" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -21.1549, 0, 15.6306 )
+
+[node name="Goon7" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -45.6136, 0, 15.6306 )
+
+[node name="Goon6" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.1618, 0, -36.804 )
+
+[node name="Goon8" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.1618, 0, -57.1536 )
+
+[node name="Goon9" parent="Enemies/cave060" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.8602, 0, -98.1474 )
 
 [node name="environment" type="Spatial" parent="."]
 

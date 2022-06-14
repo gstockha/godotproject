@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://mobs/scripts/Hopper.cs" type="Script" id=1]
 
@@ -8,14 +8,13 @@
 
 [sub_resource type="BoxShape" id=5]
 
-[sub_resource type="BoxShape" id=9]
-
 [sub_resource type="SpatialMaterial" id=7]
 albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="PrismMesh" id=8]
 
 [node name="Hopper" type="KinematicBody" groups=["goons", "mobs"]]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
 collision_layer = 4
 script = ExtResource( 1 )
 
@@ -46,24 +45,11 @@ one_shot = true
 one_shot = true
 
 [node name="RayCast" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 30, 0, 0, 0, 1, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 35, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
 
-[node name="ShakeTimer" type="Timer" parent="."]
-one_shot = true
-
-[node name="Shakebox" type="Area" parent="."]
-transform = Transform( 8, 0, 0, 0, 2, 0, 0, 0, 8, 0, -1, 0 )
-collision_layer = 0
-collision_mask = 16
-monitorable = false
-
-[node name="CollisionShape" type="CollisionShape" parent="Shakebox"]
-shape = SubResource( 9 )
-disabled = true
-
 [node name="Arrow" type="MeshInstance" parent="."]
-transform = Transform( -0.3, 4.52987e-08, 0, -4.52987e-08, -0.3, 0, 0, 0, 0.3, 0, 3, 0 )
+transform = Transform( -0.5, 7.54979e-08, 0, -7.54979e-08, -0.5, 0, 0, 0, 0.5, 0, 3.5, 0 )
 visible = false
 material_override = SubResource( 7 )
 cast_shadow = 0
@@ -72,5 +58,3 @@ material/0 = null
 
 [connection signal="timeout" from="AggroTimer" to="." method="_on_AggroTimer_timeout"]
 [connection signal="timeout" from="DeathTimer" to="." method="_on_DeathTimer_timeout"]
-[connection signal="timeout" from="ShakeTimer" to="." method="_on_ShakeTimer_timeout"]
-[connection signal="area_entered" from="Shakebox" to="." method="_on_Shakebox_area_entered"]

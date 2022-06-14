@@ -40,7 +40,7 @@ public override void _Ready(){
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bottom = GetNode<RayCast>("RayCast");
-    parent = GetNode<Spatial>("../../Enemies");
+    parent = GetNode<Spatial>("../.");
     arrow = GetNode<MeshInstance>("Arrow");
     pathTimer.Start(1);
     squishSet[0] = mesh.Scale.x * 1.3F;
