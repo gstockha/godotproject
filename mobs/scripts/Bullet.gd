@@ -2,7 +2,7 @@ extends Area
 onready var deleteTimer = $DeleteTimer
 export var speed = 45
 export var duration = 5
-export var damage = 15
+export var damage = 18
 var trajectory = Vector3.ZERO
 var tajectorySet = false
 

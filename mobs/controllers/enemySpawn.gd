@@ -3,17 +3,13 @@ extends Spatial
 onready var player = get_node("../playerNode/PlayerBall")
 var spawnTime = 60
 var enemyNodes = {}
-var enemyCount = {
-	"goon": [0,0],
-	"mole": [0,0],
-	"spinner": [0,0],
-	"hopper": [0,0]
-}
-var enemies = ["goon", "mole", "spinner", "hopper"]
+var enemyCount = {}
+var enemies = ["goon", "mole", "spinner", "hopper", "cannon"]
 
 func _ready():
 	var childName
 	spawnTime = (name[name.length()-3] + name[name.length()-2] + name[name.length()-1]) as int
+	for enemy in enemies: enemyCount[enemy] = [0,0]
 	for child in get_children():
 		childName = child.name.to_lower()
 		for enemy in enemies:

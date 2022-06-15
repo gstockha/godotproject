@@ -1,4 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://mobs/scripts/Cannon.cs" type="Script" id=1]
 
 [sub_resource type="CylinderShape" id=3]
 
@@ -13,6 +15,7 @@ albedo_color = Color( 1, 0, 0, 1 )
 
 [node name="Cannon" type="KinematicBody" groups=["mobs", "moles"]]
 collision_layer = 4
+script = ExtResource( 1 )
 
 [node name="Hitbox" type="Area" parent="." groups=["mobs"]]
 collision_layer = 0
@@ -33,7 +36,7 @@ mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Shooter" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1 )
 
 [node name="DeathTimer" type="Timer" parent="."]
 one_shot = true

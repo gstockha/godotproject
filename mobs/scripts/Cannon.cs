@@ -10,7 +10,7 @@ enum states{
 }
 states state = states.attack;
 float[] squishSet = new float[] {0,0,0};
-float meshY;
+float startAngle;
 Timer shootTimer;
 Timer springTimer;
 Timer deathTimer;
@@ -32,15 +32,16 @@ public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
-    bullet = (PackedScene)GD.Load("res://mobs/Bullet.tscn");
+    bullet = (PackedScene)GD.Load("res://mobs/CannonBall.tscn");
     parent = GetNode<Spatial>("../.");
     shooter = GetNode<Position3D>("Shooter");
     arrow = GetNode<MeshInstance>("Arrow");
-    meshY = mesh.Scale.y;
     squishSet[0] = mesh.Scale.x * 1.7F;
     squishSet[1] = mesh.Scale.y * .3F;
     squishSet[2] = mesh.Scale.z * 1.7F;
     spawnPoint = GlobalTransform.origin;
+    startAngle = Mathf.Rad2Deg(Rotation.y) + 180;
+    _initiate();
 }
 
 public override void _PhysicsProcess(float delta){
@@ -76,12 +77,19 @@ public void _squish(float power){ //check power vs health and all that here?
 }
 
 public void _on_ShootTimer_timeout(){
-    shootTimer.Stop();
     if (state != states.attack) return;
+    float randAngle = (GD.Randf() * 90) - 45;
+    Rotation = new Vector3(Rotation.x, Mathf.Deg2Rad((startAngle - 180) + randAngle), Rotation.z);
     Area blt = (Area)bullet.Instance();
     parent.AddChild(blt);
     blt.Set("trajectory", shooter.GlobalTransform.origin);
     blt.RotateY(Rotation.y);
+    shootTimer.Start(3);
+}
+
+public void _initiate(){
+    state = states.attack;
+    shootTimer.Start(1);
 }
 
 public void _on_DeathTimer_timeout(){

@@ -1243,11 +1243,11 @@ public void _collisionDamage(Spatial collisionNode){
                 //if ((bool)collisionNode.Get("invincible")) return;
                 damage = (int)collisionNode.Get("damage");
                 Vector3 trajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
-                power = baseWeight * .5F * 25;
+                power = (damage / baseWeight);
                 launch = new Vector3(trajectory.x * -1 * power, 0, trajectory.z * -1 * power);
                 _launch(launch, power, true);
                 collisionNode.Call("_on_DeleteTimer_timeout");
-                camera.Call("_shakeMove", 10, damage * .2F, 0);
+                camera.Call("_shakeMove", damage * .5F, damage * .15F, 0);
                 break;
                 #endregion
             case("lavas"):

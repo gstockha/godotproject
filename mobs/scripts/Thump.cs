@@ -81,7 +81,7 @@ public void _on_Shakebox_area_entered(Area area){
         if (groups[i].ToString() == "players"){
             Camera cam = (Camera)area.Owner.Get("camera");
             Spatial player = (Spatial)area.Owner;
-            cam.Call("_shakeMove", 10, damage, Translation.DistanceTo(player.GlobalTransform.origin));
+            cam.Call("_shakeMove", 10, damage, player.GlobalTransform.origin.DistanceTo(player.GlobalTransform.origin));
             break;
         }
     }
