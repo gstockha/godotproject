@@ -23,9 +23,9 @@ func _ready():
 				enemyCount[enemy][1] += 1
 				if (enemyCount[enemy][1] == 1): #add to load object if it exists
 					var eCap = enemy[0].to_upper() + enemy.substr(1,-1)
-					enemyNodes[enemy] = load('res://mobs/' + eCap + '.tscn')
+					enemyNodes[enemy] = load('res://mobs/scenes/' + eCap + '.tscn')
 				break
-			enemyChildren.append(enemy)
+		enemyChildren.append(child)
 
 func _process(_delta):
 	distanceChecker += _delta
@@ -33,7 +33,6 @@ func _process(_delta):
 		distanceChecker = 0
 		var pLocation = player.global_transform.origin
 		var myLocation = global_transform.origin
-		print(myLocation.distance_to(pLocation))
 		if !active && myLocation.distance_to(pLocation) < 90 && pLocation.y < myLocation.y + 15 && pLocation.y > myLocation.y - 15:
 			active = true
 			checkerThreshold = checkFrequencies[1]
@@ -51,7 +50,7 @@ func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
 		spawnedEnemy.spawnPoint = point
 		enemyCount[mobName][0] += 1
 		enemyChildren.append(spawnedEnemy)
-		if active: spawnedEnemy.call("_initiate")
+		if active: spawnedEnemy.call("_on")
 	spawnTimer.queue_free()
 
 func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3) -> void:

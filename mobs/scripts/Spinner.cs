@@ -22,7 +22,9 @@ CSGCylinder mesh;
 Vector3 spawnPoint;
 Spatial parent;
 MeshInstance arrow;
-// Called when the node enters the scene tree for the first time.
+bool active = false;
+
+
 public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
@@ -35,6 +37,7 @@ public override void _Ready(){
     spawnPoint = GlobalTransform.origin;
     angMod = (Name.Contains("z")) ? .5F : (Name.Contains("a")) ? 1.5F : 1;
     speed *= (Name.Contains("V")) ? -1 : 1;
+    SetPhysicsProcess(false);
 }
 
 public override void _PhysicsProcess(float delta){
@@ -73,6 +76,19 @@ public void _squish(float power){
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+}
+
+public void _on(){
+    if (!deathTimer.IsStopped() || active) return;
+    SetPhysicsProcess(true);
+    active = true;
+}
+
+public void _off(){
+    if (!deathTimer.IsStopped() || !active) return;
+    SetPhysicsProcess(false);
+    state = states.spin;
+    active = false;
 }
 
 public void _on_DeathTimer_timeout(){

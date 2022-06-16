@@ -32,6 +32,8 @@ RayCast bottom;
 Vector3 spawnPoint;
 Spatial parent;
 MeshInstance arrow;
+bool active = false;
+
 
 public override void _Ready(){
     pathTimer = GetNode<Timer>("PathTimer");
@@ -42,14 +44,15 @@ public override void _Ready(){
     bottom = GetNode<RayCast>("RayCast");
     parent = GetNode<Spatial>("../.");
     arrow = GetNode<MeshInstance>("Arrow");
-    pathTimer.Start(1);
     squishSet[0] = mesh.Scale.x * 1.3F;
     squishSet[1] = mesh.Scale.y * .7F;
     squishSet[2] = mesh.Scale.z * 1.3F;
     spawnPoint = GlobalTransform.origin;
+    SetPhysicsProcess(false);
 }
 
 public override void _PhysicsProcess(float delta){
+    GD.Print("a");
     if (state == states.alert) return;
     if (state == states.attack || state == states.search || state == states.repath) _velocityMove(delta);
     else if (state == states.squished){
@@ -107,6 +110,31 @@ public void _squish(float power){ //check power vs health and all that here?
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+}
+
+
+public void _on(){
+    if (!deathTimer.IsStopped() || active) return;
+    if (active && !bottom.IsColliding()){
+        _on_DeathTimer_timeout();
+        return;
+    }
+    pathTimer.Start(1);
+    state = states.alert;
+    SetPhysicsProcess(true);
+    active = true;
+}
+
+public void _off(){
+    if (!deathTimer.IsStopped() || !active) return;
+    if (!bottom.IsColliding()){
+        _on_DeathTimer_timeout();
+        return;
+    }
+    pathTimer.Stop();
+    angleChecker.Stop();
+    SetPhysicsProcess(false);
+    active = false;
 }
 
 public void _on_PathTimer_timeout(){

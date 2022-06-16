@@ -28,6 +28,8 @@ PackedScene bullet;
 MeshInstance mesh;
 Position3D shooter;
 MeshInstance arrow;
+bool active = false;
+
 
 public override void _Ready(){
     burrowTimer = GetNode<Timer>("BurrowTimer");
@@ -37,7 +39,7 @@ public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
-    bullet = (PackedScene)GD.Load("res://mobs/Bullet.tscn");
+    bullet = (PackedScene)GD.Load("res://mobs/scenes/Bullet.tscn");
     parent = GetNode<Spatial>("../.");
     shooter = GetNode<Position3D>("Shooter");
     arrow = GetNode<MeshInstance>("Arrow");
@@ -46,7 +48,7 @@ public override void _Ready(){
     squishSet[1] = mesh.Scale.y * .3F;
     squishSet[2] = mesh.Scale.z * 1.7F;
     spawnPoint = GlobalTransform.origin;
-    burrowTimer.Start(1);
+    SetPhysicsProcess(false);
 }
 
 public override void _PhysicsProcess(float delta){
@@ -81,6 +83,25 @@ public void _squish(float power){ //check power vs health and all that here?
     vulnerableClass = 0;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+}
+
+public void _on(){
+    if (!deathTimer.IsStopped() || active) return;
+    burrowTimer.Start(1);
+    state = states.search;
+    SetPhysicsProcess(true);
+    active = true;
+}
+
+public void _off(){
+    if (!deathTimer.IsStopped() || !active) return;
+    burrowTimer.Stop();
+    shootTimer.Stop();
+    springTimer.Stop();
+    vulnerableClass = 2;
+    mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
+    SetPhysicsProcess(false);
+    active = false;
 }
 
 public void _on_BurrowTimer_timeout(){

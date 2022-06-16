@@ -25,6 +25,7 @@ PackedScene bullet;
 MeshInstance mesh;
 Position3D shooter;
 MeshInstance arrow;
+bool active = false;
 
 public override void _Ready(){
     shootTimer = GetNode<Timer>("ShootTimer");
@@ -33,7 +34,7 @@ public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
-    bullet = (PackedScene)GD.Load("res://mobs/CannonBall.tscn");
+    bullet = (PackedScene)GD.Load("res://mobs/scenes/CannonBall.tscn");
     parent = GetNode<Spatial>("../.");
     shooter = GetNode<Position3D>("Shooter");
     arrow = GetNode<MeshInstance>("Arrow");
@@ -42,7 +43,7 @@ public override void _Ready(){
     squishSet[2] = mesh.Scale.z * 1.7F;
     spawnPoint = GlobalTransform.origin;
     startAngle = Mathf.Rad2Deg(Rotation.y) + 180;
-    _initiate();
+    SetPhysicsProcess(false);
 }
 
 public override void _PhysicsProcess(float delta){
@@ -88,9 +89,19 @@ public void _on_ShootTimer_timeout(){
     shootTimer.Start(fireRate);
 }
 
-public void _initiate(){
+public void _on(){
+    if (!deathTimer.IsStopped() || active) return;
     state = states.attack;
     shootTimer.Start(1);
+    SetPhysicsProcess(true);
+    active = true;
+}
+
+public void _off(){
+    if (!deathTimer.IsStopped() || !active) return;
+    shootTimer.Stop();
+    SetPhysicsProcess(false);
+    active = false;
 }
 
 public void _on_DeathTimer_timeout(){

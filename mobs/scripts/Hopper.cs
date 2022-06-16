@@ -30,6 +30,8 @@ RayCast bottom;
 bool ascending = false;
 float landingCooldown = 0;
 float baseScale;
+bool active = false;
+
 
 public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
@@ -40,13 +42,13 @@ public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
     aggroTimer = GetNode<Timer>("AggroTimer");
     bottom = GetNode<RayCast>("RayCast");
-    aggroTimer.Start(2.5F);
     meshY = mesh.Scale.y;
     baseScale = mesh.Scale.x;
     squishSet[0] = mesh.Scale.x * 1.7F;
     squishSet[1] = mesh.Scale.y * .3F;
     squishSet[2] = mesh.Scale.z * 1.7F;
     spawnPoint = GlobalTransform.origin;
+    SetPhysicsProcess(false);
 }
 
 public override void _PhysicsProcess(float delta){
@@ -118,6 +120,26 @@ public void _squish(float power){ //check power vs health and all that here?
     mesh.Scale = new Vector3(squishSet[0],squishSet[1],squishSet[2]);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
+
+public void _on(){
+    if (!deathTimer.IsStopped() || active) return;
+    aggroTimer.Start(1);
+    state = states.search;
+    SetPhysicsProcess(true);
+    active = true;
+}
+
+public void _off(){
+    if (!deathTimer.IsStopped() || !active) return;
+    aggroTimer.Stop();
+    SetPhysicsProcess(false);
+    active = false;
+    ascending = false;
+    yvelocity = 0;
+    Translation = new Vector3(Translation.x, bottom.GetCollisionPoint().y, Translation.z);
+    mesh.Scale = new Vector3(baseScale, baseScale, baseScale);
+}
+
 
 public void _on_AggroTimer_timeout(){
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) aggroTimer.Start(2.5F);
