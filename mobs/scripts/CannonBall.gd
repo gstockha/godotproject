@@ -16,7 +16,8 @@ func _physics_process(delta):
 	if !tajectorySet:
 		global_transform.origin = trajectory
 		tajectorySet = true
-		yvelocity = (2 + (7 * randf())) * .1
+		speed = 20 + (20 * randf())
+		yvelocity = (2 + (4 * randf())) * .1
 	translation -= get_transform().basis.z*speed*delta
 	yvelocity -= delta
 	translation.y += yvelocity

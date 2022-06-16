@@ -18,6 +18,7 @@ Area hitbox;
 Vector3 spawnPoint;
 Vector3 launchVec;
 float yvelocity;
+float fireRate = 2;
 Spatial target;
 Spatial parent;
 PackedScene bullet;
@@ -84,7 +85,7 @@ public void _on_ShootTimer_timeout(){
     parent.AddChild(blt);
     blt.Set("trajectory", shooter.GlobalTransform.origin);
     blt.RotateY(Rotation.y);
-    shootTimer.Start(3);
+    shootTimer.Start(fireRate);
 }
 
 public void _initiate(){
@@ -95,7 +96,7 @@ public void _initiate(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", "cannon", spawnPoint);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "cannon", spawnPoint);
 }
 
 }

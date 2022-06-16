@@ -1,10 +1,15 @@
 extends Spatial
 
-onready var player = get_node("../playerNode/PlayerBall")
+onready var player = get_node("../../playerNode/PlayerBall")
 var spawnTime = 60
 var enemyNodes = {}
 var enemyCount = {}
 var enemies = ["goon", "mole", "spinner", "hopper", "cannon"]
+var enemyChildren = []
+var checkFrequencies = [5, 20]
+var checkerThreshold = checkFrequencies[0]
+var distanceChecker = checkerThreshold
+var active = false
 
 func _ready():
 	var childName
@@ -17,11 +22,26 @@ func _ready():
 				enemyCount[enemy][0] += 1
 				enemyCount[enemy][1] += 1
 				if (enemyCount[enemy][1] == 1): #add to load object if it exists
-					enemyNodes[enemy] = load('res://mobs/' + enemy + '.tscn')
+					var eCap = enemy[0].to_upper() + enemy.substr(1,-1)
+					enemyNodes[enemy] = load('res://mobs/' + eCap + '.tscn')
 				break
-#	for i in range(enemies.size()):
-#		for x in range(enemyCount[enemies[i]][1]):
-#			enemyPoints[enemies[i]].append(Vector3.ZERO)
+			enemyChildren.append(enemy)
+
+func _process(_delta):
+	distanceChecker += _delta
+	if distanceChecker > checkerThreshold:
+		distanceChecker = 0
+		var pLocation = player.global_transform.origin
+		var myLocation = global_transform.origin
+		print(myLocation.distance_to(pLocation))
+		if !active && myLocation.distance_to(pLocation) < 90 && pLocation.y < myLocation.y + 15 && pLocation.y > myLocation.y - 15:
+			active = true
+			checkerThreshold = checkFrequencies[1]
+			for enemy in enemyChildren: enemy.call("_on")
+		elif active && (myLocation.distance_to(pLocation) >= 90 || pLocation.y > myLocation.y + 15 || pLocation.y < myLocation.y - 15):
+			active = false
+			checkerThreshold = checkFrequencies[0]
+			for enemy in enemyChildren: enemy.call("_off")
 
 func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
 	if (enemyCount[mobName][0] < enemyCount[mobName][1]):
@@ -30,13 +50,12 @@ func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
 		spawnedEnemy.global_transform.origin = point
 		spawnedEnemy.spawnPoint = point
 		enemyCount[mobName][0] += 1
+		enemyChildren.append(spawnedEnemy)
+		if active: spawnedEnemy.call("_initiate")
 	spawnTimer.queue_free()
 
-func _spawnTimerSet(mobName: String, point: Vector3) -> void:
-#	enemyPoints[mobName][enemyCount[mobName][0]] = point
-#	if (enemyCount[mobName][0] > 0): return
-#	enemyCount[mobName][0] = enemyCount[mobName][1]
-#	for i in range(enemyCount[mobName][1]):
+func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3) -> void:
+	enemyChildren.erase(mobNode)
 	var spawnTimer = Timer.new()
 	add_child(spawnTimer)
 	spawnTimer.connect("timeout", self, "_spawnMob", [mobName, point, spawnTimer])

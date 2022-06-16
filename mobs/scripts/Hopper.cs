@@ -62,7 +62,7 @@ public override void _PhysicsProcess(float delta){
                 MoveAndSlide(new Vector3(velocityNormal.x * 10, yvelocity, velocityNormal.z * 10), Vector3.Up);
             }
             else{
-                if (landingCooldown > 30){
+                if (landingCooldown > 45){
                     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
                         state = states.search;
                         aggroTimer.Start(2.5F);
@@ -89,7 +89,6 @@ public override void _PhysicsProcess(float delta){
             if (yvelocity > 15) ascending = false;
         }
     }
-    else if (state == states.squished) mesh.Scale = new Vector3(Mathf.Lerp(mesh.Scale.x,squishSet[0],.05F),Mathf.Lerp(mesh.Scale.y, squishSet[1],.05F),Mathf.Lerp(mesh.Scale.x,squishSet[2],.05F));
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 27 * delta;
@@ -116,6 +115,7 @@ public void _squish(float power){ //check power vs health and all that here?
     vulnerableClass = 0;
     deathTimer.Start(1.5F);
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
+    mesh.Scale = new Vector3(squishSet[0],squishSet[1],squishSet[2]);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
@@ -130,7 +130,7 @@ public void _on_AggroTimer_timeout(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", "hopper", spawnPoint);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "hopper", spawnPoint);
 }
 
 }

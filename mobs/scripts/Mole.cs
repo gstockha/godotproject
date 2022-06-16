@@ -126,7 +126,7 @@ public void _on_ShootTimer_timeout(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", "mole", spawnPoint);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "mole", spawnPoint);
 }
 
 }
