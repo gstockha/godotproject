@@ -1,7 +1,7 @@
 extends Spatial
 
 onready var player = get_node("../../playerNode/PlayerBall")
-var spawnTime = 60
+export var spawnTime = 60
 var enemyNodes = {}
 var enemyCount = {}
 var enemies = ["goon", "mole", "spinner", "hopper", "cannon"]
@@ -10,10 +10,12 @@ var checkFrequencies = [5, 20]
 var checkerThreshold = checkFrequencies[0]
 var distanceChecker = checkerThreshold
 var active = false
+export var distanceTreshold = 90
+export var distanceTresholdY = 15
 
 func _ready():
 	var childName
-	spawnTime = (name[name.length()-3] + name[name.length()-2] + name[name.length()-1]) as int
+#	spawnTime = (name[name.length()-3] + name[name.length()-2] + name[name.length()-1]) as int
 	for enemy in enemies: enemyCount[enemy] = [0,0]
 	for child in get_children():
 		childName = child.name.to_lower()
@@ -33,11 +35,11 @@ func _process(_delta):
 		distanceChecker = 0
 		var pLocation = player.global_transform.origin
 		var myLocation = global_transform.origin
-		if !active && myLocation.distance_to(pLocation) < 90 && pLocation.y < myLocation.y + 15 && pLocation.y > myLocation.y - 15:
+		if !active && myLocation.distance_to(pLocation) < distanceTreshold && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
 			active = true
 			checkerThreshold = checkFrequencies[1]
 			for enemy in enemyChildren: enemy.call("_on")
-		elif active && (myLocation.distance_to(pLocation) >= 90 || pLocation.y > myLocation.y + 15 || pLocation.y < myLocation.y - 15):
+		elif active && (myLocation.distance_to(pLocation) >= distanceTreshold || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
 			active = false
 			checkerThreshold = checkFrequencies[0]
 			for enemy in enemyChildren: enemy.call("_off")

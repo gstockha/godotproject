@@ -64,7 +64,7 @@ public override void _PhysicsProcess(float delta){
                 MoveAndSlide(new Vector3(velocityNormal.x * 10, yvelocity, velocityNormal.z * 10), Vector3.Up);
             }
             else{
-                if (landingCooldown > 45){
+                if (landingCooldown > 60){
                     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
                         state = states.search;
                         aggroTimer.Start(2.5F);

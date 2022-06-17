@@ -40,4 +40,8 @@ func _on_DeleteTimer_timeout():
 	if shaken: queue_free()
 	else:
 		shakeBox.disabled = false
-		deleteTimer.start(.1)
+		deleteTimer.start(.3)
+		shaken = true
+
+func _on_CollisionTimer_timeout():
+	$CollisionShape.disabled = false;

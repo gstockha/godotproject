@@ -52,7 +52,6 @@ public override void _Ready(){
 }
 
 public override void _PhysicsProcess(float delta){
-    GD.Print("a");
     if (state == states.alert) return;
     if (state == states.attack || state == states.search || state == states.repath) _velocityMove(delta);
     else if (state == states.squished){

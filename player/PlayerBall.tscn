@@ -40,6 +40,7 @@ transform = Transform( 1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0
 current = true
 fov = 45.0
 size = 20.0
+near = 10.0
 far = 500.0
 script = ExtResource( 1 )
 
