@@ -61,7 +61,11 @@ public override void _PhysicsProcess(float delta){
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 25 * delta;
-        if (IsOnFloor() || IsOnWall()) _on_DeathTimer_timeout();
+        if (IsOnFloor()) _on_DeathTimer_timeout();
+        else if (IsOnWall()){
+            Node collider = (Node)GetSlideCollision(0).Collider;
+            if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+        }
     }
 }
 

@@ -40,13 +40,13 @@ float[] stickDir = new float[] {0,0};
 float[] moveDir = new float[] {0,0};
 float friction = 0;
 float wallFriction = 0;
-static float speedCap = 12;
+static float speedCap = 18;
 float speed = speedCap;
 int traction = 50;
 float[] tractionList = new float[101];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
-float dashSpeed = speedCap * 1.5F;
+float dashSpeed = speedCap * 1.25F;
 float boing = 0;
 bool boingCharge = false;
 bool boingDash = false; //use dashSpeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
@@ -368,8 +368,8 @@ public void _applyShift(float delta, bool isGrounded){
 public void _isRolling(float delta){
     jumpwindow = 0;
 	wallb = false;
+    idle = false;
 	hasJumped = 0;
-	idle = false;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
             bounce = bounceBase;
@@ -865,7 +865,7 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
             dashTimer.Stop();
-            dashTimer.Start(.5F);
+            dashTimer.Start(.3F);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -1058,6 +1058,7 @@ public void _on_hitBox_area_entered(Area area){
                 _launch(Vector3.Zero, boingPower, false);
                 break;
             case "projectiles": _collisionDamage(area); break;
+            case "splashes": _collisionDamage((Spatial)area.GetParentSpatial()); break;
             case "lavas": _collisionDamage(area); break;
             case "checkpoints": checkpoint = area; break;
             case "killboxes":
@@ -1158,7 +1159,7 @@ public void _collisionDamage(Spatial collisionNode){
                         power *= weightPowerMod; //don't send me as far
                         doShake = false;
                     }
-                    else if (!notCrashing && vulnerableClass != 3 && Translation.y > collisionNode.Translation.y){
+                    else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
                         doShake = false;
@@ -1189,7 +1190,7 @@ public void _collisionDamage(Spatial collisionNode){
                         power *= weightPowerMod; //don't send me as far
                         doShake = false;
                     }
-                    else if (!notCrashing && vulnerableClass != 3 && Translation.y > collisionNode.Translation.y){
+                    else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
                         collisionNode.Call("_squish", power); //crashing
                         power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
                         doShake = false;

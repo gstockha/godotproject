@@ -18,7 +18,7 @@ Area hitbox;
 Vector3 spawnPoint;
 Vector3 launchVec;
 float yvelocity;
-float fireRate = 2;
+float fireRate = 3.5F;
 Spatial target;
 Spatial parent;
 PackedScene bullet;

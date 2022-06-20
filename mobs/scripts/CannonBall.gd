@@ -7,6 +7,7 @@ var trajectory = Vector3.ZERO
 var tajectorySet = false
 var yvelocity = 0
 onready var shakeBox = $Shakebox/CollisionShape
+onready var hurtBox = $Hurtbox/CollisionShape
 var shaken = false
 
 func _ready():
@@ -18,6 +19,7 @@ func _physics_process(delta):
 		tajectorySet = true
 		speed = 20 + (20 * randf())
 		yvelocity = (2 + (4 * randf())) * .1
+		visible = true
 	translation -= get_transform().basis.z*speed*delta
 	yvelocity -= delta
 	translation.y += yvelocity
@@ -40,7 +42,8 @@ func _on_DeleteTimer_timeout():
 	if shaken: queue_free()
 	else:
 		shakeBox.disabled = false
-		deleteTimer.start(.3)
+		hurtBox.disabled = false
+		deleteTimer.start(.1)
 		shaken = true
 
 func _on_CollisionTimer_timeout():

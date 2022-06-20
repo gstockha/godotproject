@@ -32,20 +32,6 @@ func _ready():
 	mesh.rotation_degrees.y = 45
 
 func _input(event: InputEvent) -> void:
-#	if (event is InputEventMouseButton): #quick camera
-#		if (lockOn != null): return
-#		if event.is_pressed():
-#			cam = 1
-#			lastAng = -1 * player.rotation.y
-#		else:
-#			cam = 0
-#			player.camLock = false
-#			player.ang = lastAng
-#			player.rotation.y = lastAng * -1
-##			camsetarray = findClosestCamSet(player.rotation_degrees.y)
-#			#stickMove = false
-##			player.angTarget = -1 * player.rotation.y
-#	elif (event is InputEventMouseMotion and cam == 1) or event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 	if event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		if (lockOn == null): _move_camera(event)
 		elif event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
@@ -55,16 +41,6 @@ func _input(event: InputEvent) -> void:
 func _move_camera(evn) -> void:
 	turnRate = 8
 	player.angDelayFriction = true
-#	if ((evn is InputEventMouseMotion) and (cam == 1)): #free cam
-#		player.rotate_y(-lerp(0, 1.0, evn.relative.x/300)) #needs to eventually just rotate camera not player
-##		if evn.relative.x < 0: turnDir = 'right'
-##		elif evn.relative.x: turnDir = 'left'
-##		player.angTarget = -1 * player.rotation.y
-#		player.camLock = true
-##		camsetarray = findClosestCamSet(player.rotation_degrees.y)
-#		setDelay.stop()
-#		setDelay.start(6)
-#	elif (cam != 1):
 	if (cam != 1):
 		if player.rotation_degrees.y == camsets[camsetarray]:
 			if evn.get_action_strength("pan_left") > 0:
@@ -192,28 +168,18 @@ func _process(delta: float) -> void:
 				customset = 0
 				return
 	elif Input.get_action_strength("move_camera_right") > 0 or Input.get_action_strength("move_camera_left") > 0:
-#		if stickMove == false:
-#			lastAng = -1 * player.rotation.y
-#			stickMove = true
 		var panStrength = Input.get_action_strength("move_camera_right") - Input.get_action_strength("move_camera_left")
-		#if panStrength > 0: turnDir = 'right'
-		#else: turnDir = 'left'
 		player.rotate_y(lerp(0, .1, panStrength*abs(panStrength)*.25)) #needs to eventually just rotate camera not player
-#		player.angTarget = -1 * player.rotation.y
 		if !stickMove:
 			lastAng = player.rotation.y * -1
 			player.camLock = true
 			stickMove = true
 		setDelay.stop()
 		setDelay.start(6)
-#		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 	elif stickMove == true:
 		stickMove = false
 		player.camLock = false
 		player.rotation.y = lastAng * -1
-#		player.angTarget = -1 * player.rotation.y
-#		player.call("_applyFriction", 0, .5)
-#		camsetarray = findClosestCamSet(player.rotation_degrees.y)
 
 func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null

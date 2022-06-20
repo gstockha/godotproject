@@ -8,6 +8,7 @@
 
 [node name="Bullet" type="Area" groups=["projectiles"]]
 transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0 )
+visible = false
 collision_layer = 0
 collision_mask = 9
 script = ExtResource( 1 )

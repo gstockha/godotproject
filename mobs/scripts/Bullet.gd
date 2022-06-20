@@ -13,6 +13,7 @@ func _physics_process(delta):
 	if !tajectorySet:
 		global_transform.origin = trajectory
 		tajectorySet = true
+		visible = true
 	translation -= get_transform().basis.z*speed*delta
 
 func _on_Bullet_body_entered(body):

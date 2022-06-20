@@ -108,6 +108,7 @@ public void _launch(float power, Vector3 cVec){
     else launchVec = new Vector3(cVec.x, 0, cVec.z);
     yvelocity = power * 2;
     deathTimer.Start(3);
+    aggroTimer.Stop();
     vulnerableClass = 0;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
@@ -116,6 +117,7 @@ public void _squish(float power){ //check power vs health and all that here?
     state = states.squished;
     vulnerableClass = 0;
     deathTimer.Start(1.5F);
+    aggroTimer.Stop();
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     mesh.Scale = new Vector3(squishSet[0],squishSet[1],squishSet[2]);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
