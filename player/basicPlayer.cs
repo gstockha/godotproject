@@ -40,13 +40,13 @@ float[] stickDir = new float[] {0,0};
 float[] moveDir = new float[] {0,0};
 float friction = 0;
 float wallFriction = 0;
-static float speedCap = 18;
+static float speedCap = 15;
 float speed = speedCap;
 int traction = 50;
 float[] tractionList = new float[101];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
-float dashSpeed = speedCap * 1.25F;
+float dashSpeed = speedCap * 1.4F;
 float boing = 0;
 bool boingCharge = false;
 bool boingDash = false; //use dashSpeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
@@ -162,7 +162,7 @@ public override void _Ready(){
     //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,45,collisionShape.RotationDegrees.z);
     ang = (-1 * Rotation.y);
     yvelocity = -1;
-    
+    Translation = new Vector3(Translation.x, Translation.y + 2, Translation.z);
 }
 
 public override void _PhysicsProcess(float delta){ //run physics
@@ -293,7 +293,11 @@ public void _applyShift(float delta, bool isGrounded){
                     else if (Mathf.Round(shift.y * 10) > Mathf.Round(shiftedLastYNorm * 10)) record = false;
                     else shiftedLastYNorm = shift.y;
                     if (record){ //save the last rolling vector
-                        fric *= (shiftedBoost[0] * (1 - shiftedLastYNorm));
+                        float fallRate = (lastTranslationY - Translation.y) * 10;
+                        if (fallRate <= 0) fallRate = 0;
+                        else if (fallRate > 1) fallRate = 1;
+                        lastTranslationY = Translation.y;
+                        fric *= (shiftedBoost[0] * (1 - shiftedLastYNorm)) * fallRate;
                         shiftedLingerVec = new Vector3(shift.x*grav*fric, 0, shift.z*grav*fric);
                     }
                     _rotateMesh(shiftedLingerVec.x*2*60, shiftedLingerVec.z*2*60, delta);
@@ -307,7 +311,7 @@ public void _applyShift(float delta, bool isGrounded){
             shiftedSticky = 0;
             floorCastTouching = true; //so we don't apply it twice (below)
         }
-        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.3F);
+        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.4F);
     }
     else if (shiftedBoost[0] > 0){ //shift linger
         shiftedLinger = true;
@@ -335,7 +339,7 @@ public void _applyShift(float delta, bool isGrounded){
                 if (dashing){
                     dashing = false;
                     walldashing = false;
-                    dashSpeed = speedCap * 1.5F;
+                    // dashSpeed = speedCap * 1.5F;
                 }
 				shiftedDir = 0;
 				rampSlope = 0;
@@ -343,7 +347,7 @@ public void _applyShift(float delta, bool isGrounded){
             }
             else{ //shifted ground
                 if (shiftedDir != 0){
-                    shiftedDir = (lastTranslationY - Translation.y) * delta * 60;
+                    shiftedDir = (lastTranslationY - Translation.y);// * delta * 60;
                     if (shiftedDir > 0){ //going down slope
                         shiftedSticky = -1;
                         rampSlope = 0;
@@ -438,7 +442,7 @@ public void _isRolling(float delta){
             bounceCombo = 0;
         }
     }
-    else if (shiftedDir > 1) yvelocity = -1; //prevents slope cheesing
+    else if (shiftedDir > 0) yvelocity = -1; //prevents slope cheesing
     launched = false;
 }
 
@@ -692,8 +696,8 @@ public void _turnDelay(){
         if ((string)camera.Get("turnDir") == "left") add *= -1;
         ang = angTarget + add;
     }
-    if (angDelayFriction) ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[traction] * .0007F)));
-    else ang = Mathf.LerpAngle(ang,angTarget,.015F + ((tractionList[0] * .0007F)));
+    float tractionFriction = (angDelayFriction) ? tractionList[traction] * .0007F : tractionList[traction] * .0007F;
+    ang = Mathf.LerpAngle(ang,angTarget,.015F + tractionFriction);
     if (lockOn != null) return;
     if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
         ang = angTarget;
@@ -704,37 +708,18 @@ public void _turnDelay(){
 }
 
 public void _alterDirection(Vector3 alterNormal){
-    Vector3 wallbang = new Vector3(moveDir[0], 0, moveDir[1]).Bounce(alterNormal);
-    int camArray = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
-    if (camArray == 1 || camArray == 3) wallbang.z *= -1;
-    else if (camArray == 0 || camArray == 2) wallbang.x *= -1;
-    #region set angTarget if shift launch
-    if (lockOn == null && wallb && shiftedDir != 0){
-        int[] camAngs = new int[] {135,45,-45,-135};
-        float camAng = Mathf.Deg2Rad(camAngs[camArray]) * -1;
-        if (myMath.roundTo(ang, 100) != myMath.roundTo(camAng, 100)){
-            float lastAng = myMath.roundTo(Mathf.Rad2Deg(ang), 100) + 180;
-            float targAng = camAngs[camArray] + 180;
-            string turnDir = "";
-            if (camArray == 1 || camArray == 2) turnDir = (lastAng < targAng) ? "right" : "left";
-            else if (camArray == 0) turnDir = (lastAng < targAng && lastAng > 225) ? "right" : "left";
-            else turnDir = (lastAng < targAng || lastAng > 315) ? "right" : "left";
-            camera.Set("turnDir", turnDir);
-            angTarget = Rotation.y * -1;
-            angDelayFriction = true;
-            ang = camAng;
-        }
-    }
-    #endregion
+    Vector2 rotDir = new Vector2(moveDir[0], moveDir[1]).Rotated(ang);
+    Vector3 wallbang = new Vector3(rotDir.x, 0, rotDir.y).Bounce(alterNormal);
+    rotDir = new Vector2(wallbang.z, wallbang.x).Rotated(ang);
     for (int i = 0; i < dirSize; i++){
-        dir[0,i] = wallbang.z;
-        dir[1,i] = wallbang.x;
+        dir[0,i] = rotDir.y;
+        dir[1,i] = rotDir.x;
     }
 }
 
 public void _lockOn(bool triggerScript, float delta){
     if (lockOn == null){
-        if (camLock == false && moveDir[0] != 0 && !wallb){//(Math.Abs(moveDir[0]) > .05F){
+        if (!camLock && moveDir[0] != 0){// && !wallb){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
             addAng += ((moveDir[0] * 2) * (speed * .05F)) * .01F;
             addAng *= (moveDir[1] > 0) ?  1 + (moveDir[1] * 1.1F) : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
@@ -865,7 +850,7 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
             dashTimer.Stop();
-            dashTimer.Start(.3F);
+            dashTimer.Start(.4F);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -874,7 +859,7 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             _drawMoveNote("crash");
         }
         else if (shiftedDir != 0){ // is on shift
-            dashSpeed = speedCap * 2;
+            // dashSpeed = speedCap * 2;
             _drawMoveNote("slope dash");
         }
         else return;
@@ -968,7 +953,7 @@ public override void _Input(InputEvent @event){
 public void _on_DashTimer_timeout(){
     dashing = false;
     walldashing = false;
-    dashSpeed = speedCap * 1.5F;
+    // dashSpeed = speedCap * 1.5F;
 }
 
 public void _on_boingTimer_timeout(){
@@ -1013,7 +998,7 @@ public void _dieNRespawn(){
     dashing = false;
     dashTimer.Stop();
     walldashing = false;
-    dashSpeed = speedCap * 1.5F;
+    // dashSpeed = speedCap * 1.5F;
     wallb = false;
     hasJumped = 0;
     shiftedDir = 0;
@@ -1030,7 +1015,7 @@ public void _dieNRespawn(){
         dir[0,i] = 0;
         dir[1,i] = 0;
     }
-    Translation = checkpoint.GlobalTransform.origin;
+    Translation = new Vector3(checkpoint.GlobalTransform.origin.x, checkpoint.GlobalTransform.origin.y + 2, checkpoint.GlobalTransform.origin.z);
     camera.Call("_setToDefaults"); //turn off player: lockOn, camLock, angTarget ; turn off cam: lockOn, heightMove, angMove, lerpMove
 }
 
@@ -1115,13 +1100,16 @@ public void _on_hitBox_area_entered(Area area){
                 if (str != "") _drawTip(str);
                 break;
             case "camerasets":
-                if ((bool)camera.Get("autoBuffer") == true){ //have triggered the buffer (to make it only triggerable via a direction)
-                    string[] tag = area.Name.Split("cameraset");
+                bool typeArea = area.Name.Contains("Area");
+                if (typeArea || (bool)camera.Get("autoBuffer") == true){ //have triggered the buffer (to make it only triggerable via a direction)
+                    string[] tag = (typeArea) ? area.Name.Split("cameraArea") : area.Name.Split("cameraset");
                     tag = tag[1].Split("-");
-                    if (tag[0] != "R" || tag[0] != "L") camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]); //height camera
+                    bool neg = tag[1].Contains("n");
+                    string[] dir = (neg) ? tag[1].Split("n") : new string[] {tag[1]};
+                    if (tag[0] != "R" || tag[0] != "L") camera.Call("_auto_move_camera", dir[0].ToInt(), tag[0], neg); //height camera
                     else{ //not height camera, check timer buffer
                         Timer setDelay = (Timer)GetNode("Position3D/playerCam/setDelay");
-                        if (setDelay.IsStopped()) camera.Call("_auto_move_camera", tag[1].ToInt(), tag[0]);
+                        if (setDelay.IsStopped()) camera.Call("_auto_move_camera", dir[0].ToInt(), tag[0], neg);
                     }
                 }
                 break;
@@ -1278,6 +1266,10 @@ public void _on_hitBox_area_exited(Area area){
                 Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
                 if (!textTimer.IsStopped()) textTimer.Stop();
                 textTimer.Start(2);
+                break;
+            case "camerasets":
+                if (!area.Name.Contains("Modal")) continue;
+                camera.Call("_auto_move_camera", 0, "O", false);
                 break;
         }
     }

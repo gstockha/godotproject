@@ -29,6 +29,8 @@ MeshInstance mesh;
 Position3D shooter;
 MeshInstance arrow;
 bool active = false;
+bool lockable = true;
+
 
 
 public override void _Ready(){
@@ -73,6 +75,7 @@ public void _launch(float power, Vector3 cVec){
     burrowTimer.Stop();
     deathTimer.Start(2);
     vulnerableClass = 0;
+    lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
@@ -81,6 +84,7 @@ public void _squish(float power){ //check power vs health and all that here?
     burrowTimer.Stop();
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
+    lockable = false;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }

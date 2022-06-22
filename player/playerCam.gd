@@ -2,7 +2,7 @@ extends Camera
 onready var player = get_node("../../")
 onready var mesh = get_node('../../CollisionShape/BallSkin')
 onready var lockScanner = get_node('../../lockOnScanner')
-onready var setDelay = get_node("setDelay")
+onready var setDelay = get_node("setDelay") #so camsets wont change angle if we've set it manually via panning
 onready var bufferTimer = get_node("bufferTimer") #for camset node
 var cam = 0 #rotate mode
 var camsets = [135,45,-45,-135]
@@ -18,6 +18,7 @@ var baseY = 5 #translation Y
 var baseRotX = -10 #rotation_degrees X
 var targetY = baseY
 var targetRotX = baseRotX
+var fixedCamLock = false #keep lock cam on?
 var lerpMove = false
 var heightMove = false
 var angMove = false
@@ -109,7 +110,6 @@ func _process(delta: float) -> void:
 				if (turnDir == "left"): add *= -1;
 				player.ang = angMoveTarget + add
 			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
-			print(player.ang)
 			if (player.ang > angMoveTarget - .005 && player.ang < angMoveTarget + .005):
 				player.ang = angMoveTarget
 				angMove = false
@@ -130,6 +130,12 @@ func _process(delta: float) -> void:
 			shakeMoveTimer = 0
 			translation.y = baseY
 			translation.x = 0
+	elif fixedCamLock:
+		if lockOn != null || player.angTarget != 0:
+			fixedCamLock = false
+			player.camLock = false
+			near = 10
+		else: player.camLock = true
 	if (lockOn != null): return
 	if cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
 		var proty = player.rotation_degrees.y
@@ -210,7 +216,7 @@ func _findLockOn(lockOnMode) -> void:
 	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
 	var lastRot = player.rotation.y
 	for enemy in areas:
-		if enemy.vulnerableClass == 0: continue
+		if enemy.lockable == false: continue
 		var eLocation = enemy.global_transform.origin
 		los = spaceState.intersect_ray(player.translation, eLocation)
 		if (los.size() > 0):
@@ -259,7 +265,7 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	var targAngle = player.rotation.y
 	player.rotation.y = lastRot
 	for enemy in areas:
-		if enemy.vulnerableClass == 0: continue
+		if enemy.lockable == false: continue
 		var eLocation = enemy.global_transform.origin
 		los = spaceState.intersect_ray(player.translation, eLocation)
 		if (los.size() > 0):
@@ -304,8 +310,12 @@ func findDegreeDistance(from: float, to: float):
 	var difference = fmod(to - from, max_angle)
 	return abs(fmod(2 * difference, max_angle) - difference)
 
-func _auto_move_camera(target: int, direction: String) -> void:
+func _auto_move_camera(target: int, direction: String, neg: bool) -> void:
 	camsetarray = findClosestCamSet(player.rotation_degrees.y)
+	if fixedCamLock:
+		fixedCamLock = false
+		player.camLock = false
+		near = 10
 	if target == camsetarray && (direction == "R" || direction == "L"): return
 	if direction == "R" || direction == "L":
 		if direction == "L":
@@ -331,13 +341,16 @@ func _auto_move_camera(target: int, direction: String) -> void:
 		if direction == "H":
 			if (target <= 3): target = 3 #some fuck shit
 			elif (target <= 6): target = 6
+			if neg: target *= -1
 			if (translation.y == baseY + target): return
 			targetY = baseY + target
 			targetRotX = baseRotX - target
 			heightMove = true
 		elif direction == "HA": #height angle hybrid (for ramps and stuff)
-			if (translation.y != baseY + 6):
-				targetY = baseY + 6
+			var htarg = 6
+			if neg: htarg *= -1
+			if (translation.y != baseY + htarg):
+				targetY = baseY + htarg
 				targetRotX = baseRotX - 6
 				heightMove = true
 			angMoveTarget = deg2rad(target - 180) #target goes to the angMove
@@ -350,12 +363,16 @@ func _auto_move_camera(target: int, direction: String) -> void:
 			targetRotX = baseRotX
 			heightMove = true
 			angMove = false
-		elif direction == "A":
+			player.camLock = false
+		elif direction == "A" || direction == "AF":
 			angMoveTarget = deg2rad(target - 180)
 			angMove = true
 			player.angTarget = 0
 			player.camLock = false
 			turnDir = 'left' if (player.ang + 3 > angMoveTarget + 3) else 'right'
+			if direction == "AF":
+				fixedCamLock = true
+				near = 12
 	autoBuffer = false #tigger the buffer off
 
 func _setToDefaults() -> void:
@@ -369,6 +386,8 @@ func _setToDefaults() -> void:
 	angMove = false
 	lerpMove = false
 	shakeMove = false
+	fixedCamLock = false
+	near = 10
 	
 func _shakeMove(setTimer: float, intensity: float, distance: float) -> void:
 	if distance != 0:

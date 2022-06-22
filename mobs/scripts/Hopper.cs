@@ -2,7 +2,7 @@ using Godot;
 
 public class Hopper : KinematicBody
 {
-int aggroRange = 22;
+int aggroRange = 27;
 int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 enum states{
     search,
@@ -31,6 +31,8 @@ bool ascending = false;
 float landingCooldown = 0;
 float baseScale;
 bool active = false;
+bool lockable = true;
+
 
 
 public override void _Ready(){
@@ -104,18 +106,20 @@ public override void _PhysicsProcess(float delta){
 
 public void _launch(float power, Vector3 cVec){
     state = states.launched;
-    if (power != 0) launchVec = new Vector3(cVec.x * power, 0, cVec.z * power);
+    if (power != 0) launchVec = new Vector3(cVec.x * power * 2, 0, cVec.z * power * 2);
     else launchVec = new Vector3(cVec.x, 0, cVec.z);
     yvelocity = power * 2;
     deathTimer.Start(3);
     aggroTimer.Stop();
     vulnerableClass = 0;
+    lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
     state = states.squished;
     vulnerableClass = 0;
+    lockable = false;
     deathTimer.Start(1.5F);
     aggroTimer.Stop();
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);

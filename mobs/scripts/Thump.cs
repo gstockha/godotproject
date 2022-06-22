@@ -22,6 +22,8 @@ Vector3 anchorOrigin;
 Position3D bottomPosition;
 Area crushBox;
 CollisionShape shakeBox;
+bool lockable = false;
+
 
 public override void _Ready(){
     fallTimer = GetNode<Timer>("FallTimer");

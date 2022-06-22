@@ -6,7 +6,7 @@ public class Goon : KinematicBody
 Vector3 velocity = Vector3.Zero;
 Vector3 launchVec = Vector3.Zero;
 float yvelocity = 0;
-int aggroRange = 20;
+int aggroRange = 22;
 int damage = 20;
 float speed = 11;
 float ang = 0;
@@ -33,6 +33,8 @@ Vector3 spawnPoint;
 Spatial parent;
 MeshInstance arrow;
 bool active = false;
+[Export] bool lockable = true;
+
 
 
 public override void _Ready(){
@@ -61,7 +63,17 @@ public override void _PhysicsProcess(float delta){
     else if (state == states.launched){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 25 * delta;
-        if (IsOnFloor()) _on_DeathTimer_timeout();
+        if (IsOnFloor()){
+            if (!stunned){
+                mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - .3F, mesh.Translation.z);
+                state = states.alert;
+                pathTimer.Start(4);
+                deathTimer.Stop();
+                stunned = true;
+                velocity = Vector3.Zero;
+            }
+            else _on_DeathTimer_timeout();
+        }
         else if (IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
             if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
@@ -70,6 +82,7 @@ public override void _PhysicsProcess(float delta){
 }
 
 public void _velocityMove(float delta){
+    if (stunned) return;
     if (!bottom.IsColliding()){
         if (state == states.attack){
             _launch(0, Vector3.Zero);
@@ -98,13 +111,17 @@ public void _velocityMove(float delta){
 
 public void _launch(float power, Vector3 cVec){
     state = states.launched;
-    if (power != 0) launchVec = new Vector3(cVec.x * power * 3, 0, cVec.z * power * 3);
+    if (power != 0) launchVec = new Vector3(cVec.x * power * 2, 0, cVec.z * power * 2);
     else launchVec = new Vector3(velocity.x, 0, velocity.z);
     yvelocity = power * 1.5F;
     pathTimer.Stop();
-    deathTimer.Start(2);
-    vulnerableClass = 0;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (stunned){
+        vulnerableClass = 0;
+        lockable = false;
+        target.Call("_lockOn", true, 0);
+        deathTimer.Start(.5F);
+    }
+    else deathTimer.Start(4);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
@@ -112,6 +129,7 @@ public void _squish(float power){ //check power vs health and all that here?
     pathTimer.Stop();
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
+    lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 
@@ -130,7 +148,7 @@ public void _on(){
 
 public void _off(){
     if (!deathTimer.IsStopped() || !active) return;
-    if (!bottom.IsColliding()){
+    if (!bottom.IsColliding() || stunned){
         _on_DeathTimer_timeout();
         return;
     }
@@ -144,15 +162,15 @@ public void _on_PathTimer_timeout(){
     pathTimer.Stop();
     skrrt = 1;
     if (stunned){ //wake up
-        Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
+        mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y + .3F, mesh.Translation.z);
         stunned = false;
         state = states.alert;
         pathTimer.Start(.5F);
     }
-    else if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange || stunned){
+    else if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
         state = states.search;
         pathTimer.Start(2);
-        velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), 0, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 1.5F;
+        velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 1.5F;
     }
     else if (state != states.alert){
         state = states.alert;
@@ -163,7 +181,7 @@ public void _on_PathTimer_timeout(){
         velocity = new Vector3(target.GlobalTransform.origin - GlobalTransform.origin);
         ang = new Vector2(velocity.x, velocity.z).Angle();
         angleChecker.Start(.25F);
-        velocity = new Vector3(velocity.x, 0, velocity.z).Normalized() * speed;
+        velocity = new Vector3(velocity.x, -10, velocity.z).Normalized() * speed;
     }
 }
 

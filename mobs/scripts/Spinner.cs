@@ -23,6 +23,8 @@ Vector3 spawnPoint;
 Spatial parent;
 MeshInstance arrow;
 bool active = false;
+bool lockable = true;
+
 
 
 public override void _Ready(){

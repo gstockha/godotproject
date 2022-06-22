@@ -198,7 +198,7 @@ shape = SubResource( 4 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 136.513, 74.4899, -154.167 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 97.2706, 51.5742, -37.7092 )
 
 [node name="envStarting" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.23, 26 )
@@ -418,16 +418,16 @@ transform = Transform( 0.409575, 0, -0.573579, 0, 1, 0, 0.286789, 0, 0.819151, -
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 2, 69.4894, 11.2856, -118.529 )
 
 [node name="platRound" parent="envStarting/part5crashing" instance=ExtResource( 8 )]
-transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 16.5749, -1.23, -117.46 )
+transform = Transform( 2.5, 0, 0, 0, 1, 0, 0, 0, 2.5, 16.5749, -1.23, -117.46 )
 
 [node name="plat5" parent="envStarting/part5crashing" groups=["flats"] instance=ExtResource( 4 )]
-transform = Transform( -1.09278e-07, 0, 4.3, 0, 1, 0, -2.5, 0, -1.87959e-07, 31.441, 4.997, -117.17 )
+transform = Transform( -1.09278e-07, 0, 3.2, 0, 1, 0, -2.5, 0, -1.39876e-07, 31, 4.997, -117.17 )
 
 [node name="platRound3" parent="envStarting/part5crashing" instance=ExtResource( 8 )]
-transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 61.2641, -1.23, -116.742 )
+transform = Transform( 2.25, 0, 0, 0, 1, 0, 0, 0, 2.25, 59.9793, -1.23, -116.742 )
 
 [node name="platRound2" parent="envStarting/part5crashing" instance=ExtResource( 8 )]
-transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 48.2641, -1.23, -116.742 )
+transform = Transform( 2.25, 0, 0, 0, 1, 0, 0, 0, 2.25, 45.4793, -1.23, -116.742 )
 
 [node name="plat4" parent="envStarting/part5crashing" groups=["flats"] instance=ExtResource( 4 )]
 transform = Transform( -2.5, 0, -2.76764e-05, 0, 1, 0, 3.95377e-06, 0, -17.5, 72.982, 4.997, -147.16 )
@@ -721,19 +721,16 @@ transform = Transform( 6, 0, 0, 0, 1, 0, 0, 0, 3, 8.58018, -13, -8 )
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 6, -7, -8 )
 
 [node name="platLanding" parent="envMainCourse/part2" instance=ExtResource( 8 )]
-transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -14, -20, -8 )
+transform = Transform( 2.25, 0, 0, 0, 1, 0, 0, 0, 2.25, -15.2544, -20, -8 )
 
 [node name="platLanding2" parent="envMainCourse/part2" instance=ExtResource( 8 )]
-transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -25, -20, -8 )
-
-[node name="platLanding3" parent="envMainCourse/part2" instance=ExtResource( 8 )]
-transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -36, -20, -8 )
+transform = Transform( 2.25, 0, 0, 0, 1, 0, 0, 0, 2.25, -30.7643, -20, -8 )
 
 [node name="wallBlock3" parent="envMainCourse/part2" instance=ExtResource( 17 )]
-transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 1, -43.6845, -13.4438, -7.957 )
+transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 1, -43.8033, -13.4438, -7.957 )
 
 [node name="wallBlock" parent="envMainCourse/part2" instance=ExtResource( 17 )]
-transform = Transform( 0.1, 0, 0, 0, 12, 0, 0, 0, 1, -38.7012, -8.66695, -8 )
+transform = Transform( 0.098774, 1.87328, 0, -0.0156107, 11.8529, 0, 0, 0, 1, -40.151, -7.69734, -8 )
 
 [node name="plat2" parent="envMainCourse/part2" instance=ExtResource( 4 )]
 transform = Transform( 9, 0, 0, 0, 1, 0, 0, 0, 3, -78.9986, -13, -8 )
@@ -845,7 +842,7 @@ mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
 [node name="shift" parent="envMainCourse/part2" groups=["shifts"] instance=ExtResource( 14 )]
-transform = Transform( -4.7551e-08, -0.068404, 3.28892, 7.19644e-09, 0.187938, 1.19707, -1, 4.60516e-09, -1.47777e-07, -54.5109, -8.48676, -8 )
+transform = Transform( -4.60018e-08, -0.0606571, 3.52573, 7.19644e-09, 0.19058, 1.12216, -1, 4.16184e-09, -1.54115e-07, -53.4257, -8.11671, -8 )
 
 [node name="part3" type="Spatial" parent="envMainCourse"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -126.136, 25.674, 40.762 )
