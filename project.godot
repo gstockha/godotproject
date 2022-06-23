@@ -15,7 +15,11 @@ _global_script_class_icons={
 [application]
 
 config/name="marblebounce"
-run/main_scene="res://levels/demo.tscn"
+run/main_scene="res://levels/pyramid.tscn"
+
+[debug]
+
+shapes/collision/shape_color=Color( 0, 0.65098, 0.545098, 0.419608 )
 
 [display]
 

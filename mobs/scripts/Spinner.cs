@@ -25,8 +25,6 @@ MeshInstance arrow;
 bool active = false;
 bool lockable = true;
 
-
-
 public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
@@ -69,6 +67,7 @@ public void _launch(float power, Vector3 cVec){
     yvelocity = power * 1.5F;
     deathTimer.Start(2);
     vulnerableClass = 0;
+    lockable = false;
     GetNode<CollisionShape>("CollisionShape").Disabled = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
@@ -77,6 +76,7 @@ public void _squish(float power){
     state = states.squished;
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
+    lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
 }
 

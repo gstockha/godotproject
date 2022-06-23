@@ -198,7 +198,7 @@ shape = SubResource( 4 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 97.2706, 51.5742, -37.7092 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 99.6838, 19.0498, 204.423 )
 
 [node name="envStarting" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.23, 26 )

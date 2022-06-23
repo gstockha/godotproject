@@ -779,19 +779,22 @@ public void _jump(){
         }
         string chargedNote = "";
         if (windowRatio >= 1) chargedNote += "charged ";
-        if (slopeSquish) _drawMoveNote(chargedNote + "slopejump");
+        if (slopeSquish) _drawMoveNote(chargedNote + "slopeboing");
         float nuyvel = 0;
         if (bounceDashing != 1){ //regular boingjump
             jumpwindow = (jumpwindow / basejumpwindow * .75F) + bounceBase;
             nuyvel = myMath.roundTo((jumpforce*(1 + combo * .035F)) * jumpwindow, 10);
             bounceCombo += 1;
             if (!wallb && !slopeSquish){
-                if (chargedNote == "") _drawMoveNote("boingjump");
-                else _drawMoveNote("chargedjump");
+                if (chargedNote == ""){
+                    string comboStr = (combo > 0) ? " x" + (bounceCombo).ToString() : "";
+                    _drawMoveNote("boing" + comboStr);
+                }
+                else _drawMoveNote("chargedboing");
             }
             else{
                 if (!slopeSquish){
-                    _drawMoveNote(chargedNote + "walljump");
+                    _drawMoveNote(chargedNote + "wallboing");
                     wallbx *= (jumpforce * (.2F + (.1F * jumpwindow)));
                     wallby *= (jumpforce * (.2F + (.1F * jumpwindow)));
                     nuyvel *= .6F + (.2F * jumpwindow);
@@ -806,7 +809,7 @@ public void _jump(){
             nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F)) * jumpwindow,10);
             if (wallb){ //if off wall
                 if (!slopeSquish){
-                    _drawMoveNote(chargedNote + "crash walljump");
+                    _drawMoveNote(chargedNote + "crash wallboing");
                     wallbx *= (jumpforce * (.4F + (.25F * jumpwindow)));
                     wallby *= (jumpforce * (.4F + (.25F * jumpwindow)));
                     nuyvel *= .4F + (.25F * jumpwindow);
@@ -815,7 +818,7 @@ public void _jump(){
                 lastyvel *= windowRatio * .65F;
                 squishReverb[2] = 1; //set wall jiggle to true
             }
-            else if (!slopeSquish) _drawMoveNote(chargedNote + "crashjump");
+            else if (!slopeSquish) _drawMoveNote(chargedNote + "crashboing");
             if (lastyvel > nuyvel || lastyvel == 20) nuyvel += lastyvel * .2F;
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
@@ -836,7 +839,7 @@ public void _jump(){
 
 public void _normalJump(){
 	boingCharge = false;
-	_drawMoveNote("jump");
+	_drawMoveNote("boing");
 	yvelocity = jumpforce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 7) * .5F;
 	squishReverb[0] = yvelocity * .035F;
 	preBoingTimer.Stop();
@@ -1051,7 +1054,7 @@ public void _on_hitBox_area_entered(Area area){
                 else if (deathtimer.IsStopped()) deathtimer.Start(2);
                 break;
             case "warps":
-                Area checkpoint1 = (Area)GetNode("../checkpoints/checkpoint1");
+                Area checkpoint1 = (Area)GetNode("../../checkpoints/checkpoint1");
                 Translation = checkpoint1.GlobalTransform.origin;
                 if (speedRun){
                     if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
@@ -1073,28 +1076,28 @@ public void _on_hitBox_area_entered(Area area){
                 string str = "";
                 switch(area.Name){
 					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
-                    case "jumpTip": str = "Press " + controlNames["jump"] + " to Jump"; break;
-                    case "bounceTip": str = "Try jumping right when you hit the\nground to Boingjump"; break;
+                    case "jumpTip": str = "Press and release\n" + controlNames["jump"] + " to Boing"; break;
+                    case "bounceTip": str = "Try jumping right when you hit the\nground to Bounce"; break;
                     case "camTip": str = controlNames["camera"] + "\nto pan the camera"; break;
                     case "restartTip": 
                         str = controlNames["restart"] + " to restart from checkpoint\n" +
                         controlNames["speedrun"] + " to start speedrun mode";
                         break;
-                    case "boingTip": str = "Hold " + controlNames["jump"] + "\nto Chargejump"; break;
-                    case "boingTip2": str = "Pro tip: Holding " + controlNames["jump"] + " will help you\nget the most out of your jumps!"; break;
+                    case "boingTip": str = "Hold " + controlNames["jump"] + " for longer\nto charge a Boing"; break;
+                    case "boingTip2": str = "Pro tip: when in doubt, charge your Boings!"; break;
                     case "dashTip": str = controlNames["dash"] + " to Dash"; break;
-                    case "slideTip": str = "Hold " + controlNames["jump"] + " after dashing\nto Slide"; break;
+                    case "slideTip": str = "Try Boinging off the wall!"; break;
                     //case "slideTip2": str = "You can slide super far on glass!"; break;
                     case "crashTip": str = "Dash in mid-air\nto Crash"; break;
-                    case "crashTip2": str = "Jump after a Crash\nto Crashjump"; break;
-                    case "crashTip3": str = "Try charging a big Crashjump\nto get over the wall!"; break;
-                    case "wallTip": str = "Jump after hitting a wall\nto Walljump"; break;
-                    case "wallTip2": str = "You can charge walljumps too!"; break;
+                    case "crashTip2": str = "Jump after a Crash\nto Crashboing"; break;
+                    case "crashTip3": str = "Try charging a big Crashboing\nto get over the wall!"; break;
+                    case "wallTip": str = "Boing after hitting a wall\nto Wallboing"; break;
+                    case "wallTip2": str = "You can charge Wallboings too!"; break;
                     case "shiftTip": str = "Roll down slopes to go fast!"; break;
-                    case "shiftTip2": str = "Jump off ramps at high speeds\nto get some air!"; break;
+                    case "shiftTip2": str = "Boing off ramps at high speeds the last\nsecond to get some air!"; break;
                     case "part1Tip": str = "Grats on making it this far. You got it!"; break;
                     case "part3Tip": str = "Take your time..."; break;
-                    case "part4Tip": str = "Try dashing into the wall and\ncharge a Walljump off of it!"; break;
+                    case "part4Tip": str = "Try dashing into the wall and\ncharge a Wallboing off of it!"; break;
                     case "endTip": str = "That's all for now. Good job!\nTravel down to restart in speedrun mode!"; break;
                 }
                 if (str != "") _drawTip(str);
