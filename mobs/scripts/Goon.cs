@@ -6,9 +6,9 @@ public class Goon : KinematicBody
 Vector3 velocity = Vector3.Zero;
 Vector3 launchVec = Vector3.Zero;
 float yvelocity = 0;
-int aggroRange = 22;
+int aggroRange = 24;
 int damage = 20;
-float speed = 11;
+float speed = 12;
 float ang = 0;
 int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 bool stunned = false; //if we just got hit or not (relevant if we don't die in 1 hit)

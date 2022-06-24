@@ -46,7 +46,7 @@ int traction = 50;
 float[] tractionList = new float[101];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
-float dashSpeed = speedCap * 1.4F;
+float dashSpeed = 20;
 float boing = 0;
 bool boingCharge = false;
 bool boingDash = false; //use dashSpeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
@@ -311,7 +311,7 @@ public void _applyShift(float delta, bool isGrounded){
             shiftedSticky = 0;
             floorCastTouching = true; //so we don't apply it twice (below)
         }
-        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.4F);
+        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.5F);
     }
     else if (shiftedBoost[0] > 0){ //shift linger
         shiftedLinger = true;
@@ -853,7 +853,7 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             yvelocity = jumpforce * .5F;
             _drawMoveNote("dash");
             dashTimer.Stop();
-            dashTimer.Start(.4F);
+            dashTimer.Start(.5F);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -1086,7 +1086,7 @@ public void _on_hitBox_area_entered(Area area){
                     case "boingTip": str = "Hold " + controlNames["jump"] + " for longer\nto charge a Boing"; break;
                     case "boingTip2": str = "Pro tip: when in doubt, charge your Boings!"; break;
                     case "dashTip": str = controlNames["dash"] + " to Dash"; break;
-                    case "slideTip": str = "Try Boinging off the wall!"; break;
+                    case "slideTip": str = "Hold " + controlNames["jump"] + "\nafter Dashing to slide"; break;
                     //case "slideTip2": str = "You can slide super far on glass!"; break;
                     case "crashTip": str = "Dash in mid-air\nto Crash"; break;
                     case "crashTip2": str = "Jump after a Crash\nto Crashboing"; break;
