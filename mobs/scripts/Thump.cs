@@ -32,7 +32,6 @@ public override void _Ready(){
     bottomPosition = GetNode<Position3D>("BottomPosition");
     crushBox = GetNode<Area>("Crushbox");
     shakeBox = GetNode<CollisionShape>("Shakebox/CollisionShape");
-    fallTimer.Start(2);
     fallMode = !Name.BeginsWith("push");
     anchorOrigin = anchor.GlobalTransform.origin;
     originY = (fallMode) ? GlobalTransform.origin.y : GlobalTransform.origin.x;

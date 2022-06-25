@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=2]
+[gd_scene load_steps=83 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
@@ -23,7 +23,6 @@
 [ext_resource path="res://geography/misc/cameraset.tscn" type="PackedScene" id=21]
 [ext_resource path="res://geography/misc/cameraArea.tscn" type="PackedScene" id=22]
 [ext_resource path="res://geography/structures/shiftTile.tscn" type="PackedScene" id=23]
-[ext_resource path="res://geography/structures/trampoline.tscn" type="PackedScene" id=24]
 
 [sub_resource type="SpatialMaterial" id=9]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -153,12 +152,25 @@ albedo_color = Color( 0.309804, 1, 0.964706, 0.313726 )
 [sub_resource type="SpatialMaterial" id=56]
 albedo_color = Color( 0.843137, 0.498039, 1, 1 )
 
+[sub_resource type="BoxShape" id=3]
+
+[sub_resource type="BoxShape" id=4]
+
+[sub_resource type="BoxShape" id=62]
+
+[sub_resource type="CubeMesh" id=63]
+
+[sub_resource type="SpatialMaterial" id=64]
+albedo_color = Color( 0.772549, 0.32549, 1, 1 )
+
 [sub_resource type="CylinderShape" id=57]
 
 [sub_resource type="CylinderMesh" id=58]
 
 [sub_resource type="SpatialMaterial" id=59]
 albedo_color = Color( 1, 0.862745, 0.976471, 1 )
+
+[sub_resource type="CylinderShape" id=61]
 
 [sub_resource type="DynamicFont" id=53]
 size = 42
@@ -190,7 +202,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -44.8104, 3.85039, -102.322 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82.639, 5.19337, -32.0366 )
 
 [node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
@@ -1206,341 +1218,340 @@ polygon = PoolVector2Array( -9.49547, 39.0018, 8.54559, 39.9995, 27.4501, 20.389
 depth = 2.5
 material = SubResource( 60 )
 
-[node name="spawnWorld" type="Spatial" parent="environment/Outside"]
+[node name="spawnZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 175 )
 
-[node name="staticGround" parent="environment/Outside/spawnWorld" groups=["flats"] instance=ExtResource( 7 )]
+[node name="staticGround" parent="environment/Outside/spawnZone" groups=["flats"] instance=ExtResource( 7 )]
 transform = Transform( 50, 0, 0, 0, 1, 0, 0, 0, 25, 0, 0, -25 )
 
-[node name="spawnPlat" parent="environment/Outside/spawnWorld" groups=["obstacles"] instance=ExtResource( 7 )]
+[node name="spawnPlat" parent="environment/Outside/spawnZone" groups=["obstacles"] instance=ExtResource( 7 )]
 transform = Transform( 4, 0, 0, 0, 0.5, 0, 0, 0, 4, 0, 1.878, 0 )
 
-[node name="cyFlat2" parent="environment/Outside/spawnWorld/spawnPlat" groups=["obstacles"] instance=ExtResource( 7 )]
+[node name="cyFlat2" parent="environment/Outside/spawnZone/spawnPlat" groups=["obstacles"] instance=ExtResource( 7 )]
 transform = Transform( 0.75, 0, 0, 0, 1, 0, 0, 0, 0.75, 0, 1.85, 0 )
 
-[node name="cyFlat3" parent="environment/Outside/spawnWorld/spawnPlat" groups=["obstacles"] instance=ExtResource( 7 )]
+[node name="cyFlat3" parent="environment/Outside/spawnZone/spawnPlat" groups=["obstacles"] instance=ExtResource( 7 )]
 transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 3.816, 0 )
 
-[node name="spawnPillarSet" type="Spatial" parent="environment/Outside/spawnWorld"]
+[node name="spawnPillarSet" type="Spatial" parent="environment/Outside/spawnZone"]
 
-[node name="crossBeam" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 7 )]
+[node name="crossBeam" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 7 )]
 transform = Transform( 7.5, 0, 0, 0, 0.4, 0, 0, 0, 1, 0, 22, 13 )
 
-[node name="crossBeam2" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 7 )]
+[node name="crossBeam2" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 7 )]
 transform = Transform( -3.27835e-07, 0, 1, 0, 0.4, 0, -7.5, 0, -4.37114e-08, -13, 22, 0 )
 
-[node name="crossBeam3" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 7 )]
+[node name="crossBeam3" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 7 )]
 transform = Transform( 7.5, 0, 0, 0, 0.4, 0, 0, 0, 1, 0, 22, -13 )
 
-[node name="crossBeam4" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 7 )]
+[node name="crossBeam4" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 7 )]
 transform = Transform( -3.27835e-07, 0, 1, 0, 0.4, 0, -7.5, 0, -4.37114e-08, 13, 22, 0 )
 
-[node name="spawnPillars" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 4 )]
+[node name="spawnPillars" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 20, 0, 0, 0, 1, -13, 2, 13 )
 
-[node name="wallBlock2" parent="environment/Outside/spawnWorld/spawnPillarSet/spawnPillars" instance=ExtResource( 4 )]
+[node name="wallBlock2" parent="environment/Outside/spawnZone/spawnPillarSet/spawnPillars" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26 )
 
-[node name="wallBlock3" parent="environment/Outside/spawnWorld/spawnPillarSet/spawnPillars" instance=ExtResource( 4 )]
+[node name="wallBlock3" parent="environment/Outside/spawnZone/spawnPillarSet/spawnPillars" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 0 )
 
-[node name="wallBlock4" parent="environment/Outside/spawnWorld/spawnPillarSet/spawnPillars" instance=ExtResource( 4 )]
+[node name="wallBlock4" parent="environment/Outside/spawnZone/spawnPillarSet/spawnPillars" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -26 )
 
-[node name="wallBlock5" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 4 )]
+[node name="wallBlock5" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 4 )]
 transform = Transform( 0.491657, -1.22589, -0.91924, 0.080905, 14.8995, 0, 0.491658, -1.2259, 0.919237, 46.7565, 2, 11.0418 )
 
-[node name="wallBlock7" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 4 )]
+[node name="wallBlock7" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 4 )]
 transform = Transform( 0.409677, -0.662453, -0.285455, 0.0399785, 12.6558, 0.0118523, 0.283842, -0.826397, 0.410335, 35.5275, 1.935, 0.504471 )
 
-[node name="wallBlock6" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 4 )]
+[node name="wallBlock6" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 4 )]
 transform = Transform( 0.352165, 0.876393, -0.91924, -0.0442646, 13.945, 8.98742e-09, 0.352166, 0.876396, 0.919237, 51.0397, 1.90723, 15.1363 )
 
-[node name="shift" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 23 )]
+[node name="shift" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 23 )]
 transform = Transform( 0.907476, -0.0278595, 2.83997, -0.0116115, 0.297104, 0.553265, -0.93078, -0.0308684, 2.76197, 40.7574, 15.6365, 5.19676 )
 
-[node name="shift2" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 23 )]
+[node name="shift2" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 23 )]
 transform = Transform( 0.574199, 0.0597663, -5.6396, -0.113404, 0.293984, 1.15945, 0.931361, -0.0010509, 3.61808, 25.7028, 16.6496, 5.26544 )
 
-[node name="shift3" parent="environment/Outside/spawnWorld/spawnPillarSet" instance=ExtResource( 23 )]
+[node name="shift3" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 23 )]
 transform = Transform( -0.306252, 0.187999, 1.45572, 0.053038, 0.229796, -1.28209, -1.05518, -0.0430138, -0.486948, 17.2663, 20.3455, 9.79411 )
 
-[node name="monument" type="Spatial" parent="environment/Outside/spawnWorld"]
+[node name="monument" type="Spatial" parent="environment/Outside/spawnZone"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0, -45 )
 
-[node name="beamWorld" type="Spatial" parent="environment/Outside"]
+[node name="beamZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 83.3267, 0, 111.649 )
 
-[node name="wallBlock" parent="environment/Outside/beamWorld" instance=ExtResource( 4 )]
+[node name="wallBlock" parent="environment/Outside/beamZone" instance=ExtResource( 4 )]
 transform = Transform( 0.176777, 0, 0.176777, 0, 15.9, 0, -0.176777, 0, 0.176777, 0, 2, 11.8 )
 
-[node name="wallBlock2" parent="environment/Outside/beamWorld" instance=ExtResource( 4 )]
+[node name="wallBlock2" parent="environment/Outside/beamZone" instance=ExtResource( 4 )]
 transform = Transform( 0.176777, 0, 0.176777, 0, 15.8, 0, -0.176777, 0, 0.176777, -0.7, 2, -43.6 )
 
-[node name="wallBlock3" parent="environment/Outside/beamWorld" instance=ExtResource( 4 )]
+[node name="wallBlock3" parent="environment/Outside/beamZone" instance=ExtResource( 4 )]
 transform = Transform( 0.176777, 0, 0.176777, 0, 25.7, 0, -0.176777, 0, 0.176777, -0.7, 2, -64.7 )
 
-[node name="wallBlock4" parent="environment/Outside/beamWorld" instance=ExtResource( 4 )]
+[node name="wallBlock4" parent="environment/Outside/beamZone" instance=ExtResource( 4 )]
 transform = Transform( 0.176777, 0, 0.176777, 0, 25.7, 0, -0.176777, 0, 0.176777, -1, 2, -112 )
 
-[node name="wallBlock6" parent="environment/Outside/beamWorld" instance=ExtResource( 4 )]
+[node name="wallBlock6" parent="environment/Outside/beamZone" instance=ExtResource( 4 )]
 transform = Transform( 0.176777, 0, 0.176777, 0, 35.3, 0, -0.176777, 0, 0.176777, -1, 2, -133 )
 
-[node name="wallBlock5" parent="environment/Outside/beamWorld" instance=ExtResource( 4 )]
+[node name="wallBlock5" parent="environment/Outside/beamZone" instance=ExtResource( 4 )]
 transform = Transform( 0.176777, 0, 0.176777, 0, 35.3, 0, -0.176777, 0, 0.176777, -1, 2, -166.3 )
 
-[node name="shift" parent="environment/Outside/beamWorld" groups=["shifts"] instance=ExtResource( 23 )]
+[node name="shift" parent="environment/Outside/beamZone" groups=["shifts"] instance=ExtResource( 23 )]
 transform = Transform( 1, 0, 0, 0, 0.16383, -4.01504, 0, 0.114715, 5.73406, 0, 9.7, 25.067 )
 
-[node name="purplePlat" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="purplePlat" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, 0.001, 17.858, 11.83 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/purplePlat"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/purplePlat"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/purplePlat"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="beam" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.7, 0, 0, 0, 0.2, 0, 0, 0, 10, 0, 17.858, -0.0673141 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam"]
 shape = SubResource( 54 )
 
-[node name="beam2" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam2" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.494975, 0, -3.53553, 0, 0.2, 0, 0.494975, 0, 3.53553, 3.337, 17.858, -13.103 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam2"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam2"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam2/CollisionShape"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam2/CollisionShape"]
 mesh = SubResource( 55 )
 skeleton = NodePath("../..")
 material/0 = SubResource( 56 )
 
-[node name="beam3" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam3" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.7, 0, 0, 0, 0.2, 0, 0, 0, 3.2, 6.67089, 17.858, -19.345 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam3"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam3"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam3/CollisionShape"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam3/CollisionShape"]
 mesh = SubResource( 55 )
 skeleton = NodePath("../..")
 material/0 = SubResource( 56 )
 
-[node name="beam4" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam4" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.181173, 0, 2.89778, 0, 0.2, 0, -0.676148, 0, 0.776457, 4.26945, 17.858, -22.6482 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam4"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam4"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam4/CollisionShape"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam4/CollisionShape"]
 transform = Transform( 1, 0, -1.19209e-07, 0, 1, 0, 3.72529e-09, 0, 1, 0, 0, 0 )
 mesh = SubResource( 55 )
 skeleton = NodePath("../..")
 material/0 = SubResource( 56 )
 
-[node name="beam5" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam5" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.638949, 0, 2.4915, 0, 0.2, 0, -0.285909, 0, 5.56798, -0.671, 17.858, -28.622 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam5"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam5"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam5/CollisionShape"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam5/CollisionShape"]
 mesh = SubResource( 55 )
 skeleton = NodePath("../..")
 material/0 = SubResource( 56 )
 
-[node name="beam6" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam6" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.694135, 0, -0.54254, 0, 0.2, 0, 0.0904234, 0, 4.16481, -2.558, 17.858, -37.978 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam6"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam6"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam6/CollisionShape"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam6/CollisionShape"]
 mesh = SubResource( 55 )
 skeleton = NodePath("../..")
 material/0 = SubResource( 56 )
 
-[node name="purplePlat2" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="purplePlat2" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -0.866608, 17.858, -43.5763 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/purplePlat2"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/purplePlat2"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/purplePlat2"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat2"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="shift2" parent="environment/Outside/beamWorld" groups=["shifts"] instance=ExtResource( 23 )]
+[node name="shift2" parent="environment/Outside/beamZone" groups=["shifts"] instance=ExtResource( 23 )]
 transform = Transform( 0.4, 0, 0, 0, 0.173205, -2.5, 0, 0.1, 4.33013, -0.764, 22.6522, -54.1588 )
 
-[node name="purplePlat3" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="purplePlat3" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -0.866608, 27.8115, -64.6179 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/purplePlat3"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/purplePlat3"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/purplePlat3"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat3"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="beam7" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam7" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 6, 0.312256, 27.812, -72.5905 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam7"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam7"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam7"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam7"]
 shape = SubResource( 54 )
 
-[node name="beam8" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam8" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.353553, 0, 2.12132, 0, 0.2, 0, -0.353554, 0, 2.12132, -1.679, 27.812, -80.367 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam8"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam8"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam8"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam8"]
 shape = SubResource( 54 )
 
-[node name="beam9" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam9" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( -0.176183, 0, 2.78325, 0, 0.2, 0, -0.467931, 0, -1.04794, -0.496101, 27.812, -83.4403 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam9"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam9"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam9"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam9"]
 shape = SubResource( 54 )
 
-[node name="beam10" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam10" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.20756, 0, 1.81953, 0, 0.2, 0, -0.454883, 0, 0.830241, 3.74206, 27.812, -83.6733 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam10"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam10"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam10"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam10"]
 shape = SubResource( 54 )
 
-[node name="beam11" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam11" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.469846, 0, -1.36808, 0, 0.2, 0, 0.17101, 0, 3.75877, 6.649, 27.812, -87.188 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam11"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam11"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam11"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam11"]
 shape = SubResource( 54 )
 
-[node name="beam12" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam12" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.101108, 0, -5.87605, 0, 0.2, 0, 0.489671, 0, 1.21329, 1.766, 27.812, -89.41 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam12"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam12"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam12"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam12"]
 shape = SubResource( 54 )
 
-[node name="beam13" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam13" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.461958, 0, 1.53038, 0, 0.2, 0, -0.191298, 0, 3.69566, -5.084, 27.812, -91.617 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam13"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam13"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam13"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam13"]
 shape = SubResource( 54 )
 
-[node name="beam14" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="beam14" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 0.472846, 0, -2.60051, 0, 0.2, 0, 0.162532, 0, 7.56554, -3.993, 27.812, -102.526 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam14"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam14"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam14"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam14"]
 shape = SubResource( 54 )
 
-[node name="purplePlat4" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="purplePlat4" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -1.06369, 27.8115, -111.929 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/purplePlat4"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/purplePlat4"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/purplePlat4"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat4"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="shift3" parent="environment/Outside/beamWorld" groups=["shifts"] instance=ExtResource( 23 )]
+[node name="shift3" parent="environment/Outside/beamZone" groups=["shifts"] instance=ExtResource( 23 )]
 transform = Transform( 0.3, 0, 0, 0, 0.173205, -2.5, 0, 0.1, 4.33013, -1.04488, 32.564, -122.549 )
 
-[node name="purplePlat5" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="purplePlat5" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -1.02443, 37.7142, -133.034 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/purplePlat5"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/purplePlat5"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/purplePlat5"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat5"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="purplePlat6" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats"]]
+[node name="purplePlat6" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats"]]
 transform = Transform( 2.82842, 0, 2.82843, 0, 0.2, 0, -2.82843, 0, 2.82842, -1, 37.714, -166.581 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/purplePlat6"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/purplePlat6"]
 shape = SubResource( 54 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/purplePlat6"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat6"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="beam15" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats", "shifts"]]
+[node name="beam15" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats", "shifts"]]
 transform = Transform( 0.3, 0, 0, 0, 0.173205, -4, 0, 0.1, 6.9282, -1, 41.71, -141.866 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam15"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam15"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam15"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam15"]
 shape = SubResource( 54 )
 
-[node name="beam16" type="StaticBody" parent="environment/Outside/beamWorld" groups=["flats", "shifts"]]
+[node name="beam16" type="StaticBody" parent="environment/Outside/beamZone" groups=["flats", "shifts"]]
 transform = Transform( -0.3, -1.50996e-08, -1.04613e-06, 0, 0.173205, -4, 4.52987e-08, -0.1, -6.9282, -1, 41.71, -155.53 )
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamWorld/beam16"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/beam16"]
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamWorld/beam16"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam16"]
 shape = SubResource( 54 )
 
-[node name="well" type="Spatial" parent="environment/Outside"]
+[node name="pondZone" type="Spatial" parent="environment/Outside"]
 
-[node name="wellHole" type="CSGCylinder" parent="environment/Outside/well" groups=["shifts"]]
+[node name="wellHole" type="CSGCylinder" parent="environment/Outside/pondZone" groups=["shifts"]]
 transform = Transform( 1.3, 0, 0, 0, 3.525, 0, 0, 0, 1.30576, 1.8, -0.672, -100 )
 use_collision = true
 collision_mask = 0
 height = 3.0
 material = SubResource( 15 )
 
-[node name="hole" type="CSGCylinder" parent="environment/Outside/well/wellHole" groups=["shifts"]]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+[node name="hole" type="CSGCylinder" parent="environment/Outside/pondZone/wellHole" groups=["shifts"]]
 operation = 2
 radius = 0.8
 height = 3.6
 material = SubResource( 15 )
 
-[node name="icePond" type="CSGPolygon" parent="environment/Outside/well" groups=["flats", "slides"]]
+[node name="icePond" type="CSGPolygon" parent="environment/Outside/pondZone" groups=["flats", "slides"]]
 transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, -2, 0.604, -91 )
 cast_shadow = 0
 use_collision = true
@@ -1548,148 +1559,636 @@ collision_mask = 0
 polygon = PoolVector2Array( -9.49547, 39.0018, 8.54559, 39.9995, 27.4501, 20.3891, 38.8752, 2.93539, 19.196, -13.0782, -16.4589, -19.131, -42.0503, -1.46255, -35.1703, 18.8885, -27.2175, 32.5132 )
 material = SubResource( 60 )
 
-[node name="CSGCylinder" type="CSGCylinder" parent="environment/Outside/well/icePond"]
+[node name="CSGCylinder" type="CSGCylinder" parent="environment/Outside/pondZone/icePond"]
 transform = Transform( 1, 0, 0, 0, -3.14315e-06, -1, 0, 1, -3.14315e-06, 3.77598, 9.0366, -0.446084 )
 operation = 2
 radius = 1.1
 height = 2.0
 
-[node name="spireWorld" type="Spatial" parent="environment/Outside"]
+[node name="spireZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82.514, 2, -139.013 )
 
-[node name="shiftRamp" type="Spatial" parent="environment/Outside/spireWorld"]
+[node name="shiftRamp" type="Spatial" parent="environment/Outside/spireZone"]
 transform = Transform( -0.5, 0, -3.18686e-06, 0, 1, 0, 1.59343e-06, 0, -1, 1.153, 10.445, -20.01 )
 __meta__ = {
 "_editor_description_": "	"
 }
 
-[node name="shiftMain" parent="environment/Outside/spireWorld/shiftRamp" groups=["shifts"] instance=ExtResource( 23 )]
+[node name="shiftMain" parent="environment/Outside/spireZone/shiftRamp" groups=["shifts"] instance=ExtResource( 23 )]
 transform = Transform( -3, 1.12389e-08, -8.70607e-07, 0, 0.153209, 8.35624, 2.62268e-07, 0.128558, -9.95858, 1.509, 2.52999, -0.570999 )
 
-[node name="shiftEnter" parent="environment/Outside/spireWorld/shiftRamp" groups=["shifts"] instance=ExtResource( 23 )]
+[node name="shiftEnter" parent="environment/Outside/spireZone/shiftRamp" groups=["shifts"] instance=ExtResource( 23 )]
 transform = Transform( -3, -1.50996e-08, 1.04613e-07, 0, 0.173205, 0.4, -4.52987e-07, 0.1, -0.69282, 1.509, -14.9053, 20.596 )
 
-[node name="shiftFlat" parent="environment/Outside/spireWorld/shiftRamp" groups=["shifts"] instance=ExtResource( 23 )]
+[node name="shiftFlat" parent="environment/Outside/spireZone/shiftRamp" groups=["shifts"] instance=ExtResource( 23 )]
 transform = Transform( -3, 0, -6.99382e-08, 0, 0.2, 0, 2.62268e-07, 0, -0.8, 1.509, -15.6833, 23.521 )
 
-[node name="rampEnter" parent="environment/Outside/spireWorld/shiftRamp" groups=["ramps"] instance=ExtResource( 23 )]
+[node name="rampEnter" parent="environment/Outside/spireZone/shiftRamp" groups=["ramps"] instance=ExtResource( 23 )]
 transform = Transform( 3, 0, 0, 0, 0.173205, 0.3, 0, -0.1, 0.519615, 1.509, -15.0862, 26.1666 )
 
-[node name="rampExit" parent="environment/Outside/spireWorld/shiftRamp" groups=["ramps"] instance=ExtResource( 23 )]
+[node name="rampExit" parent="environment/Outside/spireZone/shiftRamp" groups=["ramps"] instance=ExtResource( 23 )]
 transform = Transform( 3, 0, 0, 0, 0.141421, 0.707107, 0, -0.141421, 0.707107, 1.509, -13.101, 28.6034 )
 
-[node name="cyFlat" parent="environment/Outside/spireWorld/shiftRamp" instance=ExtResource( 7 )]
+[node name="cyFlat" parent="environment/Outside/spireZone/shiftRamp" instance=ExtResource( 7 )]
 transform = Transform( 1.89901e-05, 0, 3, 0, 0.2, 0, -1.5, 0, 9.49503e-06, 1.51633, 19.133, -23.2478 )
 
-[node name="wallBlock" parent="environment/Outside/spireWorld" instance=ExtResource( 4 )]
+[node name="tower" parent="environment/Outside/spireZone" instance=ExtResource( 4 )]
 transform = Transform( 2, 0, 0, 0, 30, 0, 0, 0, 2, 0, 0, 10.2301 )
 
-[node name="cyFlat" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.5, 0, 0, 0, 0.00666667, 0, 0, 0, 0.75, 0, 0.03, 3.48 )
 
-[node name="cyFlat2" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat2" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.353553, 0, 0.565686, 0, 0.007, 0, -0.353554, 0, 0.565685, 2.4, 0.07, 2.4 )
 
-[node name="cyFlat3" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat3" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( -2.18557e-08, 0, 0.75, 0, 0.00666667, 0, -0.5, 0, -3.27835e-08, 3.467, 0.11, 0 )
 
-[node name="cyFlat4" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat4" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.353553, 0, -0.565685, 0, 0.007, 0, 0.353553, 0, 0.565685, 2.4, 0.15, -2.4 )
 
-[node name="cyFlat5" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat5" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( -0.5, 0, -4.71473e-06, 0, 0.00666667, 0, 3.14315e-06, 0, -0.75, -0.0761299, 0.163333, -3.45997 )
 
-[node name="cyFlat6" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat6" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( -0.353551, 0, -0.56569, 0, 0.007, 0, 0.353556, 0, -0.565681, -2.47612, 0.203334, -2.37995 )
 
-[node name="cyFlat7" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat7" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 3.16501e-06, 0, -0.75, 0, 0.00666667, 0, 0.5, 0, 4.74751e-06, -3.54311, 0.243334, 0.0200577 )
 
-[node name="cyFlat8" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat8" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( -0.353556, 0, 0.565682, 0, 0.007, 0, -0.353551, 0, -0.565689, -2.47609, 0.283334, 2.42006 )
 
-[node name="cyFlat9" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat9" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.5, 0, 0, 0, 0.00666667, 0, 0, 0, 0.75, 0, 0.424441, 3.48 )
 
-[node name="cyFlat10" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat10" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.353553, 0, 0.565686, 0, 0.007, 0, -0.353554, 0, 0.565685, 2.4, 0.464441, 2.4 )
 
-[node name="cyFlat11" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat11" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( -2.18557e-08, 0, 0.75, 0, 0.00666667, 0, -0.5, 0, -3.27835e-08, 3.467, 0.504441, 0 )
 
-[node name="cyFlat12" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat12" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.353553, 0, -0.565685, 0, 0.007, 0, 0.353553, 0, 0.565685, 2.4, 0.544441, -2.4 )
 
-[node name="cyFlat13" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat13" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( -2.18557e-08, 0, 0.75, 0, 0.00666667, 0, -0.5, 0, -3.27835e-08, 3.467, 0.780289, 0 )
 
-[node name="cyFlat14" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat14" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.353553, 0, 0.565686, 0, 0.007, 0, -0.353554, 0, 0.565685, 2.4, 0.827504, 2.4 )
 
-[node name="cyFlat15" parent="environment/Outside/spireWorld/wallBlock" instance=ExtResource( 7 )]
+[node name="cyFlat15" parent="environment/Outside/spireZone/tower" instance=ExtResource( 7 )]
 transform = Transform( 0.5, 0, 0, 0, 0.00666667, 0, 0, 0, 0.75, 0, 0.984568, 3.48 )
 
-[node name="cloudMain" type="StaticBody" parent="environment/Outside/spireWorld"]
-transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 5, -76 )
+[node name="thumpZone" type="Spatial" parent="environment/Outside"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 2.5, 1.13207 )
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireWorld/cloudMain"]
-transform = Transform( 1, 0, 0, 0, 0.75, 0, 0, 0, 1, 0, -0.25, 0 )
+[node name="Thump" type="StaticBody" parent="environment/Outside/thumpZone" groups=["thumps", "walls"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.5, -52 )
+collision_mask = 0
+script = ExtResource( 5 )
+
+[node name="Crushbox" type="Area" parent="environment/Outside/thumpZone/Thump" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump/Crushbox"]
+transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump"]
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump"]
+transform = Transform( 21.5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 62 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/thumpZone/Thump/CollisionShape"]
+mesh = SubResource( 63 )
+material/0 = SubResource( 64 )
+
+[node name="FallTimer" type="Timer" parent="environment/Outside/thumpZone/Thump"]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[node name="ShakeTimer" type="Timer" parent="environment/Outside/thumpZone/Thump"]
+one_shot = true
+
+[node name="BottomPosition" type="Position3D" parent="environment/Outside/thumpZone/Thump"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
+
+[node name="Thump2" type="StaticBody" parent="environment/Outside/thumpZone" groups=["thumps", "walls"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.5, -32 )
+collision_mask = 0
+script = ExtResource( 5 )
+
+[node name="Crushbox" type="Area" parent="environment/Outside/thumpZone/Thump2" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump2/Crushbox"]
+transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump2"]
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump2/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump2"]
+transform = Transform( 21.5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 62 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/thumpZone/Thump2/CollisionShape"]
+mesh = SubResource( 63 )
+material/0 = SubResource( 64 )
+
+[node name="FallTimer" type="Timer" parent="environment/Outside/thumpZone/Thump2"]
+wait_time = 4.5
+one_shot = true
+autostart = true
+
+[node name="ShakeTimer" type="Timer" parent="environment/Outside/thumpZone/Thump2"]
+one_shot = true
+
+[node name="BottomPosition" type="Position3D" parent="environment/Outside/thumpZone/Thump2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
+
+[node name="Thump3" type="StaticBody" parent="environment/Outside/thumpZone" groups=["thumps", "walls"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.5, -12 )
+collision_mask = 0
+script = ExtResource( 5 )
+
+[node name="Crushbox" type="Area" parent="environment/Outside/thumpZone/Thump3" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump3/Crushbox"]
+transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump3"]
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump3/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump3"]
+transform = Transform( 21.5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 62 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/thumpZone/Thump3/CollisionShape"]
+mesh = SubResource( 63 )
+material/0 = SubResource( 64 )
+
+[node name="FallTimer" type="Timer" parent="environment/Outside/thumpZone/Thump3"]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[node name="ShakeTimer" type="Timer" parent="environment/Outside/thumpZone/Thump3"]
+one_shot = true
+
+[node name="BottomPosition" type="Position3D" parent="environment/Outside/thumpZone/Thump3"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump3"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
+
+[node name="Thump4" type="StaticBody" parent="environment/Outside/thumpZone" groups=["thumps", "walls"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.5, 10 )
+collision_mask = 0
+script = ExtResource( 5 )
+
+[node name="Crushbox" type="Area" parent="environment/Outside/thumpZone/Thump4" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump4/Crushbox"]
+transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump4"]
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump4/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump4"]
+transform = Transform( 21.5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 62 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/thumpZone/Thump4/CollisionShape"]
+mesh = SubResource( 63 )
+material/0 = SubResource( 64 )
+
+[node name="FallTimer" type="Timer" parent="environment/Outside/thumpZone/Thump4"]
+wait_time = 4.5
+one_shot = true
+autostart = true
+
+[node name="ShakeTimer" type="Timer" parent="environment/Outside/thumpZone/Thump4"]
+one_shot = true
+
+[node name="BottomPosition" type="Position3D" parent="environment/Outside/thumpZone/Thump4"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump4"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
+
+[node name="Thump6" type="StaticBody" parent="environment/Outside/thumpZone" groups=["thumps", "walls"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.5, 50 )
+collision_mask = 0
+script = ExtResource( 5 )
+
+[node name="Crushbox" type="Area" parent="environment/Outside/thumpZone/Thump6" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump6/Crushbox"]
+transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump6"]
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump6/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump6"]
+transform = Transform( 21.5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 62 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/thumpZone/Thump6/CollisionShape"]
+mesh = SubResource( 63 )
+material/0 = SubResource( 64 )
+
+[node name="FallTimer" type="Timer" parent="environment/Outside/thumpZone/Thump6"]
+wait_time = 4.5
+one_shot = true
+autostart = true
+
+[node name="ShakeTimer" type="Timer" parent="environment/Outside/thumpZone/Thump6"]
+one_shot = true
+
+[node name="BottomPosition" type="Position3D" parent="environment/Outside/thumpZone/Thump6"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump6"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
+
+[node name="Thump5" type="StaticBody" parent="environment/Outside/thumpZone" groups=["thumps", "walls"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.5, 30 )
+collision_mask = 0
+script = ExtResource( 5 )
+
+[node name="Crushbox" type="Area" parent="environment/Outside/thumpZone/Thump5" groups=["thumps"]]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+collision_layer = 0
+collision_mask = 16
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump5/Crushbox"]
+transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
+shape = SubResource( 3 )
+
+[node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump5"]
+transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump5/Shakebox"]
+shape = SubResource( 4 )
+disabled = true
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump5"]
+transform = Transform( 21.5, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 62 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/thumpZone/Thump5/CollisionShape"]
+mesh = SubResource( 63 )
+material/0 = SubResource( 64 )
+
+[node name="FallTimer" type="Timer" parent="environment/Outside/thumpZone/Thump5"]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[node name="ShakeTimer" type="Timer" parent="environment/Outside/thumpZone/Thump5"]
+one_shot = true
+
+[node name="BottomPosition" type="Position3D" parent="environment/Outside/thumpZone/Thump5"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+
+[node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump5"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
+
+[node name="cloudZone" type="Spatial" parent="environment/Outside"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -76.3555, 8.71146, -215.346 )
+
+[node name="cloudMain" type="StaticBody" parent="environment/Outside/cloudZone"]
+transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, -6.15849, -1.71146, 0.333008 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
 shape = SubResource( 57 )
+disabled = true
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spireWorld/cloudMain"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudMain"]
+cast_shadow = 0
 mesh = SubResource( 58 )
 material/0 = SubResource( 59 )
 
-[node name="cloudSub" type="StaticBody" parent="environment/Outside/spireWorld"]
-transform = Transform( 2.6354, 0, -1.43341, 0, 0.8, 0, 1.43341, 0, 2.6354, 9.99103, 8.76592, -78.8338 )
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudMain" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireWorld/cloudSub"]
-transform = Transform( 1, 0, 0, 0, 0.75, 0, 0, 0, 1, 0, -0.25, 0 )
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudMain2" type="StaticBody" parent="environment/Outside/cloudZone"]
+transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -25.803, 2.711, -13.62 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain2"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
 shape = SubResource( 57 )
+disabled = true
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spireWorld/cloudSub"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudMain2"]
+cast_shadow = 0
 mesh = SubResource( 58 )
 material/0 = SubResource( 59 )
 
-[node name="cloudSub2" type="StaticBody" parent="environment/Outside/spireWorld"]
-transform = Transform( 2.19617, 0, -1.19451, 0, 0.7, 0, 1.19451, 0, 2.19617, 14.2453, 11.8061, -80.9709 )
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudMain2" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireWorld/cloudSub2"]
-transform = Transform( 1, 0, 0, 0, 0.75, 0, 0, 0, 1, 0, -0.25, 0 )
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain2/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudMain3" type="StaticBody" parent="environment/Outside/cloudZone"]
+transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -17.149, 5.711, -32.773 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain3"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
 shape = SubResource( 57 )
+disabled = true
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spireWorld/cloudSub2"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudMain3"]
+cast_shadow = 0
 mesh = SubResource( 58 )
 material/0 = SubResource( 59 )
 
-[node name="cloudSub3" type="StaticBody" parent="environment/Outside/spireWorld"]
-transform = Transform( 1.75693, 0, -0.955606, 0, 0.6, 0, 0.955606, 0, 1.75693, 18.8352, 14.1871, -79.6787 )
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudMain3" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireWorld/cloudSub3"]
-transform = Transform( 1, 0, 0, 0, 0.75, 0, 0, 0, 1, 0, -0.25, 0 )
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain3/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudMain4" type="StaticBody" parent="environment/Outside/cloudZone"]
+transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -36.505, 8.711, -44.991 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain4"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
 shape = SubResource( 57 )
+disabled = true
 
-[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spireWorld/cloudSub3"]
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudMain4"]
+cast_shadow = 0
 mesh = SubResource( 58 )
 material/0 = SubResource( 59 )
 
-[node name="TrampolineWorld" type="Spatial" parent="environment/Outside"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 2.5, 0 )
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudMain4" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
 
-[node name="trampoline" parent="environment/Outside/TrampolineWorld" instance=ExtResource( 24 )]
-transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 10.6365, 0, -45.467 )
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain4/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
 
-[node name="trampoline2" parent="environment/Outside/TrampolineWorld" instance=ExtResource( 24 )]
-transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, -4.43906, 0, -23.7247 )
+[node name="cloudBig" type="StaticBody" parent="environment/Outside/cloudZone"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, -65.402, 11.711, -41.408 )
 
-[node name="trampoline3" parent="environment/Outside/TrampolineWorld" instance=ExtResource( 24 )]
-transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 10.844, 0, -2.79019 )
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudBig"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
 
-[node name="trampoline4" parent="environment/Outside/TrampolineWorld" instance=ExtResource( 24 )]
-transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, -4.7276, 0, 20.0651 )
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudBig"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
 
-[node name="trampoline5" parent="environment/Outside/TrampolineWorld" instance=ExtResource( 24 )]
-transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 9.44646, 0, 41.8257 )
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudBig" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudBig/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudColumn" type="Spatial" parent="environment/Outside/cloudZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -67.489, 22.8094, -52.1119 )
+
+[node name="cloudColumn" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
+transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -6.15849, -1.71146, 0.333008 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
+
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudColumn2" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
+transform = Transform( 6, 0, 0, 0, 0.6, 0, 0, 0, 6, -6.40299, 7, 1.25073 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn2"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn2"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
+
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn2" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn2/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudColumn3" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
+transform = Transform( 5, 0, 0, 0, 0.5, 0, 0, 0, 5, -6.25632, 13.5, -0.0219574 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn3"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn3"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
+
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn3" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn3/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudColumn4" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
+transform = Transform( 4, 0, 0, 0, 0.4, 0, 0, 0, 4, -7.28813, 19, -0.175522 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn4"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn4"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
+
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn4" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn4/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudColumn5" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
+transform = Transform( 3, 0, 0, 0, 0.3, 0, 0, 0, 3, -7.133, 23.5, -0.242004 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn5"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn5"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
+
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn5" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn5/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
+
+[node name="cloudColumn6" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
+transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -7.27466, 27, 0.257797 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn6"]
+transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
+shape = SubResource( 57 )
+disabled = true
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn6"]
+cast_shadow = 0
+mesh = SubResource( 58 )
+material/0 = SubResource( 59 )
+
+[node name="trampoline" type="Area" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn6" groups=["trampolines"]]
+transform = Transform( 0.5, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.05, 0 )
+collision_layer = 33
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn6/trampoline"]
+transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
+shape = SubResource( 61 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -1800,6 +2299,30 @@ shape = SubResource( 6 )
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/center/centerLift/FallTimer" to="environment/Pyramid/PyramidInternal/center/centerLift" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump/FallTimer" to="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/lowerLevel/cornerBlocks/Lift/FallTimer" to="environment/Pyramid/PyramidInternal/lowerLevel/cornerBlocks/Lift" method="_on_FallTimer_timeout"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump/Crushbox" to="environment/Outside/thumpZone/Thump" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump/Shakebox" to="environment/Outside/thumpZone/Thump" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump/FallTimer" to="environment/Outside/thumpZone/Thump" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump/ShakeTimer" to="environment/Outside/thumpZone/Thump" method="_on_ShakeTimer_timeout"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump2/Crushbox" to="environment/Outside/thumpZone/Thump2" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump2/Shakebox" to="environment/Outside/thumpZone/Thump2" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump2/FallTimer" to="environment/Outside/thumpZone/Thump2" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump2/ShakeTimer" to="environment/Outside/thumpZone/Thump2" method="_on_ShakeTimer_timeout"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump3/Crushbox" to="environment/Outside/thumpZone/Thump3" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump3/Shakebox" to="environment/Outside/thumpZone/Thump3" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump3/FallTimer" to="environment/Outside/thumpZone/Thump3" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump3/ShakeTimer" to="environment/Outside/thumpZone/Thump3" method="_on_ShakeTimer_timeout"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump4/Crushbox" to="environment/Outside/thumpZone/Thump4" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump4/Shakebox" to="environment/Outside/thumpZone/Thump4" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump4/FallTimer" to="environment/Outside/thumpZone/Thump4" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump4/ShakeTimer" to="environment/Outside/thumpZone/Thump4" method="_on_ShakeTimer_timeout"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump6/Crushbox" to="environment/Outside/thumpZone/Thump6" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump6/Shakebox" to="environment/Outside/thumpZone/Thump6" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump6/FallTimer" to="environment/Outside/thumpZone/Thump6" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump6/ShakeTimer" to="environment/Outside/thumpZone/Thump6" method="_on_ShakeTimer_timeout"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump5/Crushbox" to="environment/Outside/thumpZone/Thump5" method="_on_Crushbox_area_entered"]
+[connection signal="area_entered" from="environment/Outside/thumpZone/Thump5/Shakebox" to="environment/Outside/thumpZone/Thump5" method="_on_Shakebox_area_entered"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump5/FallTimer" to="environment/Outside/thumpZone/Thump5" method="_on_FallTimer_timeout"]
+[connection signal="timeout" from="environment/Outside/thumpZone/Thump5/ShakeTimer" to="environment/Outside/thumpZone/Thump5" method="_on_ShakeTimer_timeout"]
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
 
 [editable path="environment/Pyramid/PyramidInternal/upperLevel/stairPlatArea/upperRailing/beams/upperPlatBase7"]

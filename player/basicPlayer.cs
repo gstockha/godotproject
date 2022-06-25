@@ -757,7 +757,7 @@ public void _jump(){
         boingTimer.Stop();
         //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
         bool slopeSquish = false;
-        if (shiftedDir != 0){ //boing jump off a slope
+        if (!trampolined && shiftedDir != 0){ //boing jump off a slope
             Vector3 wallbang = velocity.Bounce(floorCast.GetCollisionNormal());
             Vector2 wallang = new Vector2(wallbang.x, wallbang.z);
             wallb = true;

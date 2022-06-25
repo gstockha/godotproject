@@ -106,7 +106,7 @@ public override void _PhysicsProcess(float delta){
 
 public void _launch(float power, Vector3 cVec){
     state = states.launched;
-    if (power != 0) launchVec = new Vector3(cVec.x * power * 2, 0, cVec.z * power * 2);
+    if (power != 0) launchVec = new Vector3((cVec.x * power * 1.5F) + (Mathf.Sign(cVec.x) * 2), 0, (cVec.z * power * 1.5F) + (Mathf.Sign(cVec.z) * 2));
     else launchVec = new Vector3(cVec.x, 0, cVec.z);
     yvelocity = power * 2;
     deathTimer.Start(3);

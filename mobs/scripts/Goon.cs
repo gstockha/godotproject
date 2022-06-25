@@ -8,7 +8,7 @@ Vector3 launchVec = Vector3.Zero;
 float yvelocity = 0;
 int aggroRange = 24;
 int damage = 20;
-float speed = 12;
+float speed = 15;
 float ang = 0;
 int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 bool stunned = false; //if we just got hit or not (relevant if we don't die in 1 hit)
@@ -174,13 +174,14 @@ public void _on_PathTimer_timeout(){
     }
     else if (state != states.alert){
         state = states.alert;
-        pathTimer.Start(.5F);
+        pathTimer.Start(.4F);
     }
     else{
         state = states.attack;
         velocity = new Vector3(target.GlobalTransform.origin - GlobalTransform.origin);
         ang = new Vector2(velocity.x, velocity.z).Angle();
         angleChecker.Start(.25F);
+        GD.Print(new Vector3(velocity.x, -10, velocity.z).Normalized());
         velocity = new Vector3(velocity.x, -10, velocity.z).Normalized() * speed;
     }
 }
