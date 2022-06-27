@@ -14,6 +14,7 @@ albedo_color = Color( 1, 0, 0, 1 )
 [sub_resource type="PrismMesh" id=8]
 
 [node name="Goon" type="KinematicBody" groups=["goons", "mobs"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
 collision_layer = 4
 script = ExtResource( 1 )
 
@@ -33,7 +34,7 @@ skeleton = NodePath("../CollisionShape")
 material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, 0, 1, 0 )
+transform = Transform( 0.8, 0, 0, 0, 1, 0, 0, 0, 0.8, 0, 0.8, 0 )
 shape = SubResource( 5 )
 
 [node name="PathTimer" type="Timer" parent="."]
@@ -47,6 +48,7 @@ one_shot = true
 [node name="RayCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 5, 0, 0, 0, 1, 0, 0, 0 )
 enabled = true
+exclude_parent = false
 
 [node name="Arrow" type="MeshInstance" parent="."]
 transform = Transform( -0.3, 4.52987e-08, 0, -4.52987e-08, -0.3, 0, 0, 0, 0.3, 0, 3, 0 )

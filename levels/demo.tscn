@@ -926,13 +926,13 @@ transform = Transform( 3, 0, 0, 0, 0.141421, 1.06066, 0, -0.141421, 1.06066, 1.5
 transform = Transform( -4.37115e-08, 0, -1, 0, 1, 0, 1, 0, -4.37115e-08, 1.25925, 23.8384, -22.9436 )
 
 [node name="landingSpace" type="Spatial" parent="envMainCourse/part4"]
-transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, 2.1304, 0, 144.826 )
+transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, 3.25395, 0, 145.95 )
 
 [node name="camerasetO-0" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 13 )]
 transform = Transform( 0.952381, 0, 6.07438e-06, 0, 1.5, 0, -6.36957e-06, 0, 1, -93.9432, -21, 43.0996 )
 
 [node name="platRound" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 8 )]
-transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -89.5459, -29.1074, 43.5015 )
+transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -90.1618, -29.1074, 43.5015 )
 
 [node name="platFloat2" parent="envMainCourse/part4/landingSpace" groups=["flats"] instance=ExtResource( 5 )]
 transform = Transform( 6, 0, 0, 0, 0.2, 0, 0, 0, 1.8, -72.738, -3.647, 43.422 )

@@ -28,7 +28,9 @@ float wallby = 0;
 bool idle = true;
 bool smushed = false;
 bool launched = false;
+bool invincible = false;
 bool dashing = false;
+bool sliding = false;
 int hasJumped = 0; //set to 2 (strong) in jump function, 1 in boing timer timeout (soft) (distinction for leeway jumping) CANCRASH == 2 == HASJUMPED
 int bounceDashing = 0; //determine if you're crashing or can crash
 bool walldashing = false; //for speed boost after dashing into a wall
@@ -81,6 +83,7 @@ Timer preBoingTimer;
 Timer dashTimer;
 Timer smushTimer;
 Timer deathtimer;
+Timer invincibleTimer;
 MeshInstance mesh;
 MeshInstance shadow;
 Spatial collisionShape;
@@ -104,6 +107,7 @@ public override void _Ready(){
     preBoingTimer = GetNode<Timer>("preBoingTimer");
     dashTimer = GetNode<Timer>("DashTimer");
     smushTimer = GetNode<Timer>("SmushTimer");
+    invincibleTimer = GetNode<Timer>("invincibleTimer");
     deathtimer = GetNode<Timer>("hitBox/deathTimer");
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
     shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
@@ -194,8 +198,10 @@ public override void _PhysicsProcess(float delta){ //run physics
 
 public void _controller(float delta){
     if (!idle){ //update direction
-        stickDir[0] = Mathf.Round(Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
-        stickDir[1] = Mathf.Round(Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
+        stickDir[0] = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
+        stickDir[1] = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
+        if (Mathf.Abs(stickDir[0]) > Mathf.Abs(stickDir[1])) stickDir[0] = Mathf.Round(stickDir[0]);
+        else stickDir[1] = Mathf.Round(stickDir[1]);
     }
     moving = (stickDir[0] != 0 || stickDir[1] != 0);
     _applyFriction(delta, 1);
@@ -492,6 +498,7 @@ public void _isWall(float delta){
         }
         wallbx = GetSlideCollision(0).Normal.x * 2;
         wallby = GetSlideCollision(0).Normal.z * 2;
+        _alterDirection(GetSlideCollision(0).Normal);
     }
     else if (!isWall){
         wallb = false;
@@ -510,6 +517,7 @@ public void _isBoinging(float delta){
     if (floorCast.IsColliding() || isWall){
         if (jumpwindow < basejumpwindow) jumpwindow += 60 * delta;
         else jumpwindow = basejumpwindow;
+        sliding = false;
         if (!wallb && shiftedDir == 0){
             float jumpratio = jumpwindow / basejumpwindow;
             float offset = (speed * bounceBase) / basejumpwindow;
@@ -528,9 +536,12 @@ public void _isBoinging(float delta){
             if (boingDash){
                 float dashSpd = (dashSpeed*friction*(dashSpeed/speedCap))*(bounceBase*offset);
                 if (dashSpd > spd) spd = dashSpd;
-                if (boingCharge && spd > 4 && jumpwindow == 60 * delta) _drawMoveNote("slide");
             }
             velocity = new Vector3(direction_ground.x*spd, yvelocity, direction_ground.y*spd);
+            if (spd > 7){
+                if (!sliding) _drawMoveNote("slide");
+                sliding = true;
+            }
             MoveAndSlide(velocity, Vector3.Up, true);
         }
         else if (isThump){ //stick to thump
@@ -1034,6 +1045,10 @@ public void _on_deathtimer_timeout(){
     }
 }
 
+public void _on_invincibleTimer_timeout(){
+    invincible = false;
+}
+
 public void _on_hitBox_area_entered(Area area){
     Godot.Collections.Array groups = area.GetGroups();
     for (int i = 0; i < groups.Count; i++){
@@ -1137,12 +1152,13 @@ public void _collisionDamage(Spatial collisionNode){
         switch(groups[i].ToString()){
             case("goons"):
                 #region
+                if (invincible) return;
                 vulnerableClass = (int)collisionNode.Get("vulnerableClass");
                 if (vulnerableClass == 0) return;
                 damage = (int)collisionNode.Get("damage");
                 Vector3 vel = (Vector3)collisionNode.Get("velocity");
                 power = (damage / baseWeight) * .5F;
-                if (dashing){
+                if (dashing || (sliding && boing != 0)){
                     if (notCrashing && vulnerableClass > 1){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .3F);
@@ -1163,17 +1179,20 @@ public void _collisionDamage(Spatial collisionNode){
                     launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
                 }
                 _launch(launch, power, notCrashing);
+                invincible = true;
+                invincibleTimer.Start(.1F);
                 if (doShake) camera.Call("_shakeMove", 10, damage * .1F, 0);
                 break;
                 #endregion
             case("moles"):
                 #region
+                if (invincible) return;
                 vulnerableClass = (int)collisionNode.Get("vulnerableClass");
                 if (vulnerableClass == 0) return;
                 power = baseWeight * .5F * 25;
                 Timer springTimer = (Timer)collisionNode.Get("springTimer");
                 if (!springTimer.IsStopped()) power *= 3;
-                if (dashing){
+                if (dashing || (sliding && boing != 0)){
                     if (notCrashing && vulnerableClass > 1){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .5F);
@@ -1195,6 +1214,8 @@ public void _collisionDamage(Spatial collisionNode){
                 vecz = (velocity.z != 0) ? velocity.z : .1F;
                 launch = new Vector3(vecx * -1 * power * 2, 0, vecz * -1 * power * 2).Normalized();
                 _launch(launch, power, notCrashing);
+                invincible = true;
+                invincibleTimer.Start(.1F);
                 if (doShake) camera.Call("_shakeMove", 10, 2.5F, 0);
                 break;
                 #endregion
@@ -1233,21 +1254,27 @@ public void _collisionDamage(Spatial collisionNode){
             case("projectiles"):
                 #region
                 //if ((bool)collisionNode.Get("invincible")) return;
+                if (invincible) return;
                 damage = (int)collisionNode.Get("damage");
                 Vector3 trajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
                 power = (damage / baseWeight);
                 launch = new Vector3(trajectory.x * -1 * power, 0, trajectory.z * -1 * power);
                 _launch(launch, power, true);
                 collisionNode.Call("_on_DeleteTimer_timeout");
+                invincible = true;
+                invincibleTimer.Start(.1F);
                 camera.Call("_shakeMove", damage * .5F, damage * .15F, 0);
                 break;
                 #endregion
             case("lavas"):
                 #region
                 //if ((bool)collisionNode.Get("invincible")) return;
+                if (invincible) return;
                 damage = 25;
                 _launch(Vector3.Zero, damage, false);
                 camera.Call("_shakeMove", 10, damage * .1F, 0);
+                invincible = true;
+                invincibleTimer.Start(.1F);
                 break;
                 #endregion
             }

@@ -8,7 +8,7 @@ Vector3 launchVec = Vector3.Zero;
 float yvelocity = 0;
 int aggroRange = 24;
 int damage = 20;
-float speed = 15;
+float speed = 12;
 float ang = 0;
 int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 bool stunned = false; //if we just got hit or not (relevant if we don't die in 1 hit)
@@ -83,9 +83,12 @@ public override void _PhysicsProcess(float delta){
 
 public void _velocityMove(float delta){
     if (stunned) return;
+    MoveAndSlide(velocity * skrrt, Vector3.Up);
     if (!bottom.IsColliding()){
         if (state == states.attack){
-            _launch(0, Vector3.Zero);
+            MoveAndSlide(velocity * skrrt * -1, Vector3.Up);
+            state = states.search;
+            pathTimer.Start(.2F);
             return;
         }
         else if (state == states.search){
@@ -99,12 +102,11 @@ public void _velocityMove(float delta){
             return;
         }
     }
-    MoveAndSlide(velocity * skrrt, Vector3.Up);
     if (skrrt < 1){
         skrrt -= .5F * delta;
         if (skrrt < .08F){
             state = states.alert;
-            pathTimer.Start(2);
+            pathTimer.Start(1);
         }
     }
 }
@@ -170,7 +172,7 @@ public void _on_PathTimer_timeout(){
     else if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
         state = states.search;
         pathTimer.Start(2);
-        velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 1.5F;
+        velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 2;
     }
     else if (state != states.alert){
         state = states.alert;
@@ -180,9 +182,9 @@ public void _on_PathTimer_timeout(){
         state = states.attack;
         velocity = new Vector3(target.GlobalTransform.origin - GlobalTransform.origin);
         ang = new Vector2(velocity.x, velocity.z).Angle();
-        angleChecker.Start(.25F);
-        GD.Print(new Vector3(velocity.x, -10, velocity.z).Normalized());
-        velocity = new Vector3(velocity.x, -10, velocity.z).Normalized() * speed;
+        angleChecker.Start(.5F);
+        Vector2 dirVel = new Vector2(speed, 0).Rotated(ang);
+        velocity = new Vector3(dirVel.x, -10, dirVel.y);
     }
 }
 

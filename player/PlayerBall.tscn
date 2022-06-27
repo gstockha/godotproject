@@ -104,6 +104,9 @@ one_shot = true
 [node name="SmushTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="invincibleTimer" type="Timer" parent="."]
+one_shot = true
+
 [node name="lockOnScanner" type="Area" parent="."]
 collision_layer = 6
 collision_mask = 0
@@ -121,3 +124,4 @@ shape = SubResource( 18 )
 [connection signal="timeout" from="boingTimer" to="." method="_on_boingTimer_timeout"]
 [connection signal="timeout" from="preBoingTimer" to="." method="_on_preBoingTimer_timeout"]
 [connection signal="timeout" from="SmushTimer" to="." method="_on_SmushTimer_timeout"]
+[connection signal="timeout" from="invincibleTimer" to="." method="_on_invincibleTimer_timeout"]

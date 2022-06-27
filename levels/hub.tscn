@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://geography/misc/checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://world/DefaultWorld.tscn" type="PackedScene" id=8]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=9]
+[ext_resource path="res://mobs/scenes/Goon.tscn" type="PackedScene" id=10]
 [ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=12]
 
 [sub_resource type="DynamicFont" id=2]
@@ -43,9 +44,9 @@ font_data = ExtResource( 9 )
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 4, 15 )
 
-[node name="checkpoints" type="Spatial" parent="playerNode"]
+[node name="checkpoints" type="Spatial" parent="."]
 
-[node name="checkpoint1" parent="playerNode/checkpoints" instance=ExtResource( 7 )]
+[node name="checkpoint1" parent="checkpoints" instance=ExtResource( 7 )]
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
 
 [node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
@@ -130,8 +131,12 @@ transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 6 )
 
 [node name="Enemies" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
 
 [node name="Enemies" type="Spatial" parent="Enemies"]
 script = ExtResource( 12 )
+
+[node name="Goon" parent="Enemies/Enemies" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
