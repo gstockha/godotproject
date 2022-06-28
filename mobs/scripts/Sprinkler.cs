@@ -1,6 +1,6 @@
 using Godot;
 
-public class Mole : KinematicBody
+public class Sprinkler : KinematicBody
 {
 int aggroRange = 40;
 int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
@@ -34,7 +34,6 @@ bool lockable = true;
 
 
 public override void _Ready(){
-    burrowTimer = GetNode<Timer>("BurrowTimer");
     shootTimer = GetNode<Timer>("ShootTimer");
     springTimer = GetNode<Timer>("SpringTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
@@ -102,23 +101,14 @@ public void _off(){
     burrowTimer.Stop();
     shootTimer.Stop();
     springTimer.Stop();
-    vulnerableClass = 2;
     mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
     SetPhysicsProcess(false);
     active = false;
 }
 
 public void _on_BurrowTimer_timeout(){
-    float timerSet = 2.5F;
-    if (state == states.burrowed){
-        if (springTimer.IsStopped()) springTimer.Start(.1F);
-        hitbox.Monitorable = true;
-        vulnerableClass = 2;
-        mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
-        mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y + 1, mesh.Translation.z);
-    }
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) state = states.search;
-    else if (state == states.search || state == states.burrowed){
+    else if (state == states.search){
         state = states.attack;
         Vector3 oldRot = Rotation;
         float nuRot;
@@ -126,17 +116,8 @@ public void _on_BurrowTimer_timeout(){
         nuRot = Rotation.y;
         Rotation = new Vector3(oldRot.x, nuRot, oldRot.z);
         shootTimer.Start(.5F);
-        timerSet += 1;
     }
-    else if (state == states.attack){
-        state = states.burrowed;
-        hitbox.Monitorable = false;
-        vulnerableClass = 0;
-        mesh.Scale = new Vector3(mesh.Scale.x, 0.1F, mesh.Scale.z);
-        mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1, mesh.Translation.z);
-        timerSet -= .5F;
-    }
-    burrowTimer.Start(timerSet);
+    burrowTimer.Start(3);
 }
 
 public void _on_ShootTimer_timeout(){
@@ -152,7 +133,7 @@ public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
     if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "mole", spawnPoint);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "sprinkler", spawnPoint);
 }
 
 }

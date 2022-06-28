@@ -1191,7 +1191,7 @@ public void _collisionDamage(Spatial collisionNode){
                 if (vulnerableClass == 0) return;
                 power = baseWeight * .5F * 25;
                 Timer springTimer = (Timer)collisionNode.Get("springTimer");
-                if (!springTimer.IsStopped()) power *= 3;
+                if (!springTimer.IsStopped()) power *= 2;
                 if (dashing || (sliding && boing != 0)){
                     if (notCrashing && vulnerableClass > 1){
                         collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
@@ -1202,7 +1202,7 @@ public void _collisionDamage(Spatial collisionNode){
                     }
                     else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
                         collisionNode.Call("_squish", power); //crashing
-                        power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
+                        power *= .5F + ((bounceBase + (baseWeight * .5F)) * .5F);
                         doShake = false;
                     }
                     dashTimer.Stop();
@@ -1256,7 +1256,7 @@ public void _collisionDamage(Spatial collisionNode){
                 //if ((bool)collisionNode.Get("invincible")) return;
                 if (invincible) return;
                 damage = (int)collisionNode.Get("damage");
-                Vector3 trajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.Translation).Normalized();
+                Vector3 trajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.GlobalTransform.origin).Normalized();
                 power = (damage / baseWeight);
                 launch = new Vector3(trajectory.x * -1 * power, 0, trajectory.z * -1 * power);
                 _launch(launch, power, true);

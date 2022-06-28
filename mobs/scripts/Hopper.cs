@@ -32,8 +32,7 @@ float landingCooldown = 0;
 float baseScale;
 bool active = false;
 bool lockable = true;
-
-
+bool meshSquished = false;
 
 public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
@@ -56,10 +55,10 @@ public override void _Ready(){
 public override void _PhysicsProcess(float delta){
     if (state == states.search) return;
     if (state == states.attack){
-        if (deathTimer.IsStopped()){
-            if (!bottom.IsColliding()) deathTimer.Start(3);
-            else deathTimer.Stop();
+        if (!bottom.IsColliding()){
+            if (deathTimer.IsStopped()) deathTimer.Start(3);
         }
+        else if (!deathTimer.IsStopped()) deathTimer.Stop();
         if (!ascending){
             if (!IsOnFloor()){
                 yvelocity -= 30 * delta;
@@ -71,6 +70,10 @@ public override void _PhysicsProcess(float delta){
                         state = states.search;
                         aggroTimer.Start(2.5F);
                         mesh.Scale = new Vector3(baseScale,baseScale,baseScale);
+                        if (meshSquished){
+                            Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
+                            meshSquished = false;
+                        }
                     }
                     else{
                         velocityNormal = new Vector3(target.GlobalTransform.origin - GlobalTransform.origin).Normalized();
@@ -78,11 +81,21 @@ public override void _PhysicsProcess(float delta){
                         ascending = true;
                         yvelocity = 5;
                         mesh.Scale = new Vector3(baseScale*.8F,baseScale*1.2F,baseScale*.8F);
+                        if (meshSquished){
+                            Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
+                            meshSquished = false;
+                        }
                     }
                     landingCooldown = 0;
                 }
                 else{
-                    if (landingCooldown == 0) mesh.Scale = new Vector3(baseScale*1.3F,baseScale*.7F,baseScale*1.3F);
+                    if (landingCooldown == 0){
+                        mesh.Scale = new Vector3(baseScale*1.3F,baseScale*.7F,baseScale*1.3F);
+                        if (!meshSquished){
+                            Translation = new Vector3(Translation.x, Translation.y - .3F, Translation.z);
+                            meshSquished = true;
+                        }
+                    }
                     landingCooldown += 60 * delta;
                 }
             }
@@ -128,7 +141,7 @@ public void _squish(float power){ //check power vs health and all that here?
 }
 
 public void _on(){
-    if (!deathTimer.IsStopped() || active) return;
+    if ((!deathTimer.IsStopped() && state != states.attack) || active) return;
     aggroTimer.Start(1);
     state = states.search;
     SetPhysicsProcess(true);
@@ -136,14 +149,17 @@ public void _on(){
 }
 
 public void _off(){
-    if (!deathTimer.IsStopped() || !active) return;
+    if ((!deathTimer.IsStopped() && state != states.attack) || !active) return;
     aggroTimer.Stop();
     SetPhysicsProcess(false);
     active = false;
     ascending = false;
     yvelocity = 0;
-    Translation = new Vector3(Translation.x, bottom.GetCollisionPoint().y, Translation.z);
     mesh.Scale = new Vector3(baseScale, baseScale, baseScale);
+    if (meshSquished){
+        Translation = new Vector3(Translation.x, Translation.y + .3F, Translation.z);
+        meshSquished = false;
+    }
 }
 
 
@@ -158,6 +174,7 @@ public void _on_AggroTimer_timeout(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
+    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "hopper", spawnPoint);
 }
 

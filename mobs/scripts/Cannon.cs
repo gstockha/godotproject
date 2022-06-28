@@ -27,6 +27,8 @@ Position3D shooter;
 MeshInstance arrow;
 bool active = false;
 bool lockable = true;
+[Export] float bltSpeed = 20;
+[Export] float bltVel = 4;
 
 public override void _Ready(){
     shootTimer = GetNode<Timer>("ShootTimer");
@@ -88,6 +90,8 @@ public void _on_ShootTimer_timeout(){
     Area blt = (Area)bullet.Instance();
     parent.AddChild(blt);
     blt.Set("trajectory", shooter.GlobalTransform.origin);
+    blt.Set("bltSpeed", bltSpeed);
+    blt.Set("bltVel", bltVel);
     blt.RotateY(Rotation.y);
     shootTimer.Start(fireRate);
 }
@@ -110,7 +114,8 @@ public void _off(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "cannon", spawnPoint);
+    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "cannon", spawnPoint, new float[] {startAngle, bltSpeed, bltVel});
 }
 
 }

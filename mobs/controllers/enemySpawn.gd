@@ -4,7 +4,7 @@ onready var player = get_node("../../playerNode/PlayerBall")
 export var spawnTime = 60
 var enemyNodes = {}
 var enemyCount = {}
-var enemies = ["goon", "mole", "spinner", "hopper", "cannon"]
+var enemies = ["goon", "mole", "spinner", "hopper", "cannon", "sprinkler"]
 var enemyChildren = []
 export var checkFrequencies = [3, 15]
 var checkerThreshold = checkFrequencies[0]
@@ -15,7 +15,6 @@ export var distanceTresholdY = 15
 
 func _ready():
 	var childName
-#	spawnTime = (name[name.length()-3] + name[name.length()-2] + name[name.length()-1]) as int
 	for enemy in enemies: enemyCount[enemy] = [0,0]
 	for child in get_children():
 		childName = child.name.to_lower()
@@ -42,9 +41,11 @@ func _process(_delta):
 		elif active && (myLocation.distance_to(pLocation) >= distanceTreshold || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
 			active = false
 			checkerThreshold = checkFrequencies[0]
-			for enemy in enemyChildren: enemy.call("_off")
+			for enemy in enemyChildren:
+				enemy.call("_off")
+				enemy.global_transform.origin = enemy.spawnPoint
 
-func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
+func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer, variables: Array) -> void:
 	if (enemyCount[mobName][0] < enemyCount[mobName][1]):
 		var spawnedEnemy = enemyNodes[mobName].instance()
 		add_child(spawnedEnemy)
@@ -53,12 +54,21 @@ func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer) -> void:
 		enemyCount[mobName][0] += 1
 		enemyChildren.append(spawnedEnemy)
 		if active: spawnedEnemy.call("_on")
+		if variables:
+			match mobName:
+				"spinner":
+					spawnedEnemy.angMod = variables[0]
+					spawnedEnemy.dirMod = variables[1]
+				"cannon":
+					spawnedEnemy.startAngle = variables[0]
+					spawnedEnemy.bltSpeed = variables[1]
+					spawnedEnemy.bltVel = variables[2]
 	spawnTimer.queue_free()
 
-func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3) -> void:
+func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3, variables=[]) -> void:
 	enemyChildren.erase(mobNode)
 	var spawnTimer = Timer.new()
 	add_child(spawnTimer)
-	spawnTimer.connect("timeout", self, "_spawnMob", [mobName, point, spawnTimer])
+	spawnTimer.connect("timeout", self, "_spawnMob", [mobName, point, spawnTimer, variables])
 	spawnTimer.start(spawnTime)
 	enemyCount[mobName][0] -= 1

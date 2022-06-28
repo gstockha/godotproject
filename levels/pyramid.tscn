@@ -1,4 +1,4 @@
-[gd_scene load_steps=97 format=2]
+[gd_scene load_steps=98 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
@@ -24,6 +24,83 @@
 [ext_resource path="res://geography/misc/cameraArea.tscn" type="PackedScene" id=22]
 [ext_resource path="res://geography/structures/shiftTile.tscn" type="PackedScene" id=23]
 [ext_resource path="res://geography/structures/wallBlockTransparent.tscn" type="PackedScene" id=24]
+
+[sub_resource type="GDScript" id=78]
+script/source = "extends Spatial
+
+onready var player = get_node(\"../../playerNode/PlayerBall\")
+export var spawnTime = 6
+var enemyNodes = {}
+var enemyCount = {}
+var enemies = [\"goon\", \"mole\", \"spinner\", \"hopper\", \"cannon\"]
+var enemyChildren = []
+export var checkFrequencies = [3, 15]
+var checkerThreshold = checkFrequencies[0]
+var distanceChecker = checkerThreshold
+var active = false
+export var distanceTreshold = 90
+export var distanceTresholdY = 15
+
+func _ready():
+	var childName
+	for enemy in enemies: enemyCount[enemy] = [0,0]
+	for child in get_children():
+		childName = child.name.to_lower()
+		for enemy in enemies:
+			if childName.begins_with(enemy):
+				enemyCount[enemy][0] += 1
+				enemyCount[enemy][1] += 1
+				if (enemyCount[enemy][1] == 1): #add to load object if it exists
+					var eCap = enemy[0].to_upper() + enemy.substr(1,-1)
+					enemyNodes[enemy] = load('res://mobs/scenes/' + eCap + '.tscn')
+				break
+		enemyChildren.append(child)
+
+func _process(_delta):
+	distanceChecker += _delta
+	if distanceChecker > checkerThreshold:
+		distanceChecker = 0
+		var pLocation = player.global_transform.origin
+		var myLocation = global_transform.origin
+		if !active && myLocation.distance_to(pLocation) < distanceTreshold && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
+			active = true
+			checkerThreshold = checkFrequencies[1]
+			for enemy in enemyChildren: enemy.call(\"_on\")
+		elif active && (myLocation.distance_to(pLocation) >= distanceTreshold || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
+			active = false
+			checkerThreshold = checkFrequencies[0]
+			for enemy in enemyChildren:
+				enemy.call(\"_off\")
+				enemy.global_transform.origin = enemy.spawnPoint
+
+func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer, variables: Array) -> void:
+	if (enemyCount[mobName][0] < enemyCount[mobName][1]):
+		var spawnedEnemy = enemyNodes[mobName].instance()
+		add_child(spawnedEnemy)
+		spawnedEnemy.global_transform.origin = point
+		spawnedEnemy.spawnPoint = point
+		enemyCount[mobName][0] += 1
+		enemyChildren.append(spawnedEnemy)
+		if active: spawnedEnemy.call(\"_on\")
+		if variables:
+			match mobName:
+				\"spinner\":
+					spawnedEnemy.angMod = variables[0]
+					spawnedEnemy.dirMod = variables[1]
+				\"cannon\":
+					spawnedEnemy.startAngle = variables[0]
+					spawnedEnemy.bltSpeed = variables[1]
+					spawnedEnemy.bltVel = variables[2]
+	spawnTimer.queue_free()
+
+func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3, variables=[]) -> void:
+	enemyChildren.erase(mobNode)
+	var spawnTimer = Timer.new()
+	add_child(spawnTimer)
+	spawnTimer.connect(\"timeout\", self, \"_spawnMob\", [mobName, point, spawnTimer, variables])
+	spawnTimer.start(spawnTime)
+	enemyCount[mobName][0] -= 1
+"
 
 [sub_resource type="SpatialMaterial" id=9]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -238,7 +315,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 173.5 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 68.5431, 3.90835, 35.7748 )
 
 [node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
@@ -263,7 +340,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 22.6965, 0, 0 )
 script = ExtResource( 12 )
 distanceTresholdY = 30
 
-[node name="Spinnera" parent="Enemies/mainFloor" instance=ExtResource( 17 )]
+[node name="Spinner" parent="Enemies/mainFloor" instance=ExtResource( 17 )]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -55.1708, 2, -39.6247 )
 
 [node name="Cannon" parent="Enemies/mainFloor" instance=ExtResource( 20 )]
@@ -356,6 +433,171 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.81148, -0.75, -118.581 )
 
 [node name="Goon8" parent="Enemies/cave" instance=ExtResource( 16 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.78959, -0.75, -98.6781 )
+
+[node name="spawn" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.15, 164.353 )
+script = ExtResource( 12 )
+checkFrequencies = [ 3, 20 ]
+distanceTreshold = 120
+distanceTresholdY = 60
+
+[node name="Hopper" parent="Enemies/spawn" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 63.8124, 0, 8.03517 )
+
+[node name="Hopper2" parent="Enemies/spawn" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 75.9663, 0, -14.6473 )
+
+[node name="Hopper3" parent="Enemies/spawn" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -74.8298, 0, -11.4318 )
+
+[node name="Hopper5" parent="Enemies/spawn" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -43.0288, 0, -17.6784 )
+
+[node name="Hopper4" parent="Enemies/spawn" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -60.1817, 0, 23.1308 )
+
+[node name="Mole" parent="Enemies/spawn" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 85.4428, 0.914761, 9.8376 )
+
+[node name="lowerSpawn" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 0, 80 )
+script = ExtResource( 12 )
+distanceTreshold = 100
+
+[node name="Goon" parent="Enemies/lowerSpawn" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.17628, 2.1, 1.65001 )
+
+[node name="Goon2" parent="Enemies/lowerSpawn" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5182, 2.1, -8.60423 )
+
+[node name="Goon3" parent="Enemies/lowerSpawn" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 61.6622, 2.1, 15.5212 )
+
+[node name="debrisField" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 100 )
+script = ExtResource( 12 )
+distanceTreshold = 100
+
+[node name="Goon" parent="Enemies/debrisField" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5792, 2.1, 4.86386 )
+
+[node name="Mole" parent="Enemies/debrisField" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -31.4771, 3, 24.6681 )
+
+[node name="Mole2" parent="Enemies/debrisField" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 36.342, 3, -12.7907 )
+
+[node name="Hopper" parent="Enemies/debrisField" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -6.59476, 2.2, -20.7948 )
+
+[node name="beamFloor" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 10, 0 )
+script = ExtResource( 12 )
+distanceTreshold = 110
+distanceTresholdY = 100
+
+[node name="Spinner" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 7, -8, -14.965 )
+angMod = 0.5
+
+[node name="Spinner2" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -14.1749, -8, 22.8057 )
+angMod = 0.5
+dirMod = -1
+
+[node name="Spinner3" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 7, -8, 47.834 )
+angMod = 0.5
+
+[node name="Spinner4" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -9.90557, -8, -43.9657 )
+angMod = 0.5
+dirMod = -1
+
+[node name="Cannon" parent="Enemies/beamFloor" instance=ExtResource( 20 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -41.0494, 15.35, 12.5008 )
+bltSpeed = 10.0
+bltVel = 3.0
+
+[node name="Cannon2" parent="Enemies/beamFloor" instance=ExtResource( 20 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -41.0494, 15.35, -12.2553 )
+bltSpeed = 10.0
+bltVel = 3.0
+
+[node name="icePond" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 10, -100 )
+script = ExtResource( 12 )
+spawnTime = 120
+distanceTresholdY = 12
+
+[node name="Mole" parent="Enemies/icePond" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 62.3689, -8.4, 5.604 )
+
+[node name="Mole2" parent="Enemies/icePond" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 39.741, -8.4, -19.9193 )
+
+[node name="Mole3" parent="Enemies/icePond" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 18.292, -8.4, 8.32652 )
+
+[node name="Goon" parent="Enemies/icePond" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 21.6319, -9.4, -10.9723 )
+
+[node name="Goon4" parent="Enemies/icePond" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 27.9747, -9.4, 15.8228 )
+
+[node name="Goon2" parent="Enemies/icePond" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 53.1834, -9.4, 13.8532 )
+
+[node name="Goon5" parent="Enemies/icePond" instance=ExtResource( 16 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -30.7918, -8, -24.5287 )
+
+[node name="Hopper" parent="Enemies/icePond" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -44.1901, -7.7, 0 )
+
+[node name="Hopper3" parent="Enemies/icePond" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.2535, -7.7, -34.6143 )
+
+[node name="Hopper2" parent="Enemies/icePond" instance=ExtResource( 19 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -22.1024, -6.89393, 29.0219 )
+
+[node name="ufo" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 79.59, 7.3, -114.615 )
+script = ExtResource( 12 )
+distanceTreshold = 55
+
+[node name="Mole" parent="Enemies/ufo" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.09986, 1.7, -11.8966 )
+
+[node name="Mole2" parent="Enemies/ufo" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8.31321, 1.7, -0.208 )
+
+[node name="Mole3" parent="Enemies/ufo" instance=ExtResource( 18 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.32272, 1.7, 15.6345 )
+
+[node name="thumps" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -60.346, 15, 0 )
+script = ExtResource( 12 )
+distanceTreshold = 60
+distanceTresholdY = 20
+
+[node name="Cannon" parent="Enemies/thumps" instance=ExtResource( 20 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, 0 )
+bltSpeed = 12.0
+bltVel = 3.0
+
+[node name="Cannon2" parent="Enemies/thumps" instance=ExtResource( 20 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, -15 )
+bltSpeed = 12.0
+bltVel = 3.0
+
+[node name="Cannon3" parent="Enemies/thumps" instance=ExtResource( 20 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, 15 )
+bltSpeed = 12.0
+bltVel = 3.0
+
+[node name="space" type="Spatial" parent="Enemies"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 176, 0 )
+script = SubResource( 78 )
 
 [node name="environment" type="Spatial" parent="."]
 
@@ -599,16 +841,8 @@ polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
 depth = 0.5
 material = SubResource( 71 )
 
-[node name="pyramidRail2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
-transform = Transform( 9.88245e-06, 0, -148, 0, 3, 0, 3, 0, 0.000487534, -97.6149, 16.1592, -4.26579 )
-use_collision = true
-collision_mask = 0
-polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
-depth = 0.5
-material = SubResource( 71 )
-
 [node name="pyramidRail3" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
-transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 62, -96.0328, 26.4332, 62.3034 )
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 108, -96.033, 26.433, 73.6548 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
@@ -1475,18 +1709,6 @@ transform = Transform( -0.26623, 2.07155, 0.837092, 0.0883181, 16.2302, -0.03517
 [node name="wallBlock2" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
 transform = Transform( -0.271737, -0.225301, 0.83935, 0.015997, 19.9781, 0.0341223, -0.419408, 0.907974, -0.542519, 50.6491, 2, 136.535 )
 
-[node name="wallBlock3" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
-transform = Transform( 0.990013, -1.69104, -0.00390209, 0.140893, 11.8576, 0.0612205, -0.00477142, -0.733906, 0.998117, 16.094, 1.616, 134.409 )
-
-[node name="wallBlock4" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
-transform = Transform( 0.999719, 0.160296, 0.00618222, -0.0226204, 6.99204, -0.0419596, -0.00713605, 0.292656, 0.9991, 23.2824, 1.43587, 129.195 )
-
-[node name="wallBlock6" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
-transform = Transform( 0.375884, -0.017904, -1.01933, 0.0543364, 6.48921, 0.0209804, 0.925072, -0.373885, 0.412951, 48.3141, 1.43587, 63.7995 )
-
-[node name="wallBlock7" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
-transform = Transform( -0.321603, 0.884938, -0.836387, -0.0219925, 9.44054, 0.0981043, 0.84029, 0.585774, -0.317542, 42.2643, 1.43587, 60.0111 )
-
 [node name="wallBlock5" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
 transform = Transform( 1.09042, 0.914047, 0.0188536, -0.142796, 6.93514, -0.0439095, -0.0244125, 0.261415, 1.09896, 50.9515, 1.70798, 91.9273 )
 
@@ -1517,6 +1739,9 @@ transform = Transform( 0.5172, 0, -4.82992, 0, 1.3, 0, 1.93197, 0, 1.293, 26.809
 [node name="obstacle11" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
 transform = Transform( -2.48517, 0, -0.326288, 0, 1.4, 0, 0.271907, 0, -2.9822, -1.30465, 3.4, 130.613 )
 
+[node name="obstacle15" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( -2.34057, -0.0699669, 1.0537, -0.00391601, 6.49772, 0.0793819, -0.878486, 0.157449, -2.80774, 18.624, 7.92756, 135.504 )
+
 [node name="obstacle7" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
 transform = Transform( -0.310971, 0, -4.9498, 0, 1.5, 0, 2.17791, 0, -0.706753, 39.3317, 3.4, 66.805 )
 
@@ -1525,6 +1750,12 @@ transform = Transform( 1.85449, 0, 1.47877, 0, 1.2, 0, -1.36047, 0, 2.01575, 31.
 
 [node name="obstacle10" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
 transform = Transform( 2.23013, 0, -0.562611, 0, 1, 0, 0.562611, 0, 2.23013, 60.47, 2.95, 77.576 )
+
+[node name="obstacle13" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.93924, 0, -0.56261, 0, 3, 0, 0.489226, 0, 2.23013, 46.4053, 4.75718, 62.2209 )
+
+[node name="obstacle14" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.78493, 0.432357, 0.141351, -0.189486, 3.97414, -0.084956, -0.134659, 0.138729, 1.99319, 40.0117, 5.61857, 59.0407 )
 
 [node name="obstacle8" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
 transform = Transform( 1.79934, 0, 1.74626, 0, 1.5, 0, -0.873132, 0, 3.59869, 79.5794, 3.4, 109.099 )

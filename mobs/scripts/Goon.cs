@@ -204,6 +204,7 @@ public void _on_AngleChecker_timeout(){ //only fire infrequently
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
+    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "goon", spawnPoint);
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }

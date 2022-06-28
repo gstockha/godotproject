@@ -7,7 +7,9 @@ float yvelocity = 0;
 int damage = 23;
 float speed = 9.7F;
 float ang = 0;
-float angMod = 1;
+[Export] float angMod = 1;
+[Export] int dirMod = 1;
+
 int vulnerableClass = 1; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 enum states{
     spin,
@@ -35,8 +37,7 @@ public override void _Ready(){
     squishSet[1] = mesh.Scale.y * .7F;
     squishSet[2] = mesh.Scale.z * 1.3F;
     spawnPoint = GlobalTransform.origin;
-    angMod = (Name.Contains("z")) ? .5F : (Name.Contains("a")) ? 1.5F : 1;
-    speed *= (Name.Contains("V")) ? -1 : 1;
+    speed *= dirMod;
     SetPhysicsProcess(false);
 }
 
@@ -96,7 +97,8 @@ public void _off(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "spinner", spawnPoint);
+    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "spinner", spawnPoint, new float[] {angMod, (float)dirMod});
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }
 
