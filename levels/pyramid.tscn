@@ -1,4 +1,4 @@
-[gd_scene load_steps=83 format=2]
+[gd_scene load_steps=97 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
@@ -23,6 +23,7 @@
 [ext_resource path="res://geography/misc/cameraset.tscn" type="PackedScene" id=21]
 [ext_resource path="res://geography/misc/cameraArea.tscn" type="PackedScene" id=22]
 [ext_resource path="res://geography/structures/shiftTile.tscn" type="PackedScene" id=23]
+[ext_resource path="res://geography/structures/wallBlockTransparent.tscn" type="PackedScene" id=24]
 
 [sub_resource type="SpatialMaterial" id=9]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -41,6 +42,16 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 [sub_resource type="ShaderMaterial" id=12]
 
 [sub_resource type="SphereShape" id=11]
+
+[sub_resource type="SpatialMaterial" id=71]
+albedo_color = Color( 1, 0, 0.890196, 1 )
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 1, 0, 0.890196, 1 )
 
 [sub_resource type="SpatialMaterial" id=33]
 albedo_color = Color( 0, 1, 0.882353, 1 )
@@ -67,9 +78,9 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 [sub_resource type="SpatialMaterial" id=36]
 albedo_color = Color( 1, 0, 0.890196, 1 )
 
-[sub_resource type="BoxShape" id=1]
+[sub_resource type="BoxShape" id=72]
 
-[sub_resource type="CubeMesh" id=2]
+[sub_resource type="CubeMesh" id=73]
 
 [sub_resource type="SpatialMaterial" id=41]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -145,6 +156,12 @@ albedo_color = Color( 0, 1, 0.882353, 1 )
 flags_transparent = true
 albedo_color = Color( 0.309804, 1, 0.964706, 0.313726 )
 
+[sub_resource type="SpatialMaterial" id=67]
+albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=68]
+albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
+
 [sub_resource type="BoxShape" id=54]
 
 [sub_resource type="CubeMesh" id=55]
@@ -152,7 +169,7 @@ albedo_color = Color( 0.309804, 1, 0.964706, 0.313726 )
 [sub_resource type="SpatialMaterial" id=56]
 albedo_color = Color( 0.843137, 0.498039, 1, 1 )
 
-[sub_resource type="BoxShape" id=3]
+[sub_resource type="BoxShape" id=74]
 
 [sub_resource type="BoxShape" id=4]
 
@@ -171,6 +188,25 @@ albedo_color = Color( 0.772549, 0.32549, 1, 1 )
 albedo_color = Color( 1, 0.862745, 0.976471, 1 )
 
 [sub_resource type="CylinderShape" id=61]
+
+[sub_resource type="SpatialMaterial" id=69]
+albedo_color = Color( 0.392157, 1, 0.870588, 1 )
+
+[sub_resource type="SpatialMaterial" id=70]
+albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=65]
+albedo_color = Color( 0.964706, 0.262745, 0.839216, 1 )
+
+[sub_resource type="SpatialMaterial" id=66]
+albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
+
+[sub_resource type="CylinderShape" id=75]
+
+[sub_resource type="CylinderMesh" id=76]
+
+[sub_resource type="SpatialMaterial" id=77]
+albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
 [sub_resource type="DynamicFont" id=53]
 size = 42
@@ -202,7 +238,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -11.1556, 20.7499, 176.033 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 173.5 )
 
 [node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
@@ -218,7 +254,7 @@ spot_angle_attenuation = 0.5
 [node name="checkpoints" type="Spatial" parent="."]
 
 [node name="checkpoint1" parent="checkpoints" instance=ExtResource( 11 )]
-transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, -18.688, 29.9943, -39.459 )
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 24, 173.5 )
 
 [node name="Enemies" type="Spatial" parent="."]
 
@@ -240,7 +276,7 @@ transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 5.80148, 2.25, 0 )
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -16.3896, 2.25, 27.1976 )
 
 [node name="Hopper2" parent="Enemies/mainFloor" instance=ExtResource( 19 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -1.47713, 2.25, -38.2444 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -1.47713, 2.25, -29.922 )
 
 [node name="Hopper5" parent="Enemies/mainFloor" instance=ExtResource( 19 )]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -30.4745, 2.25, -42.051 )
@@ -511,6 +547,73 @@ material/0 = SubResource( 12 )
 shape = SubResource( 11 )
 
 [node name="pyramidStructures" type="Spatial" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 59.8164, 0, -46.5645 )
+
+[node name="shift" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["shifts"]]
+transform = Transform( 4.37114e-07, -6.60024e-14, 8, -1.50996e-06, -10, 5.42101e-21, 10, -1.50996e-06, -3.49691e-07, 1.199, 12, -0.063 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
+depth = 0.5
+material = SubResource( 71 )
+
+[node name="cyPlat" type="StaticBody" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
+transform = Transform( 1, 0, 0, 0, 5, 0, 0, 0, 2.6, -0.8, 2, -5.239 )
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidExternal/pyramidStructures/cyPlat"]
+transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0 )
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Pyramid/PyramidExternal/pyramidStructures/cyPlat" groups=["flats"]]
+transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="shift2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["shifts"]]
+transform = Transform( -10, 1.50996e-06, -2.47955e-05, -1.50996e-06, -10, 3.46945e-19, -3.09944e-05, 4.68003e-12, 8, -13.47, 12, -10.381 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
+depth = 0.5
+material = SubResource( 71 )
+
+[node name="cyPlat2" type="StaticBody" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
+transform = Transform( -3.14315e-06, 0, -2.45, 0, 5, 0, 1, 0, -7.70073e-06, -8.324, 2, -12.381 )
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidExternal/pyramidStructures/cyPlat2"]
+transform = Transform( 2, 0, -3.63798e-12, 0, 1, 0, 9.09495e-13, 0, 3, 0, 1, -0.9 )
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Pyramid/PyramidExternal/pyramidStructures/cyPlat2" groups=["flats"]]
+transform = Transform( 2, 0, -3.63798e-12, 0, 1, 0, 6.82121e-13, 0, 3, 0, 1, -0.9 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="pyramidRail" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
+transform = Transform( -3, 0, -1.75155e-05, 0, 3, 0, 4.52987e-07, 0, -116, -16.4, 21.42, 17.3674 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
+depth = 0.5
+material = SubResource( 71 )
+
+[node name="pyramidRail2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
+transform = Transform( 9.88245e-06, 0, -148, 0, 3, 0, 3, 0, 0.000487534, -97.6149, 16.1592, -4.26579 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
+depth = 0.5
+material = SubResource( 71 )
+
+[node name="pyramidRail3" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 62, -96.0328, 26.4332, 62.3034 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
+depth = 0.5
+material = SubResource( 71 )
 
 [node name="PyramidInternal" type="Spatial" parent="environment/Pyramid"]
 
@@ -637,10 +740,10 @@ script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump"]
 transform = Transform( 5, 0, -3.8147e-07, 0, 3.3, 0, 2.38419e-07, 0, 8, -3.70599, 0.216999, 0.758999 )
-shape = SubResource( 1 )
+shape = SubResource( 72 )
 
 [node name="MeshInstance" type="MeshInstance" parent="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump/CollisionShape"]
-mesh = SubResource( 2 )
+mesh = SubResource( 73 )
 material/0 = SubResource( 41 )
 
 [node name="FallTimer" type="Timer" parent="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump"]
@@ -1239,41 +1342,49 @@ use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -83.5247, -7.27864, -32.9704, -17.4022, -0.51725, 6.02434, 3.2875, 6.07174, 18.02, -4.307, 18.02, -67.02, -181.9, -67.02, -181.9, -15, -165.657, -6.17088, -140.041, -2.28929, -111.458, -9.2253 )
 depth = 16.06
+material = SubResource( 67 )
 
-[node name="higherGround2" type="CSGPolygon" parent="environment/Outside/spawnZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5.943, 15.05, -59.1899 )
+[node name="groundStairs" type="Spatial" parent="environment/Outside/spawnZone"]
+
+[node name="higherGround2" type="CSGPolygon" parent="environment/Outside/spawnZone/groundStairs" groups=["flats"]]
+transform = Transform( 0.75, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -29.444, 15.05, -59.1899 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -94, -22.54, -94, -37, 9.711, -36.8947, -21.5806, -17.6693, -44.2868, -8.99043, -75.333, -14.3264 )
-depth = 12.06
+depth = 14.06
+material = SubResource( 68 )
 
-[node name="higherGround3" type="CSGPolygon" parent="environment/Outside/spawnZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5.943, 12.05, -67.8789 )
+[node name="higherGround3" type="CSGPolygon" parent="environment/Outside/spawnZone/groundStairs" groups=["flats"]]
+transform = Transform( 0.75, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -29.444, 12.05, -67.8789 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -94, -22.54, -94, -37, 14.2638, -42.4261, -12.0012, -19.9896, -34.41, -10.3796, -60.0687, -10.7729 )
-depth = 8.06
+depth = 10.06
+material = SubResource( 68 )
 
-[node name="higherGround4" type="CSGPolygon" parent="environment/Outside/spawnZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5.943, 9.05, -78.6759 )
+[node name="higherGround4" type="CSGPolygon" parent="environment/Outside/spawnZone/groundStairs" groups=["flats"]]
+transform = Transform( 0.75, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -29.444, 9.05, -78.6759 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -94, -22.54, -94, -37, 25.8403, -54.9483, -4.67193, -26.2013, -38.0359, -11.7322, -73.1633, -16.8401 )
-depth = 4.06
+depth = 8.06
+material = SubResource( 68 )
 
-[node name="higherGround5" type="CSGPolygon" parent="environment/Outside/spawnZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5.943, 6.05, -83.6829 )
+[node name="higherGround5" type="CSGPolygon" parent="environment/Outside/spawnZone/groundStairs" groups=["flats"]]
+transform = Transform( 0.75, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -29.444, 6.05, -83.6829 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -94, -22.54, -94, -37, 29.8617, -57.1757, 8.1446, -32.5046, -25.743, -13.1929, -66.3912, -11.2844 )
 depth = 4.06
+material = SubResource( 68 )
 
-[node name="higherGround6" type="CSGPolygon" parent="environment/Outside/spawnZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5.943, 3.05, -87.046 )
+[node name="higherGround6" type="CSGPolygon" parent="environment/Outside/spawnZone/groundStairs" groups=["flats"]]
+transform = Transform( 0.75, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -29.444, 3.05, -87.046 )
 use_collision = true
 collision_mask = 0
 polygon = PoolVector2Array( -94, -16.685, -94, -37, 33.641, -59.2081, 22.2795, -38.0125, -11.3199, -12.8491, -59.1543, -7.5782 )
 depth = 2.06
+material = SubResource( 68 )
 
 [node name="spawnPlat" parent="environment/Outside/spawnZone" groups=["obstacles"] instance=ExtResource( 7 )]
 transform = Transform( 4, 0, 0, 0, 0.5, 0, 0, 0, 4, 0, 17.947, 0 )
@@ -1320,6 +1431,9 @@ transform = Transform( 0.409677, -0.662453, -0.285455, 0.0399785, 12.6558, 0.011
 [node name="wallBlock6" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 4 )]
 transform = Transform( 0.352165, 0.876393, -0.91924, -0.0442646, 13.945, 8.98742e-09, 0.352166, 0.876396, 0.919237, 51.0397, 1.90723, 15.1363 )
 
+[node name="wallBlock8" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 4 )]
+transform = Transform( -0.446539, -1.31745, -0.994787, -0.140572, 9.88015, -0.0952264, 0.995411, 0.804275, -0.459707, 92.2473, 1.26529, -14.4402 )
+
 [node name="shift" parent="environment/Outside/spawnZone/spawnPillarSet" instance=ExtResource( 23 )]
 transform = Transform( 0.907476, -0.0278595, 2.83997, -0.0116115, 0.297104, 0.553265, -0.93078, -0.0308684, 2.76197, 40.7574, 15.6365, 5.19676 )
 
@@ -1331,6 +1445,89 @@ transform = Transform( -0.306252, 0.187999, 1.45572, 0.053038, 0.229796, -1.2820
 
 [node name="monument" type="Spatial" parent="environment/Outside/spawnZone"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 16.069, -45 )
+
+[node name="wallBlock" parent="environment/Outside/spawnZone" instance=ExtResource( 4 )]
+transform = Transform( 1.76777, 0, 1.76777, 0, 25, 0, -1.76777, 0, 1.76777, -68.8723, 18, -1.99486 )
+
+[node name="obstacle" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.87139, 0, -2.82244, 0, 1.5, 0, 0.705611, 0, 7.48557, -87.7118, 19.5, -12.3271 )
+
+[node name="obstacle4" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
+transform = Transform( -1.25479, 0, 7.26661, 0, 0.7, 0, -2.72498, 0, -3.34611, 81.964, 18.6, 12.797 )
+
+[node name="obstacle5" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.07618, 0, 3.73377, 0, 0.5, 0, -2.80033, 0, 1.43491, 46.7258, 18.5, -12.0657 )
+
+[node name="obstacle6" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.99804, 0, 0.176989, 0, 1.2, 0, -0.0884944, 0, 3.99608, 92.5506, 19.2, -31.172 )
+
+[node name="obstacle2" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
+transform = Transform( -0.609291, 0, 5.81908, 0, 1.25, 0, -2.42462, 0, -1.4623, -51.118, 19, 0.874008 )
+
+[node name="obstacle3" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.46971, 0, 3.55316, 0, 1.25, 0, -2.84252, 0, 1.83714, -85.8649, 19, 14.0695 )
+
+[node name="bottomSpawnZone" type="Spatial" parent="environment/Outside"]
+
+[node name="wallBlock" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( -0.26623, 2.07155, 0.837092, 0.0883181, 16.2302, -0.0351739, -0.41391, 2.13068, -0.54593, 53.3231, 2, 141.58 )
+
+[node name="wallBlock2" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( -0.271737, -0.225301, 0.83935, 0.015997, 19.9781, 0.0341223, -0.419408, 0.907974, -0.542519, 50.6491, 2, 136.535 )
+
+[node name="wallBlock3" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( 0.990013, -1.69104, -0.00390209, 0.140893, 11.8576, 0.0612205, -0.00477142, -0.733906, 0.998117, 16.094, 1.616, 134.409 )
+
+[node name="wallBlock4" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( 0.999719, 0.160296, 0.00618222, -0.0226204, 6.99204, -0.0419596, -0.00713605, 0.292656, 0.9991, 23.2824, 1.43587, 129.195 )
+
+[node name="wallBlock6" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( 0.375884, -0.017904, -1.01933, 0.0543364, 6.48921, 0.0209804, 0.925072, -0.373885, 0.412951, 48.3141, 1.43587, 63.7995 )
+
+[node name="wallBlock7" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( -0.321603, 0.884938, -0.836387, -0.0219925, 9.44054, 0.0981043, 0.84029, 0.585774, -0.317542, 42.2643, 1.43587, 60.0111 )
+
+[node name="wallBlock5" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( 1.09042, 0.914047, 0.0188536, -0.142796, 6.93514, -0.0439095, -0.0244125, 0.261415, 1.09896, 50.9515, 1.70798, 91.9273 )
+
+[node name="wallBlock8" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
+transform = Transform( -0.669226, 0.791947, 0.727401, 0.0911823, 7.95393, -0.0384059, -0.59483, 0.328274, -0.824265, 86.5903, 1.70799, 114.241 )
+
+[node name="obstacle" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.36004, 0, -2.10898, 0, 1.5, 0, 0.632693, 0, 4.53345, 5.853, 3.4, 114.469 )
+
+[node name="obstacle2" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( -0.758147, 0, -3.78022, 0, 1.2, 0, 1.2943, 0, -2.2143, 28.8074, 3.14832, 113.584 )
+
+[node name="obstacle4" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.45576, 0, -5.24624, 0, 0.8, 0, 2.62312, 0, 2.91151, 59.741, 2.75, 119.918 )
+
+[node name="obstacle12" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( -0.41567, 0, -5.89193, 0, 1.1, 0, 2.16037, 0, -1.13365, 33.7484, 3, 133.119 )
+
+[node name="obstacle5" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( -1.46318, 0, -4.09046, 0, 1.2, 0, 1.36349, 0, -4.38955, 59.6672, 3.2, 90.4794 )
+
+[node name="obstacle3" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 2.49458, 0, 0.164553, 0, 1, 0, -0.164553, 0, 2.49458, 42.157, 2.95, 108.129 )
+
+[node name="obstacle6" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 0.5172, 0, -4.82992, 0, 1.3, 0, 1.93197, 0, 1.293, 26.809, 3.2, 91.202 )
+
+[node name="obstacle11" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( -2.48517, 0, -0.326288, 0, 1.4, 0, 0.271907, 0, -2.9822, -1.30465, 3.4, 130.613 )
+
+[node name="obstacle7" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( -0.310971, 0, -4.9498, 0, 1.5, 0, 2.17791, 0, -0.706753, 39.3317, 3.4, 66.805 )
+
+[node name="obstacle9" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.85449, 0, 1.47877, 0, 1.2, 0, -1.36047, 0, 2.01575, 31.281, 3.15, 83.267 )
+
+[node name="obstacle10" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 2.23013, 0, -0.562611, 0, 1, 0, 0.562611, 0, 2.23013, 60.47, 2.95, 77.576 )
+
+[node name="obstacle8" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
+transform = Transform( 1.79934, 0, 1.74626, 0, 1.5, 0, -0.873132, 0, 3.59869, 79.5794, 3.4, 109.099 )
 
 [node name="beamZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 83.3267, 0, 111.649 )
@@ -1611,6 +1808,45 @@ operation = 2
 radius = 1.1
 height = 2.0
 
+[node name="obstacle" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( 1.09483, 0, -2.45639, 0, 1, 0, 0.491277, 0, 5.47414, -78.651, 3, -91.2631 )
+
+[node name="obstacle9" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( 1.66773, 0, 2.75983, 0, 0.7, 0, -1.10393, 0, 4.16933, -46.63, 2.7, -124.375 )
+
+[node name="obstacle6" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( -1.10744, 0, -1.85874, 0, 1, 0, 2.78811, 0, -0.738294, -61.205, 3, -119.582 )
+
+[node name="obstacle2" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( 1.21465, 0, 1.42545, 0, 1.3, 0, -0.463272, 0, 3.73739, -72.7675, 3.2, -110.996 )
+
+[node name="obstacle3" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( -0.634691, 0, -2.93209, 0, 0.8, 0, 2.93209, 0, -0.634691, -63.4494, 2.8, -84.7519 )
+
+[node name="obstacle7" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( -4.16292, 0, -1.21858, 0, 1.4, 0, 2.7695, 0, -1.83168, -58.3747, 3.2143, -102.473 )
+
+[node name="obstacle4" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( 1.87047, 0, 1.41612, 0, 0.7, 0, -0.708059, 0, 3.74094, -92.7534, 2.7, -81.9874 )
+
+[node name="obstacle5" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( 2.33809, 0, 1.41612, 0, 1.3, 0, -0.885074, 0, 3.74094, -89.549, 3.2, -110.233 )
+
+[node name="obstacle8" parent="environment/Outside/pondZone" instance=ExtResource( 8 )]
+transform = Transform( -1.06241, 0, -4.03619, 0, 1.5, 0, 1.45303, 0, -2.95113, -46.245, 3.4, -72.631 )
+
+[node name="wallBlock" parent="environment/Outside/pondZone" instance=ExtResource( 4 )]
+transform = Transform( 0.843918, -0.185613, -0.345493, 0.0285757, 4.99636, -0.0211964, 0.311425, 0.0445296, 0.938182, -89.6102, 1.23026, -88.5078 )
+
+[node name="wallBlock4" parent="environment/Outside/pondZone" instance=ExtResource( 4 )]
+transform = Transform( 0.610757, 2.91675, -0.227687, -0.17568, 7.24487, 0.23932, 0.29345, -1.73332, 0.617158, -54.0488, 0.669143, -65.8864 )
+
+[node name="wallBlock3" parent="environment/Outside/pondZone" instance=ExtResource( 4 )]
+transform = Transform( 0.628411, -2.88283, -0.272209, 0.231186, 8.49325, -0.0172301, 0.20409, -0.744333, 0.857674, -43.268, 1.09344, -106.513 )
+
+[node name="wallBlock2" parent="environment/Outside/pondZone" instance=ExtResource( 4 )]
+transform = Transform( 0.390942, -0.671995, 1.50498, 0.0915342, 6.91793, -0.012034, -0.445854, 0.831026, 1.31715, -73.0447, 1.23026, -101.046 )
+
 [node name="thumpZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 2.5, 1.13207 )
 
@@ -1628,7 +1864,7 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump/Crushbox"]
 transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
-shape = SubResource( 3 )
+shape = SubResource( 74 )
 
 [node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
@@ -1676,7 +1912,7 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump2/Crushbox"]
 transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
-shape = SubResource( 3 )
+shape = SubResource( 74 )
 
 [node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump2"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
@@ -1724,7 +1960,7 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump3/Crushbox"]
 transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
-shape = SubResource( 3 )
+shape = SubResource( 74 )
 
 [node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump3"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
@@ -1772,7 +2008,7 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump4/Crushbox"]
 transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
-shape = SubResource( 3 )
+shape = SubResource( 74 )
 
 [node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump4"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
@@ -1820,7 +2056,7 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump6/Crushbox"]
 transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
-shape = SubResource( 3 )
+shape = SubResource( 74 )
 
 [node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump6"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
@@ -1868,7 +2104,7 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/thumpZone/Thump5/Crushbox"]
 transform = Transform( 14.3, 0, 0, 0, 0.15, 0, 0, 0, 3.3, 0, -1.4, 0 )
-shape = SubResource( 3 )
+shape = SubResource( 74 )
 
 [node name="Shakebox" type="Area" parent="environment/Outside/thumpZone/Thump5"]
 transform = Transform( 15, 0, 0, 0, 3, 0, 0, 0, 15, 0, -2, 0 )
@@ -1929,59 +2165,23 @@ transform = Transform( 3, 0, 0, 0, 0.141421, 0.707107, 0, -0.141421, 0.707107, 1
 [node name="cyFlat" parent="environment/Outside/spireZone/shiftRamp" groups=["flats"] instance=ExtResource( 7 )]
 transform = Transform( 1.89901e-05, 0, 3, 0, 0.2, 0, -1.5, 0, 9.49503e-06, 1.51633, 19.133, -23.2478 )
 
-[node name="tower" parent="environment/Outside/spireZone" instance=ExtResource( 4 )]
-transform = Transform( 2, 0, 0, 0, 30, 0, 0, 0, 2, 0, 0, 10.2301 )
+[node name="wallBlock" parent="environment/Outside/spireZone" instance=ExtResource( 24 )]
+transform = Transform( 1.5, 0, 0, 0, 26, 0, 0, 0, 0.1, 0.4, 3.5, 6 )
 
-[node name="cyFlat" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.5, 0, 0, 0, 0.014, 0, 0, 0, 0.75, 0, 0.0174015, 3.48 )
+[node name="wallBlock2" parent="environment/Outside/spireZone" instance=ExtResource( 24 )]
+transform = Transform( -6.55671e-08, 0, 0.1, 0, 26, 0, -1.5, 0, -4.37114e-09, -2.375, 3.5, 9.2 )
 
-[node name="cyFlat2" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.353553, 0, 0.565686, 0, 0.014, 0, -0.353554, 0, 0.565685, 2.4, 0.0574015, 2.4 )
+[node name="wallBlock3" parent="environment/Outside/spireZone" instance=ExtResource( 24 )]
+transform = Transform( -6.55671e-08, 0, 0.1, 0, 26, 0, -1.5, 0, -4.37114e-09, 3.2, 3.5, 9.2 )
 
-[node name="cyFlat3" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( -2.18557e-08, 0, 0.75, 0, 0.014, 0, -0.5, 0, -3.27835e-08, 3.467, 0.0974015, 0 )
-
-[node name="cyFlat4" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.353553, 0, -0.565685, 0, 0.014, 0, 0.353553, 0, 0.565685, 2.4, 0.137401, -2.4 )
-
-[node name="cyFlat5" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( -0.5, 0, -4.76241e-06, 0, 0.014, 0, 3.17494e-06, 0, -0.75, -0.0761299, 0.150734, -3.45997 )
-
-[node name="cyFlat6" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( -0.353551, 0, -0.56569, 0, 0.014, 0, 0.353556, 0, -0.565681, -2.47612, 0.190735, -2.37995 )
-
-[node name="cyFlat7" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 3.13719e-06, 0, -0.75, 0, 0.014, 0, 0.5, 0, 4.70579e-06, -3.54311, 0.230735, 0.0200577 )
-
-[node name="cyFlat8" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( -0.353556, 0, 0.565681, 0, 0.014, 0, -0.353551, 0, -0.56569, -2.47609, 0.270736, 2.42006 )
-
-[node name="cyFlat9" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.5, 0, 0, 0, 0.014, 0, 0, 0, 0.75, 0, 0.411843, 3.48 )
-
-[node name="cyFlat10" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.353553, 0, 0.565686, 0, 0.014, 0, -0.353554, 0, 0.565685, 2.4, 0.451843, 2.4 )
-
-[node name="cyFlat11" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( -2.18557e-08, 0, 0.75, 0, 0.014, 0, -0.5, 0, -3.27835e-08, 3.467, 0.491843, 0 )
-
-[node name="cyFlat12" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.353553, 0, -0.565685, 0, 0.014, 0, 0.353553, 0, 0.565685, 2.4, 0.531843, -2.4 )
-
-[node name="cyFlat13" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( -2.18557e-08, 0, 0.75, 0, 0.014, 0, -0.5, 0, -3.27835e-08, 3.467, 0.767691, 0 )
-
-[node name="cyFlat14" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.353553, 0, 0.565686, 0, 0.014, 0, -0.353554, 0, 0.565685, 2.4, 0.814906, 2.4 )
-
-[node name="cyFlat15" parent="environment/Outside/spireZone/tower" groups=["flats"] instance=ExtResource( 7 )]
-transform = Transform( 0.5, 0, 0, 0, 0.014, 0, 0, 0, 0.75, 0, 0.97197, 3.48 )
+[node name="wallBlock4" parent="environment/Outside/spireZone" instance=ExtResource( 24 )]
+transform = Transform( 1.5, 0, 0, 0, 26, 0, 0, 0, 0.1, 0.4, 3.5, 12 )
 
 [node name="cloudZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -76.3555, 8.71146, -215.346 )
 
 [node name="cloudMain" type="StaticBody" parent="environment/Outside/cloudZone"]
-transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, -6.15849, -1.71146, 0.333008 )
+transform = Transform( -8.78742, 0, -4.77297, 0, 1, 0, 4.77297, 0, -8.78742, -3.83006, -1.71146, 3.34807 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2004,7 +2204,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudMain2" type="StaticBody" parent="environment/Outside/cloudZone"]
-transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -25.803, 2.711, -13.62 )
+transform = Transform( -7.02994, 0, -3.81837, 0, 0.8, 0, 3.81837, 0, -7.02994, 20.0921, 2.711, 6.23291 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain2"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2027,7 +2227,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudMain3" type="StaticBody" parent="environment/Outside/cloudZone"]
-transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -17.149, 5.711, -32.773 )
+transform = Transform( -7.02994, 0, -3.81837, 0, 0.8, 0, 3.81837, 0, -7.02994, 21.6292, 5.711, 27.194 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain3"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2050,7 +2250,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudMain4" type="StaticBody" parent="environment/Outside/cloudZone"]
-transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -36.505, 8.711, -44.991 )
+transform = Transform( -7.02994, 0, -3.81837, 0, 0.8, 0, 3.81837, 0, -7.02994, 44.4698, 8.711, 28.6919 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudMain4"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2073,7 +2273,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudBig" type="StaticBody" parent="environment/Outside/cloudZone"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, -65.402, 11.711, -41.408 )
+transform = Transform( -13.5602, 0, 6.4125, 0, 1, 0, -6.4125, 0, -13.5602, 51.5054, 11.711, 58.2404 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudBig"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2096,7 +2296,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudColumn" type="Spatial" parent="environment/Outside/cloudZone"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -67.489, 22.8094, -52.1119 )
+transform = Transform( -0.904015, 0, 0.4275, 0, 1, 0, -0.4275, 0, -0.904015, 48.8162, 22.8094, 68.8091 )
 
 [node name="cloudColumn" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
 transform = Transform( 8, 0, 0, 0, 0.8, 0, 0, 0, 8, -6.15849, -1.71146, 0.333008 )
@@ -2122,7 +2322,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudColumn2" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
-transform = Transform( 6, 0, 0, 0, 0.6, 0, 0, 0, 6, -6.40299, 7, 1.25073 )
+transform = Transform( 6, 0, 0, 0, 0.6, 0, 0, 0, 6, -8.77367, 7, -3.76246 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn2"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2145,7 +2345,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudColumn3" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
-transform = Transform( 5, 0, 0, 0, 0.5, 0, 0, 0, 5, -6.25632, 13.5, -0.0219574 )
+transform = Transform( 5, 0, 0, 0, 0.5, 0, 0, 0, 5, -10.9996, 13.5, -6.19992 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn3"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2168,7 +2368,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudColumn4" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
-transform = Transform( 4, 0, 0, 0, 0.4, 0, 0, 0, 4, -7.28813, 19, -0.175522 )
+transform = Transform( 4, 0, 0, 0, 0.4, 0, 0, 0, 4, -13.1715, 19, -8.76443 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn4"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2191,7 +2391,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudColumn5" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
-transform = Transform( 3, 0, 0, 0, 0.3, 0, 0, 0, 3, -7.133, 23.5, -0.242004 )
+transform = Transform( 3, 0, 0, 0, 0.3, 0, 0, 0, 3, -13.7604, 23.5, -10.4043 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn5"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2214,7 +2414,7 @@ transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
 [node name="cloudColumn6" type="StaticBody" parent="environment/Outside/cloudZone/cloudColumn"]
-transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -7.27466, 27, 0.257797 )
+transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -14.2003, 27, -11.2223 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn6"]
 transform = Transform( 1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, -0.5, 0 )
@@ -2235,6 +2435,80 @@ monitoring = false
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/cloudZone/cloudColumn/cloudColumn6/trampoline"]
 transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
+
+[node name="alienZone" type="Spatial" parent="environment/Outside"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 72.758, 0, -124.743 )
+
+[node name="ufoLandBottom" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
+transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 5, 0 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -28.176, 3.76027, -27.268, 17.3, 27.235, 17.3, 27.235, -45.097, 11.3891, -45.8679, -4.63512, -37.5044, -17.5551, -27.8542, -23.9119, -12.9306 )
+depth = 3.0
+material = SubResource( 69 )
+
+[node name="ufoLandTop" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
+transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 8, 0 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -21.1052, 3.45431, -18, 17.3, 27.235, 17.3, 27.235, -39, 10.5944, -38.1253, -3.23788, -32.6734, -14.8109, -20.8541, -19.8929, -8.21656 )
+depth = 3.0
+material = SubResource( 70 )
+
+[node name="ufo" type="Spatial" parent="environment/Outside/alienZone"]
+transform = Transform( -0.597143, -0.0124757, -0.802037, -0.279803, 0.940315, 0.193696, 0.751751, 0.340077, -0.564993, 14.2524, 10.1409, -6.45805 )
+
+[node name="ufoBody" type="CSGSphere" parent="environment/Outside/alienZone/ufo" groups=["flats"]]
+transform = Transform( 5.10755, 0.186949, 8.50647, -1.97953, 1.46985, -0.247129, -8.36629, -0.233648, 5.2516, -0.0340118, 0.114365, 0.0235138 )
+use_collision = true
+collision_mask = 0
+radial_segments = 15
+material = SubResource( 65 )
+
+[node name="ufoHole" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody"]
+transform = Transform( 0.3, 0, 0, 0, 1.33333, 0, 0, 0, 0.3, 0, 0.646748, 0 )
+operation = 2
+material = SubResource( 66 )
+
+[node name="ufoCap" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody"]
+transform = Transform( 0.35, 0, 0, -5.96046e-08, 1.333, 0, -3.72529e-09, 0, 0.35, 0, 0.646748, 9.53674e-07 )
+material = SubResource( 66 )
+
+[node name="ufoHole2" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody/ufoCap"]
+transform = Transform( 0.849413, 0.0765665, 0.00166647, -0.200596, 0.989827, -0.0802223, -0.00779025, 0.0301293, 0.855916, 0.093668, 0.189198, 0.103466 )
+operation = 2
+radius = 0.900111
+material = SubResource( 66 )
+
+[node name="wallBlock" parent="environment/Outside/alienZone" instance=ExtResource( 4 )]
+transform = Transform( 0.782614, 2.02451, -0.0358236, -0.164155, 9.14248, -0.279481, -0.0238296, 3.50947, 0.748737, 22.09, 7.105, 10.985 )
+
+[node name="wallBlock2" parent="environment/Outside/alienZone" instance=ExtResource( 4 )]
+transform = Transform( -0.830265, -2.10961, -0.432477, -0.205194, 5.48549, -0.349351, 0.518224, -1.20787, -0.831215, -5.78364, 6.858, -12.7272 )
+
+[node name="obstacle" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
+transform = Transform( 1.42438, -0.162543, -1.34033, 0.238771, 0.986651, -0.171899, 0.405115, -0.0100245, 4.81393, -13.2284, 8.53503, 0.518913 )
+
+[node name="obstacle2" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
+transform = Transform( -0.745584, 0.092317, 2.76993, 0.318362, 0.986651, -0.103139, -1.82832, 0.134157, -1.14753, 21.08, 8.53503, 5.48803 )
+
+[node name="obstacle3" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
+transform = Transform( -1.43022, 0.0584293, 2.4578, 0.341436, 1.48418, 0.144973, -2.02185, 0.209305, -1.71412, 22.3899, 8.84666, 24.3987 )
+
+[node name="spaceZone" type="Spatial" parent="environment/Outside"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 175, 0 )
+
+[node name="spaceBlock" type="StaticBody" parent="environment/Outside/spaceZone"]
+transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spaceZone/spaceBlock"]
+shape = SubResource( 75 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spaceZone/spaceBlock/CollisionShape"]
+cast_shadow = 0
+mesh = SubResource( 76 )
+material/0 = SubResource( 77 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
