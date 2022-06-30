@@ -116,12 +116,14 @@ public override void _Ready(){
     leewayCast = GetNode<RayCast>("leewayCast");
     trampolineCast = GetNode<RayCast>("trampolineCast");
     shadowCast = GetNode<RayCast>("shadowCast");
-    checkpoint = GetNode<Area>("../../checkpoints/checkpoint1");
+    checkpoint = GetNode<Area>("../../checkpoints/checkpointSpawn");
     camera = GetNode<Camera>("Position3D/playerCam");
     moveNote = GetNode<Label>("../../moveNote");
     tipNote = GetNode<Label>("../../tipNote");
-    speedrunNote = GetNode<Label>("../../speedrunNote");
-    prNote = GetNode<Label>("../../prNote");
+    if (Owner.Name == "demoWorld"){
+        speedrunNote = GetNode<Label>("../../speedrunNote");
+        prNote = GetNode<Label>("../../prNote");
+    }
     #endregion
 
     #region initialize data structures
@@ -934,7 +936,8 @@ public override void _Input(InputEvent @event){
     else if (@event.IsActionPressed("dash")) _dash();
     else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
     else if (@event.IsActionPressed("speedrun_reset")){
-        Area checkpnt = (Area)GetNode("../../checkpoints/checkpoint1");
+        if (Owner.Name != "demoWorld") return;
+        Area checkpnt = (Area)GetNode("../../checkpoints/checkpointSpawn");
         Translation = checkpnt.GlobalTransform.origin;
         if (!speedRun){
             _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
@@ -1069,7 +1072,7 @@ public void _on_hitBox_area_entered(Area area){
                 else if (deathtimer.IsStopped()) deathtimer.Start(2);
                 break;
             case "warps":
-                Area checkpoint1 = (Area)GetNode("../../checkpoints/checkpoint1");
+                Area checkpoint1 = (Area)GetNode("../../checkpoints/checkpointSpawn");
                 Translation = checkpoint1.GlobalTransform.origin;
                 if (speedRun){
                     if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
@@ -1286,7 +1289,7 @@ public void _on_hitBox_area_exited(Area area){
     for (int i = 0; i < groups.Count; i++){
         switch(groups[i].ToString()){
             case "checkpoints":
-                if (speedRun && area.Name == "checkpoint1"){
+                if (speedRun && area.Name == "checkpointSpawn"){
                     speedrunNote.Set("timerOn", true);
                     speedrunNote.Set("time", 0);
                 }

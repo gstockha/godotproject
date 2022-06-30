@@ -1,8 +1,8 @@
-[gd_scene load_steps=98 format=2]
+[gd_scene load_steps=97 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
-[ext_resource path="res://src/speedrunNote.gd" type="Script" id=3]
+[ext_resource path="res://geography/misc/warp.tscn" type="PackedScene" id=3]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=4]
 [ext_resource path="res://mobs/scripts/Thump.cs" type="Script" id=5]
 [ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=6]
@@ -24,6 +24,8 @@
 [ext_resource path="res://geography/misc/cameraArea.tscn" type="PackedScene" id=22]
 [ext_resource path="res://geography/structures/shiftTile.tscn" type="PackedScene" id=23]
 [ext_resource path="res://geography/structures/wallBlockTransparent.tscn" type="PackedScene" id=24]
+[ext_resource path="res://mobs/scenes/Sprinkler.tscn" type="PackedScene" id=25]
+[ext_resource path="res://scripts/warp.gd" type="Script" id=26]
 
 [sub_resource type="GDScript" id=78]
 script/source = "extends Spatial
@@ -32,7 +34,7 @@ onready var player = get_node(\"../../playerNode/PlayerBall\")
 export var spawnTime = 6
 var enemyNodes = {}
 var enemyCount = {}
-var enemies = [\"goon\", \"mole\", \"spinner\", \"hopper\", \"cannon\"]
+var enemies = [\"goon\", \"mole\", \"spinner\", \"hopper\", \"cannon\", \"sprinkler\"]
 var enemyChildren = []
 export var checkFrequencies = [3, 15]
 var checkerThreshold = checkFrequencies[0]
@@ -113,12 +115,6 @@ albedo_color = Color( 1, 0, 0.890196, 1 )
 
 [sub_resource type="SpatialMaterial" id=14]
 albedo_color = Color( 1, 0, 0.890196, 1 )
-
-[sub_resource type="SphereMesh" id=10]
-
-[sub_resource type="ShaderMaterial" id=12]
-
-[sub_resource type="SphereShape" id=11]
 
 [sub_resource type="SpatialMaterial" id=71]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -257,6 +253,8 @@ albedo_color = Color( 0.843137, 0.498039, 1, 1 )
 [sub_resource type="SpatialMaterial" id=64]
 albedo_color = Color( 0.772549, 0.32549, 1, 1 )
 
+[sub_resource type="BoxShape" id=80]
+
 [sub_resource type="CylinderShape" id=57]
 
 [sub_resource type="CylinderMesh" id=58]
@@ -285,20 +283,12 @@ albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
 [sub_resource type="SpatialMaterial" id=77]
 albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
+[sub_resource type="BoxShape" id=79]
+
 [sub_resource type="DynamicFont" id=53]
 size = 42
 outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
-use_filter = true
-font_data = ExtResource( 14 )
-
-[sub_resource type="DynamicFont" id=20]
-size = 36
-use_filter = true
-font_data = ExtResource( 14 )
-
-[sub_resource type="DynamicFont" id=21]
-size = 24
 use_filter = true
 font_data = ExtResource( 14 )
 
@@ -310,12 +300,12 @@ font_data = ExtResource( 14 )
 
 [sub_resource type="BoxShape" id=6]
 
-[node name="World" type="Spatial"]
+[node name="pyramidWorld" type="Spatial"]
 
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 68.5431, 3.90835, 35.7748 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 65.6849, 15.8271, -92.2753 )
 
 [node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
@@ -330,8 +320,17 @@ spot_angle_attenuation = 0.5
 
 [node name="checkpoints" type="Spatial" parent="."]
 
-[node name="checkpoint1" parent="checkpoints" instance=ExtResource( 11 )]
+[node name="checkpointSpawn" parent="checkpoints" instance=ExtResource( 11 )]
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 24, 173.5 )
+
+[node name="checkpointBeams" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 83.4753, 19.6498, 123.452 )
+
+[node name="checkpointBeams2" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 82.5, 29, 47 )
+
+[node name="checkpointSpire" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -82.1, 33, -135.665 )
 
 [node name="Enemies" type="Spatial" parent="."]
 
@@ -435,29 +434,20 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.81148, -0.75, -118.581 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.78959, -0.75, -98.6781 )
 
 [node name="spawn" type="Spatial" parent="Enemies"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.15, 164.353 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 65.7321, 18.15, 164.353 )
 script = ExtResource( 12 )
 checkFrequencies = [ 3, 20 ]
-distanceTreshold = 120
+distanceTreshold = 55
 distanceTresholdY = 60
 
 [node name="Hopper" parent="Enemies/spawn" instance=ExtResource( 19 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 63.8124, 0, 8.03517 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -8.24128, 0, 8.03517 )
 
 [node name="Hopper2" parent="Enemies/spawn" instance=ExtResource( 19 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 75.9663, 0, -14.6473 )
-
-[node name="Hopper3" parent="Enemies/spawn" instance=ExtResource( 19 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -74.8298, 0, -11.4318 )
-
-[node name="Hopper5" parent="Enemies/spawn" instance=ExtResource( 19 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -43.0288, 0, -17.6784 )
-
-[node name="Hopper4" parent="Enemies/spawn" instance=ExtResource( 19 )]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -60.1817, 0, 23.1308 )
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3.91262, 0, -14.6473 )
 
 [node name="Mole" parent="Enemies/spawn" instance=ExtResource( 18 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 85.4428, 0.914761, 9.8376 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 13.3891, 0.914761, 9.8376 )
 
 [node name="lowerSpawn" type="Spatial" parent="Enemies"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -75, 0, 80 )
@@ -598,6 +588,22 @@ bltVel = 3.0
 [node name="space" type="Spatial" parent="Enemies"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 176, 0 )
 script = SubResource( 78 )
+spawnTime = 60
+checkFrequencies = [ 2, 15 ]
+distanceTreshold = 30
+distanceTresholdY = 10
+
+[node name="Sprinkler" parent="Enemies/space" instance=ExtResource( 25 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 16 )
+
+[node name="Sprinkler2" parent="Enemies/space" instance=ExtResource( 25 )]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1, -16 )
+
+[node name="Sprinkler3" parent="Enemies/space" instance=ExtResource( 25 )]
+transform = Transform( 1.19249e-08, 0, 1, 0, 1, 0, -1, 0, 1.19249e-08, 16, 1, 0 )
+
+[node name="Sprinkler4" parent="Enemies/space" instance=ExtResource( 25 )]
+transform = Transform( 1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -16, 1, 0 )
 
 [node name="environment" type="Spatial" parent="."]
 
@@ -776,18 +782,6 @@ transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, -13.117, 42, -13.121 )
 [node name="PyramidTopPillar4" parent="environment/Pyramid/PyramidExternal/pyramidWalls" groups=["walls"] instance=ExtResource( 10 )]
 transform = Transform( 0.5, 0, 0, 0, 6.8, 0, 0, 0, 0.5, -13.117, 42, 13.121 )
 
-[node name="PyramidTopRound" type="StaticBody" parent="environment/Pyramid/PyramidExternal/pyramidWalls"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 60.2777, 0 )
-collision_mask = 0
-
-[node name="MeshInstance" type="MeshInstance" parent="environment/Pyramid/PyramidExternal/pyramidWalls/PyramidTopRound"]
-cast_shadow = 0
-mesh = SubResource( 10 )
-material/0 = SubResource( 12 )
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidExternal/pyramidWalls/PyramidTopRound"]
-shape = SubResource( 11 )
-
 [node name="pyramidStructures" type="Spatial" parent="environment/Pyramid/PyramidExternal"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 59.8164, 0, -46.5645 )
 
@@ -841,7 +835,7 @@ polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
 depth = 0.5
 material = SubResource( 71 )
 
-[node name="pyramidRail3" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
+[node name="pyramidRail2" type="CSGPolygon" parent="environment/Pyramid/PyramidExternal/pyramidStructures" groups=["flats"]]
 transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 108, -96.033, 26.433, 73.6548 )
 use_collision = true
 collision_mask = 0
@@ -1712,9 +1706,6 @@ transform = Transform( -0.271737, -0.225301, 0.83935, 0.015997, 19.9781, 0.03412
 [node name="wallBlock5" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
 transform = Transform( 1.09042, 0.914047, 0.0188536, -0.142796, 6.93514, -0.0439095, -0.0244125, 0.261415, 1.09896, 50.9515, 1.70798, 91.9273 )
 
-[node name="wallBlock8" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
-transform = Transform( -0.669226, 0.791947, 0.727401, 0.0911823, 7.95393, -0.0384059, -0.59483, 0.328274, -0.824265, 86.5903, 1.70799, 114.241 )
-
 [node name="obstacle" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
 transform = Transform( 1.36004, 0, -2.10898, 0, 1.5, 0, 0.632693, 0, 4.53345, 5.853, 3.4, 114.469 )
 
@@ -1861,6 +1852,7 @@ transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 2, -0.866608, 17.858, -43.5763 
 shape = SubResource( 54 )
 
 [node name="MeshInstance" type="MeshInstance" parent="environment/Outside/beamZone/purplePlat2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.045, 0, 0 )
 mesh = SubResource( 55 )
 material/0 = SubResource( 56 )
 
@@ -2408,6 +2400,46 @@ transform = Transform( -6.55671e-08, 0, 0.1, 0, 26, 0, -1.5, 0, -4.37114e-09, 3.
 [node name="wallBlock4" parent="environment/Outside/spireZone" instance=ExtResource( 24 )]
 transform = Transform( 1.5, 0, 0, 0, 26, 0, 0, 0, 0.1, 0.4, 3.5, 12 )
 
+[node name="Killbox" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
+transform = Transform( 0.4, 0, 0, 0, 1, 0, 0, 0, 2, 165, 14, 230.757 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox2" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
+transform = Transform( 0.5, 0, 0, 0, 0.866025, -0.35, 0, 0.5, 0.606218, 165, 18.5, 196.653 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox2"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox3" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
+transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 1.8, 165, 23.5, 161.277 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox3"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox4" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
+transform = Transform( 0.5, 0, 0, 0, 0.886914, -0.323354, 0, 0.461934, 0.62084, 165, 28, 125.009 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox4"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox5" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
+transform = Transform( 0.8, 0, 0, 0, 1, 0, 0, 0, 1.5, 165, 33, 93.794 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox5"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
 [node name="cloudZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -76.3555, 8.71146, -215.346 )
 
@@ -2726,6 +2758,9 @@ transform = Transform( -0.745584, 0.092317, 2.76993, 0.318362, 0.986651, -0.1031
 [node name="obstacle3" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
 transform = Transform( -1.43022, 0.0584293, 2.4578, 0.341436, 1.48418, 0.144973, -2.02185, 0.209305, -1.71412, 22.3899, 8.84666, 24.3987 )
 
+[node name="warp" parent="environment/Outside/alienZone" instance=ExtResource( 3 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 14.0973, 10.5316, -5.94278 )
+
 [node name="spaceZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 175, 0 )
 
@@ -2737,9 +2772,23 @@ collision_mask = 0
 shape = SubResource( 75 )
 
 [node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spaceZone/spaceBlock/CollisionShape"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 cast_shadow = 0
 mesh = SubResource( 76 )
 material/0 = SubResource( 77 )
+
+[node name="warp" type="Area" parent="environment/Outside/spaceZone"]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -7.89995, 0 )
+collision_layer = 2
+collision_mask = 2
+script = ExtResource( 26 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spaceZone/warp"]
+transform = Transform( 60, 0, 0, 0, 1, 0, 0, 0, 60, 0, -10, 0 )
+shape = SubResource( 79 )
+
+[node name="warpTarget" type="Position3D" parent="environment/Outside/spaceZone/warp"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -45.9085, -80.7796, 114.477 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -2760,34 +2809,6 @@ __meta__ = {
 
 [node name="Timer" type="Timer" parent="tipNote"]
 one_shot = true
-
-[node name="speedrunNote" type="Label" parent="."]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -322.0
-margin_top = 6.0
-margin_right = -17.0
-margin_bottom = 52.0
-custom_fonts/font = SubResource( 20 )
-align = 2
-script = ExtResource( 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="prNote" type="Label" parent="."]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -234.0
-margin_top = 42.0
-margin_right = -18.0
-margin_bottom = 60.0
-custom_colors/font_color = Color( 0.894118, 0.733333, 0, 1 )
-custom_fonts/font = SubResource( 21 )
-align = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="moveNote" type="Label" parent="."]
 anchor_left = 0.499652
@@ -2874,6 +2895,7 @@ shape = SubResource( 6 )
 [connection signal="area_entered" from="environment/Outside/thumpZone/Thump5/Shakebox" to="environment/Outside/thumpZone/Thump5" method="_on_Shakebox_area_entered"]
 [connection signal="timeout" from="environment/Outside/thumpZone/Thump5/FallTimer" to="environment/Outside/thumpZone/Thump5" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Outside/thumpZone/Thump5/ShakeTimer" to="environment/Outside/thumpZone/Thump5" method="_on_ShakeTimer_timeout"]
+[connection signal="body_entered" from="environment/Outside/spaceZone/warp" to="environment/Outside/spaceZone/warp" method="_on_warp_body_entered"]
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
 
 [editable path="environment/Pyramid/PyramidInternal/upperLevel/stairPlatArea/upperRailing/beams/upperPlatBase7"]

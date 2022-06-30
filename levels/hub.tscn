@@ -1,9 +1,9 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://src/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=2]
 [ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=3]
-[ext_resource path="res://src/speedrunNote.gd" type="Script" id=4]
+[ext_resource path="res://geography/structures/obstacle.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/moveNote.gd" type="Script" id=5]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=6]
 [ext_resource path="res://geography/misc/checkpoint.tscn" type="PackedScene" id=7]
@@ -12,24 +12,37 @@
 [ext_resource path="res://mobs/scenes/Goon.tscn" type="PackedScene" id=10]
 [ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=12]
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 0, 0.929688, 1, 1 )
+
+[sub_resource type="ParticlesMaterial" id=9]
+emission_shape = 5
+emission_ring_radius = 5.0
+emission_ring_inner_radius = 0.0
+emission_ring_height = 10.0
+emission_ring_axis = Vector3( 0, 0, 1 )
+gravity = Vector3( 0, -10, 0 )
+
+[sub_resource type="SpatialMaterial" id=11]
+albedo_color = Color( 0.192157, 0.960784, 0.643137, 1 )
+
+[sub_resource type="PlaneMesh" id=10]
+material = SubResource( 11 )
+flip_faces = true
+size = Vector2( 1, 1 )
+
+[sub_resource type="DynamicFont" id=7]
 size = 42
 outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
 font_data = ExtResource( 9 )
 
-[sub_resource type="DynamicFont" id=3]
-size = 36
-use_filter = true
-font_data = ExtResource( 9 )
-
-[sub_resource type="DynamicFont" id=4]
-size = 24
-use_filter = true
-font_data = ExtResource( 9 )
-
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="DynamicFont" id=8]
 size = 24
 outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
@@ -37,23 +50,92 @@ font_data = ExtResource( 9 )
 
 [sub_resource type="BoxShape" id=6]
 
-[node name="World" type="Spatial"]
+[node name="hubWorld" type="Spatial"]
 
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 4, 15 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0 )
 
 [node name="checkpoints" type="Spatial" parent="."]
 
-[node name="checkpoint1" parent="checkpoints" instance=ExtResource( 7 )]
-transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 2, 0 )
+[node name="checkpointSpawn" parent="checkpoints" instance=ExtResource( 7 )]
+transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 0, 7, 0 )
 
-[node name="cyFlat" parent="." groups=["flats"] instance=ExtResource( 2 )]
+[node name="environment" type="Spatial" parent="."]
+
+[node name="cyFlat" type="StaticBody" parent="environment" groups=["flats"]]
 transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0, 0, 0 )
+collision_mask = 0
 
-[node name="wallBlock" parent="." instance=ExtResource( 6 )]
-transform = Transform( -4.37114e-08, 0, -10, 0, 10, 0, 1, 0, -4.37114e-07, -0.411777, 2, -13.1633 )
+[node name="CollisionShape" type="CollisionShape" parent="environment/cyFlat"]
+transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0 )
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="environment/cyFlat"]
+transform = Transform( 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0 )
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="cornerStairs" type="Spatial" parent="environment"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 13.139, 0, 13 )
+
+[node name="stairBase" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( 7, 0, 0, 0, 5, 0, 0, 0, 7, -48.116, 7, -47.964 )
+
+[node name="stairL" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( 4.5, 0, 0, 0, 4, 0, 0, 0, 3, -48.6881, 5.8, -37.9986 )
+
+[node name="stairL2" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( 4, 0, 0, 0, 3, 0, 0, 0, 3, -49.1881, 4.9, -32.1476 )
+
+[node name="stairL3" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( 3.5, 0, 0, 0, 2, 0, 0, 0, 3, -49.6881, 3.9, -26.2636 )
+
+[node name="stairL4" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, -50.1881, 3, -20.2756 )
+
+[node name="stairR" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( -1.96701e-07, 0, 3, 0, 4, 0, -4.5, 0, -1.31134e-07, -38.1067, 5.8, -48.5 )
+
+[node name="stairR2" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( -1.74846e-07, 0, 3, 0, 3, 0, -4, 0, -1.31134e-07, -32.0253, 4.9, -49 )
+
+[node name="stairR3" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( -1.5299e-07, 0, 3, 0, 2, 0, -3.5, 0, -1.31134e-07, -26.0253, 3.9, -49.5 )
+
+[node name="stairR4" parent="environment/cornerStairs" instance=ExtResource( 4 )]
+transform = Transform( -1.31134e-07, 0, 3, 0, 1, 0, -3, 0, -1.31134e-07, -20.0253, 3, -50 )
+
+[node name="wallBlock" parent="environment" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, 26, 2, 38 )
+
+[node name="wallBlock3" parent="environment" instance=ExtResource( 6 )]
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 1, 33.874, 14, 38.01 )
+
+[node name="wallBlock4" parent="environment" instance=ExtResource( 6 )]
+transform = Transform( -9.74377e-06, 0, -1, 0, 3, 0, 3.1, 0, -3.14315e-06, 38.01, 14, 33.762 )
+
+[node name="wallBlock2" parent="environment" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, 38, 2, 26 )
+
+[node name="spawnPlat" parent="environment" groups=["obstacles"] instance=ExtResource( 2 )]
+transform = Transform( 4, 0, 0, 0, 0.5, 0, 0, 0, 4, 0, 2, 0 )
+
+[node name="cyFlat2" parent="environment/spawnPlat" groups=["flats", "obstacles"] instance=ExtResource( 2 )]
+transform = Transform( 0.75, 0, 0, 0, 1, 0, 0, 0, 0.75, 0, 1.85, 0 )
+
+[node name="cyFlat3" parent="environment/spawnPlat" groups=["flats", "obstacles"] instance=ExtResource( 2 )]
+transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 3.816, 0 )
+
+[node name="Particles" type="Particles" parent="environment"]
+transform = Transform( -0.707101, 0.707112, 2.22256e-06, 0, -3.14315e-06, 1, 0.707112, 0.707101, 2.22253e-06, 34, 7.5, 34 )
+generate_lightmap = false
+amount = 24
+speed_scale = 2.0
+fixed_fps = 30
+process_material = SubResource( 9 )
+draw_pass_1 = SubResource( 10 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -64,7 +146,7 @@ margin_bottom = 10.8
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_y = 3
 custom_constants/shadow_as_outline = 0
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = SubResource( 7 )
 align = 1
 valign = 1
 script = ExtResource( 1 )
@@ -74,34 +156,6 @@ __meta__ = {
 
 [node name="Timer" type="Timer" parent="tipNote"]
 one_shot = true
-
-[node name="speedrunNote" type="Label" parent="."]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -322.0
-margin_top = 6.0
-margin_right = -17.0
-margin_bottom = 52.0
-custom_fonts/font = SubResource( 3 )
-align = 2
-script = ExtResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="prNote" type="Label" parent="."]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -234.0
-margin_top = 42.0
-margin_right = -18.0
-margin_bottom = 60.0
-custom_colors/font_color = Color( 0.894118, 0.733333, 0, 1 )
-custom_fonts/font = SubResource( 4 )
-align = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="moveNote" type="Label" parent="."]
 anchor_left = 0.499652
@@ -113,7 +167,7 @@ margin_top = -51.0
 margin_right = 41.4454
 margin_bottom = -23.0024
 custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 8 )
 align = 1
 script = ExtResource( 5 )
 __meta__ = {
@@ -123,7 +177,7 @@ __meta__ = {
 [node name="DefaultWorld" parent="." instance=ExtResource( 8 )]
 
 [node name="killboxMain" type="Area" parent="." groups=["killboxes"]]
-transform = Transform( 30, 0, 0, 0, 1, 0, 0, 0, 30, -3, -15, 4 )
+transform = Transform( 40, 0, 0, 0, 1, 0, 0, 0, 40, -3, -15, 4 )
 gravity = 0.0
 
 [node name="CollisionShape" type="CollisionShape" parent="killboxMain"]
@@ -135,8 +189,14 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
 
 [node name="Enemies" type="Spatial" parent="Enemies"]
 script = ExtResource( 12 )
+spawnTime = 15
 
 [node name="Goon" parent="Enemies/Enemies" instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -28.2522, -0.4, 19.3599 )
+passive = true
+
+[node name="Goon2" parent="Enemies/Enemies" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -26.0895, -0.4, 29.0282 )
+passive = true
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]

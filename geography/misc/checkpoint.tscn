@@ -4,7 +4,6 @@
 extents = Vector3( 2, 2, 2 )
 
 [node name="checkpoint1" type="Area" groups=["checkpoints"]]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 98.678, 18.4124, 114.068 )
 collision_mask = 0
 monitoring = false
 

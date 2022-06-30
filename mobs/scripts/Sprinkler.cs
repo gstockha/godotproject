@@ -2,7 +2,7 @@ using Godot;
 
 public class Sprinkler : KinematicBody
 {
-int aggroRange = 40;
+int aggroRange = 50;
 int vulnerableClass = 2; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 enum states{
     search,
@@ -14,7 +14,7 @@ enum states{
 states state = states.search;
 float[] squishSet = new float[] {0,0,0};
 float meshY;
-Timer burrowTimer;
+Timer aggroTimer;
 Timer shootTimer;
 Timer springTimer;
 Timer deathTimer;
@@ -30,13 +30,17 @@ Position3D shooter;
 MeshInstance arrow;
 bool active = false;
 bool lockable = true;
-
+float startAngle = 0;
+int oscillation = 0;
+[Export] int oscillationRate = 4;
+bool oscillationMode = true;
 
 
 public override void _Ready(){
     shootTimer = GetNode<Timer>("ShootTimer");
     springTimer = GetNode<Timer>("SpringTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
+    aggroTimer = GetNode<Timer>("aggroTimer");
     hitbox = GetNode<Area>("Hitbox");
     target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
@@ -50,6 +54,8 @@ public override void _Ready(){
     squishSet[2] = mesh.Scale.z * 1.7F;
     spawnPoint = GlobalTransform.origin;
     SetPhysicsProcess(false);
+    startAngle = Rotation.y;// + 3.1416F;
+    oscillation -= oscillationRate;
 }
 
 public override void _PhysicsProcess(float delta){
@@ -71,7 +77,7 @@ public void _launch(float power, Vector3 cVec){
     if (power != 0) launchVec = new Vector3(cVec.x * power, 0, cVec.z * power);
     else launchVec = new Vector3(cVec.x, 0, cVec.z);
     yvelocity = power;
-    burrowTimer.Stop();
+    aggroTimer.Stop();
     deathTimer.Start(2);
     vulnerableClass = 0;
     lockable = false;
@@ -80,7 +86,7 @@ public void _launch(float power, Vector3 cVec){
 
 public void _squish(float power){ //check power vs health and all that here?
     state = states.squished;
-    burrowTimer.Stop();
+    aggroTimer.Stop();
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
     lockable = false;
@@ -90,50 +96,58 @@ public void _squish(float power){ //check power vs health and all that here?
 
 public void _on(){
     if (!deathTimer.IsStopped() || active) return;
-    burrowTimer.Start(1);
     state = states.search;
     SetPhysicsProcess(true);
     active = true;
+    aggroTimer.Start(.1F);
 }
 
 public void _off(){
     if (!deathTimer.IsStopped() || !active) return;
-    burrowTimer.Stop();
     shootTimer.Stop();
-    springTimer.Stop();
-    mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
+    aggroTimer.Stop();
     SetPhysicsProcess(false);
     active = false;
+    oscillation = 0;
 }
 
-public void _on_BurrowTimer_timeout(){
+public void _on_aggroTimer_timeout(){
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) state = states.search;
     else if (state == states.search){
         state = states.attack;
-        Vector3 oldRot = Rotation;
-        float nuRot;
-        LookAt(target.GlobalTransform.origin, Vector3.Up);
-        nuRot = Rotation.y;
-        Rotation = new Vector3(oldRot.x, nuRot, oldRot.z);
-        shootTimer.Start(.5F);
+        shootTimer.Start(.1F);
     }
-    burrowTimer.Start(3);
+    aggroTimer.Start(3);
 }
 
 public void _on_ShootTimer_timeout(){
     shootTimer.Stop();
-    if (state != states.attack) return;
+    if (state != states.attack){
+        oscillation = 0;
+        return;
+    }
     Area blt = (Area)bullet.Instance();
+    if (oscillationMode){
+        oscillation += oscillationRate;
+        if (oscillation >= oscillationRate * 3) oscillationMode = false;
+    }
+    else{
+        oscillation -= oscillationRate;
+        if (oscillation <= -1 * (oscillationRate * 3)) oscillationMode = true;
+    }
+    float oscAng = (oscillation != 0) ? oscillation * .1F : 0;
+    Rotation = new Vector3(Rotation.x, startAngle + oscAng, Rotation.z);
     parent.AddChild(blt);
     blt.Set("trajectory", shooter.GlobalTransform.origin);
     blt.RotateY(Rotation.y);
+    shootTimer.Start(.5F);
 }
 
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
     if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "sprinkler", spawnPoint);
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "sprinkler", spawnPoint, new float[] {startAngle, oscillationRate});
 }
 
 }

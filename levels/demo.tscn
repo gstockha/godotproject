@@ -68,7 +68,7 @@ size = 24
 use_filter = true
 font_data = ExtResource( 15 )
 
-[node name="Spatial" type="Spatial"]
+[node name="demoWorld" type="Spatial"]
 
 [node name="killboxMain" type="Area" parent="." groups=["killboxes"]]
 transform = Transform( 18, 0, 0, 0, 1, 0, 0, 0, 18, -3, -15, 4 )
@@ -80,7 +80,7 @@ shape = SubResource( 1 )
 
 [node name="checkpoints" type="Spatial" parent="."]
 
-[node name="checkpoint1" parent="checkpoints" instance=ExtResource( 12 )]
+[node name="checkpointSpawn" parent="checkpoints" instance=ExtResource( 12 )]
 transform = Transform( 4, 0, 0, 0, 8, 0, 0, 0, 4, 97.336, 20.104, 202.068 )
 
 [node name="checkpoint2" type="Area" parent="checkpoints" groups=["checkpoints"]]

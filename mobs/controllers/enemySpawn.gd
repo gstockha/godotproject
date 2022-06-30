@@ -63,6 +63,9 @@ func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer, variables: A
 					spawnedEnemy.startAngle = variables[0]
 					spawnedEnemy.bltSpeed = variables[1]
 					spawnedEnemy.bltVel = variables[2]
+				"sprinkler":
+					spawnedEnemy.startAngle = variables[0]
+					spawnedEnemy.oscillationRate = variables[1]
 	spawnTimer.queue_free()
 
 func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3, variables=[]) -> void:

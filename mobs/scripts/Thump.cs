@@ -27,17 +27,19 @@ bool lockable = false;
 
 public override void _Ready(){
     fallTimer = GetNode<Timer>("FallTimer");
-    shakeTimer = GetNode<Timer>("ShakeTimer");
     anchor = GetNode<Position3D>("Anchor");
-    bottomPosition = GetNode<Position3D>("BottomPosition");
     crushBox = GetNode<Area>("Crushbox");
-    shakeBox = GetNode<CollisionShape>("Shakebox/CollisionShape");
     fallMode = !Name.BeginsWith("push");
     anchorOrigin = anchor.GlobalTransform.origin;
     originY = (fallMode) ? GlobalTransform.origin.y : GlobalTransform.origin.x;
     if (!fallMode){
         if (anchorOrigin.x != Translation.x) pushDir[0] = (anchorOrigin.x > Translation.x) ?  1 : -1;
         if (anchorOrigin.z != Translation.z) pushDir[1] = (anchorOrigin.z > Translation.z) ?  1 : -1;
+    }
+    else{
+        shakeBox = GetNode<CollisionShape>("Shakebox/CollisionShape");
+        shakeTimer = GetNode<Timer>("ShakeTimer");
+        bottomPosition = GetNode<Position3D>("BottomPosition");
     }
 }
 

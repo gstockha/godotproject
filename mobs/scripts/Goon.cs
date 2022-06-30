@@ -34,6 +34,7 @@ Spatial parent;
 MeshInstance arrow;
 bool active = false;
 [Export] bool lockable = true;
+[Export] bool passive = false;
 
 
 
@@ -169,7 +170,7 @@ public void _on_PathTimer_timeout(){
         state = states.alert;
         pathTimer.Start(.5F);
     }
-    else if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
+    else if (passive || GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
         state = states.search;
         pathTimer.Start(2);
         velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 2;
