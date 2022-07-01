@@ -1,4 +1,4 @@
-[gd_scene load_steps=97 format=2]
+[gd_scene load_steps=99 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
@@ -26,6 +26,15 @@
 [ext_resource path="res://geography/structures/wallBlockTransparent.tscn" type="PackedScene" id=24]
 [ext_resource path="res://mobs/scenes/Sprinkler.tscn" type="PackedScene" id=25]
 [ext_resource path="res://scripts/warp.gd" type="Script" id=26]
+[ext_resource path="res://items/bp.tscn" type="PackedScene" id=27]
+[ext_resource path="res://items/5bp.tscn" type="PackedScene" id=28]
+
+[sub_resource type="DynamicFont" id=53]
+size = 36
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 14 )
 
 [sub_resource type="GDScript" id=78]
 script/source = "extends Spatial
@@ -242,6 +251,18 @@ albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
 [sub_resource type="SpatialMaterial" id=56]
 albedo_color = Color( 0.843137, 0.498039, 1, 1 )
 
+[sub_resource type="SpatialMaterial" id=69]
+albedo_color = Color( 0.392157, 1, 0.870588, 1 )
+
+[sub_resource type="SpatialMaterial" id=70]
+albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
+
+[sub_resource type="SpatialMaterial" id=65]
+albedo_color = Color( 0.964706, 0.262745, 0.839216, 1 )
+
+[sub_resource type="SpatialMaterial" id=66]
+albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
+
 [sub_resource type="BoxShape" id=74]
 
 [sub_resource type="BoxShape" id=4]
@@ -264,18 +285,6 @@ albedo_color = Color( 1, 0.862745, 0.976471, 1 )
 
 [sub_resource type="CylinderShape" id=61]
 
-[sub_resource type="SpatialMaterial" id=69]
-albedo_color = Color( 0.392157, 1, 0.870588, 1 )
-
-[sub_resource type="SpatialMaterial" id=70]
-albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
-
-[sub_resource type="SpatialMaterial" id=65]
-albedo_color = Color( 0.964706, 0.262745, 0.839216, 1 )
-
-[sub_resource type="SpatialMaterial" id=66]
-albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
-
 [sub_resource type="CylinderShape" id=75]
 
 [sub_resource type="CylinderMesh" id=76]
@@ -284,13 +293,6 @@ albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
 albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
 [sub_resource type="BoxShape" id=79]
-
-[sub_resource type="DynamicFont" id=53]
-size = 42
-outline_size = 1
-outline_color = Color( 0, 0, 0, 1 )
-use_filter = true
-font_data = ExtResource( 14 )
 
 [sub_resource type="DynamicFont" id=7]
 size = 24
@@ -305,7 +307,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 65.6849, 15.8271, -92.2753 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 173.5 )
 
 [node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
@@ -317,6 +319,22 @@ shadow_bias = 0.35
 spot_range = 15.0
 spot_angle = 35.0
 spot_angle_attenuation = 0.5
+
+[node name="bpNote" type="Label" parent="playerNode/PlayerBall"]
+anchor_left = 0.041
+anchor_top = 0.953
+anchor_right = 0.041
+anchor_bottom = 0.953
+margin_left = -0.480003
+margin_top = -53.0248
+margin_right = 139.52
+margin_bottom = -0.0247803
+custom_fonts/font = SubResource( 53 )
+text = "0 BP"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="checkpoints" type="Spatial" parent="."]
 
@@ -1695,6 +1713,47 @@ transform = Transform( -0.609291, 0, 5.81908, 0, 1.25, 0, -2.42462, 0, -1.4623, 
 [node name="obstacle3" parent="environment/Outside/spawnZone" instance=ExtResource( 8 )]
 transform = Transform( 1.46971, 0, 3.55316, 0, 1.25, 0, -2.84252, 0, 1.83714, -85.8649, 19, 14.0695 )
 
+[node name="bpParent" type="Spatial" parent="environment/Outside/spawnZone"]
+
+[node name="bp4" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -12.8824, 40.0777, 12.7631 )
+
+[node name="bp6" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 12.5339, 40.0777, 12.7631 )
+
+[node name="bp8" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 12.5339, 40.0777, -12.6404 )
+
+[node name="bp3" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -12.8824, 40.0777, -12.9392 )
+
+[node name="bp12" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 49.0968, 24.7074, 13.5711 )
+
+[node name="bp13" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, -0.747971 )
+
+[node name="bp16" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, 5.03217 )
+
+[node name="bp18" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, -6.65128 )
+
+[node name="bp15" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 18.6888, 15.7912, -38.4809 )
+
+[node name="bp14" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 83.2168, 19.3244, -50.0444 )
+
+[node name="bp7" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -64.0612, 24.66, 2.80673 )
+
+[node name="bp9" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -85.4501, 21.5819, 14.2759 )
+
+[node name="5bp" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -68.943, 45.3382, -1.8246 )
+
 [node name="bottomSpawnZone" type="Spatial" parent="environment/Outside"]
 
 [node name="wallBlock" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 4 )]
@@ -1750,6 +1809,36 @@ transform = Transform( 1.78493, 0.432357, 0.141351, -0.189486, 3.97414, -0.08495
 
 [node name="obstacle8" parent="environment/Outside/bottomSpawnZone" instance=ExtResource( 8 )]
 transform = Transform( 1.79934, 0, 1.74626, 0, 1.5, 0, -0.873132, 0, 3.59869, 79.5794, 3.4, 109.099 )
+
+[node name="bpParent" type="Spatial" parent="environment/Outside/bottomSpawnZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 88.7221 )
+
+[node name="bp" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.04382, 6.00299, 41.811 )
+
+[node name="bp2" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 42.0094, 5.3436, 19.3951 )
+
+[node name="bp8" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 69.6185, 2.98045, 37.1937 )
+
+[node name="bp9" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 55.7182, 6.5083, 3.32381 )
+
+[node name="bp3" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 39.2845, 5.98798, -22.0054 )
+
+[node name="bp4" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -44.5484, 3.58324, -25.1128 )
+
+[node name="bp5" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -35.5361, 3.58324, -25.1128 )
+
+[node name="bp6" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -26.788, 3.58324, -25.1128 )
+
+[node name="bp7" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 96.3145, 3.58324, 39.1333 )
 
 [node name="beamZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 83.3267, 0, 111.649 )
@@ -2001,6 +2090,119 @@ material/0 = SubResource( 56 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/beam16"]
 shape = SubResource( 54 )
+
+[node name="bpParent" type="Spatial" parent="environment/Outside/beamZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -95.99 )
+
+[node name="bp" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 2.95885 )
+
+[node name="bp4" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, -26.3458 )
+
+[node name="bp2" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 14.2826 )
+
+[node name="bp3" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 40.967 )
+
+[node name="bp5" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, -60.4972 )
+
+[node name="bp6" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, -50.885 )
+
+[node name="bp9" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.08223, 35.6977, -37.0159 )
+
+[node name="bp10" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.08223, 26.0204, -15.7393 )
+
+[node name="bp11" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.722878, 16.2598, 52.479 )
+
+[node name="bp12" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.722878, 25.7548, 31.4523 )
+
+[node name="5bp" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -1.00087, 36.845, -70.6891 )
+
+[node name="bp13" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.297, 9.8288, -74.7438 )
+
+[node name="alienZone" type="Spatial" parent="environment/Outside"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 72.758, 0, -124.743 )
+
+[node name="ufoLandBottom" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
+transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 5, 0 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -28.176, 3.76027, -27.268, 17.3, 27.235, 17.3, 27.235, -45.097, 11.3891, -45.8679, -4.63512, -37.5044, -17.5551, -27.8542, -23.9119, -12.9306 )
+depth = 3.0
+material = SubResource( 69 )
+
+[node name="ufoLandTop" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
+transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 8, 0 )
+use_collision = true
+collision_mask = 0
+polygon = PoolVector2Array( -21.1052, 3.45431, -18, 17.3, 27.235, 17.3, 27.235, -39, 10.5944, -38.1253, -3.23788, -32.6734, -14.8109, -20.8541, -19.8929, -8.21656 )
+depth = 3.0
+material = SubResource( 70 )
+
+[node name="ufo" type="Spatial" parent="environment/Outside/alienZone"]
+transform = Transform( -0.597143, -0.0124757, -0.802037, -0.279803, 0.940315, 0.193696, 0.751751, 0.340077, -0.564993, 14.2524, 10.1409, -6.45805 )
+
+[node name="ufoBody" type="CSGSphere" parent="environment/Outside/alienZone/ufo" groups=["flats"]]
+transform = Transform( 5.10755, 0.186949, 8.50647, -1.97953, 1.46985, -0.247129, -8.36629, -0.233648, 5.2516, -0.0340118, 0.114365, 0.0235138 )
+use_collision = true
+collision_mask = 0
+radial_segments = 15
+material = SubResource( 65 )
+
+[node name="ufoHole" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody"]
+transform = Transform( 0.3, 0, 0, 0, 1.33333, 0, 0, 0, 0.3, 0, 0.646748, 0 )
+operation = 2
+material = SubResource( 66 )
+
+[node name="ufoCap" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody"]
+transform = Transform( 0.35, 0, 0, -5.96046e-08, 1.333, 0, -3.72529e-09, 0, 0.35, 0, 0.646748, 9.53674e-07 )
+material = SubResource( 66 )
+
+[node name="ufoHole2" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody/ufoCap"]
+transform = Transform( 0.849413, 0.0765665, 0.00166647, -0.200596, 0.989827, -0.0802223, -0.00779025, 0.0301293, 0.855916, 0.093668, 0.189198, 0.103466 )
+operation = 2
+radius = 0.900111
+material = SubResource( 66 )
+
+[node name="wallBlock" parent="environment/Outside/alienZone" instance=ExtResource( 4 )]
+transform = Transform( 0.782614, 2.02451, -0.0358236, -0.164155, 9.14248, -0.279481, -0.0238296, 3.50947, 0.748737, 22.09, 7.105, 10.985 )
+
+[node name="wallBlock2" parent="environment/Outside/alienZone" instance=ExtResource( 4 )]
+transform = Transform( -0.830265, -2.10961, -0.432477, -0.205194, 5.48549, -0.349351, 0.518224, -1.20787, -0.831215, -5.78364, 6.858, -12.7272 )
+
+[node name="obstacle" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
+transform = Transform( 1.42438, -0.162543, -1.34033, 0.238771, 0.986651, -0.171899, 0.405115, -0.0100245, 4.81393, -13.2284, 8.53503, 0.518913 )
+
+[node name="obstacle2" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
+transform = Transform( -0.745584, 0.092317, 2.76993, 0.318362, 0.986651, -0.103139, -1.82832, 0.134157, -1.14753, 21.08, 8.53503, 5.48803 )
+
+[node name="obstacle3" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
+transform = Transform( -1.43022, 0.0584293, 2.4578, 0.341436, 1.48418, 0.144973, -2.02185, 0.209305, -1.71412, 22.3899, 8.84666, 24.3987 )
+
+[node name="warp" parent="environment/Outside/alienZone" instance=ExtResource( 3 )]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 14.0973, 10.5316, -5.94278 )
+
+[node name="bpParent" type="Spatial" parent="environment/Outside/alienZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.63278, 9, 7.86745 )
+
+[node name="bp" parent="environment/Outside/alienZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -7.07318, 0, -16.8093 )
+
+[node name="bp2" parent="environment/Outside/alienZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 13.7887, 0, 2.53582 )
+
+[node name="bp3" parent="environment/Outside/alienZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 17.7431, 2.25213, 17.1758 )
 
 [node name="pondZone" type="Spatial" parent="environment/Outside"]
 
@@ -2699,68 +2901,6 @@ monitoring = false
 transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
-[node name="alienZone" type="Spatial" parent="environment/Outside"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 72.758, 0, -124.743 )
-
-[node name="ufoLandBottom" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 5, 0 )
-use_collision = true
-collision_mask = 0
-polygon = PoolVector2Array( -28.176, 3.76027, -27.268, 17.3, 27.235, 17.3, 27.235, -45.097, 11.3891, -45.8679, -4.63512, -37.5044, -17.5551, -27.8542, -23.9119, -12.9306 )
-depth = 3.0
-material = SubResource( 69 )
-
-[node name="ufoLandTop" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
-transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 8, 0 )
-use_collision = true
-collision_mask = 0
-polygon = PoolVector2Array( -21.1052, 3.45431, -18, 17.3, 27.235, 17.3, 27.235, -39, 10.5944, -38.1253, -3.23788, -32.6734, -14.8109, -20.8541, -19.8929, -8.21656 )
-depth = 3.0
-material = SubResource( 70 )
-
-[node name="ufo" type="Spatial" parent="environment/Outside/alienZone"]
-transform = Transform( -0.597143, -0.0124757, -0.802037, -0.279803, 0.940315, 0.193696, 0.751751, 0.340077, -0.564993, 14.2524, 10.1409, -6.45805 )
-
-[node name="ufoBody" type="CSGSphere" parent="environment/Outside/alienZone/ufo" groups=["flats"]]
-transform = Transform( 5.10755, 0.186949, 8.50647, -1.97953, 1.46985, -0.247129, -8.36629, -0.233648, 5.2516, -0.0340118, 0.114365, 0.0235138 )
-use_collision = true
-collision_mask = 0
-radial_segments = 15
-material = SubResource( 65 )
-
-[node name="ufoHole" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody"]
-transform = Transform( 0.3, 0, 0, 0, 1.33333, 0, 0, 0, 0.3, 0, 0.646748, 0 )
-operation = 2
-material = SubResource( 66 )
-
-[node name="ufoCap" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody"]
-transform = Transform( 0.35, 0, 0, -5.96046e-08, 1.333, 0, -3.72529e-09, 0, 0.35, 0, 0.646748, 9.53674e-07 )
-material = SubResource( 66 )
-
-[node name="ufoHole2" type="CSGSphere" parent="environment/Outside/alienZone/ufo/ufoBody/ufoCap"]
-transform = Transform( 0.849413, 0.0765665, 0.00166647, -0.200596, 0.989827, -0.0802223, -0.00779025, 0.0301293, 0.855916, 0.093668, 0.189198, 0.103466 )
-operation = 2
-radius = 0.900111
-material = SubResource( 66 )
-
-[node name="wallBlock" parent="environment/Outside/alienZone" instance=ExtResource( 4 )]
-transform = Transform( 0.782614, 2.02451, -0.0358236, -0.164155, 9.14248, -0.279481, -0.0238296, 3.50947, 0.748737, 22.09, 7.105, 10.985 )
-
-[node name="wallBlock2" parent="environment/Outside/alienZone" instance=ExtResource( 4 )]
-transform = Transform( -0.830265, -2.10961, -0.432477, -0.205194, 5.48549, -0.349351, 0.518224, -1.20787, -0.831215, -5.78364, 6.858, -12.7272 )
-
-[node name="obstacle" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
-transform = Transform( 1.42438, -0.162543, -1.34033, 0.238771, 0.986651, -0.171899, 0.405115, -0.0100245, 4.81393, -13.2284, 8.53503, 0.518913 )
-
-[node name="obstacle2" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
-transform = Transform( -0.745584, 0.092317, 2.76993, 0.318362, 0.986651, -0.103139, -1.82832, 0.134157, -1.14753, 21.08, 8.53503, 5.48803 )
-
-[node name="obstacle3" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
-transform = Transform( -1.43022, 0.0584293, 2.4578, 0.341436, 1.48418, 0.144973, -2.02185, 0.209305, -1.71412, 22.3899, 8.84666, 24.3987 )
-
-[node name="warp" parent="environment/Outside/alienZone" instance=ExtResource( 3 )]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 14.0973, 10.5316, -5.94278 )
-
 [node name="spaceZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 175, 0 )
 
@@ -2772,7 +2912,6 @@ collision_mask = 0
 shape = SubResource( 75 )
 
 [node name="MeshInstance" type="MeshInstance" parent="environment/Outside/spaceZone/spaceBlock/CollisionShape"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 cast_shadow = 0
 mesh = SubResource( 76 )
 material/0 = SubResource( 77 )

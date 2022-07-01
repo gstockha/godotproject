@@ -48,6 +48,7 @@ int traction = 50;
 float[] tractionList = new float[101];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
+int bp = 0;
 float dashSpeed = 20;
 float boing = 0;
 bool boingCharge = false;
@@ -71,7 +72,7 @@ bool shiftedLinger = false;
 bool slowMo = false;
 bool speedRun = false;
 Dictionary<string, string> controlNames = new Dictionary<string, string>(){
-    {"roll", ""}, {"jump",""}, {"dash",""}, {"camera",""}, {"restart",""}, {"speedrun",""}
+    {"roll", ""}, {"jump",""}, {"dash",""}, {"camera",""}, {"restart",""}, {"speedrun",""}, {"target", ""}
 };
 #endregion
 
@@ -97,6 +98,7 @@ Label moveNote;
 Label tipNote;
 Label speedrunNote;
 Label prNote;
+Label bpNote;
 Spatial lockOn = null;
 
 #endregion
@@ -124,6 +126,10 @@ public override void _Ready(){
         speedrunNote = GetNode<Label>("../../speedrunNote");
         prNote = GetNode<Label>("../../prNote");
     }
+    else if (Owner.Name == "pyramidWorld"){
+        bpNote = GetNode<Label>("bpNote");
+        bpNote.Text = "0 BP";
+    }
     #endregion
 
     #region initialize data structures
@@ -134,7 +140,7 @@ public override void _Ready(){
         tractionList[x] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F));
     }
     //control dictionary
-    string[] controllerStr = new string[6];
+    string[] controllerStr = new string[7];
     if (Input.IsJoyKnown(0) == false){ //keyboard mouse
         controllerStr[0] = "WASD or Arrow Keys";
         controllerStr[1] = "Space";
@@ -142,11 +148,13 @@ public override void _Ready(){
         controllerStr[3] = "Q & E or Z & X";
         controllerStr[4] = "R";
         controllerStr[5] = "T";
+        controllerStr[6] = "Tab";
     }
     else{ //controller
         controllerStr[0] = "Left Joystick";
         controllerStr[3] = "L & R or Right Joystick";
         controllerStr[4] = "Start";
+        controllerStr[6] = "Joystick";
         if (Input.GetJoyName(0).BeginsWith("x") || Input.GetJoyName(0).BeginsWith("X")){ //xbox
             controllerStr[1] = "the A Button";
             controllerStr[2] = "the X Button";
@@ -164,6 +172,7 @@ public override void _Ready(){
     controlNames["camera"] = controllerStr[3];
     controlNames["restart"] = controllerStr[4];
     controlNames["speedrun"] = controllerStr[5];
+    controlNames["target"] = controllerStr[6];
     #endregion
     //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,45,collisionShape.RotationDegrees.z);
     ang = (-1 * Rotation.y);
@@ -380,7 +389,6 @@ public void _applyShift(float delta, bool isGrounded){
 public void _isRolling(float delta){
     jumpwindow = 0;
 	wallb = false;
-    idle = false;
 	hasJumped = 0;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
@@ -393,7 +401,7 @@ public void _isRolling(float delta){
     }
     else walldashing = false;
     weight = baseWeight;
-    if (yvelocity == -1){ //not bouncing up
+    if (yvelocity == -1 && !idle){ //not bouncing up
         if (moving) rolling = true;
         else{ //not pressing move keys
             if (friction > 0) rolling = true;
@@ -423,7 +431,7 @@ public void _isRolling(float delta){
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
         if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight * .5F) || 
-        (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight))){
+        (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight)) || idle){
         //if (boingCharge || (bounceDashing == 2 || launched) && yvelocity != -1){
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
@@ -449,6 +457,7 @@ public void _isRolling(float delta){
             bounce = bounceBase;
             bounceCombo = 0;
         }
+        idle = false;
     }
     else if (shiftedDir > 0) yvelocity = -1; //prevents slope cheesing
     launched = false;
@@ -965,6 +974,7 @@ public override void _Input(InputEvent @event){
     else if (@event.IsActionPressed("debug_restart")) GetTree().ReloadCurrentScene();
     else if (@event.IsActionPressed("end_game")) GetTree().Quit();
     else if (@event.IsActionPressed("fullscreen")) OS.WindowFullscreen = !OS.WindowFullscreen;
+    else if (@event.IsActionPressed("return_hub")) GetTree().ChangeScene("res://levels/hub.tscn");
 }
 
 public void _on_DashTimer_timeout(){
@@ -1081,7 +1091,7 @@ public void _on_hitBox_area_entered(Area area){
                     }
                 }
                 else{
-                    _drawTip("Speedrun mode activated!\nPress T to restart speedrun");
+                    _drawTip("Speedrun mode activated!\nPress " + controlNames["speedrun"] + " to restart speedrun");
                     speedRun = true;
                     Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
                     if (!textTimer.IsStopped()) textTimer.Stop();
@@ -1091,7 +1101,7 @@ public void _on_hitBox_area_entered(Area area){
                 speedrunNote.Set("timerOn", false);
                 break;
             case "tips":
-                string str = "";
+                string str = (string)area.Get("note");
                 switch(area.Name){
 					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
                     case "jumpTip": str = "Press and release\n" + controlNames["jump"] + " to Boing"; break;
@@ -1117,6 +1127,12 @@ public void _on_hitBox_area_entered(Area area){
                     case "part3Tip": str = "Take your time..."; break;
                     case "part4Tip": str = "Try dashing into the wall and\ncharge a Wallboing off of it!"; break;
                     case "endTip": str = "That's all for now. Good job!\nTravel down to restart in speedrun mode!"; break;
+                    case "targetingTip": str = "Push " + controlNames["target"] + " to lock on and off!\n" +
+                    controlNames["camera"] + " to change target"; break;
+                    case "welcomeTip": str = "Welcome to the\nBoing Boing Bros prototype!"; break;
+                    case "tutorialTip": str = "Enter the portal to do the\nAdvanced movement trial!"; break;
+                    case "pyramidTip": str ="Enter the tube to check out the\nPyramid zone prototype!"; break;
+                    case "hubTip": str = "Press H to return to this Hub"; break;
                 }
                 if (str != "") _drawTip(str);
                 break;
@@ -1139,6 +1155,11 @@ public void _on_hitBox_area_entered(Area area){
                 Timer bufferTimer = (Timer)GetNode("Position3D/playerCam/bufferTimer");
                 bufferTimer.Stop();
                 bufferTimer.Start(1);
+                break;
+            case "bp":
+                bp += (area.Name.BeginsWith("5")) ? 5 : 1;
+                bpNote.Text = bp.ToString() + " BP";
+                area.QueueFree();
                 break;
         }
     }

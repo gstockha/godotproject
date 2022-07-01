@@ -174,6 +174,7 @@ public void _on_PathTimer_timeout(){
         state = states.search;
         pathTimer.Start(2);
         velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 2;
+        if (passive) velocity *= 2;
     }
     else if (state != states.alert){
         state = states.alert;
