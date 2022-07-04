@@ -122,7 +122,7 @@ public void _launch(float power, Vector3 cVec){
         vulnerableClass = 0;
         lockable = false;
         target.Call("_lockOn", true, 0);
-        deathTimer.Start(.5F);
+        deathTimer.Start(2.5F);
     }
     else deathTimer.Start(4);
 }
@@ -173,8 +173,7 @@ public void _on_PathTimer_timeout(){
     else if (passive || GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange){
         state = states.search;
         pathTimer.Start(2);
-        velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 2;
-        if (passive) velocity *= 2;
+        velocity = new Vector3((float)GD.RandRange(-3.1F, 3.1F), -10, (float)GD.RandRange(-3.1F, 3.1F)).Normalized() * 4;
     }
     else if (state != states.alert){
         state = states.alert;

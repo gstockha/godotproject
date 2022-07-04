@@ -34,6 +34,7 @@ func _ready():
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
+		if fixedCamLock: return
 		if (lockOn == null): _move_camera(event)
 		elif event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
 		elif event.is_action_pressed("pan_left"): _directionalLockOn("L", true)
@@ -42,6 +43,14 @@ func _input(event: InputEvent) -> void:
 func _move_camera(evn) -> void:
 	turnRate = 8
 	player.angDelayFriction = true
+	var ones = 0
+	var fives = 0
+#	for bp in get_tree().get_nodes_in_group("boingPoints"):
+#		print(bp.name)
+#		if bp.name.begins_with("5"): fives += 1
+#		else: ones += 1
+#	print("ones: " + str(ones))
+#	print("fives: " + str(fives))
 	if (cam != 1):
 		if player.rotation_degrees.y == camsets[camsetarray]:
 			if evn.get_action_strength("pan_left") > 0:
@@ -168,7 +177,7 @@ func _process(delta: float) -> void:
 		player.angTarget = -1 * player.rotation.y
 		if cam == 0:
 			turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
-			player.call("_applyFriction", 0, .5)
+			player.call("_applyFriction", 0, .49 + (player.traction * .017))
 			if customset != 0:
 				cam = customset
 				customset = 0
@@ -216,6 +225,7 @@ func _findLockOn(lockOnMode) -> void:
 	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
 	var lastRot = player.rotation.y
 	for enemy in areas:
+		print(enemy.name)
 		if enemy.lockable == false: continue
 		var eLocation = enemy.global_transform.origin
 		los = spaceState.intersect_ray(player.translation, eLocation)

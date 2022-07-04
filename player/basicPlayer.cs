@@ -44,8 +44,8 @@ float friction = 0;
 float wallFriction = 0;
 static float speedCap = 15;
 float speed = speedCap;
-int traction = 50;
-float[] tractionList = new float[101];
+int traction = 0;
+float[] tractionList = new float[31];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
 int bp = 0;
@@ -136,8 +136,11 @@ public override void _Ready(){
     //collisionScales
     collisionScales = new float[] {collisionBaseScale,collisionBaseScale,collisionBaseScale};
     //traction
-    for (int x = 0; x < tractionList.Length; x++){
-        tractionList[x] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F));
+    float x = 50;
+    for (int p = 0; p < tractionList.Length; p++){
+        tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F));
+        GD.Print("tractionList[" + p.ToString() + "]: " + tractionList[p].ToString());
+        x += 1.66F;
     }
     //control dictionary
     string[] controllerStr = new string[7];
@@ -236,8 +239,8 @@ public void _controller(float delta){
     }
     else{
         if (moving && (Mathf.Sign(wallbx) != Mathf.Sign(direction_ground.x) || Mathf.Sign(wallby) != Mathf.Sign(direction_ground.y))){ //wallb air control
-            wallFriction += .01F * delta * ((traction * .25F) + 40);
-            if (wallFriction > 1) wallFriction = 1;
+            wallFriction += .01F * delta * (((traction + 50) * .25F) + 40);
+            if (wallFriction > .9F) wallFriction = .9F;
         }
         if (wallFriction != 0) MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
         xvel = wallbx * (1 - wallFriction);
@@ -268,7 +271,7 @@ public void _applyFriction(float delta, float camDrag){
             if (!float.IsNaN(stickDir[i])) signdir = Math.Sign(stickDir[i]);
             else signdir = Math.Sign(moveDir[i]);
             if (signdir != 0 && Math.Sign(moveDir[i]) != signdir){
-                dir[i,current] += (tractionList[traction] * signdir) * delta;
+                dir[i,current] += (tractionList[traction] * signdir * (1 - (traction * .016F))) * delta;
             }
         }
     }
@@ -278,7 +281,7 @@ public void _applyFriction(float delta, float camDrag){
             if (Math.Abs(moveDir[i]) > .015F){ //slowly reduce speed (friction)
                 moveDir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
-                dir[i,current] -= (tractionList[traction] * .08F * signdir) * baseWeight * delta;
+                dir[i,current] -= (tractionList[traction] * .025F * signdir) * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
                     dir[i,current] = 0;
                 }
@@ -464,7 +467,9 @@ public void _isRolling(float delta){
 }
 
 public void _isAirborne(float delta){
-	yvelocity -= (gravity * weight) * delta; //gravity
+	// if (yvelocity > 0) yvelocity -= (gravity * weight) * delta; //gravity
+    // else yvelocity -= (gravity * weight) * delta * 2;
+    yvelocity -= (gravity * weight) * delta; //gravity
 	rolling = false;
     if (yvelocity < -50) yvelocity = -50;
 	//_capSpeed(22,50);
@@ -718,7 +723,8 @@ public void _turnDelay(){
         if ((string)camera.Get("turnDir") == "left") add *= -1;
         ang = angTarget + add;
     }
-    float tractionFriction = (angDelayFriction) ? tractionList[traction] * .0007F : tractionList[traction] * .0007F;
+    // float tractionFriction = (angDelayFriction) ? tractionList[traction] * .0007F : tractionList[0] * .0007F;
+    float tractionFriction = (angDelayFriction) ? .07F : 0;
     ang = Mathf.LerpAngle(ang,angTarget,.015F + tractionFriction);
     if (lockOn != null) return;
     if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
@@ -726,16 +732,6 @@ public void _turnDelay(){
         angTarget = 0;
         angDelayFriction = true;
         camLock = false;
-    }
-}
-
-public void _alterDirection(Vector3 alterNormal){
-    Vector2 rotDir = new Vector2(moveDir[0], moveDir[1]).Rotated(ang);
-    Vector3 wallbang = new Vector3(rotDir.x, 0, rotDir.y).Bounce(alterNormal);
-    rotDir = new Vector2(wallbang.z, wallbang.x).Rotated(ang);
-    for (int i = 0; i < dirSize; i++){
-        dir[0,i] = rotDir.y;
-        dir[1,i] = rotDir.x;
     }
 }
 
@@ -762,10 +758,20 @@ public void _lockOn(bool triggerScript, float delta){
     Rotation = new Vector3(Rotation.x, Mathf.LerpAngle(ang * -1, Rotation.y, .015F + (tractionList[traction] * .0007F)), Rotation.z);
 }
 
+public void _alterDirection(Vector3 alterNormal){
+    Vector2 rotDir = new Vector2(moveDir[0], moveDir[1]).Rotated(ang);
+    Vector3 wallbang = new Vector3(rotDir.x, 0, rotDir.y).Bounce(alterNormal);
+    rotDir = new Vector2(wallbang.z, wallbang.x).Rotated(ang);
+    for (int i = 0; i < dirSize; i++){
+        dir[0,i] = rotDir.y;
+        dir[1,i] = rotDir.x;
+    }
+}
+
 public void _jump(){
     if (smushed) return;
     boingCharge = true;
-    bool trampolined = trampolineCast.IsColliding();
+    bool trampolined = trampolineCast.IsColliding() && yvelocity >= -1;
     if (trampolined){
         boing = yvelocity * 1.25F;
         if (boing < 15) boing = 15;
@@ -957,21 +963,45 @@ public override void _Input(InputEvent @event){
         }
     }
     else if (@event.IsActionPressed("add_traction")){
-        if (traction < 100) traction += 10;
+        if (traction < 30) traction += 3;
         else traction = 0;
+        int lastSize = dirSize;
+        dirSize = 13 - Mathf.FloorToInt(traction / 3);
+        if (lastSize != dirSize){
+            float avgDir0 = myMath.array2dMean(dir,0);
+            float avgDir1 = myMath.array2dMean(dir,1);
+            dir = new float[2,dirSize];
+            for (int i = 0; i < dirSize; i++){
+                dir[0,i] = avgDir0;
+                dir[1,i] = avgDir1;
+            }
+        }
         GD.Print("traction " + traction.ToString());
+        GD.Print("dirSize " + dirSize.ToString());
     }
     else if (@event.IsActionPressed("sub_traction")){
-        if (traction > 0) traction -= 10;
-        else traction = 100;
+        if (traction > 0) traction -= 3;
+        else traction = 30;
+        int lastSize = dirSize;
+        dirSize = 13 - Mathf.FloorToInt(traction / 3);
+        if (lastSize != dirSize){
+            float avgDir0 = myMath.array2dMean(dir,0);
+            float avgDir1 = myMath.array2dMean(dir,1);
+            dir = new float[2,dirSize];
+            for (int i = 0; i < dirSize; i++){
+                dir[0,i] = avgDir0;
+                dir[1,i] = avgDir1;
+            }
+        }
         GD.Print("traction " + traction.ToString());
+        GD.Print("dirSize " + dirSize.ToString());
     }
     else if (@event.IsActionPressed("slow-mo")){
         if (!slowMo) Engine.TimeScale = .3F;
         else Engine.TimeScale = 1;
         slowMo = !slowMo;
     }
-    else if (@event.IsActionPressed("debug_restart")) GetTree().ReloadCurrentScene();
+    else if (@event.IsActionPressed("debug_restart")) GetTree().ChangeScene("res://levels/hub.tscn");
     else if (@event.IsActionPressed("end_game")) GetTree().Quit();
     else if (@event.IsActionPressed("fullscreen")) OS.WindowFullscreen = !OS.WindowFullscreen;
     else if (@event.IsActionPressed("return_hub")) GetTree().ChangeScene("res://levels/hub.tscn");
@@ -1156,10 +1186,11 @@ public void _on_hitBox_area_entered(Area area){
                 bufferTimer.Stop();
                 bufferTimer.Start(1);
                 break;
-            case "bp":
+            case "boingPoints":
                 bp += (area.Name.BeginsWith("5")) ? 5 : 1;
                 bpNote.Text = bp.ToString() + " BP";
                 area.QueueFree();
+                if (bp >= 160) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
                 break;
         }
     }

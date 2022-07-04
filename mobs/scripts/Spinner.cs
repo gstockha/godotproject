@@ -92,6 +92,7 @@ public void _off(){
     SetPhysicsProcess(false);
     state = states.spin;
     active = false;
+    ang = 0;
 }
 
 public void _on_DeathTimer_timeout(){

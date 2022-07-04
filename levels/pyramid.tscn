@@ -1,8 +1,7 @@
-[gd_scene load_steps=99 format=2]
+[gd_scene load_steps=100 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://src/tipNote.gd" type="Script" id=2]
-[ext_resource path="res://geography/misc/warp.tscn" type="PackedScene" id=3]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=4]
 [ext_resource path="res://mobs/scripts/Thump.cs" type="Script" id=5]
 [ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=6]
@@ -216,6 +215,8 @@ albedo_color = Color( 0, 1, 0.741176, 1 )
 [sub_resource type="SpatialMaterial" id=51]
 albedo_color = Color( 0, 1, 0.741176, 1 )
 
+[sub_resource type="BoxShape" id=81]
+
 [sub_resource type="SpatialMaterial" id=52]
 albedo_color = Color( 0, 1, 0.882353, 1 )
 
@@ -251,6 +252,8 @@ albedo_color = Color( 0.458824, 0.996078, 0.882353, 1 )
 [sub_resource type="SpatialMaterial" id=56]
 albedo_color = Color( 0.843137, 0.498039, 1, 1 )
 
+[sub_resource type="BoxShape" id=80]
+
 [sub_resource type="SpatialMaterial" id=69]
 albedo_color = Color( 0.392157, 1, 0.870588, 1 )
 
@@ -263,6 +266,8 @@ albedo_color = Color( 0.964706, 0.262745, 0.839216, 1 )
 [sub_resource type="SpatialMaterial" id=66]
 albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
 
+[sub_resource type="BoxShape" id=79]
+
 [sub_resource type="BoxShape" id=74]
 
 [sub_resource type="BoxShape" id=4]
@@ -273,8 +278,6 @@ albedo_color = Color( 0.505882, 0.823529, 0.831373, 1 )
 
 [sub_resource type="SpatialMaterial" id=64]
 albedo_color = Color( 0.772549, 0.32549, 1, 1 )
-
-[sub_resource type="BoxShape" id=80]
 
 [sub_resource type="CylinderShape" id=57]
 
@@ -292,7 +295,7 @@ albedo_color = Color( 1, 0.862745, 0.976471, 1 )
 [sub_resource type="SpatialMaterial" id=77]
 albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
-[sub_resource type="BoxShape" id=79]
+[sub_resource type="BoxShape" id=82]
 
 [sub_resource type="DynamicFont" id=7]
 size = 24
@@ -307,7 +310,7 @@ font_data = ExtResource( 14 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 173.5 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82.7274, 33.3047, -135.103 )
 
 [node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
@@ -350,6 +353,21 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 82.5, 29, 47 )
 [node name="checkpointSpire" parent="checkpoints" instance=ExtResource( 11 )]
 transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -82.1, 33, -135.665 )
 
+[node name="checkpointPyramidEntry" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 7, 0, 0, 0, 2, 0, 0, 0, 1, 0, 6.4, 46 )
+
+[node name="checkpointPyramidStairs" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 1.5, 0, 0, 0, 1, 0, 0, 0, 1.5, -46.0984, 13.9325, -46.0556 )
+
+[node name="checkpointThumps" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 10, 0, 0, 0, 10, 0, 0, 0, 2, -77.564, 8.9, 62.5 )
+
+[node name="checkpointPond" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 12, 0, 0, 0, 12, 0, 0, 0, 2, -76.1177, 6.41222, -61.655 )
+
+[node name="checkpointPond2" parent="checkpoints" instance=ExtResource( 11 )]
+transform = Transform( 10, 0, 0, 0, 20, 0, 0, 0, 2, 78.4, 5.20057, -66.4 )
+
 [node name="Enemies" type="Spatial" parent="."]
 
 [node name="mainFloor" type="Spatial" parent="Enemies"]
@@ -359,6 +377,7 @@ distanceTresholdY = 30
 
 [node name="Spinner" parent="Enemies/mainFloor" instance=ExtResource( 17 )]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -55.1708, 2, -39.6247 )
+angMod = 1.5
 
 [node name="Cannon" parent="Enemies/mainFloor" instance=ExtResource( 20 )]
 transform = Transform( -3.14315e-06, 0, -1, 0, 1, 0, 1, 0, -3.14315e-06, -64.2038, 17, -10.6749 )
@@ -588,18 +607,13 @@ script = ExtResource( 12 )
 distanceTreshold = 60
 distanceTresholdY = 20
 
-[node name="Cannon" parent="Enemies/thumps" instance=ExtResource( 20 )]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, 0 )
-bltSpeed = 12.0
-bltVel = 3.0
-
 [node name="Cannon2" parent="Enemies/thumps" instance=ExtResource( 20 )]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, -15 )
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, -13.1114 )
 bltSpeed = 12.0
 bltVel = 3.0
 
 [node name="Cannon3" parent="Enemies/thumps" instance=ExtResource( 20 )]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, 15 )
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 26, 15.35, 12.7484 )
 bltSpeed = 12.0
 bltVel = 3.0
 
@@ -860,6 +874,39 @@ collision_mask = 0
 polygon = PoolVector2Array( 0, 0, 0, 1, 1.5, 1 )
 depth = 0.5
 material = SubResource( 71 )
+
+[node name="bpParent" type="Spatial" parent="environment/Pyramid/PyramidExternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 26.9236, 0 )
+
+[node name="bp2" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -34.2, 3.5, -0.250165 )
+
+[node name="bp3" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -34.2, 3.5, -25.238 )
+
+[node name="bp4" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -34.2, 3.5, 24.6911 )
+
+[node name="bp5" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.0325766, 10.0471, 23.6595 )
+
+[node name="bp6" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.0325766, -3.21649, 42.573 )
+
+[node name="bp8" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 41.6379, -1.5, 0.515611 )
+
+[node name="bp9" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 41.6379, -1.5, -18.1996 )
+
+[node name="bp10" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 41.6379, -1.5, 17.5718 )
+
+[node name="bp11" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.189116, 14.85, -16.2012 )
+
+[node name="bp12" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.189116, -6.69675, -47.4006 )
 
 [node name="PyramidInternal" type="Spatial" parent="environment/Pyramid"]
 
@@ -1321,7 +1368,7 @@ use_collision = true
 collision_mask = 0
 
 [node name="glassRoof" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["flats", "slides"]]
-transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 11.627, -37.242 )
+transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 11.72, -37.242 )
 material_override = SubResource( 34 )
 use_collision = true
 collision_mask = 0
@@ -1377,7 +1424,7 @@ collision_mask = 0
 [node name="layerMid" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut"]
 
 [node name="glassLayer2" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerMid" groups=["flats", "slides"]]
-transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 9.25, -37.242 )
+transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 9.057, -37.242 )
 material_override = SubResource( 34 )
 use_collision = true
 collision_mask = 0
@@ -1442,13 +1489,13 @@ collision_mask = 0
 [node name="layerTop" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut"]
 
 [node name="glassWall" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerTop" groups=["obstacles"]]
-transform = Transform( -1.09278e-07, 0, 3.19, 0, 1.2, 0, -2.5, 0, -1.39439e-07, -9.9, 10.435, -39.837 )
+transform = Transform( -1.09278e-07, 0, 3.19, 0, 1.3, 0, -2.5, 0, -1.39439e-07, -9.9, 10.3, -39.837 )
 material_override = SubResource( 34 )
 use_collision = true
 collision_mask = 0
 
 [node name="glassWall2" type="CSGBox" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerTop" groups=["obstacles"]]
-transform = Transform( -9.17939e-08, 0, 3.19, 0, 1.2, 0, -2.1, 0, -1.39439e-07, -9.9, 10.435, -50.889 )
+transform = Transform( -9.17939e-08, 0, 3.19, 0, 1.3, 0, -2.1, 0, -1.39439e-07, -9.9, 10.3, -50.889 )
 material_override = SubResource( 34 )
 use_collision = true
 collision_mask = 0
@@ -1495,6 +1542,132 @@ collision_mask = 0
 polygon = PoolVector2Array( -7.35139, 0.329834, -7.57977, 0.929187, 0.615633, 1.06942, -0.579666, -1.18221, -4.05548, -0.937375 )
 depth = 1.5
 material = SubResource( 51 )
+
+[node name="obstacleBuffer" type="StaticBody" parent="environment/Pyramid/PyramidInternal/caveStairs"]
+transform = Transform( 14.8617, 0, -0.00568031, 0, 8, 0, 4.40224, 0, 0.0191764, -38.2, -6, -0.592 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Pyramid/PyramidInternal/caveStairs/obstacleBuffer"]
+shape = SubResource( 81 )
+
+[node name="bpParent" type="Spatial" parent="environment/Pyramid/PyramidInternal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0 )
+
+[node name="bp" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 50.947, 4.55188, 18.2427 )
+
+[node name="bp2" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 49.7826, 1.61843, 35.0243 )
+
+[node name="bp3" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 39.1283, 2.47801, 34.1522 )
+
+[node name="bp5" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 37.9828, 5.49727, 47.1862 )
+
+[node name="5bp" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 49.3881, 6.0621, 49.5117 )
+
+[node name="bp4" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -5.45053, -3.19025, 5.86335 )
+
+[node name="bp6" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 5.90336, -3.19025, -6.07281 )
+
+[node name="bp7" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.0248842, 14.4986, 0.0912366 )
+
+[node name="bp10" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -10.8317, 15.4033, 35.2021 )
+
+[node name="bp9" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -28.6569, 22.7813, 28.6816 )
+
+[node name="5bp2" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -24.2379, 17.7158, 24.1057 )
+
+[node name="bp11" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -41.9111, 13.6577, -3.82955 )
+
+[node name="bp12" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -41.9111, 13.6577, -23.4321 )
+
+[node name="bp13" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -25.1634, 9.53852, -25.0073 )
+
+[node name="bp14" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -47.8528, 9.53852, -47.7492 )
+
+[node name="bp36" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -36.4576, -0.176675, -36.6966 )
+
+[node name="bp16" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -17.3258, 31.8611, -8.10689 )
+
+[node name="bp17" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -17.2524, 31.8611, 3.73518 )
+
+[node name="bp18" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -17.2463, 31.8611, 16.9015 )
+
+[node name="bp19" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -8.11057, 31.8611, 17.3025 )
+
+[node name="bp20" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.855002, 31.8611, 17.4588 )
+
+[node name="bp21" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -5.91502, 31.8611, -17.3749 )
+
+[node name="bp22" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 4.25736, 31.8611, -17.2227 )
+
+[node name="bp23" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 16.9868, 31.8611, -16.9308 )
+
+[node name="bp24" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 17.5956, 31.8611, -8.2308 )
+
+[node name="bp25" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 17.4858, 31.8611, -1.30007 )
+
+[node name="5bp3" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 22.2307, 25.1917, 21.4809 )
+
+[node name="bp8" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 39.0271, -0.2, -33.585 )
+
+[node name="bp26" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.3501, -0.2, -36.8103 )
+
+[node name="bp28" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 51.1983, -0.2, -42.4291 )
+
+[node name="bp27" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 47.0179, -0.199999, -18.349 )
+
+[node name="bp29" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.2139, 2.75629, -19.1683 )
+
+[node name="bp30" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 49.4464, 2.75629, -24.0518 )
+
+[node name="bp31" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 44.783, 2.75629, -39.1194 )
+
+[node name="bp32" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 50.5918, 2.75629, -50.2913 )
+
+[node name="bp33" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.25, -31.923 )
+
+[node name="bp34" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.25, -26.506 )
+
+[node name="bp35" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.25, -21.359 )
+
+[node name="5bp4" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 45.0601, 7.13243, -21.139 )
 
 [node name="Outside" type="Spatial" parent="environment"]
 
@@ -1575,6 +1748,42 @@ operation = 2
 polygon = PoolVector2Array( -9.49547, 39.0018, 8.54559, 39.9995, 27.4501, 20.3891, 38.8752, 2.93539, 19.196, -13.0782, -16.4589, -19.131, -42.0503, -1.46255, -35.1703, 18.8885, -27.2175, 32.5132 )
 depth = 2.5
 material = SubResource( 60 )
+
+[node name="bpParent" type="Spatial" parent="environment/Outside/csgGround"]
+transform = Transform( 0.005, 0, 0, 0, 0.5, 0, 0, 0, 0.005, 0.5, -6.1, -0.5 )
+
+[node name="bp" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -7.72671, 0, -1.90047 )
+
+[node name="bp2" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 9.76788, -9.53674e-07, 50.1049 )
+
+[node name="bp11" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -12.2472, 0, 26.9034 )
+
+[node name="bp5" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -40.6649, 1.90735e-06, 40.6644 )
+
+[node name="bp3" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 34.2431, 0, 29.7686 )
+
+[node name="bp6" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 8.38749, 0, -51.3545 )
+
+[node name="bp8" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 1.16432, 0, -76.8006 )
+
+[node name="bp9" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 4.12519, 0, -96.5296 )
+
+[node name="bp10" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -9.87019, 0, -93.1763 )
+
+[node name="bp7" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 14.4467, 0, -19.6169 )
+
+[node name="bp4" parent="environment/Outside/csgGround/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 49.797, 3.41281, 49.9944 )
 
 [node name="spawnZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 173.508 )
@@ -1820,7 +2029,7 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.04382, 6.00299, 41.81
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 42.0094, 5.3436, 19.3951 )
 
 [node name="bp8" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 69.6185, 2.98045, 37.1937 )
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 51.5093, 20.5838, 50.2169 )
 
 [node name="bp9" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 55.7182, 6.5083, 3.32381 )
@@ -2130,6 +2339,46 @@ transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -1.00087, 36.845, -70.68
 [node name="bp13" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.297, 9.8288, -74.7438 )
 
+[node name="Killbox" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+transform = Transform( 0.4, 0, 0, 0, 1, 0, 0, 0, 2, -0.840698, 14.9464, -19.905 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox2" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+transform = Transform( 0.5, 0, 0, 0, 0.866025, -0.35, 0, 0.5, 0.606218, -0.840698, 19.4464, -54.009 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox2"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox3" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 1.8, -0.840698, 24.4464, -89.385 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox3"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox4" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+transform = Transform( 0.5, 0, 0, 0, 0.886914, -0.323354, 0, 0.461934, 0.62084, -0.840698, 28.9464, -125.653 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox4"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
+[node name="Killbox5" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+transform = Transform( 0.8, 0, 0, 0, 1, 0, 0, 0, 1.5, -0.840698, 33.9464, -156.868 )
+gravity = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox5"]
+transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
+shape = SubResource( 80 )
+
 [node name="alienZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 72.758, 0, -124.743 )
 
@@ -2189,8 +2438,18 @@ transform = Transform( -0.745584, 0.092317, 2.76993, 0.318362, 0.986651, -0.1031
 [node name="obstacle3" parent="environment/Outside/alienZone" instance=ExtResource( 8 )]
 transform = Transform( -1.43022, 0.0584293, 2.4578, 0.341436, 1.48418, 0.144973, -2.02185, 0.209305, -1.71412, 22.3899, 8.84666, 24.3987 )
 
-[node name="warp" parent="environment/Outside/alienZone" instance=ExtResource( 3 )]
+[node name="warp" type="Area" parent="environment/Outside/alienZone"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 14.0973, 10.5316, -5.94278 )
+collision_layer = 2
+collision_mask = 2
+monitorable = false
+script = ExtResource( 26 )
+
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/alienZone/warp"]
+shape = SubResource( 79 )
+
+[node name="warpTarget" type="Position3D" parent="environment/Outside/alienZone/warp"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -57.9, 115, 87.032 )
 
 [node name="bpParent" type="Spatial" parent="environment/Outside/alienZone"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.63278, 9, 7.86745 )
@@ -2271,6 +2530,39 @@ transform = Transform( 0.628411, -2.88283, -0.272209, 0.231186, 8.49325, -0.0172
 
 [node name="wallBlock2" parent="environment/Outside/pondZone" instance=ExtResource( 4 )]
 transform = Transform( 0.390942, -0.671995, 1.50498, 0.0915342, 6.91793, -0.012034, -0.445854, 0.831026, 1.31715, -73.0447, 1.23026, -101.046 )
+
+[node name="bpParent" type="Spatial" parent="environment/Outside/pondZone"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -102.91 )
+
+[node name="bp" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -22.5163, 0, 1.53614 )
+
+[node name="bp5" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -39.433, 6.64581, -2.45246 )
+
+[node name="bp2" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 19.4687, 0, -0.804321 )
+
+[node name="bp3" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -7.41601, 0, -15.4274 )
+
+[node name="bp4" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -4.72401, -9.53674e-07, 13.4245 )
+
+[node name="bp6" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -63.1641, 2.71503, 18.363 )
+
+[node name="bp8" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -82.1183, 1, -24.5486 )
+
+[node name="bp9" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -54.428, 1, -34.043 )
+
+[node name="bp7" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -71.1519, 3.91096, -0.0820923 )
+
+[node name="5bp" parent="environment/Outside/pondZone/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -82.153, 31.1203, -33.0314 )
 
 [node name="thumpZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 2.5, 1.13207 )
@@ -2563,6 +2855,32 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
 [node name="Anchor" type="Position3D" parent="environment/Outside/thumpZone/Thump5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.45, 0 )
 
+[node name="bpParent" type="Spatial" parent="environment/Outside/thumpZone"]
+
+[node name="bp" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -8, 10.2, -32 )
+
+[node name="bp3" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 14, 10.2, 30 )
+
+[node name="bp2" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -8, 10.2, 50 )
+
+[node name="bp4" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 14, 10.2, -12 )
+
+[node name="bp5" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 14, 10.2, -52 )
+
+[node name="bp6" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.8, -12.237 )
+
+[node name="bp8" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.8, 9.70959 )
+
+[node name="bp7" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0.8, -32.2099 )
+
 [node name="spireZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82.514, 2, -139.013 )
 
@@ -2602,45 +2920,8 @@ transform = Transform( -6.55671e-08, 0, 0.1, 0, 26, 0, -1.5, 0, -4.37114e-09, 3.
 [node name="wallBlock4" parent="environment/Outside/spireZone" instance=ExtResource( 24 )]
 transform = Transform( 1.5, 0, 0, 0, 26, 0, 0, 0, 0.1, 0.4, 3.5, 12 )
 
-[node name="Killbox" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
-transform = Transform( 0.4, 0, 0, 0, 1, 0, 0, 0, 2, 165, 14, 230.757 )
-gravity = 0.0
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
-shape = SubResource( 80 )
-
-[node name="Killbox2" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
-transform = Transform( 0.5, 0, 0, 0, 0.866025, -0.35, 0, 0.5, 0.606218, 165, 18.5, 196.653 )
-gravity = 0.0
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox2"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
-shape = SubResource( 80 )
-
-[node name="Killbox3" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
-transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 1.8, 165, 23.5, 161.277 )
-gravity = 0.0
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox3"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
-shape = SubResource( 80 )
-
-[node name="Killbox4" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
-transform = Transform( 0.5, 0, 0, 0, 0.886914, -0.323354, 0, 0.461934, 0.62084, 165, 28, 125.009 )
-gravity = 0.0
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox4"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
-shape = SubResource( 80 )
-
-[node name="Killbox5" type="Area" parent="environment/Outside/spireZone" groups=["killboxes"]]
-transform = Transform( 0.8, 0, 0, 0, 1, 0, 0, 0, 1.5, 165, 33, 93.794 )
-gravity = 0.0
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spireZone/Killbox5"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
-shape = SubResource( 80 )
+[node name="ModalcameraAreaH-6" parent="environment/Outside/spireZone" instance=ExtResource( 22 )]
+transform = Transform( 3, 0, 0, 0, 3.83022, 19.2836, 0, -3.21394, 22.9813, 0, 16.2035, -22.0381 )
 
 [node name="cloudZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -76.3555, 8.71146, -215.346 )
@@ -2901,6 +3182,26 @@ monitoring = false
 transform = Transform( 2, 0, 0, 0, 0.25, 0, 0, 0, 2, 0, 0, 0 )
 shape = SubResource( 61 )
 
+[node name="bpParent" type="Spatial" parent="environment/Outside/cloudZone"]
+
+[node name="bp" parent="environment/Outside/cloudZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -3.78616, 8.11535, 4.75529 )
+
+[node name="bp2" parent="environment/Outside/cloudZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 20.0704, 14.1281, 6.40991 )
+
+[node name="bp3" parent="environment/Outside/cloudZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 21.6667, 18.6033, 27.6386 )
+
+[node name="bp4" parent="environment/Outside/cloudZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 46.3607, 20.6532, 28.8035 )
+
+[node name="bp5" parent="environment/Outside/cloudZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 50.5744, 22.3432, 58.1108 )
+
+[node name="5bp" parent="environment/Outside/cloudZone/bpParent" instance=ExtResource( 28 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 57.1045, 56.6579, 85.2105 )
+
 [node name="spaceZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 175, 0 )
 
@@ -2920,14 +3221,35 @@ material/0 = SubResource( 77 )
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -7.89995, 0 )
 collision_layer = 2
 collision_mask = 2
+monitorable = false
 script = ExtResource( 26 )
 
 [node name="CollisionShape" type="CollisionShape" parent="environment/Outside/spaceZone/warp"]
 transform = Transform( 60, 0, 0, 0, 1, 0, 0, 0, 60, 0, -10, 0 )
-shape = SubResource( 79 )
+shape = SubResource( 82 )
 
 [node name="warpTarget" type="Position3D" parent="environment/Outside/spaceZone/warp"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -45.9085, -80.7796, 114.477 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -45.909, -76, 114.477 )
+
+[node name="bpParent" type="Spatial" parent="environment/Outside/spaceZone"]
+
+[node name="bp" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 11, 2.3, 11 )
+
+[node name="bp2" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -11, 2.3, 11 )
+
+[node name="bp5" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 2.3, 10 )
+
+[node name="bp6" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 2.3, -10 )
+
+[node name="bp3" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -11, 2.3, -11 )
+
+[node name="bp4" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 11, 2.3, -11 )
 
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
@@ -3010,6 +3332,7 @@ shape = SubResource( 6 )
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/center/centerLift/FallTimer" to="environment/Pyramid/PyramidInternal/center/centerLift" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump/FallTimer" to="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/lowerLevel/cornerBlocks/Lift/FallTimer" to="environment/Pyramid/PyramidInternal/lowerLevel/cornerBlocks/Lift" method="_on_FallTimer_timeout"]
+[connection signal="body_entered" from="environment/Outside/alienZone/warp" to="environment/Outside/alienZone/warp" method="_on_warp_body_entered"]
 [connection signal="area_entered" from="environment/Outside/thumpZone/Thump/Crushbox" to="environment/Outside/thumpZone/Thump" method="_on_Crushbox_area_entered"]
 [connection signal="area_entered" from="environment/Outside/thumpZone/Thump/Shakebox" to="environment/Outside/thumpZone/Thump" method="_on_Shakebox_area_entered"]
 [connection signal="timeout" from="environment/Outside/thumpZone/Thump/FallTimer" to="environment/Outside/thumpZone/Thump" method="_on_FallTimer_timeout"]
