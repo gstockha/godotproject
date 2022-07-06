@@ -9,6 +9,7 @@ margin_left = -262.0
 margin_top = -32.0
 margin_right = 262.0
 margin_bottom = 32.0
+rounded = true
 __meta__ = {
 "_edit_use_anchors_": false
 }

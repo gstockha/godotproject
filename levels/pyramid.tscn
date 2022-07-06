@@ -2402,7 +2402,7 @@ shape = SubResource( 80 )
 [node name="alienZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 72.758, 0, -124.743 )
 
-[node name="ufoLandBottom" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
+[node name="ufoLandBottom" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats", "obstacles"]]
 transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 5, 0 )
 use_collision = true
 collision_mask = 0
@@ -2410,7 +2410,7 @@ polygon = PoolVector2Array( -28.176, 3.76027, -27.268, 17.3, 27.235, 17.3, 27.23
 depth = 3.0
 material = SubResource( 69 )
 
-[node name="ufoLandTop" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats"]]
+[node name="ufoLandTop" type="CSGPolygon" parent="environment/Outside/alienZone" groups=["flats", "obstacles"]]
 transform = Transform( 1, 0, 0, 0, -3.14315e-06, 1, 0, -1, -3.14315e-06, 0, 8, 0 )
 use_collision = true
 collision_mask = 0

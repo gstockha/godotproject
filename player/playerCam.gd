@@ -177,7 +177,7 @@ func _process(delta: float) -> void:
 		player.angTarget = -1 * player.rotation.y
 		if cam == 0:
 			turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
-			player.call("_applyFriction", 0, .49 + (player.traction * .017))
+			player.call("_applyFriction", 0, .25 + (player.traction * .02))
 			if customset != 0:
 				cam = customset
 				customset = 0

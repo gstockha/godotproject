@@ -31,13 +31,13 @@ export var dirsize = 13 #list size
 var stickdir = [0,0]
 var dragdir = [0,0]
 var friction = 0
-export var speedCap := 10.0 #max ground (roll) speed
-var speed = speedCap
+export var speedBase := 10.0 #max ground (roll) speed
+var speed = speedBase
 export var traction = 50
 var tractionlist = [] #array 100 long
 export var baseweight := 1.2
 var weight = baseweight
-var dashspeed = speedCap * 1.5
+var dashspeed = speedBase * 1.5
 export var dashcost := .4
 var boing = 0 #boing state
 var boingCharge = false #holding space
@@ -293,7 +293,7 @@ func _isRolling(delta: float) -> void: #on ground
 			if dashing:
 				dashtimer.stop()
 				dashing = false
-				speed = speedCap
+				speed = speedBase
 	elif (yvelocity < -1): #falling (to bounce)
 		if yvelocity < 0 and yvelocity > -1: yvelocity = -1
 		if ((yvelocity * bounce) * -1 >= bouncethreshold) and yvelocity != -1: #change the number to a stat value (like bouncemod)
@@ -338,7 +338,7 @@ func _isWall(delta: float) -> void: #on wall
 			dashtimer.stop() #cancel
 			dashing = false
 			weight = baseweight
-			speed = speedCap
+			speed = speedBase
 			bouncedashing = 1
 			walldashing = true
 		if isWall:
@@ -365,7 +365,7 @@ func _isBoinging(delta: float) -> void: #boing physics
 			_applyFriction(delta)
 			var spd = speed * friction * (bouncebase * offset)
 			if boingDash:
-				var dashSpd = (dashspeed * friction * (dashspeed / speedCap) * (bouncebase * offset))
+				var dashSpd = (dashspeed * friction * (dashspeed / speedBase) * (bouncebase * offset))
 				if dashSpd > spd: spd = dashSpd
 				if boingCharge and (spd > 4) and (jumpwindow == 60 * delta): _drawMoveNote('slide')
 			velocity = Vector3(direction_ground.x * spd, yvelocity, direction_ground.y * spd) #apply velocity
@@ -575,7 +575,7 @@ func _dash() -> void:
 			_drawMoveNote('crash')
 		elif (shiftedDir != 0): #is on shift
 			dashtimer.start(.3) #start timer
-			dashspeed = speedCap * 2
+			dashspeed = speedBase * 2
 			_drawMoveNote('slope dash')
 		else: return
 		if moving: #dash changes direction
@@ -624,7 +624,7 @@ func _input(event: InputEvent) -> void: #buttons
 func _on_DashTimer_timeout() -> void: #dash timer (on shifts)
 	dashing = false
 	walldashing = false
-	dashspeed = speedCap * 1.5
+	dashspeed = speedBase * 1.5
 
 func _on_boingTimer_timeout() -> void:
 	if boingCharge: return
@@ -655,7 +655,7 @@ func _dieNRespawn() -> void:
 	dashing = false
 	dashtimer.stop()
 	walldashing = false
-	dashspeed = speedCap * 1.5
+	dashspeed = speedBase * 1.5
 	wallb = false
 	canCrash = false
 	shiftedDir = 0
