@@ -1,7 +1,6 @@
 [gd_scene load_steps=100 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
-[ext_resource path="res://src/tipNote.gd" type="Script" id=2]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=4]
 [ext_resource path="res://mobs/scripts/Thump.cs" type="Script" id=5]
 [ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=6]
@@ -11,7 +10,6 @@
 [ext_resource path="res://geography/structures/flatBlock.tscn" type="PackedScene" id=10]
 [ext_resource path="res://geography/misc/checkpoint.tscn" type="PackedScene" id=11]
 [ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=12]
-[ext_resource path="res://src/moveNote.gd" type="Script" id=13]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=14]
 [ext_resource path="res://scripts/Lift.cs" type="Script" id=15]
 [ext_resource path="res://mobs/scenes/Goon.tscn" type="PackedScene" id=16]
@@ -297,11 +295,33 @@ albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
 [sub_resource type="BoxShape" id=82]
 
+[sub_resource type="GDScript" id=83]
+script/source = "extends Label
+onready var textTimer = $Timer
+
+func _on_Timer_timeout():
+	text = ''
+"
+
 [sub_resource type="DynamicFont" id=7]
 size = 24
 outline_color = Color( 0, 0, 0, 1 )
 use_filter = true
 font_data = ExtResource( 14 )
+
+[sub_resource type="GDScript" id=84]
+script/source = "extends Label
+var alpha = 2
+
+func _process(delta):
+	if (text != \"\"):
+		alpha -= .01
+		if alpha < 1:
+			if alpha < 0:
+				alpha = 0
+				text = \"\"
+			add_color_override(\"font_color\", Color(1,1,1,alpha))
+"
 
 [sub_resource type="BoxShape" id=6]
 
@@ -3263,7 +3283,7 @@ custom_constants/shadow_as_outline = 0
 custom_fonts/font = SubResource( 53 )
 align = 1
 valign = 1
-script = ExtResource( 2 )
+script = SubResource( 83 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -3283,7 +3303,7 @@ margin_bottom = -23.0024
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 7 )
 align = 1
-script = ExtResource( 13 )
+script = SubResource( 84 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

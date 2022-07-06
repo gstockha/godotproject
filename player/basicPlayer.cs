@@ -36,13 +36,13 @@ int bounceDashing = 0; //determine if you're crashing or can crash
 bool walldashing = false; //for speed boost after dashing into a wall
 bool rolling = true; //ball is rolling
 bool moving = false; //you're actually moving the ball
-static int dirSize = 13;
+static int dirSize = 10;
 float[,] dir = new float[2,dirSize];
 float[] stickDir = new float[] {0,0};
 float[] moveDir = new float[] {0,0};
 float friction = 0;
 float wallFriction = 0;
-static float speedCap = 15;
+static float speedCap = 13;
 float speed = speedCap;
 int traction = 0;
 float[] tractionList = new float[31];
@@ -71,6 +71,7 @@ bool shiftedLinger = false;
 #region misc. game variables
 bool slowMo = false;
 bool speedRun = false;
+string statSet = "traction";
 Dictionary<string, string> controlNames = new Dictionary<string, string>(){
     {"roll", ""}, {"jump",""}, {"dash",""}, {"camera",""}, {"restart",""}, {"speedrun",""}, {"target", ""}
 };
@@ -138,7 +139,8 @@ public override void _Ready(){
     //traction
     float x = 50;
     for (int p = 0; p < tractionList.Length; p++){
-        tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F));
+        // tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F)); old (pre dirSize alteration)
+        tractionList[p] = (float)((Math.Pow(1.025D,x)-1)*((Math.Pow(0.01F*x,25)*.05F)+2.4F));
         GD.Print("tractionList[" + p.ToString() + "]: " + tractionList[p].ToString());
         x += 1.66F;
     }
@@ -425,7 +427,7 @@ public void _isRolling(float delta){
                 if (dashing){
                     dashTimer.Stop();
                     dashing = false;
-                    speed = speedCap;
+                    //speed = speedCap;
                 }
             }
         }
@@ -491,7 +493,7 @@ public void _isWall(float delta){
             dashTimer.Stop();
             dashing = false;
             weight = baseWeight;
-            speed = speedCap;
+            //speed = speedCap;
             bounceDashing = 1;
             walldashing = true;
         }
@@ -916,7 +918,7 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
         dashTimer.Stop();
         dashing = false;
         weight = baseWeight;
-        speed = speedCap;
+        //speed = speedCap;
     }
     if (alterDir){
         wallb = true;
@@ -962,40 +964,17 @@ public override void _Input(InputEvent @event){
             textTimer.Start(2);
         }
     }
-    else if (@event.IsActionPressed("add_traction")){
-        if (traction < 30) traction += 3;
-        else traction = 0;
-        int lastSize = dirSize;
-        dirSize = 13 - Mathf.FloorToInt(traction / 3);
-        if (lastSize != dirSize){
-            float avgDir0 = myMath.array2dMean(dir,0);
-            float avgDir1 = myMath.array2dMean(dir,1);
-            dir = new float[2,dirSize];
-            for (int i = 0; i < dirSize; i++){
-                dir[0,i] = avgDir0;
-                dir[1,i] = avgDir1;
-            }
-        }
-        GD.Print("traction " + traction.ToString());
-        GD.Print("dirSize " + dirSize.ToString());
-    }
-    else if (@event.IsActionPressed("sub_traction")){
-        if (traction > 0) traction -= 3;
-        else traction = 30;
-        int lastSize = dirSize;
-        dirSize = 13 - Mathf.FloorToInt(traction / 3);
-        if (lastSize != dirSize){
-            float avgDir0 = myMath.array2dMean(dir,0);
-            float avgDir1 = myMath.array2dMean(dir,1);
-            dir = new float[2,dirSize];
-            for (int i = 0; i < dirSize; i++){
-                dir[0,i] = avgDir0;
-                dir[1,i] = avgDir1;
-            }
-        }
-        GD.Print("traction " + traction.ToString());
-        GD.Print("dirSize " + dirSize.ToString());
-    }
+    else if (@event.IsActionPressed("add_stat")) _setStat(5, statSet);
+    else if (@event.IsActionPressed("sub_stat")) _setStat(-5, statSet);
+    else if (@event.IsActionPressed("set_traction")) statSet = "traction";
+    else if (@event.IsActionPressed("set_speed")) statSet = "speed";
+    else if (@event.IsActionPressed("set_weight")) statSet = "weight";
+    else if (@event.IsActionPressed("set_mass")) statSet = "mass";
+    else if (@event.IsActionPressed("set_bounce")) statSet = "bounce";
+    else if (@event.IsActionPressed("set_energy")) statSet = "energy";
+    else if (@event.IsActionPressed("reset_stats")) _setStat(0, "reset");
+    else if (@event.IsActionPressed("mario_stats")) _setStat(0, "mario");
+    else if (@event.IsActionPressed("max_stats")) _setStat(0, "max");
     else if (@event.IsActionPressed("slow-mo")){
         if (!slowMo) Engine.TimeScale = .3F;
         else Engine.TimeScale = 1;
@@ -1263,7 +1242,7 @@ public void _collisionDamage(Spatial collisionNode){
                     dashTimer.Stop();
                     dashing = false;
                     weight = baseWeight;
-                    speed = speedCap;
+                    //speed = speedCap;
                 }
                 vecx = (velocity.x != 0) ? velocity.x : .1F;
                 vecz = (velocity.z != 0) ? velocity.z : .1F;
@@ -1357,6 +1336,46 @@ public void _on_hitBox_area_exited(Area area){
                 camera.Call("_auto_move_camera", 0, "O", false);
                 break;
         }
+    }
+}
+
+public void _setStat(int points, string stat){
+    if (stat == "reset") return;
+    if (stat == "mario") return;
+    if (stat == "max") return;
+    switch (stat){
+        case "traction":
+            traction += points;
+            traction = Mathf.Clamp(traction, 0, 30);
+            int lastSize = dirSize;
+            dirSize = 10 - Mathf.FloorToInt(traction / 5);
+            if (lastSize != dirSize){
+                float avgDir0 = myMath.array2dMean(dir,0);
+                float avgDir1 = myMath.array2dMean(dir,1);
+                dir = new float[2,dirSize];
+                for (int i = 0; i < dirSize; i++){
+                    dir[0,i] = avgDir0;
+                    dir[1,i] = avgDir1;
+                }
+            }
+            GD.Print("traction " + traction.ToString());
+            GD.Print("dirSize " + dirSize.ToString());
+            break;
+        case "speed":
+
+            break;
+        case "weight":
+
+            break;
+        case "mass":
+
+            break;
+        case "bounce":
+
+            break;
+        case "energy":
+
+            break;
     }
 }
 

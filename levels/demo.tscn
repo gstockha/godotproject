@@ -1,7 +1,7 @@
 [gd_scene load_steps=33 format=2]
 
-[ext_resource path="res://src/moveNote.gd" type="Script" id=1]
-[ext_resource path="res://src/tipNote.gd" type="Script" id=2]
+[ext_resource path="res://player/moveNote.gd" type="Script" id=1]
+[ext_resource path="res://player/tipNote.gd" type="Script" id=2]
 [ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=3]
 [ext_resource path="res://geography/structures/cyPlat.tscn" type="PackedScene" id=4]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=5]
@@ -15,7 +15,7 @@
 [ext_resource path="res://geography/misc/cameraset.tscn" type="PackedScene" id=13]
 [ext_resource path="res://geography/structures/shiftTile.tscn" type="PackedScene" id=14]
 [ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=15]
-[ext_resource path="res://src/speedrunNote.gd" type="Script" id=16]
+[ext_resource path="res://player/speedrunNote.gd" type="Script" id=16]
 [ext_resource path="res://geography/structures/wallBlockTransparent.tscn" type="PackedScene" id=17]
 [ext_resource path="res://geography/structures/windowWall.tscn" type="PackedScene" id=18]
 
