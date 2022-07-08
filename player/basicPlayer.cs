@@ -10,7 +10,7 @@ Vector2 direction_ground;
 Vector3 velocity;
 Vector3 platformStickDifference = Vector3.Zero; //stick on thumps and stuff
 float gravity = 23.0F;
-float jumpForce = 12;
+float jumpForce = 11.5F;
 float yvelocity = -1;
 static float bounceBase = .7F;
 float bounce = bounceBase;
@@ -144,8 +144,8 @@ public override void _Ready(){
     //traction
     float x = 50;
     for (int p = 0; p < tractionList.Length; p++){
-        // tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F)); old (pre dirSize alteration)
-        tractionList[p] = (float)((Math.Pow(1.025D,x)-1)*((Math.Pow(0.01F*x,25)*.05F)+2.4F));
+        tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F)); //old (pre dirSize alteration)
+        // tractionList[p] = (float)((Math.Pow(1.025D,x)-1)*((Math.Pow(0.01F*x,25)*.05F)+2.4F));
         // GD.Print("tractionList[" + p.ToString() + "]: " + tractionList[p].ToString());
         x += 1.66F;
     }
@@ -298,8 +298,12 @@ public void _applyFriction(float delta, float camDrag){
     }
     float absx = Math.Abs(moveDir[0]);
     float absy = Math.Abs(moveDir[1]);
-    friction = (absx > absy) ? absx : absy;
+    float tempFric = (absx > absy) ? absx : absy;
+    float tractionBoost = .05F + (traction * .005F);
+    friction = (moving && tempFric > (friction - tractionBoost)) ? tempFric + tractionBoost : tempFric;
     if (friction > 1) friction = 1;
+    // GD.Print(friction);
+
 }
 
 public void _applyShift(float delta, bool isGrounded){
@@ -891,7 +895,6 @@ if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
             _drawMoveNote("dash");
             dashTimer.Stop();
             dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
-            GD.Print(dashTimer.TimeLeft);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -1369,26 +1372,14 @@ public void _setStat(int points, string stat){
             if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
             traction += points;
             traction = Mathf.Clamp(traction, 0, 30);
-            int lastSize = dirSize;
-            dirSize = 10 - Mathf.FloorToInt(traction / 5);
-            if (lastSize != dirSize){
-                float avgDir0 = myMath.array2dMean(dir,0);
-                float avgDir1 = myMath.array2dMean(dir,1);
-                dir = new float[2,dirSize];
-                for (int i = 0; i < dirSize; i++){
-                    dir[0,i] = avgDir0;
-                    dir[1,i] = avgDir1;
-                }
-            }
             GD.Print("traction " + traction.ToString());
-            // GD.Print("dirSize " + dirSize.ToString());
             break;
         case "speed":
             if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
             speedPoints += points;
             speedPoints = Mathf.Clamp(speedPoints, 0, 30);
             bool setSpd = speed == speedBase;
-            speedBase = 13 + myMath.roundTo(speedPoints * .2F, 10);
+            speedBase = 13 + myMath.roundTo(speedPoints * .18F, 10);
             if (setSpd) speed = speedBase;
             GD.Print("speed " + speedBase.ToString());
             break;
@@ -1412,6 +1403,7 @@ public void _setStat(int points, string stat){
             hitBoxShape.Scale = new Vector3(collisionBaseScale + .05F, collisionBaseScale + .05F, collisionBaseScale + .05F);
             floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.033F * sizePoints), 100), 1);
             floorCast.Translation = new Vector3(0, 1 + (sizePoints * .01F), 0);
+            shadowCast.Set("shadowScale", collisionBaseScale);
             GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
             // GD.Print("hitbox scale " + hitBoxShape.Scale.ToString());
             // GD.Print("floorCast scale " + floorCast.Scale.ToString());
@@ -1421,10 +1413,10 @@ public void _setStat(int points, string stat){
             if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
             bouncePoints += points;
             bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
-            jumpForce = 12 + myMath.roundTo(bouncePoints * .2F, 10);
+            jumpForce = 11.5F + myMath.roundTo(bouncePoints * .23F, 10);
             bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
             GD.Print("jumpForce " + jumpForce.ToString());
-            GD.Print("bounceComboCap " + bounceComboCap.ToString());
+            // GD.Print("bounceComboCap " + bounceComboCap.ToString());
             break;
         case "energy":
 

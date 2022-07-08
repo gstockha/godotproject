@@ -267,7 +267,7 @@ mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
 [node name="shiftBlock" parent="envStarting/part1moving" groups=["shifts"] instance=ExtResource( 10 )]
-transform = Transform( -0.707107, 0, -0.702864, 0, 1, 0, 0.707107, 0, -0.702864, -33.934, 6.037, 94.597 )
+transform = Transform( -0.707107, 0, -0.702864, 0, 1, 0, 0.707107, 0, -0.702864, -34.037, 6.001, 94.597 )
 polygon = PoolVector2Array( -3, 1.5, -3, -5, 12, -5 )
 material = SubResource( 8 )
 
