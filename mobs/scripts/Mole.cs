@@ -69,9 +69,9 @@ public override void _PhysicsProcess(float delta){
 
 public void _launch(float power, Vector3 cVec){
     state = states.launched;
-    if (power != 0) launchVec = new Vector3(cVec.x * power, 0, cVec.z * power);
+    if (power != 0) launchVec = new Vector3(cVec.x * power * 2.3F, 0, cVec.z * power * 2.3F);
     else launchVec = new Vector3(cVec.x, 0, cVec.z);
-    yvelocity = power;
+    yvelocity = power * 1.5F;
     burrowTimer.Stop();
     deathTimer.Start(2);
     vulnerableClass = 0;

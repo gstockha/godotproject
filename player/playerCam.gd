@@ -225,7 +225,6 @@ func _findLockOn(lockOnMode) -> void:
 	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
 	var lastRot = player.rotation.y
 	for enemy in areas:
-		print(enemy.name)
 		if enemy.lockable == false: continue
 		var eLocation = enemy.global_transform.origin
 		los = spaceState.intersect_ray(player.translation, eLocation)

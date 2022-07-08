@@ -114,7 +114,7 @@ public void _velocityMove(float delta){
 
 public void _launch(float power, Vector3 cVec){
     state = states.launched;
-    if (power != 0) launchVec = new Vector3(cVec.x * power * 2, 0, cVec.z * power * 2);
+    if (power != 0) launchVec = new Vector3(cVec.x * power * 2.25F, 0, cVec.z * power * 2.25F);
     else launchVec = new Vector3(velocity.x, 0, velocity.z);
     yvelocity = power * 1.5F;
     pathTimer.Stop();

@@ -1,3 +1,3 @@
 extends Node
 
-var currentScene = "res://levels/hub.tscn"
+var currentScene = "res://levels/pyramid.tscn"

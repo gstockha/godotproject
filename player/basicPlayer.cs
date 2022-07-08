@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using MyMath;
+
 public class basicPlayer : KinematicBody{
 
 #region basic movement variables
@@ -9,8 +10,7 @@ Vector2 direction_ground;
 Vector3 velocity;
 Vector3 platformStickDifference = Vector3.Zero; //stick on thumps and stuff
 float gravity = 23.0F;
-float jumpforce = 12.0F;
-float baseJumpforce = 12.0F;
+float jumpForce = 12;
 float yvelocity = -1;
 static float bounceBase = .7F;
 float bounce = bounceBase;
@@ -90,6 +90,7 @@ Timer invincibleTimer;
 MeshInstance mesh;
 MeshInstance shadow;
 Spatial collisionShape;
+CollisionShape hitBoxShape;
 RayCast floorCast;
 RayCast leewayCast;
 RayCast trampolineCast;
@@ -102,17 +103,20 @@ Label speedrunNote;
 Label prNote;
 Label bpNote;
 Spatial lockOn = null;
+Node globals;
 
 #endregion
 
 public override void _Ready(){
     #region load nodes
+    globals = GetNode<Node>("/root/globals");
     boingTimer = GetNode<Timer>("boingTimer");
     preBoingTimer = GetNode<Timer>("preBoingTimer");
     dashTimer = GetNode<Timer>("DashTimer");
     smushTimer = GetNode<Timer>("SmushTimer");
     invincibleTimer = GetNode<Timer>("invincibleTimer");
     deathtimer = GetNode<Timer>("hitBox/deathTimer");
+    hitBoxShape = GetNode<CollisionShape>("hitBox/CollisionShape");
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
     shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
     collisionShape = GetNode<Spatial>("CollisionShape");
@@ -334,7 +338,7 @@ public void _applyShift(float delta, bool isGrounded){
             shiftedSticky = 0;
             floorCastTouching = true; //so we don't apply it twice (below)
         }
-        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.5F);
+        if (dashing && dashTimer.IsStopped()) dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
     }
     else if (shiftedBoost[0] > 0){ //shift linger
         shiftedLinger = true;
@@ -436,8 +440,8 @@ public void _isRolling(float delta){
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
-        if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (baseJumpforce * baseWeight * .5F) || 
-        (yvelocity * bounce) * -1 > (baseJumpforce * 1.2F)) || idle){
+        if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (jumpForce * baseWeight * .5F) || 
+        (yvelocity * bounce) * -1 > (jumpForce * 1.2F)) || idle){
         //if (boingCharge || (bounceDashing == 2 || launched) && yvelocity != -1){
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
@@ -672,7 +676,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
     //     if (collisionscales.y < collisionBaseScale){
     //         float meshTarg = 0 - ((collisionBaseScale * collisionBaseScale * 12) *
     //         (collisionBaseScale - collisionscales.y) / collisionBaseScale);
-    //         meshTarg *= ((basejumpwindow*.5F)/jumpforce < 1) ? ((basejumpwindow*.5F)/jumpforce) : 1;
+    //         meshTarg *= ((basejumpwindow*.5F)/jumpForce < 1) ? ((basejumpwindow*.5F)/jumpForce) : 1;
     //         translations = mesh.Translation;
     //         if (meshTarg < translations.y) mesh.Translation = new Vector3(translations.x,meshTarg,translations.z);
     //     }
@@ -779,7 +783,7 @@ public void _jump(){
     bool trampolined = trampolineCast.IsColliding() && yvelocity >= -1;
     if (trampolined){
         boing = yvelocity * 1.25F;
-        if (boing < 15) boing = 15;
+        if (boing < 15 + (bouncePoints * .1F)) boing = 15 + (bouncePoints * .1F);
     }
     if (boing != 0){ //boing jump
         yvelocity = boing;
@@ -816,7 +820,7 @@ public void _jump(){
         float nuyvel = 0;
         if (bounceDashing != 1){ //regular boingjump
             jumpwindow = (jumpwindow / basejumpwindow * .75F) + bounceBase;
-            nuyvel = myMath.roundTo((jumpforce*(1 + combo * .035F)) * jumpwindow, 10);
+            nuyvel = myMath.roundTo((jumpForce*(1 + combo * .035F)) * jumpwindow, 10);
             bounceCombo += 1;
             if (!wallb && !slopeSquish){
                 if (chargedNote == ""){
@@ -828,8 +832,8 @@ public void _jump(){
             else{
                 if (!slopeSquish){
                     _drawMoveNote(chargedNote + "wallboing");
-                    wallbx *= (jumpforce * (.2F + (.1F * jumpwindow)));
-                    wallby *= (jumpforce * (.2F + (.1F * jumpwindow)));
+                    wallbx *= (jumpForce * (.2F + (.1F * jumpwindow)));
+                    wallby *= (jumpForce * (.2F + (.1F * jumpwindow)));
                     nuyvel *= .6F + (.2F * jumpwindow);
                 }
                 squishReverb[2] = 1; //set wall jiggle to true
@@ -839,12 +843,12 @@ public void _jump(){
         else{ //crashing or walldashing
             jumpwindow = (jumpwindow / basejumpwindow) + bounceBase;
             bounceDashing = 0;
-            nuyvel = myMath.roundTo((jumpforce * (1 + bounceComboCap * .1F)) * jumpwindow,10);
+            nuyvel = myMath.roundTo((jumpForce * (1.3F - (bouncePoints * .002F))) * jumpwindow,10);
             if (wallb){ //if off wall
                 if (!slopeSquish){
                     _drawMoveNote(chargedNote + "crash wallboing");
-                    wallbx *= (jumpforce * (.4F + (.25F * jumpwindow)));
-                    wallby *= (jumpforce * (.4F + (.25F * jumpwindow)));
+                    wallbx *= (jumpForce * (.4F + (.25F * jumpwindow)));
+                    wallby *= (jumpForce * (.4F + (.25F * jumpwindow)));
                     nuyvel *= .4F + (.25F * jumpwindow);
                 }
                 nuyvel *= windowRatio * .65F;
@@ -857,7 +861,7 @@ public void _jump(){
         }
         squishReverb[0] = yvelocity * .035F;
         //_capSpeed(22, 50);
-        if (!trampolined && yvelocity > (jumpforce + 10)) yvelocity = jumpforce + 10;
+        if (!trampolined && yvelocity > (jumpForce + 10)) yvelocity = jumpForce + 10;
         jumpwindow = 0;
         bounce = bounceBase;
     }
@@ -873,7 +877,7 @@ public void _jump(){
 public void _normalJump(){
 	boingCharge = false;
 	_drawMoveNote("boing");
-	yvelocity = jumpforce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 7) * .5F;
+	yvelocity = jumpForce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 7) * .5F;
 	squishReverb[0] = yvelocity * .035F;
 	preBoingTimer.Stop();
 	hasJumped = 2;
@@ -883,10 +887,11 @@ public void _normalJump(){
 public void _dash(){
 if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
         if (leewayCast.IsColliding() && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
-            yvelocity = jumpforce * .5F;
+            yvelocity = jumpForce * .5F;
             _drawMoveNote("dash");
             dashTimer.Stop();
-            dashTimer.Start(.5F);
+            dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
+            GD.Print(dashTimer.TimeLeft);
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -932,7 +937,7 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
     }
     launched = true;
     yvelocity = power;
-    hasJumped = yvelocity >= (bounceBase * jumpforce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
+    hasJumped = yvelocity >= (bounceBase * jumpForce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
     _squishNScale((gravity * .017F), new Vector3(0,0,0), true);
     squishSet = false;
     squishReverb[0] = yvelocity * .08F;
@@ -983,7 +988,7 @@ public override void _Input(InputEvent @event){
         else Engine.TimeScale = 1;
         slowMo = !slowMo;
     }
-    else if (@event.IsActionPressed("debug_restart")) GetTree().ChangeScene("res://levels/hub.tscn");
+    else if (@event.IsActionPressed("debug_restart")) GetTree().ChangeScene((string)globals.Get("currentScene"));
     else if (@event.IsActionPressed("end_game")) GetTree().Quit();
     else if (@event.IsActionPressed("fullscreen")) OS.WindowFullscreen = !OS.WindowFullscreen;
     else if (@event.IsActionPressed("return_hub")) GetTree().ChangeScene("res://levels/hub.tscn");
@@ -1008,7 +1013,7 @@ public void _on_boingTimer_timeout(){
         squishReverb[0] = boing * .12F;
         squishReverb[2] = 1; //proc wall wiggle
     }
-    hasJumped = yvelocity >= (bounceBase * jumpforce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
+    hasJumped = yvelocity >= (bounceBase * jumpForce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
     boingDash = false;
     jumpwindow = 0;
     boing = 0;
@@ -1016,7 +1021,7 @@ public void _on_boingTimer_timeout(){
 }
 
 public void _on_preBoingTimer_timeout(){
-    boing = jumpforce;
+    boing = jumpForce;
     jumpwindow = 0;
     basejumpwindow = Mathf.Round(boing * 1.2F);
 }
@@ -1197,15 +1202,15 @@ public void _collisionDamage(Spatial collisionNode){
                 power = (damage / baseWeight) * .5F;
                 if (dashing || (sliding && boing != 0)){
                     if (notCrashing && vulnerableClass > 1){
-                        collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
+                        collisionNode.Call("_launch", collisionBaseScale * (10 + (speed * friction * .1F)), new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .3F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
                         doShake = false;
                     }
                     else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
-                        collisionNode.Call("_squish", power); //crashing
-                        power *= 1 + ((bounceBase + (baseWeight * .5F)) * .5F);
+                        collisionNode.Call("_squish", collisionBaseScale * ((baseWeight * 10) * .5F)); //crashing
+                        power *= 1.5F;
                         doShake = false;
                     }
                 }
@@ -1226,20 +1231,20 @@ public void _collisionDamage(Spatial collisionNode){
                 if (invincible) return;
                 vulnerableClass = (int)collisionNode.Get("vulnerableClass");
                 if (vulnerableClass == 0) return;
-                power = baseWeight * .5F * 25;
+                power = (15 / baseWeight) * .5F;
                 Timer springTimer = (Timer)collisionNode.Get("springTimer");
                 if (!springTimer.IsStopped()) power *= 2;
                 if (dashing || (sliding && boing != 0)){
                     if (notCrashing && vulnerableClass > 1){
-                        collisionNode.Call("_launch", power, new Vector3(direction_ground.x, 0, direction_ground.y));
+                        collisionNode.Call("_launch", collisionBaseScale * (10 + (speed * friction * .1F)), new Vector3(direction_ground.x, 0, direction_ground.y));
                         float weightPowerMod = 1 - (baseWeight * .5F);
                         if (weightPowerMod > 1) weightPowerMod = 1;
                         power *= weightPowerMod; //don't send me as far
                         doShake = false;
                     }
                     else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
-                        collisionNode.Call("_squish", power); //crashing
-                        power *= .5F + ((bounceBase + (baseWeight * .5F)) * .5F);
+                        collisionNode.Call("_squish", collisionBaseScale * ((baseWeight * 10) * .5F)); //crashing
+                        power *= 1.5F;
                         doShake = false;
                     }
                     dashTimer.Stop();
@@ -1355,6 +1360,7 @@ public void _setStat(int points, string stat){
         _setStat(0, "speed");
         _setStat(0, "weight");
         _setStat(0, "size");
+        _setStat(0, "bounce");
         _setStat(0, "energy");
         return;
     }
@@ -1401,14 +1407,24 @@ public void _setStat(int points, string stat){
             sizePoints += points;
             sizePoints = Mathf.Clamp(sizePoints, 0, 30);
             collisionBaseScale = .6F + sizePoints * .0133F;
+            // collisionBaseScale = .6F + sizePoints * .02F;
             collisionBaseScale = myMath.roundTo(collisionBaseScale, 100);
-            // collisionScales[0] = collisionBaseScale;
-            // collisionScales[1] = collisionBaseScale;
-            // collisionScales[2] = collisionBaseScale;
+            hitBoxShape.Scale = new Vector3(collisionBaseScale + .05F, collisionBaseScale + .05F, collisionBaseScale + .05F);
+            floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.033F * sizePoints), 100), 1);
+            floorCast.Translation = new Vector3(0, 1 + (sizePoints * .01F), 0);
             GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
+            // GD.Print("hitbox scale " + hitBoxShape.Scale.ToString());
+            // GD.Print("floorCast scale " + floorCast.Scale.ToString());
+            // GD.Print("floorCast translationY " + floorCast.Translation.y.ToString());
             break;
         case "bounce":
-
+            if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
+            bouncePoints += points;
+            bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
+            jumpForce = 12 + myMath.roundTo(bouncePoints * .2F, 10);
+            bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
+            GD.Print("jumpForce " + jumpForce.ToString());
+            GD.Print("bounceComboCap " + bounceComboCap.ToString());
             break;
         case "energy":
 
