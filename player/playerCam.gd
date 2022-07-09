@@ -35,7 +35,7 @@ func _ready():
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
 		if fixedCamLock: return
-		if (lockOn == null): _move_camera(event)
+		if (lockOn == null): pass#_move_camera(event)
 		elif event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
 		elif event.is_action_pressed("pan_left"): _directionalLockOn("L", true)
 	elif (event.is_action_pressed("lock_on")): _findLockOn(lockOn)
@@ -221,7 +221,8 @@ func _findLockOn(lockOnMode) -> void:
 	var distance = 9999
 	var angDist = .5
 	var checkDistance
-	var distFloor = 17
+	var distFloor = 16
+	var distFloorBase = distFloor
 	var moveAng = Vector2(player.moveDir[1] * -1, player.moveDir[0]).rotated(player.ang).angle()
 	var lastRot = player.rotation.y
 	for enemy in areas:
@@ -238,7 +239,7 @@ func _findLockOn(lockOnMode) -> void:
 			distance = checkDistance
 			lockOn = enemy
 			if checkDistance < distFloor: distFloor = checkDistance #trigger adjacent target priority
-		elif distFloor == 15: #if haven't triggered close target yet
+		elif distFloor == distFloorBase: #if haven't triggered close target yet
 			player.look_at(Vector3(eLocation.x,eLocation.y,eLocation.z),Vector3.UP)
 			var enemyAngDist = findDegreeDistance(lastRot, player.rotation.y)
 			if enemyAngDist < angDist:

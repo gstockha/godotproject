@@ -49,7 +49,7 @@ int traction = 0;
 float[] tractionList = new float[31];
 static float baseWeight = 1.2F;
 float weight = baseWeight;
-int bp = 0;
+int bp, bpUnspent, bpSpent = 0;
 float dashSpeed = 20;
 float boing = 0;
 bool boingCharge = false;
@@ -79,6 +79,7 @@ Dictionary<string, string> controlNames = new Dictionary<string, string>(){
 #endregion
 
 #region onready variables (init in _Ready())
+Dictionary<string, ProgressBar> statLabels;
 float collisionBaseScale = .6F;
 float[] collisionScales;
 Timer boingTimer;
@@ -89,7 +90,7 @@ Timer deathtimer;
 Timer invincibleTimer;
 MeshInstance mesh;
 MeshInstance shadow;
-Spatial collisionShape;
+CollisionShape collisionShape;
 CollisionShape hitBoxShape;
 RayCast floorCast;
 RayCast leewayCast;
@@ -101,7 +102,7 @@ Label moveNote;
 Label tipNote;
 Label speedrunNote;
 Label prNote;
-Label bpNote;
+Label bpNote, bpSpendNote, bpSpendAlert;
 Spatial lockOn = null;
 Node globals;
 
@@ -119,7 +120,7 @@ public override void _Ready(){
     hitBoxShape = GetNode<CollisionShape>("hitBox/CollisionShape");
     mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
     shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
-    collisionShape = GetNode<Spatial>("CollisionShape");
+    collisionShape = GetNode<CollisionShape>("CollisionShape");
     floorCast = GetNode<RayCast>("floorCast");
     leewayCast = GetNode<RayCast>("leewayCast");
     trampolineCast = GetNode<RayCast>("trampolineCast");
@@ -128,14 +129,25 @@ public override void _Ready(){
     camera = GetNode<Camera>("Position3D/playerCam");
     moveNote = GetNode<Label>("../../moveNote");
     tipNote = GetNode<Label>("../../tipNote");
+    bpNote = GetNode<Label>("bpNote");
+    bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
+    bpSpendAlert = GetNode<Label>("bpSpendAlert");
     if (Owner.Name == "demoWorld"){
         speedrunNote = GetNode<Label>("../../speedrunNote");
         prNote = GetNode<Label>("../../prNote");
     }
     else if (Owner.Name == "pyramidWorld"){
-        bpNote = GetNode<Label>("bpNote");
-        bpNote.Text = "0 BP";
+        bpNote.Visible = true;
+        bpNote.Text = "0 / 160 BP";
     }
+    statLabels = new Dictionary<string, ProgressBar>(){
+        {"weight", GetNode<ProgressBar>("statUI/gravityBar")},
+        {"traction", GetNode<ProgressBar>("statUI/tractionBar")},
+        {"bounce", GetNode<ProgressBar>("statUI/bounceBar")},
+        {"size", GetNode<ProgressBar>("statUI/girthBar")},
+        {"speed", GetNode<ProgressBar>("statUI/speedBar")},
+        {"energy", GetNode<ProgressBar>("statUI/energyBar")}
+    };
     #endregion
 
     #region initialize data structures
@@ -150,7 +162,7 @@ public override void _Ready(){
         x += 1.66F;
     }
     //control dictionary
-    string[] controllerStr = new string[7];
+    string[] controllerStr = new string[8];
     if (Input.IsJoyKnown(0) == false){ //keyboard mouse
         controllerStr[0] = "WASD or Arrow Keys";
         controllerStr[1] = "Space";
@@ -159,21 +171,29 @@ public override void _Ready(){
         controllerStr[4] = "R";
         controllerStr[5] = "T";
         controllerStr[6] = "Tab";
+        controllerStr[7] = "Alt";
     }
     else{ //controller
         controllerStr[0] = "Left Joystick";
         controllerStr[3] = "L & R or Right Joystick";
         controllerStr[4] = "Start";
         controllerStr[6] = "Joystick";
+        controllerStr[7] = "Y";
         if (Input.GetJoyName(0).BeginsWith("x") || Input.GetJoyName(0).BeginsWith("X")){ //xbox
             controllerStr[1] = "the A Button";
             controllerStr[2] = "the X Button";
             controllerStr[5] = "Back";
         }
+        else if (Input.GetJoyName(0).BeginsWith("d") || Input.GetJoyName(0).BeginsWith("D")){ //dualshock
+            controllerStr[7] = "Triangle";
+            controllerStr[1] = "Cross Button";
+            controllerStr[2] = "Square Button";
+            controllerStr[5] = "Select";
+        }
         else{ //other controller
             controllerStr[1] = "Bottom Face Button";
             controllerStr[2] = "Left Face Button";
-            controllerStr[5] = "Back";
+            controllerStr[5] = "Select";
         }
     }
     controlNames["roll"] = controllerStr[0];
@@ -183,6 +203,7 @@ public override void _Ready(){
     controlNames["restart"] = controllerStr[4];
     controlNames["speedrun"] = controllerStr[5];
     controlNames["target"] = controllerStr[6];
+    bpSpendAlert.Text = "Hold " + controllerStr[7] + " to spend points!";
     #endregion
     //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,45,collisionShape.RotationDegrees.z);
     ang = (-1 * Rotation.y);
@@ -246,7 +267,7 @@ public void _controller(float delta){
     }
     else{
         if (moving && (Mathf.Sign(wallbx) != Mathf.Sign(direction_ground.x) || Mathf.Sign(wallby) != Mathf.Sign(direction_ground.y))){ //wallb air control
-            wallFriction += .01F * delta * (((traction + 50) * .25F) + 40);
+            wallFriction += .01F * delta * (((traction + 50) * .33F) + 40);
             if (wallFriction > .9F) wallFriction = .9F;
         }
         if (wallFriction != 0) MoveAndSlide(new Vector3(direction_ground.x*(speed*wallFriction),0,direction_ground.y*(speed*wallFriction)),Vector3.Up,true);
@@ -278,7 +299,7 @@ public void _applyFriction(float delta, float camDrag){
             if (!float.IsNaN(stickDir[i])) signdir = Math.Sign(stickDir[i]);
             else signdir = Math.Sign(moveDir[i]);
             if (signdir != 0 && Math.Sign(moveDir[i]) != signdir){
-                dir[i,current] += (tractionList[traction] * signdir * (1 - (traction * .016F))) * delta;
+                dir[i,current] += (tractionList[traction] * signdir) * delta;
             }
         }
     }
@@ -288,7 +309,7 @@ public void _applyFriction(float delta, float camDrag){
             if (Math.Abs(moveDir[i]) > .015F){ //slowly reduce speed (friction)
                 moveDir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
-                dir[i,current] -= (tractionList[traction] * .025F * signdir) * delta;
+                dir[i,current] -= (tractionList[traction] * .03F * signdir) * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
                     dir[i,current] = 0;
                 }
@@ -673,26 +694,25 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
     new Vector3(Mathf.Lerp(collisionShape.Scale.x, collisionScales[0], rate),
     Mathf.Lerp(collisionShape.Scale.y, collisionScales[1], rate),
     Mathf.Lerp(collisionShape.Scale.z, collisionScales[2], rate));
-    // Vector3 translations = mesh.Translation;
-    // if (IsOnFloor() && shiftedDir == 0){ //crush the ball into the floor
-    //     if (translations.y > 0) mesh.Translation = new Vector3(translations.x, 0, translations.z);
-    //     Vector3 collisionscales = collisionShape.Scale;
-    //     if (collisionscales.y < collisionBaseScale){
-    //         float meshTarg = 0 - ((collisionBaseScale * collisionBaseScale * 12) *
-    //         (collisionBaseScale - collisionscales.y) / collisionBaseScale);
-    //         meshTarg *= ((basejumpwindow*.5F)/jumpForce < 1) ? ((basejumpwindow*.5F)/jumpForce) : 1;
-    //         translations = mesh.Translation;
-    //         if (meshTarg < translations.y) mesh.Translation = new Vector3(translations.x,meshTarg,translations.z);
-    //     }
-    // }
-    // else if (translations.y != 0){ //undo the crush effect
-    //     if (translations.y < -.5F) mesh.Translation = new Vector3(translations.x, -.5F, translations.z);
-    //     else if (translations.y < 0){
-    //         float newY = translations.y + (delta * Math.Abs(yvelocity));
-    //         mesh.Translation = new Vector3(translations.x, newY, translations.z);
-    //     }
-    //     else mesh.Translation = new Vector3(translations.x, 0, translations.z);
-    // }
+    Vector3 translations = mesh.Translation;
+    if (IsOnFloor() && shiftedDir == 0){ //crush the ball into the floor
+        if (translations.y > 0) mesh.Translation = new Vector3(translations.x, 0, translations.z);
+        Vector3 collisionscales = collisionShape.Scale;
+        if (collisionscales.y < collisionBaseScale){
+            float meshTarg = 0 - (4.32F * (collisionBaseScale - collisionscales.y) / collisionBaseScale);
+            meshTarg *= ((basejumpwindow*.5F)/jumpForce < 1) ? ((basejumpwindow*.5F)/jumpForce) : 1;
+            translations = mesh.Translation;
+            if (meshTarg < translations.y) mesh.Translation = new Vector3(translations.x,meshTarg,translations.z);
+        }
+    }
+    else if (translations.y != 0){ //undo the crush effect
+        if (translations.y < -.5F) mesh.Translation = new Vector3(translations.x, -.5F, translations.z);
+        else if (translations.y < 0){
+            float newY = translations.y + (delta * Math.Abs(yvelocity));
+            mesh.Translation = new Vector3(translations.x, newY, translations.z);
+        }
+        else mesh.Translation = new Vector3(translations.x, 0, translations.z);
+    }
     if (!IsOnFloor() && (!wallb || !IsOnWall())){ //airborne
         if (collisionShape.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
         && collisionShape.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
@@ -1147,12 +1167,11 @@ public void _on_hitBox_area_entered(Area area){
                     case "part3Tip": str = "Take your time..."; break;
                     case "part4Tip": str = "Try dashing into the wall and\ncharge a Wallboing off of it!"; break;
                     case "endTip": str = "That's all for now. Good job!\nTravel down to restart in speedrun mode!"; break;
-                    case "targetingTip": str = "Push " + controlNames["target"] + " to lock on and off!\n" +
+                    case "targetingTip": str = "Push " + controlNames["target"] + " to lock on enemies!\n" +
                     controlNames["camera"] + " to change target"; break;
                     case "welcomeTip": str = "Welcome to the\nBoing Boing Bros prototype!"; break;
-                    case "tutorialTip": str = "Enter the portal to do the\nAdvanced movement trial!"; break;
-                    case "pyramidTip": str ="Enter the tube to check out the\nPyramid zone prototype!"; break;
-                    case "hubTip": str = "Press H to return to this Hub"; break;
+                    case "tutorialTip": str = "Enter the tube above to do the\nAdvanced movement trial!"; break;
+                    case "pyramidTip": str ="This way to the new Pyramid Zone!\nPress H to return here at anytime"; break;
                 }
                 if (str != "") _drawTip(str);
                 break;
@@ -1177,8 +1196,21 @@ public void _on_hitBox_area_entered(Area area){
                 bufferTimer.Start(1);
                 break;
             case "boingPoints":
-                bp += (area.Name.BeginsWith("5")) ? 5 : 1;
-                bpNote.Text = bp.ToString() + " BP";
+                int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
+                bp += newBp;
+                bpNote.Text = bp.ToString() + " / 160 BP";
+                int oldUnspent = bpUnspent;
+                int totalBp = bpSpent + bpUnspent;
+                while(newBp > 0 && totalBp != 90){
+                    bpUnspent ++;
+                    newBp --;
+                    totalBp = bpSpent + bpUnspent;
+                }
+                if (oldUnspent != bpUnspent){
+                    bpSpendNote.Text = bpUnspent.ToString() + " points to spend";
+                    bpSpendAlert.Visible = true;
+                }
+                else bpSpendNote.Text = "max points allocated";
                 area.QueueFree();
                 if (bp >= 160) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
                 break;
@@ -1369,32 +1401,35 @@ public void _setStat(int points, string stat){
     }
     switch (stat){
         case "traction":
-            if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
+            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
             traction += points;
             traction = Mathf.Clamp(traction, 0, 30);
-            GD.Print("traction " + traction.ToString());
+            // GD.Print("traction " + traction.ToString());
+            statLabels[stat].Value = traction;
             break;
         case "speed":
-            if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
+            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
             speedPoints += points;
             speedPoints = Mathf.Clamp(speedPoints, 0, 30);
             bool setSpd = speed == speedBase;
             speedBase = 13 + myMath.roundTo(speedPoints * .18F, 10);
             if (setSpd) speed = speedBase;
-            GD.Print("speed " + speedBase.ToString());
+            // GD.Print("speed " + speedBase.ToString());
+            statLabels[stat].Value = speedPoints;
             break;
         case "weight":
-            if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
+            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
             weightPoints += points;
             weightPoints = Mathf.Clamp(weightPoints, 0, 30);
             bool setWeight = weight == baseWeight;
             baseWeight = 1.2F + myMath.roundTo(weightPoints * .04F, 100);
             if (setWeight) weight = baseWeight;
-            GD.Print("weight " + baseWeight.ToString());
+            // GD.Print("weight " + baseWeight.ToString());
             dashSpeed = 20 + (.1F * weightPoints);
+            statLabels[stat].Value = weightPoints;
             break;
         case "size":
-            if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
+            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
             sizePoints += points;
             sizePoints = Mathf.Clamp(sizePoints, 0, 30);
             collisionBaseScale = .6F + sizePoints * .0133F;
@@ -1403,19 +1438,21 @@ public void _setStat(int points, string stat){
             hitBoxShape.Scale = new Vector3(collisionBaseScale + .05F, collisionBaseScale + .05F, collisionBaseScale + .05F);
             floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.033F * sizePoints), 100), 1);
             floorCast.Translation = new Vector3(0, 1 + (sizePoints * .01F), 0);
-            shadowCast.Set("shadowScale", collisionBaseScale);
-            GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
+            statLabels[stat].Value = sizePoints;
+            // shadowCast.Set("shadowScale", collisionBaseScale);
+            // GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
             // GD.Print("hitbox scale " + hitBoxShape.Scale.ToString());
             // GD.Print("floorCast scale " + floorCast.Scale.ToString());
             // GD.Print("floorCast translationY " + floorCast.Translation.y.ToString());
             break;
         case "bounce":
-            if (Mathf.Abs(points) == 99) points = 5 * Mathf.Sign(points);
+            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
             bouncePoints += points;
             bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
             jumpForce = 11.5F + myMath.roundTo(bouncePoints * .23F, 10);
             bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
-            GD.Print("jumpForce " + jumpForce.ToString());
+            statLabels[stat].Value = bouncePoints;
+            // GD.Print("jumpForce " + jumpForce.ToString());
             // GD.Print("bounceComboCap " + bounceComboCap.ToString());
             break;
         case "energy":

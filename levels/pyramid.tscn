@@ -26,13 +26,6 @@
 [ext_resource path="res://items/bp.tscn" type="PackedScene" id=27]
 [ext_resource path="res://items/5bp.tscn" type="PackedScene" id=28]
 
-[sub_resource type="DynamicFont" id=53]
-size = 36
-outline_size = 1
-outline_color = Color( 0, 0, 0, 1 )
-use_filter = true
-font_data = ExtResource( 14 )
-
 [sub_resource type="GDScript" id=78]
 script/source = "extends Spatial
 
@@ -295,6 +288,13 @@ albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
 [sub_resource type="BoxShape" id=82]
 
+[sub_resource type="DynamicFont" id=53]
+size = 36
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 14 )
+
 [sub_resource type="GDScript" id=83]
 script/source = "extends Label
 onready var textTimer = $Timer
@@ -342,22 +342,6 @@ shadow_bias = 0.35
 spot_range = 15.0
 spot_angle = 35.0
 spot_angle_attenuation = 0.5
-
-[node name="bpNote" type="Label" parent="playerNode/PlayerBall"]
-anchor_left = 0.041
-anchor_top = 0.953
-anchor_right = 0.041
-anchor_bottom = 0.953
-margin_left = -0.480003
-margin_top = -53.0248
-margin_right = 139.52
-margin_bottom = -0.0247803
-custom_fonts/font = SubResource( 53 )
-text = "0 BP"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="checkpoints" type="Spatial" parent="."]
 
@@ -550,7 +534,7 @@ angMod = 0.5
 [node name="Spinner2" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -14.1749, -8, 22.8057 )
 angMod = 0.5
-dirMod = -1
+dirMod = -1.0
 
 [node name="Spinner3" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 7, -8, 47.834 )
@@ -559,7 +543,7 @@ angMod = 0.5
 [node name="Spinner4" parent="Enemies/beamFloor" instance=ExtResource( 17 )]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -9.90557, -8, -43.9657 )
 angMod = 0.5
-dirMod = -1
+dirMod = -1.0
 
 [node name="Cannon" parent="Enemies/beamFloor" instance=ExtResource( 20 )]
 transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -41.0494, 15.35, 12.5008 )
@@ -2358,14 +2342,6 @@ transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -1.00087, 36.845, -70.68
 
 [node name="bp13" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.297, 9.8288, -74.7438 )
-
-[node name="Killbox" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
-transform = Transform( 0.4, 0, 0, 0, 1, 0, 0, 0, 2, -0.840698, 14.9464, -19.905 )
-gravity = 0.0
-
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox"]
-transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
-shape = SubResource( 80 )
 
 [node name="Killbox2" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
 transform = Transform( 0.5, 0, 0, 0, 0.866025, -0.35, 0, 0.5, 0.606218, -0.840698, 19.4464, -54.009 )

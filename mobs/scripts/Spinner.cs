@@ -8,7 +8,7 @@ int damage = 23;
 float speed = 9.7F;
 float ang = 0;
 [Export] float angMod = 1;
-[Export] int dirMod = 1;
+[Export] float dirMod = 1;
 
 int vulnerableClass = 1; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 enum states{
@@ -37,18 +37,17 @@ public override void _Ready(){
     squishSet[1] = mesh.Scale.y * .7F;
     squishSet[2] = mesh.Scale.z * 1.3F;
     spawnPoint = GlobalTransform.origin;
-    speed *= dirMod;
     SetPhysicsProcess(false);
 }
 
 public override void _PhysicsProcess(float delta){
     if (state == states.spin){
-        Vector2 spinVel = new Vector2(speed, speed).Rotated(ang*angMod);
+        Vector2 spinVel = new Vector2(speed, speed).Rotated(ang*angMod*dirMod);
         velocity = new Vector3(spinVel.x, 0, spinVel.y);
         MoveAndSlide(new Vector3(velocity.x, 0, velocity.z), Vector3.Up);
         ang = Mathf.LerpAngle(ang, ang + .01F, 3);
         //mesh.Rotation = new Vector3(mesh.Rotation.x, mesh.Rotation.y + (.15F * rotDir), mesh.Rotation.z);
-        mesh.RotateY(Rotation.y - .15F);
+        mesh.RotateY(Rotation.y - (.15F * dirMod));
     }
     else if (state == states.squished){
         mesh.Scale = new Vector3(Mathf.Lerp(mesh.Scale.x, squishSet[0], .2F),Mathf.Lerp(mesh.Scale.y, squishSet[1], .2F),Mathf.Lerp(mesh.Scale.x, squishSet[2], .2F));
@@ -99,7 +98,7 @@ public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
     if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "spinner", spawnPoint, new float[] {angMod, (float)dirMod});
+    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "spinner", spawnPoint, new float[] {angMod, dirMod});
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }
 

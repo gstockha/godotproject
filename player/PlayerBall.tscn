@@ -1,17 +1,161 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://player/playerCam.gd" type="Script" id=1]
 [ext_resource path="res://assets/ballSkin.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://player/basicPlayer.cs" type="Script" id=3]
 [ext_resource path="res://player/shadowCast.gd" type="Script" id=4]
+[ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://menus/scripts/statUI.gd" type="Script" id=6]
 
-[sub_resource type="BoxShape" id=19]
+[sub_resource type="SphereShape" id=19]
 
 [sub_resource type="SphereMesh" id=17]
 
 [sub_resource type="SphereShape" id=3]
 
 [sub_resource type="BoxShape" id=18]
+
+[sub_resource type="DynamicFont" id=35]
+size = 36
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_filter = true
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=34]
+size = 25
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 5 )
+
+[sub_resource type="StyleBoxFlat" id=20]
+bg_color = Color( 0.384314, 1, 0.368627, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.105882, 0.203922, 0.101961, 0.784314 )
+border_blend = true
+shadow_color = Color( 0.356863, 1, 0.337255, 0.156863 )
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=21]
+bg_color = Color( 0.235294, 0.470588, 0.227451, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.105882, 0.203922, 0.101961, 0.784314 )
+border_blend = true
+
+[sub_resource type="DynamicFont" id=22]
+font_data = ExtResource( 5 )
+
+[sub_resource type="StyleBoxFlat" id=25]
+bg_color = Color( 0.180392, 0.996078, 0.882353, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.0666667, 0.211765, 0.192157, 0.784314 )
+border_blend = true
+shadow_color = Color( 0.00784314, 0.972549, 0.835294, 0.156863 )
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=26]
+bg_color = Color( 0.156863, 0.443137, 0.4, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.0666667, 0.211765, 0.192157, 0.784314 )
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id=29]
+bg_color = Color( 0.909804, 0.290196, 0.980392, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.156863, 0.0313726, 0.145098, 0.784314 )
+border_blend = true
+shadow_color = Color( 0.972549, 0.00784314, 0.87451, 0.156863 )
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=30]
+bg_color = Color( 0.443137, 0.196078, 0.423529, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.156863, 0.0313726, 0.145098, 0.784314 )
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id=27]
+bg_color = Color( 1, 0.219608, 0.27451, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.141176, 0.0352941, 0.054902, 0.784314 )
+border_blend = true
+shadow_color = Color( 0.972549, 0.00784314, 0.188235, 0.156863 )
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=28]
+bg_color = Color( 0.482353, 0.164706, 0.227451, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.141176, 0.0352941, 0.054902, 0.784314 )
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id=23]
+bg_color = Color( 1, 0.635294, 0.12549, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.152941, 0.109804, 0.0509804, 0.784314 )
+border_blend = true
+shadow_color = Color( 1, 0.588235, 0, 0.156863 )
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=24]
+bg_color = Color( 0.501961, 0.372549, 0.192157, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.152941, 0.109804, 0.0509804, 0.784314 )
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id=31]
+bg_color = Color( 0.909804, 1, 0.290196, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.160784, 0.180392, 0.0392157, 0.784314 )
+border_blend = true
+shadow_color = Color( 0.909804, 1, 0.290196, 0.156863 )
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=32]
+bg_color = Color( 0.384314, 0.419608, 0.156863, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.160784, 0.180392, 0.0392157, 0.784314 )
+border_blend = true
+
+[sub_resource type="DynamicFont" id=33]
+size = 20
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 5 )
 
 [node name="PlayerBall" type="KinematicBody" groups=["players"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 76.523, 43.104, -147.733 )
@@ -89,6 +233,15 @@ shape = SubResource( 3 )
 
 [node name="deathTimer" type="Timer" parent="hitBox"]
 
+[node name="lockOnScanner" type="Area" parent="."]
+collision_layer = 6
+collision_mask = 0
+monitorable = false
+
+[node name="scanBody" type="CollisionShape" parent="lockOnScanner"]
+transform = Transform( 25, 0, 0, 0, 5.75, 0, 0, 0, 25, 0, 1.9, -9 )
+shape = SubResource( 18 )
+
 [node name="DashTimer" type="Timer" parent="."]
 process_mode = 0
 one_shot = true
@@ -107,14 +260,300 @@ one_shot = true
 [node name="invincibleTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="lockOnScanner" type="Area" parent="."]
-collision_layer = 6
-collision_mask = 0
-monitorable = false
+[node name="bpNote" type="Label" parent="."]
+anchor_left = 0.974
+anchor_top = 0.921
+anchor_right = 0.974
+anchor_bottom = 0.921
+margin_left = -352.72
+margin_top = -22.1201
+margin_right = 0.279907
+margin_bottom = 52.8799
+custom_fonts/font = SubResource( 35 )
+text = "0 / 160 BP"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="scanBody" type="CollisionShape" parent="lockOnScanner"]
-transform = Transform( 25, 0, 0, 0, 5.75, 0, 0, 0, 25, 0, 1.9, -8 )
-shape = SubResource( 18 )
+[node name="bpSpendAlert" type="Label" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.941176 )
+margin_left = 22.0
+margin_top = 658.622
+margin_right = 353.0
+margin_bottom = 714.622
+custom_fonts/font = SubResource( 34 )
+text = "Hold Y to spend points!"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="statUI" type="Control" parent="."]
+visible = false
+anchor_left = 0.018
+anchor_top = 0.798
+anchor_right = 0.203
+anchor_bottom = 0.982
+margin_left = -23.04
+margin_top = 145.44
+margin_right = -259.84
+margin_bottom = 12.96
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="gravityBar" type="ProgressBar" parent="statUI"]
+anchor_left = 0.03
+anchor_top = 0.814
+anchor_right = 0.03
+anchor_bottom = 0.814
+margin_left = 22.4179
+margin_top = -145.08
+margin_right = 259.418
+margin_bottom = -127.08
+custom_styles/fg = SubResource( 20 )
+custom_styles/bg = SubResource( 21 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="statUI/gravityBar"]
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.5
+margin_top = -10.5
+margin_right = 25.5
+margin_bottom = 10.5
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 2
+custom_fonts/font = SubResource( 22 )
+text = "Gravity"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="tractionBar" type="ProgressBar" parent="statUI"]
+anchor_left = 0.03
+anchor_top = 0.871
+anchor_right = 0.03
+anchor_bottom = 0.871
+margin_left = 22.4179
+margin_top = -122.58
+margin_right = 259.418
+margin_bottom = -104.58
+custom_styles/fg = SubResource( 25 )
+custom_styles/bg = SubResource( 26 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="statUI/tractionBar"]
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.5
+margin_top = -10.5
+margin_right = 25.5
+margin_bottom = 10.5
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 2
+custom_fonts/font = SubResource( 22 )
+text = "Traction"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bounceBar" type="ProgressBar" parent="statUI"]
+anchor_left = 0.03
+anchor_top = 0.901
+anchor_right = 0.03
+anchor_bottom = 0.901
+margin_left = 22.4179
+margin_top = -101.08
+margin_right = 259.418
+margin_bottom = -83.08
+custom_styles/fg = SubResource( 29 )
+custom_styles/bg = SubResource( 30 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="statUI/bounceBar"]
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.5
+margin_top = -10.5
+margin_right = 25.5
+margin_bottom = 10.5
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 2
+custom_fonts/font = SubResource( 22 )
+text = "Bounce"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="girthBar" type="ProgressBar" parent="statUI"]
+anchor_left = 0.03
+anchor_top = 0.901
+anchor_right = 0.03
+anchor_bottom = 0.901
+margin_left = 22.4179
+margin_top = -79.3781
+margin_right = 259.418
+margin_bottom = -61.3781
+custom_styles/fg = SubResource( 27 )
+custom_styles/bg = SubResource( 28 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="statUI/girthBar"]
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.5
+margin_top = -10.5
+margin_right = 25.5
+margin_bottom = 10.5
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 2
+custom_fonts/font = SubResource( 22 )
+text = "Girth"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="speedBar" type="ProgressBar" parent="statUI"]
+anchor_left = 0.03
+anchor_top = 0.841
+anchor_right = 0.03
+anchor_bottom = 0.841
+margin_left = 22.4179
+margin_top = -56.58
+margin_right = 259.418
+margin_bottom = -38.58
+custom_styles/fg = SubResource( 23 )
+custom_styles/bg = SubResource( 24 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="statUI/speedBar"]
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.5
+margin_top = -10.5
+margin_right = 25.5
+margin_bottom = 10.5
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 2
+custom_fonts/font = SubResource( 22 )
+text = "Speed
+"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="energyBar" type="ProgressBar" parent="statUI"]
+modulate = Color( 1, 1, 1, 0.588235 )
+anchor_left = 0.03
+anchor_top = 0.901
+anchor_right = 0.03
+anchor_bottom = 0.901
+margin_left = 22.4179
+margin_top = -34.58
+margin_right = 259.418
+margin_bottom = -16.58
+custom_styles/fg = SubResource( 31 )
+custom_styles/bg = SubResource( 32 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="statUI/energyBar"]
+modulate = Color( 1, 1, 1, 0.941176 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -25.5
+margin_top = -10.5
+margin_right = 25.5
+margin_bottom = 10.5
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 2
+custom_fonts/font = SubResource( 22 )
+text = "Energy"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bpSpendNote" type="Label" parent="statUI"]
+margin_left = 22.0
+margin_top = -188.0
+margin_right = 259.0
+margin_bottom = -132.0
+custom_fonts/font = SubResource( 33 )
+text = "0  points to spend"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="timeout" from="Position3D/playerCam/bufferTimer" to="Position3D/playerCam" method="_on_bufferTimer_timeout"]
 [connection signal="area_entered" from="hitBox" to="." method="_on_hitBox_area_entered"]
