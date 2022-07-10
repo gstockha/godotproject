@@ -138,7 +138,7 @@ public override void _Ready(){
     }
     else if (Owner.Name == "pyramidWorld"){
         bpNote.Visible = true;
-        bpNote.Text = "0 / 160 BP";
+        bpNote.Text = "0 / " + globals.Get("bpTotal") + " BP";
     }
     statLabels = new Dictionary<string, ProgressBar>(){
         {"weight", GetNode<ProgressBar>("statUI/gravityBar")},
@@ -171,21 +171,18 @@ public override void _Ready(){
         controllerStr[4] = "R";
         controllerStr[5] = "T";
         controllerStr[6] = "Tab";
-        controllerStr[7] = "Alt";
     }
     else{ //controller
         controllerStr[0] = "Left Joystick";
         controllerStr[3] = "L & R or Right Joystick";
         controllerStr[4] = "Start";
         controllerStr[6] = "Joystick";
-        controllerStr[7] = "Y";
         if (Input.GetJoyName(0).BeginsWith("x") || Input.GetJoyName(0).BeginsWith("X")){ //xbox
             controllerStr[1] = "the A Button";
             controllerStr[2] = "the X Button";
             controllerStr[5] = "Back";
         }
         else if (Input.GetJoyName(0).BeginsWith("d") || Input.GetJoyName(0).BeginsWith("D")){ //dualshock
-            controllerStr[7] = "Triangle";
             controllerStr[1] = "Cross Button";
             controllerStr[2] = "Square Button";
             controllerStr[5] = "Select";
@@ -203,7 +200,6 @@ public override void _Ready(){
     controlNames["restart"] = controllerStr[4];
     controlNames["speedrun"] = controllerStr[5];
     controlNames["target"] = controllerStr[6];
-    bpSpendAlert.Text = "Hold " + controllerStr[7] + " to spend points!";
     #endregion
     //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,45,collisionShape.RotationDegrees.z);
     ang = (-1 * Rotation.y);
@@ -244,6 +240,10 @@ public void _controller(float delta){
         stickDir[1] = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
         if (Mathf.Abs(stickDir[0]) > Mathf.Abs(stickDir[1])) stickDir[0] = Mathf.Round(stickDir[0]);
         else stickDir[1] = Mathf.Round(stickDir[1]);
+    }
+    else{
+        stickDir[0] = 0;
+        stickDir[1] = 0;
     }
     moving = (stickDir[0] != 0 || stickDir[1] != 0);
     _applyFriction(delta, 1);
@@ -1011,10 +1011,16 @@ public override void _Input(InputEvent @event){
         else Engine.TimeScale = 1;
         slowMo = !slowMo;
     }
-    else if (@event.IsActionPressed("debug_restart")) GetTree().ChangeScene((string)globals.Get("currentScene"));
+    else if (@event.IsActionPressed("debug_restart")){
+        _setStat(0, "reset");
+        GetTree().ChangeScene((string)globals.Get("currentScene"));
+    }
     else if (@event.IsActionPressed("end_game")) GetTree().Quit();
     else if (@event.IsActionPressed("fullscreen")) OS.WindowFullscreen = !OS.WindowFullscreen;
-    else if (@event.IsActionPressed("return_hub")) GetTree().ChangeScene("res://levels/hub.tscn");
+    else if (@event.IsActionPressed("return_hub")){
+        _setStat(0, "reset");
+        GetTree().ChangeScene("res://levels/hub.tscn");
+    }
 }
 
 public void _on_DashTimer_timeout(){
@@ -1198,19 +1204,18 @@ public void _on_hitBox_area_entered(Area area){
             case "boingPoints":
                 int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
                 bp += newBp;
-                bpNote.Text = bp.ToString() + " / 160 BP";
+                bpNote.Text = bp.ToString() + " / " + globals.Get("bpTotal") + " BP";
                 int oldUnspent = bpUnspent;
                 int totalBp = bpSpent + bpUnspent;
-                while(newBp > 0 && totalBp != 90){
+                while(newBp > 0 && totalBp < 90){
                     bpUnspent ++;
                     newBp --;
                     totalBp = bpSpent + bpUnspent;
                 }
-                if (oldUnspent != bpUnspent){
+                if (bpUnspent > 0){
                     bpSpendNote.Text = bpUnspent.ToString() + " points to spend";
                     bpSpendAlert.Visible = true;
                 }
-                else bpSpendNote.Text = "max points allocated";
                 area.QueueFree();
                 if (bp >= 160) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
                 break;
@@ -1399,17 +1404,29 @@ public void _setStat(int points, string stat){
         _setStat(0, "energy");
         return;
     }
+    int oldPoints = 0;
+    bool hax = false;
+    bool overflow = false;
+    if (points == 5 && bpUnspent < 5) points = bpUnspent;
+    else if (Mathf.Abs(points) == 99){
+        points = 5 * Mathf.Sign(points);
+        hax = true;
+    }
     switch (stat){
         case "traction":
-            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
+            oldPoints = traction;
+            if (oldPoints == 30) return;
             traction += points;
+            overflow = traction > 30;
             traction = Mathf.Clamp(traction, 0, 30);
             // GD.Print("traction " + traction.ToString());
             statLabels[stat].Value = traction;
             break;
         case "speed":
-            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
+            oldPoints = speedPoints;
+            if (oldPoints == 30) return;
             speedPoints += points;
+            overflow = speedPoints > 30;
             speedPoints = Mathf.Clamp(speedPoints, 0, 30);
             bool setSpd = speed == speedBase;
             speedBase = 13 + myMath.roundTo(speedPoints * .18F, 10);
@@ -1418,8 +1435,10 @@ public void _setStat(int points, string stat){
             statLabels[stat].Value = speedPoints;
             break;
         case "weight":
-            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
+            oldPoints = weightPoints;
+            if (oldPoints == 30) return;
             weightPoints += points;
+            overflow = weightPoints > 30;
             weightPoints = Mathf.Clamp(weightPoints, 0, 30);
             bool setWeight = weight == baseWeight;
             baseWeight = 1.2F + myMath.roundTo(weightPoints * .04F, 100);
@@ -1429,8 +1448,10 @@ public void _setStat(int points, string stat){
             statLabels[stat].Value = weightPoints;
             break;
         case "size":
-            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
+            oldPoints = sizePoints;
+            if (oldPoints == 30) return;
             sizePoints += points;
+            overflow = sizePoints > 30;
             sizePoints = Mathf.Clamp(sizePoints, 0, 30);
             collisionBaseScale = .6F + sizePoints * .0133F;
             // collisionBaseScale = .6F + sizePoints * .02F;
@@ -1446,8 +1467,10 @@ public void _setStat(int points, string stat){
             // GD.Print("floorCast translationY " + floorCast.Translation.y.ToString());
             break;
         case "bounce":
-            if (Mathf.Abs(points) == 99) points = 1 * Mathf.Sign(points);
+            oldPoints = bouncePoints;
+            if (oldPoints == 30) return;
             bouncePoints += points;
+            overflow = bouncePoints > 30;
             bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
             jumpForce = 11.5F + myMath.roundTo(bouncePoints * .23F, 10);
             bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
@@ -1456,8 +1479,13 @@ public void _setStat(int points, string stat){
             // GD.Print("bounceComboCap " + bounceComboCap.ToString());
             break;
         case "energy":
-
+            
             break;
+    }
+    if (!hax){
+        if (overflow) points = 30 - oldPoints;
+        bpSpent += points;
+        bpUnspent -= points;
     }
 }
 

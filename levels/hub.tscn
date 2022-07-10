@@ -170,13 +170,13 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0 )
 visible = false
 
 [node name="jumpTip" parent="environment" instance=ExtResource( 11 )]
-transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, 12.8025, 3.609, -13.361 )
+transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, 9.6054, 3.609, -16.1464 )
 
 [node name="boingTip" parent="environment" instance=ExtResource( 11 )]
 transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, 17.7805, 3.609, -23.9253 )
 
 [node name="dashTip" parent="environment" instance=ExtResource( 11 )]
-transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, 22.7129, 3.609, -33.4226 )
+transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, -31.3059, 3.609, 22.2769 )
 
 [node name="pyramidTip" parent="environment" instance=ExtResource( 11 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 3.4, -22 )
