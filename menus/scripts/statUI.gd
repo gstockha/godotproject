@@ -22,14 +22,15 @@ func _ready():
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("allocate_stats"):
 		allocateMode = !allocateMode
-		player.idle = allocateMode
 		visible = allocateMode
 		if allocateMode:
+			player.idle = 2
 			bpUnspent = player.bpUnspent
 			bpSpent = player.bpSpent
 			targetBar.visible = bpSpent < 90 && bpUnspent > 0
 			spendNote.visible = bpUnspent > 0 || bpSpent >= 90
 			alertBar.visible = false
+		else: player.idle = 0
 	if (allocateMode == false): return
 	if event.is_action_pressed("ui_up"):
 		target = target - 1 if (target > 0) else 4
@@ -51,5 +52,5 @@ func _input(event: InputEvent) -> void:
 		if (bpSpent < 90): spendNote.text = str(bpUnspent) + ' points to spend'
 		else: spendNote.text = 'max points spent'
 
-func _process(delta) -> void:
-	if allocateMode: player.idle = true
+#func _process(delta) -> void:
+#	if allocateMode: player.idle = true
