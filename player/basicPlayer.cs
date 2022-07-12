@@ -102,7 +102,8 @@ Label moveNote;
 Label tipNote;
 Label speedrunNote;
 Label prNote;
-Label bpNote, bpSpendNote, bpSpendAlert;
+Label bpNote, bpSpendNote;
+Control statUI;
 Spatial lockOn = null;
 Node globals;
 
@@ -131,7 +132,7 @@ public override void _Ready(){
     tipNote = GetNode<Label>("../../tipNote");
     bpNote = GetNode<Label>("bpNote");
     bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
-    bpSpendAlert = GetNode<Label>("bpSpendAlert");
+    statUI = GetNode<Control>("statUI");
     if (Owner.Name == "demoWorld"){
         speedrunNote = GetNode<Label>("../../speedrunNote");
         prNote = GetNode<Label>("../../prNote");
@@ -1204,7 +1205,8 @@ public void _on_hitBox_area_entered(Area area){
             case "boingPoints":
                 int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
                 bp += newBp;
-                bpNote.Text = bp.ToString() + " / " + globals.Get("bpTotal") + " BP";
+                int bpTotal = (int)globals.Get("bpTotal");
+                bpNote.Text = bp.ToString() + " / " + bpTotal.ToString() + " BP";
                 int oldUnspent = bpUnspent;
                 int totalBp = bpSpent + bpUnspent;
                 while(newBp > 0 && totalBp < 90){
@@ -1212,12 +1214,18 @@ public void _on_hitBox_area_entered(Area area){
                     newBp --;
                     totalBp = bpSpent + bpUnspent;
                 }
-                if (bpUnspent > 0){
-                    bpSpendNote.Text = bpUnspent.ToString() + " points to spend";
-                    bpSpendAlert.Visible = true;
+                int addUnspent = 0;
+                if (bpSpent < 90){
+                    do{
+                        addUnspent += 1;
+                        statUI.Call("_check_PresetList", bpSpent + addUnspent, bpUnspent, bpSpent);
+                    } while (bpUnspent > 0 && (int)statUI.Get("bpPreset") > 0);
                 }
+                // if (bpUnspent > 0){
+                //     bpSpendNote.Text = bpUnspent.ToString() + " points to spend";
+                // }
                 area.QueueFree();
-                if (bp >= 160) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
+                if (bp >= bpTotal) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
                 break;
         }
     }
@@ -1407,7 +1415,9 @@ public void _setStat(int points, string stat){
     int oldPoints = 0;
     bool hax = false;
     bool overflow = false;
-    if (points == 5 && bpUnspent < 5) points = bpUnspent;
+    if (points == 5 && bpUnspent < 5){
+        points = bpUnspent;
+    }
     else if (Mathf.Abs(points) > 90){
         if (points == 99) points = 5 * Mathf.Sign(points);
         hax = true;

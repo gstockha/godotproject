@@ -3,21 +3,31 @@ var allocateMode = false
 onready var player = get_node("..")
 var barMap = {0: "weight", 1: "traction", 2: "bounce", 3: "size", 4: "speed", 5: "energy"}
 onready var barNodes = [$gravityBar, $tractionBar, $bounceBar, $girthBar, $speedBar, $energyBar]
+onready var preSpendNodes = [$gravityBar/preSpendBar, $tractionBar/preSpendBar, $bounceBar/preSpendBar,
+$girthBar/preSpendBar, $speedBar/preSpendBar, $energyBar/preSpendBar]
 onready var targetBar = $targetBar
 onready var spendNote = $bpSpendNote
+onready var targetInputNote = $targetBar/inputNote
 onready var alertBar = get_node('../bpSpendAlert')
 var target = 0
 var bpUnspent = 0
 var bpSpent = 0
+var buttonName = "Alt"
+var bpPreset = 0
+var unPresetList = []
+var targetInput = 'D :  + 1    E :  + 5'
+var targetInputAlt = targetInput + '    Q :  clear preset'
 
 func _ready():
-	var buttonName = "Alt"
+	for i in range(90): unPresetList.append(null)
 	if Input.is_joy_known(0):
-		$targetBar/inputNote.text = "R direction :  + 1    R trigger :  + 5"
+		targetInput = "R direction :  + 1    R trigger :  + 5"
+		targetInputAlt = targetInput + '    L trigger :  clear preset'
 		var name = Input.get_joy_name(0).to_lower()
-		buttonName = "triangle" if name.begins_with("d") else "Y"
+		buttonName = "Triangle" if name.begins_with("d") else "Y"
 	alertBar.text = "Press " + buttonName + " to spend points!";
 	$exitNote.text = "Press  " + buttonName + " to close"
+	targetInputNote.text = targetInput
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("allocate_stats"):
@@ -27,30 +37,88 @@ func _input(event: InputEvent) -> void:
 			player.idle = 2
 			bpUnspent = player.bpUnspent
 			bpSpent = player.bpSpent
-			targetBar.visible = bpSpent < 90 && bpUnspent > 0
-			spendNote.visible = bpUnspent > 0 || bpSpent >= 90
+			targetBar.visible = bpSpent < 90# && bpUnspent > 0
 			alertBar.visible = false
+			targetInputNote.text = targetInput if preSpendNodes[target].value < 1 else targetInputAlt
 		else: player.idle = 0
 	if (allocateMode == false): return
-	if event.is_action_pressed("ui_up"):
-		target = target - 1 if (target > 0) else 4
-		targetBar.rect_position.x = barNodes[target].rect_position.x - 3.418
-		targetBar.rect_position.y = barNodes[target].rect_position.y - 2.92
-	elif event.is_action_pressed("ui_down"):
-		target = target + 1 if (target < 4) else 0
-		targetBar.rect_position.x = barNodes[target].rect_position.x - 3.418
-		targetBar.rect_position.y = barNodes[target].rect_position.y - 2.92
+	if event.is_action_pressed("ui_up") || event.is_action_pressed("ui_down"):
+		if event.is_action_pressed("ui_up"): target = target - 1 if (target > 0) else 4
+		elif event.is_action_pressed("ui_down"): target = target + 1 if (target < 4) else 0
+		targetBar.rect_position.x = barNodes[target].rect_position.x - 1.418
+		targetBar.rect_position.y = barNodes[target].rect_position.y - 1.92
+		targetInputNote.text = targetInput if preSpendNodes[target].value < 1 else targetInputAlt
 	elif event.is_action_pressed("ui_right") || event.is_action_pressed("pan_right"):
 		if bpSpent >= 90: return
-		var points = 1 if (event.is_action_pressed("move_right")) else 5
-		if (bpUnspent > 0): player._setStat(points, barMap[target])
-		else: player._setStat(0, barMap[target])
+		var points = 1 if (event.is_action_pressed("ui_right")) else 5
+		var oldbpSpent = bpSpent
+		if bpUnspent > 0: player._setStat(points, barMap[target])
+		elif bpPreset + bpSpent < 90: _add_Preset(points)
+		else: return
 		bpUnspent = player.bpUnspent
 		bpSpent = player.bpSpent
-		targetBar.visible = bpSpent < 90 && bpUnspent > 0
-		spendNote.visible = bpUnspent > 0 || bpSpent >= 90
-		if (bpSpent < 90): spendNote.text = str(bpUnspent) + ' points to spend'
+		if bpSpent != oldbpSpent && bpSpent - oldbpSpent < points:
+			_add_Preset(points - (bpSpent - oldbpSpent))
+		targetBar.visible = bpSpent < 90# && bpUnspent > 0
+		if (bpSpent < 90):
+			if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
+			else: spendNote.text = str(bpPreset) + ' /' + str(90 - bpSpent) + '  preset'
 		else: spendNote.text = 'max points spent'
+	elif event.is_action_pressed("pan_left"): _clear_PresetList(target)
 
-#func _process(delta) -> void:
-#	if allocateMode: player.idle = true
+func _add_Preset(points) -> void:
+	while points > 0:
+		if preSpendNodes[target].value >= 30 || barNodes[target].value >= 30: break
+		bpPreset += 1
+		unPresetList[bpPreset + bpSpent - 1] = target
+		var diff = preSpendNodes[target].value - barNodes[target].value
+		if diff < 0: diff = 0
+		preSpendNodes[target].value = barNodes[target].value + diff + 1
+		points -= 1
+	targetInputNote.text = targetInputAlt
+
+func _check_PresetList(index, unspent, bpsent) -> void:
+	var targetIndex = unPresetList[index-1]
+	bpUnspent = unspent
+	bpSpent = bpsent
+	if targetIndex == null || bpPreset < 1 || bpSpent >= 90 || index < 1 || index > 90: bpPreset = 0
+	else:
+		player._setStat(1, barMap[targetIndex])
+		unPresetList[index-1] = null
+		bpPreset -= 1
+		bpUnspent = player.bpUnspent
+		bpSpent = player.bpSpent
+	if (bpPreset < 1 || bpUnspent < 1):
+		alertBar.visible = !allocateMode && bpUnspent > 0
+		targetBar.visible = bpSpent < 90
+		if (bpSpent < 90):
+			if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
+			else: spendNote.text = str(bpPreset) + ' /' + str(90 - bpSpent) + '  preset'
+		else: spendNote.text = 'max points spent'
+		if targetIndex != null && barNodes[targetIndex].value >= preSpendNodes[targetIndex].value:
+			preSpendNodes[targetIndex].value = 0
+
+func _clear_PresetList(target) -> void:
+	if bpPreset < 1: return
+	bpPreset = 0
+	if target == null: #clear all
+		unPresetList = []
+		for i in range(90): unPresetList.append(null)
+		for bar in preSpendNodes: bar.value = 0
+	else: #clear selected
+		var newList = []
+		var val
+		for i in range(90):
+			val = unPresetList[i]
+			if val == null || val == target: newList.append(null)
+			else:
+				newList.append(val)
+				bpPreset += 1
+		unPresetList = newList
+		preSpendNodes[target].value = 0
+	targetInputNote.text = targetInput
+	if (bpSpent < 90):
+		if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
+		else: spendNote.text = str(bpPreset) + ' /' + str(90 - bpSpent) + '  preset'
+	else: spendNote.text = 'max points spent'
+

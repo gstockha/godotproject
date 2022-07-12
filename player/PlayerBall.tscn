@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://player/playerCam.gd" type="Script" id=1]
 [ext_resource path="res://assets/ballSkin.obj" type="ArrayMesh" id=2]
@@ -36,8 +36,11 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.105882, 0.203922, 0.101961, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color( 0.356863, 1, 0.337255, 0.235294 )
-shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id=21]
 bg_color = Color( 0.164706, 0.341176, 0.160784, 0.588235 )
@@ -47,6 +50,26 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.105882, 0.203922, 0.101961, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=38]
+bg_color = Color( 0.384314, 1, 0.368627, 0.470588 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.105882, 0.203922, 0.101961, 0.784314 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color( 0.356863, 1, 0.337255, 0.235294 )
+
+[sub_resource type="StyleBoxEmpty" id=39]
 
 [sub_resource type="DynamicFont" id=22]
 font_data = ExtResource( 5 )
@@ -59,8 +82,11 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.0666667, 0.211765, 0.192157, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color( 0.00784314, 0.972549, 0.835294, 0.235294 )
-shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id=26]
 bg_color = Color( 0.121569, 0.341176, 0.305882, 0.588235 )
@@ -70,8 +96,28 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.0666667, 0.211765, 0.192157, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id=29]
+[sub_resource type="StyleBoxFlat" id=40]
+bg_color = Color( 0.180392, 0.996078, 0.882353, 0.470588 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.0666667, 0.211765, 0.192157, 0.784314 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color( 0.00784314, 0.972549, 0.835294, 0.235294 )
+
+[sub_resource type="StyleBoxEmpty" id=41]
+
+[sub_resource type="StyleBoxFlat" id=46]
 bg_color = Color( 0.909804, 0.290196, 0.980392, 1 )
 border_width_left = 2
 border_width_top = 2
@@ -79,10 +125,13 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.156863, 0.0313726, 0.145098, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color( 0.972549, 0.00784314, 0.87451, 0.235294 )
-shadow_size = 5
 
-[sub_resource type="StyleBoxFlat" id=30]
+[sub_resource type="StyleBoxFlat" id=47]
 bg_color = Color( 0.356863, 0.188235, 0.341176, 0.588235 )
 border_width_left = 2
 border_width_top = 2
@@ -90,8 +139,28 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.156863, 0.0313726, 0.145098, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id=27]
+[sub_resource type="StyleBoxFlat" id=29]
+bg_color = Color( 0.909804, 0.290196, 0.980392, 0.470588 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.156863, 0.0313726, 0.145098, 0.784314 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color( 0.972549, 0.00784314, 0.87451, 0.235294 )
+
+[sub_resource type="StyleBoxEmpty" id=42]
+
+[sub_resource type="StyleBoxFlat" id=48]
 bg_color = Color( 1, 0.219608, 0.27451, 1 )
 border_width_left = 2
 border_width_top = 2
@@ -99,10 +168,13 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.141176, 0.0352941, 0.054902, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color( 0.972549, 0.00784314, 0.188235, 0.235294 )
-shadow_size = 5
 
-[sub_resource type="StyleBoxFlat" id=28]
+[sub_resource type="StyleBoxFlat" id=49]
 bg_color = Color( 0.388235, 0.152941, 0.196078, 0.588235 )
 border_width_left = 2
 border_width_top = 2
@@ -110,8 +182,28 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.141176, 0.0352941, 0.054902, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id=23]
+[sub_resource type="StyleBoxFlat" id=27]
+bg_color = Color( 1, 0.219608, 0.27451, 0.470588 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.141176, 0.0352941, 0.054902, 0.784314 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color( 0.972549, 0.00784314, 0.188235, 0.235294 )
+
+[sub_resource type="StyleBoxEmpty" id=43]
+
+[sub_resource type="StyleBoxFlat" id=50]
 bg_color = Color( 1, 0.635294, 0.12549, 1 )
 border_width_left = 2
 border_width_top = 2
@@ -119,10 +211,13 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.152941, 0.109804, 0.0509804, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color( 1, 0.588235, 0, 0.235294 )
-shadow_size = 5
 
-[sub_resource type="StyleBoxFlat" id=24]
+[sub_resource type="StyleBoxFlat" id=51]
 bg_color = Color( 0.396078, 0.301961, 0.164706, 0.588235 )
 border_width_left = 2
 border_width_top = 2
@@ -130,8 +225,28 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.152941, 0.109804, 0.0509804, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id=31]
+[sub_resource type="StyleBoxFlat" id=23]
+bg_color = Color( 1, 0.635294, 0.12549, 0.470588 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.152941, 0.109804, 0.0509804, 0.784314 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color( 1, 0.588235, 0, 0.235294 )
+
+[sub_resource type="StyleBoxEmpty" id=44]
+
+[sub_resource type="StyleBoxFlat" id=52]
 bg_color = Color( 0.909804, 1, 0.290196, 1 )
 border_width_left = 2
 border_width_top = 2
@@ -139,10 +254,13 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.160784, 0.180392, 0.0392157, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color( 0.909804, 1, 0.290196, 0.235294 )
-shadow_size = 5
 
-[sub_resource type="StyleBoxFlat" id=32]
+[sub_resource type="StyleBoxFlat" id=53]
 bg_color = Color( 0.313726, 0.341176, 0.145098, 0.588235 )
 border_width_left = 2
 border_width_top = 2
@@ -150,6 +268,26 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 0.160784, 0.180392, 0.0392157, 0.784314 )
 border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=31]
+bg_color = Color( 0.909804, 1, 0.290196, 0.470588 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.160784, 0.180392, 0.0392157, 0.784314 )
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color( 0.909804, 1, 0.290196, 0.235294 )
+
+[sub_resource type="StyleBoxEmpty" id=45]
 
 [sub_resource type="StyleBoxFlat" id=36]
 bg_color = Color( 1, 0.996078, 0.858824, 0.235294 )
@@ -158,6 +296,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 1, 0.988235, 0.780392, 0.882353 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="DynamicFont" id=37]
 outline_size = 1
@@ -165,6 +307,11 @@ outline_color = Color( 0, 0, 0, 1 )
 font_data = ExtResource( 5 )
 
 [sub_resource type="DynamicFont" id=33]
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=54]
 outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
 font_data = ExtResource( 5 )
@@ -337,6 +484,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="preSpendBar" type="ProgressBar" parent="statUI/gravityBar"]
+margin_right = 237.0
+margin_bottom = 18.0
+custom_styles/fg = SubResource( 38 )
+custom_styles/bg = SubResource( 39 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Label" type="Label" parent="statUI/gravityBar"]
 modulate = Color( 1, 1, 1, 0.941176 )
 anchor_left = 0.5
@@ -376,6 +536,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="preSpendBar" type="ProgressBar" parent="statUI/tractionBar"]
+anchor_left = 0.03
+anchor_top = 0.871
+anchor_right = 0.03
+anchor_bottom = 0.871
+margin_left = -7.11
+margin_top = -15.678
+margin_right = 229.89
+margin_bottom = 2.322
+custom_styles/fg = SubResource( 40 )
+custom_styles/bg = SubResource( 41 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Label" type="Label" parent="statUI/tractionBar"]
 modulate = Color( 1, 1, 1, 0.941176 )
 anchor_left = 0.5
@@ -405,8 +584,27 @@ margin_left = 22.4179
 margin_top = -101.08
 margin_right = 259.418
 margin_bottom = -83.08
+custom_styles/fg = SubResource( 46 )
+custom_styles/bg = SubResource( 47 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="preSpendBar" type="ProgressBar" parent="statUI/bounceBar"]
+anchor_left = 0.03
+anchor_top = 0.901
+anchor_right = 0.03
+anchor_bottom = 0.901
+margin_left = -7.11
+margin_top = -16.218
+margin_right = 229.89
+margin_bottom = 1.782
 custom_styles/fg = SubResource( 29 )
-custom_styles/bg = SubResource( 30 )
+custom_styles/bg = SubResource( 42 )
 max_value = 30.0
 step = 1.0
 rounded = true
@@ -444,8 +642,27 @@ margin_left = 22.4179
 margin_top = -79.3781
 margin_right = 259.418
 margin_bottom = -61.3781
+custom_styles/fg = SubResource( 48 )
+custom_styles/bg = SubResource( 49 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="preSpendBar" type="ProgressBar" parent="statUI/girthBar"]
+anchor_left = 0.03
+anchor_top = 0.901
+anchor_right = 0.03
+anchor_bottom = 0.901
+margin_left = -7.11
+margin_top = -16.218
+margin_right = 229.89
+margin_bottom = 1.782
 custom_styles/fg = SubResource( 27 )
-custom_styles/bg = SubResource( 28 )
+custom_styles/bg = SubResource( 43 )
 max_value = 30.0
 step = 1.0
 rounded = true
@@ -483,8 +700,27 @@ margin_left = 22.4179
 margin_top = -56.58
 margin_right = 259.418
 margin_bottom = -38.58
+custom_styles/fg = SubResource( 50 )
+custom_styles/bg = SubResource( 51 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="preSpendBar" type="ProgressBar" parent="statUI/speedBar"]
+anchor_left = 0.03
+anchor_top = 0.841
+anchor_right = 0.03
+anchor_bottom = 0.841
+margin_left = -7.11
+margin_top = -15.138
+margin_right = 229.89
+margin_bottom = 2.862
 custom_styles/fg = SubResource( 23 )
-custom_styles/bg = SubResource( 24 )
+custom_styles/bg = SubResource( 44 )
 max_value = 30.0
 step = 1.0
 rounded = true
@@ -524,8 +760,28 @@ margin_left = 22.4179
 margin_top = -34.58
 margin_right = 259.418
 margin_bottom = -16.58
+custom_styles/fg = SubResource( 52 )
+custom_styles/bg = SubResource( 53 )
+max_value = 30.0
+step = 1.0
+rounded = true
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="preSpendBar" type="ProgressBar" parent="statUI/energyBar"]
+modulate = Color( 1, 1, 1, 0.588235 )
+anchor_left = 0.03
+anchor_top = 0.901
+anchor_right = 0.03
+anchor_bottom = 0.901
+margin_left = -7.11
+margin_top = -16.218
+margin_right = 229.89
+margin_bottom = 1.782
 custom_styles/fg = SubResource( 31 )
-custom_styles/bg = SubResource( 32 )
+custom_styles/bg = SubResource( 45 )
 max_value = 30.0
 step = 1.0
 rounded = true
@@ -557,10 +813,10 @@ __meta__ = {
 [node name="targetBar" type="ProgressBar" parent="statUI"]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = 19.0
-margin_top = -148.0
-margin_right = 262.0
-margin_bottom = -125.0
+margin_left = 21.0
+margin_top = -147.0
+margin_right = 260.0
+margin_bottom = -126.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_styles/bg = SubResource( 36 )
@@ -570,9 +826,9 @@ __meta__ = {
 }
 
 [node name="inputNote" type="Label" parent="statUI/targetBar"]
-margin_left = 251.995
+margin_left = 245.995
 margin_top = -0.325806
-margin_right = 329.995
+margin_right = 323.995
 margin_bottom = 22.6742
 custom_fonts/font = SubResource( 37 )
 text = "D :  + 1    E :  + 5"
@@ -587,7 +843,7 @@ margin_top = -169.326
 margin_right = 263.335
 margin_bottom = -148.326
 custom_fonts/font = SubResource( 33 )
-text = "0 points to spend"
+text = "0 / 90 preset"
 align = 2
 valign = 1
 __meta__ = {
@@ -599,8 +855,8 @@ margin_left = 19.0
 margin_top = -171.326
 margin_right = 184.0
 margin_bottom = -146.326
-custom_fonts/font = SubResource( 33 )
-text = "Press y to close"
+custom_fonts/font = SubResource( 54 )
+text = "Press alt to close"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
