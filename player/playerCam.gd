@@ -1,6 +1,6 @@
 extends Camera
 onready var player = get_node("../../")
-onready var mesh = get_node('../../CollisionShape/BallSkin')
+onready var mesh = get_node('../../skinBody/BallSkin')
 onready var lockScanner = get_node('../../lockOnScanner')
 onready var setDelay = get_node("setDelay") #so camsets wont change angle if we've set it manually via panning
 onready var bufferTimer = get_node("bufferTimer") #for camset node

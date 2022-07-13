@@ -322,18 +322,22 @@ collision_layer = 2
 collision_mask = 3
 script = ExtResource( 3 )
 
-[node name="CollisionShape" type="CollisionShape" parent="."]
+[node name="skinBody" type="Spatial" parent="."]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0 )
-shape = SubResource( 19 )
 
-[node name="BallSkin" type="MeshInstance" parent="CollisionShape"]
+[node name="BallSkin" type="MeshInstance" parent="skinBody"]
 transform = Transform( 0.21, 0, 0, 0, 0.21, 0, 0, 0, 0.21, 0, 0, 0 )
 layers = 4
 cast_shadow = 0
 generate_lightmap = false
 mesh = ExtResource( 2 )
+skeleton = NodePath("../../CollisionShape")
 material/0 = null
 material/1 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0 )
+shape = SubResource( 19 )
 
 [node name="Position3D" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0, 0 )

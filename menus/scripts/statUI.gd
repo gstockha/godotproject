@@ -16,13 +16,13 @@ var buttonName = "Alt"
 var bpPreset = 0
 var unPresetList = []
 var targetInput = 'D :  + 1    E :  + 5'
-var targetInputAlt = targetInput + '    Q :  clear preset'
+var targetInputAlt = targetInput + '    A :  clear preset'
 
 func _ready():
 	for i in range(90): unPresetList.append(null)
 	if Input.is_joy_known(0):
-		targetInput = "R direction :  + 1    R trigger :  + 5"
-		targetInputAlt = targetInput + '    L trigger :  clear preset'
+		targetInput = "-> :  + 1    R trigger :  + 5"
+		targetInputAlt = targetInput + '    <- :  clear preset'
 		var name = Input.get_joy_name(0).to_lower()
 		buttonName = "Triangle" if name.begins_with("d") else "Y"
 	alertBar.text = "Press " + buttonName + " to spend points!";
@@ -64,7 +64,7 @@ func _input(event: InputEvent) -> void:
 			if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
 			else: spendNote.text = str(bpPreset) + ' /' + str(90 - bpSpent) + '  preset'
 		else: spendNote.text = 'max points spent'
-	elif event.is_action_pressed("pan_left"): _clear_PresetList(target)
+	elif event.is_action_pressed("ui_left"): _clear_PresetList(target)
 
 func _add_Preset(points) -> void:
 	while points > 0:

@@ -1371,7 +1371,7 @@ material_override = SubResource( 34 )
 use_collision = true
 collision_mask = 0
 
-[node name="glassRoof" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["flats", "slides"]]
+[node name="glassRoof" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut" groups=["flats", "obstacles", "slides"]]
 transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 11.72, -37.242 )
 material_override = SubResource( 34 )
 use_collision = true
@@ -1380,7 +1380,7 @@ polygon = PoolVector2Array( -1.28, 3.517, 1.282, 3.498, 1.28, 0.923, 0.997, -0.0
 
 [node name="layerGround" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut"]
 
-[node name="glassLayer" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerGround" groups=["flats", "slides"]]
+[node name="glassLayer" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerGround" groups=["flats", "obstacles", "slides"]]
 transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 5.25, -36.9379 )
 material_override = SubResource( 34 )
 use_collision = true
@@ -1427,7 +1427,7 @@ collision_mask = 0
 
 [node name="layerMid" type="Spatial" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut"]
 
-[node name="glassLayer2" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerMid" groups=["flats", "slides"]]
+[node name="glassLayer2" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/lowerLevel/hut/layerMid" groups=["flats", "obstacles", "slides"]]
 transform = Transform( 15, 0, 0, 0, -1.96701e-07, 0.2, 0, -4.5, -8.74228e-09, -9.601, 9.057, -37.242 )
 material_override = SubResource( 34 )
 use_collision = true
@@ -1966,24 +1966,6 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -85.4501, 21.5819, 14.27
 
 [node name="5bp" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 28 )]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -68.943, 45.3382, -1.8246 )
-
-[node name="bp10" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -13.5812, 18.8598, -4.90297 )
-
-[node name="bp11" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -15.0334, 18.8598, -4.90297 )
-
-[node name="bp17" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -16.9082, 18.8598, -4.90297 )
-
-[node name="bp19" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -18.287, 18.8598, -4.90297 )
-
-[node name="bp20" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -19.797, 18.8598, -4.90297 )
-
-[node name="bp21" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -21.3942, 18.8598, -4.90297 )
 
 [node name="bottomSpawnZone" type="Spatial" parent="environment/Outside"]
 

@@ -90,8 +90,9 @@ Timer deathtimer;
 Timer invincibleTimer;
 MeshInstance mesh;
 MeshInstance shadow;
-CollisionShape collisionShape;
+Spatial skinBody;
 CollisionShape hitBoxShape;
+CollisionShape collisionShape;
 RayCast floorCast;
 RayCast leewayCast;
 RayCast trampolineCast;
@@ -118,10 +119,11 @@ public override void _Ready(){
     smushTimer = GetNode<Timer>("SmushTimer");
     invincibleTimer = GetNode<Timer>("invincibleTimer");
     deathtimer = GetNode<Timer>("hitBox/deathTimer");
-    hitBoxShape = GetNode<CollisionShape>("hitBox/CollisionShape");
-    mesh = GetNode<MeshInstance>("CollisionShape/BallSkin");
-    shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
     collisionShape = GetNode<CollisionShape>("CollisionShape");
+    hitBoxShape = GetNode<CollisionShape>("hitBox/CollisionShape");
+    mesh = GetNode<MeshInstance>("skinBody/BallSkin");
+    shadow = GetNode<MeshInstance>("shadowCast/shadowSkin");
+    skinBody = GetNode<Spatial>("skinBody");
     floorCast = GetNode<RayCast>("floorCast");
     leewayCast = GetNode<RayCast>("leewayCast");
     trampolineCast = GetNode<RayCast>("trampolineCast");
@@ -202,7 +204,7 @@ public override void _Ready(){
     controlNames["speedrun"] = controllerStr[5];
     controlNames["target"] = controllerStr[6];
     #endregion
-    //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,45,collisionShape.RotationDegrees.z);
+    //skinBody.RotationDegrees = new Vector3(skinBody.RotationDegrees.x,45,skinBody.RotationDegrees.z);
     ang = (-1 * Rotation.y);
     yvelocity = -1;
     Translation = new Vector3(Translation.x, Translation.y + 2, Translation.z);
@@ -217,10 +219,12 @@ public override void _PhysicsProcess(float delta){ //run physics
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
         else if (yvelocity > 0){ //ceiling bounce
+            Node colliderNode = (Node)GetSlideCollision(0).Collider;
+            if (colliderNode.IsInGroup("obstacles")) return;
             squishReverb[0] = yvelocity * .066F;
             float warpRate = squishReverb[0] * 1.25F;
             if (warpRate > .65F) warpRate = .65F;
-            collisionShape.Scale = new Vector3(collisionBaseScale*(1+warpRate),collisionBaseScale*(1-warpRate),collisionBaseScale*(1+warpRate));
+            skinBody.Scale = new Vector3(collisionBaseScale*(1+warpRate),collisionBaseScale*(1-warpRate),collisionBaseScale*(1+warpRate));
             collisionScales[0] = .9F;
             collisionScales[1] = .3F;
             collisionScales[2] = collisionScales[0];
@@ -466,9 +470,9 @@ public void _isRolling(float delta){
     else if (yvelocity < -1){ //falling (to bounce)
         if (yvelocity < 0 && yvelocity > -1) yvelocity = -1;
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
-        if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (jumpForce * baseWeight * .5F) || 
-        (yvelocity * bounce) * -1 > (jumpForce * 1.2F)) || idle == 1){
-        //if (boingCharge || (bounceDashing == 2 || launched) && yvelocity != -1){
+        // if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (jumpForce * baseWeight * .5F) || 
+        // (yvelocity * bounce) * -1 > (jumpForce * 1.2F)) || idle == 1){
+        if (boingCharge || idle == 1 || (bounceDashing == 2 || launched) && yvelocity != -1){
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
@@ -489,6 +493,13 @@ public void _isRolling(float delta){
             else if (shiftedDir != 0) yvelocity *= bounce * -1; //on a shift
         }
         else{ //dont bounce up
+            // float squish = boing /  22;
+            // if (squish > .9F) squish = .9F;
+            collisionScales[0] = collisionBaseScale * (1 + (.5F * .7F)); //x
+            collisionScales[1] = collisionBaseScale * (1 - (.5F * .7F)); //y
+            collisionScales[2] = collisionScales[0]; //z
+            squishReverb[0] = -yvelocity * .045F;
+            squishReverb[1] = squishReverb[0];
             yvelocity = -1;
             bounce = bounceBase;
             bounceCombo = 0;
@@ -609,7 +620,7 @@ public void _isBoinging(float delta){
                 boingTimer.Stop();
             }
         }
-        if (GetSlideCount() > 0 && collisionScales[0] != collisionShape.Scale.x){
+        if (GetSlideCount() > 0 && collisionScales[0] != skinBody.Scale.x){
             if (!wallb) _squishNScale(delta, floorCast.GetCollisionNormal(), false);
             else _squishNScale(delta, GetSlideCollision(0).Normal, false);
         }
@@ -621,7 +632,7 @@ public void _isBoinging(float delta){
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
-        //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+        //skinBody.RotationDegrees = new Vector3(skinBody.RotationDegrees.x,0,skinBody.RotationDegrees.z);
     }
 }
 
@@ -638,8 +649,8 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             collisionScales[2] = collisionScales[0]; //z
         }
         else if (Mathf.Round(squishNormal.y) == 0){ //on a wall
-            Vector3 rotation = collisionShape.RotationDegrees;
-            //collisionShape.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
+            Vector3 rotation = skinBody.RotationDegrees;
+            //skinBody.RotationDegrees = new Vector3(rotation.x,0,rotation.z);
             squish *= 1.5F;
             float add = collisionBaseScale * (1 + (squish * .7F));
             float sub = collisionBaseScale * (1 - (squish * .7F));
@@ -649,7 +660,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             float normz = Mathf.Round(squishNormal.z);
             bool flip = false;
             if (normx == 0 || normz == 0){ //45 degree flip
-                //collisionShape.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
+                //skinBody.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
                 flip = (Math.Sign(Math.Abs(normx)) == 1 && Math.Sign(Math.Abs(normz)) == 0);
             }
             else flip = (normx == 1 && normz == 1) || (normx == -1 && normz == -1);
@@ -675,7 +686,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         for (int i = 0; i < 3; i++){
             if (i == 0){
                 if (squishReverb[2] == 0){ //wall bounce proc is false
-                    if (collisionShape.Scale.x < collisionBaseScale) mod += squishReverb[0];
+                    if (skinBody.Scale.x < collisionBaseScale) mod += squishReverb[0];
                     else mod -= squishReverb[0];
                 }
                 else{ //if wallbounce, alter jiggle pattern
@@ -691,14 +702,15 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         squishReverb[1] = squishReverb[0];
         rate *= .9F; //make boing good
     }
-    collisionShape.Scale =
-    new Vector3(Mathf.Lerp(collisionShape.Scale.x, collisionScales[0], rate),
-    Mathf.Lerp(collisionShape.Scale.y, collisionScales[1], rate),
-    Mathf.Lerp(collisionShape.Scale.z, collisionScales[2], rate));
+    skinBody.Scale =
+    new Vector3(Mathf.Lerp(skinBody.Scale.x, collisionScales[0], rate),
+    Mathf.Lerp(skinBody.Scale.y, collisionScales[1], rate),
+    Mathf.Lerp(skinBody.Scale.z, collisionScales[2], rate));
     Vector3 translations = mesh.Translation;
-    if (IsOnFloor() && shiftedDir == 0){ //crush the ball into the floor
+    if (boing != 0 && IsOnFloor() && shiftedDir == 0){ //crush the ball into the floor
+    //if (IsOnFloor() && shiftedDir == 0){ //crush the ball into the floor
         if (translations.y > 0) mesh.Translation = new Vector3(translations.x, 0, translations.z);
-        Vector3 collisionscales = collisionShape.Scale;
+        Vector3 collisionscales = skinBody.Scale;
         if (collisionscales.y < collisionBaseScale){
             float meshTarg = 0 - (4.32F * (collisionBaseScale - collisionscales.y) / collisionBaseScale);
             meshTarg *= ((basejumpwindow*.5F)/jumpForce < 1) ? ((basejumpwindow*.5F)/jumpForce) : 1;
@@ -714,20 +726,26 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         }
         else mesh.Translation = new Vector3(translations.x, 0, translations.z);
     }
-    if (!IsOnFloor() && (!wallb || !IsOnWall())){ //airborne
-        if (collisionShape.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
-        && collisionShape.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
+    // if (!IsOnFloor() && (!wallb || !IsOnWall())){ //airborne
+    if (IsOnFloor() || (!wallb || !IsOnWall())){ //ground or airborne
+        if (skinBody.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
+        && skinBody.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
+            GD.Print(collisionScales[0]);
+            GD.Print(skinBody.Scale.x);
+            GD.Print(squishReverb[0]);
+            GD.Print(collisionScales[0] * (1 + squishReverb[0]));
+            GD.Print(collisionScales[0] * (1 - squishReverb[0]));
             squishReverb[0] -= .02F;
             if (squishReverb[0] < 0) squishReverb[0] = 0;
-            if (squishReverb[0] == 0) collisionShape.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
+            if (squishReverb[0] == 0) skinBody.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
         }
     }
     else if (basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1){
-        collisionScales[0] = collisionShape.Scale.x; //windowed
-        collisionScales[1] = collisionShape.Scale.y;
-        collisionScales[2] = collisionShape.Scale.z;
+        collisionScales[0] = skinBody.Scale.x; //windowed
+        collisionScales[1] = skinBody.Scale.y;
+        collisionScales[2] = skinBody.Scale.z;
     }
-    else if (jumpwindow == 0 && boing == 0 && (IsOnFloor() || yvelocity == -1)) collisionShape.Scale = new Vector3(collisionBaseScale,collisionBaseScale,collisionBaseScale);
+    else if (jumpwindow == 0 && boing == 0 && (IsOnFloor() || yvelocity == -1)) skinBody.Scale = new Vector3(collisionBaseScale,collisionBaseScale,collisionBaseScale);
 }
 
 public void _rotateMesh(float xvel, float yvel, float delta){
@@ -817,7 +835,7 @@ public void _jump(){
         squishSet = false;
         boing = 0;
         boingTimer.Stop();
-        //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+        //skinBody.RotationDegrees = new Vector3(skinBody.RotationDegrees.x,0,skinBody.RotationDegrees.z);
         bool slopeSquish = false;
         if (!trampolined && shiftedDir != 0){ //boing jump off a slope
             Vector3 wallbang = velocity.Bounce(floorCast.GetCollisionNormal());
@@ -1047,7 +1065,7 @@ public void _on_boingTimer_timeout(){
     boingDash = false;
     jumpwindow = 0;
     boing = 0;
-    //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+    //skinBody.RotationDegrees = new Vector3(skinBody.RotationDegrees.x,0,skinBody.RotationDegrees.z);
 }
 
 public void _on_preBoingTimer_timeout(){
@@ -1082,7 +1100,7 @@ public void _dieNRespawn(){
     _squishNScale(gravity * .017F, new Vector3(0,0,0), true);
     squishSet = false;
     boing = 0;
-    //collisionShape.RotationDegrees = new Vector3(collisionShape.RotationDegrees.x,0,collisionShape.RotationDegrees.z);
+    //skinBody.RotationDegrees = new Vector3(skinBody.RotationDegrees.x,0,skinBody.RotationDegrees.z);
     boingCharge = false;
     boingTimer.Stop();
     for (int i = 0; i < dirSize; i++){
@@ -1323,7 +1341,7 @@ public void _collisionDamage(Spatial collisionNode){
                     collisionScales[0] = 1.7F * collisionBaseScale;
                     collisionScales[1] = .4F * collisionBaseScale;
                     collisionScales[2] = collisionScales[0];
-                    collisionShape.Scale = new Vector3(collisionScales[0], collisionScales[1], collisionScales[2]);
+                    skinBody.Scale = new Vector3(collisionScales[0], collisionScales[1], collisionScales[2]);
                     mesh.Translation = new Vector3(mesh.Translation.x, -.05F, mesh.Translation.z);
                     smushTimer.Stop();
                     smushTimer.Start(damage);
@@ -1470,16 +1488,17 @@ public void _setStat(int points, string stat){
             float scaleRatio = (collisionBaseScale - .6F) / .6F;
             floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((1.9F * scaleRatio), 100), 1);
             floorCast.Translation = new Vector3(0, 1 + myMath.roundTo(scaleRatio * .9F, 100), 0);
+            collisionShape.Scale = new Vector3(collisionBaseScale, collisionBaseScale, collisionBaseScale);
             // float scaleRatio = myMath.roundTo((increase - .6F) / ((.6F + myMath.roundTo(sizePoints * (.015F + (30 * .000165F)), 100)) - .6F) * 30, 100);
             // floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.065F * scaleRatio), 100), 1);
             // floorCast.Translation = new Vector3(0, 1 + (scaleRatio * .032F), 0);
             // shadowCast.Set("shadowScale", collisionBaseScale);
             statLabels[stat].Value = sizePoints;
             // GD.Print(scaleRatio);
-            GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
-            GD.Print("hitbox scale " + hitBoxShape.Scale.ToString());
-            GD.Print("floorCast scale " + floorCast.Scale.ToString());
-            GD.Print("floorCast translationY " + floorCast.Translation.y.ToString());
+            // GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
+            // GD.Print("hitbox scale " + hitBoxShape.Scale.ToString());
+            // GD.Print("floorCast scale " + floorCast.Scale.ToString());
+            // GD.Print("floorCast translationY " + floorCast.Translation.y.ToString());
             break;
         case "bounce":
             oldPoints = bouncePoints;
