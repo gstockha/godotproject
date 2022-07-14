@@ -43,8 +43,8 @@ func _input(event: InputEvent) -> void:
 func _move_camera(evn) -> void:
 	turnRate = 8
 	player.angDelayFriction = true
-	var ones = 0
-	var fives = 0
+#	var ones = 0
+#	var fives = 0
 #	for bp in get_tree().get_nodes_in_group("boingPoints"):
 #		print(bp.name)
 #		if bp.name.begins_with("5"): fives += 1

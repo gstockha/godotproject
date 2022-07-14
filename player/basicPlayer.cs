@@ -219,8 +219,6 @@ public override void _PhysicsProcess(float delta){ //run physics
         else if (!IsOnCeiling() && !IsOnWall()) _isAirborne(delta);
         else if (IsOnWall()) _isWall(delta);
         else if (yvelocity > 0){ //ceiling bounce
-            Node colliderNode = (Node)GetSlideCollision(0).Collider;
-            if (colliderNode.IsInGroup("obstacles")) return;
             squishReverb[0] = yvelocity * .066F;
             float warpRate = squishReverb[0] * 1.25F;
             if (warpRate > .65F) warpRate = .65F;
@@ -493,13 +491,14 @@ public void _isRolling(float delta){
             else if (shiftedDir != 0) yvelocity *= bounce * -1; //on a shift
         }
         else{ //dont bounce up
-            // float squish = boing /  22;
-            // if (squish > .9F) squish = .9F;
-            collisionScales[0] = collisionBaseScale * (1 + (.5F * .7F)); //x
-            collisionScales[1] = collisionBaseScale * (1 - (.5F * .7F)); //y
-            collisionScales[2] = collisionScales[0]; //z
-            squishReverb[0] = -yvelocity * .045F;
-            squishReverb[1] = squishReverb[0];
+            if (yvelocity <= -10){
+                float squish = myMath.roundTo(-yvelocity * .025F, 100);
+                squishReverb[0] = Mathf.Clamp(squish, .25F, .7F);
+                if (squish > .5F) squish = .5F;
+                collisionScales[0] = collisionBaseScale * (1 - squish); //x
+                collisionScales[1] = collisionBaseScale * (1 + squish); //y
+                collisionScales[2] = collisionScales[0]; //z
+            }
             yvelocity = -1;
             bounce = bounceBase;
             bounceCombo = 0;
@@ -727,25 +726,33 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         else mesh.Translation = new Vector3(translations.x, 0, translations.z);
     }
     // if (!IsOnFloor() && (!wallb || !IsOnWall())){ //airborne
-    if (IsOnFloor() || (!wallb || !IsOnWall())){ //ground or airborne
-        if (skinBody.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
-        && skinBody.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
-            GD.Print(collisionScales[0]);
-            GD.Print(skinBody.Scale.x);
-            GD.Print(squishReverb[0]);
-            GD.Print(collisionScales[0] * (1 + squishReverb[0]));
-            GD.Print(collisionScales[0] * (1 - squishReverb[0]));
-            squishReverb[0] -= .02F;
-            if (squishReverb[0] < 0) squishReverb[0] = 0;
-            if (squishReverb[0] == 0) skinBody.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
+    if (boing == 0){
+        if (IsOnFloor() || yvelocity == -1){ //ground or airborne
+            if (skinBody.Scale.y > (collisionScales[1] * (1 - squishReverb[0]))
+            && skinBody.Scale.y < (collisionScales[1] * (1 + squishReverb[0]))){
+                squishReverb[0] -= .02F;
+                if (squishReverb[0] < 0) squishReverb[0] = 0;
+                if (squishReverb[0] == 0) skinBody.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
+            }
+        }
+        else if (!wallb || !IsOnWall()){ //ground or airborne
+            if (skinBody.Scale.x > (collisionScales[0] * (1 - squishReverb[0]))
+            && skinBody.Scale.x < (collisionScales[0] * (1 + squishReverb[0]))){
+                squishReverb[0] -= .02F;
+                if (squishReverb[0] < 0) squishReverb[0] = 0;
+                if (squishReverb[0] == 0) skinBody.Scale = new Vector3(collisionScales[0],collisionScales[1],collisionScales[2]);
+            }
         }
     }
-    else if (basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1){
-        collisionScales[0] = skinBody.Scale.x; //windowed
+    else if (basejumpwindow != 0 && jumpwindow/basejumpwindow >= 1){ //windowed
+        collisionScales[0] = skinBody.Scale.x;
         collisionScales[1] = skinBody.Scale.y;
         collisionScales[2] = skinBody.Scale.z;
     }
-    else if (jumpwindow == 0 && boing == 0 && (IsOnFloor() || yvelocity == -1)) skinBody.Scale = new Vector3(collisionBaseScale,collisionBaseScale,collisionBaseScale);
+    // else if (jumpwindow == 0 && boing == 0 && (IsOnFloor() || yvelocity == -1)){
+    //     skinBody.Scale = new Vector3(collisionBaseScale,collisionBaseScale,collisionBaseScale);
+    //     GD.Print("set");
+    // }
 }
 
 public void _rotateMesh(float xvel, float yvel, float delta){
@@ -1232,16 +1239,12 @@ public void _on_hitBox_area_entered(Area area){
                     newBp --;
                     totalBp = bpSpent + bpUnspent;
                 }
-                int addUnspent = 0;
                 if (bpSpent < 90){
                     do{
-                        addUnspent += 1;
-                        statUI.Call("_check_PresetList", bpSpent + addUnspent, bpUnspent, bpSpent);
+                        statUI.Call("_check_PresetList", bpSpent, bpUnspent);
                     } while (bpUnspent > 0 && (int)statUI.Get("bpPreset") > 0);
                 }
-                // if (bpUnspent > 0){
-                //     bpSpendNote.Text = bpUnspent.ToString() + " points to spend";
-                // }
+                // GD.Print("done");
                 area.QueueFree();
                 if (bp >= bpTotal) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
                 break;

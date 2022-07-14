@@ -364,12 +364,10 @@ enabled = true
 
 [node name="leewayCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0 )
-visible = false
 enabled = true
 
 [node name="trampolineCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0 )
-visible = false
 enabled = true
 collision_mask = 32
 collide_with_areas = true
@@ -377,7 +375,6 @@ collide_with_bodies = false
 
 [node name="shadowCast" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 15, 0, 0, 0, 1, 0, 0, 0 )
-visible = false
 enabled = true
 script = ExtResource( 4 )
 
@@ -847,7 +844,7 @@ margin_top = -169.326
 margin_right = 263.335
 margin_bottom = -148.326
 custom_fonts/font = SubResource( 33 )
-text = "0 / 90 preset"
+text = "0 / 90 set"
 align = 2
 valign = 1
 __meta__ = {

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://player/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=2]
@@ -14,6 +14,8 @@
 [ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=12]
 [ext_resource path="res://geography/misc/levelWarp.tscn" type="PackedScene" id=13]
 [ext_resource path="res://scripts/levelWarp.gd" type="Script" id=14]
+[ext_resource path="res://items/5bp.tscn" type="PackedScene" id=15]
+[ext_resource path="res://items/bp.tscn" type="PackedScene" id=16]
 
 [sub_resource type="CylinderShape" id=14]
 
@@ -178,9 +180,6 @@ transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, 1
 [node name="dashTip" parent="environment" instance=ExtResource( 11 )]
 transform = Transform( 0.933799, 0, -0.357798, 0, 1, 0, 0.357798, 0, 0.933799, -31.3059, 3.609, 22.2769 )
 
-[node name="pyramidTip" parent="environment" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 3.4, -22 )
-
 [node name="tipNote" type="Label" parent="."]
 anchor_top = 0.124
 anchor_right = 1.0
@@ -284,6 +283,135 @@ levelName = "demo"
 
 [node name="CollisionShape" type="CollisionShape" parent="levelWarp2"]
 shape = SubResource( 13 )
+
+[node name="bps" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 23.3239, -16.5101, -18.7698 )
+
+[node name="bp10" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -18.2315, 19.219, -0.652496 )
+
+[node name="bp11" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -19.6795, 19.219, -0.652496 )
+
+[node name="bp17" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -21.0814, 19.219, -0.652496 )
+
+[node name="bp19" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -22.5844, 19.219, -0.652496 )
+
+[node name="bp20" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.0081, 19.219, -0.652496 )
+
+[node name="bp21" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -25.6113, 19.219, -0.652496 )
+
+[node name="bp22" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -27.2356, 19.219, -0.652496 )
+
+[node name="bp23" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -28.9728, 19.219, -0.652496 )
+
+[node name="bp24" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -30.6984, 19.219, -0.652496 )
+
+[node name="bp25" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -32.6349, 19.219, -0.652496 )
+
+[node name="bp27" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -18.2315, 19.219, 1.3205 )
+
+[node name="bp28" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -19.6795, 19.219, 1.3205 )
+
+[node name="bp29" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -21.0814, 19.219, 1.3205 )
+
+[node name="bp30" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -22.5844, 19.219, 1.3205 )
+
+[node name="bp31" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.0081, 19.219, 1.3205 )
+
+[node name="bp32" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -25.6113, 19.219, 1.3205 )
+
+[node name="bp33" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -27.2356, 19.219, 1.3205 )
+
+[node name="bp34" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -28.9728, 19.219, 1.3205 )
+
+[node name="bp35" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -30.6984, 19.219, 1.3205 )
+
+[node name="bp36" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -32.6349, 19.219, 1.3205 )
+
+[node name="bp38" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -18.2315, 19.219, 3.13925 )
+
+[node name="bp39" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -19.6795, 19.219, 3.13925 )
+
+[node name="bp40" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -21.0814, 19.219, 3.13925 )
+
+[node name="bp41" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -22.5844, 19.219, 3.13925 )
+
+[node name="bp42" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.0081, 19.219, 3.13925 )
+
+[node name="bp43" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -25.6113, 19.219, 3.13925 )
+
+[node name="bp44" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -27.2356, 19.219, 3.13925 )
+
+[node name="bp45" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -28.9728, 19.219, 3.13925 )
+
+[node name="bp46" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -30.6984, 19.219, 3.13925 )
+
+[node name="bp47" parent="bps" instance=ExtResource( 16 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -32.6349, 19.219, 3.13925 )
+
+[node name="5bp2" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -29.1684, 19.0786, -8.3557 )
+
+[node name="5bp3" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -30.8574, 19.0786, -8.3557 )
+
+[node name="5bp5" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -32.7337, 19.0786, -8.3557 )
+
+[node name="5bp6" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -27.1868, 19.0786, -8.3557 )
+
+[node name="5bp7" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -24.8674, 19.0786, -8.3557 )
+
+[node name="5bp8" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -22.5832, 19.0786, -8.3557 )
+
+[node name="5bp9" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -29.1684, 19.0786, -5.77664 )
+
+[node name="5bp10" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -30.8574, 19.0786, -5.77664 )
+
+[node name="5bp12" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -32.7337, 19.0786, -5.77664 )
+
+[node name="5bp13" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -27.1868, 19.0786, -5.77664 )
+
+[node name="5bp14" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -24.8674, 19.0786, -5.77664 )
+
+[node name="5bp15" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -22.5832, 19.0786, -5.77664 )
 
 [connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
 [connection signal="area_entered" from="levelWarp2" to="levelWarp2" method="_on_levelWarp_area_entered"]
