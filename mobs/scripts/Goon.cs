@@ -123,6 +123,7 @@ public void _launch(float power, Vector3 cVec){
         lockable = false;
         target.Call("_lockOn", true, 0);
         deathTimer.Start(2.5F);
+        parent.Call("_dropBP", GlobalTransform.origin, .3);
     }
     else deathTimer.Start(4);
 }
@@ -134,6 +135,7 @@ public void _squish(float power){ //check power vs health and all that here?
     vulnerableClass = 0;
     lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .3);
 }
 
 
@@ -207,7 +209,6 @@ public void _on_DeathTimer_timeout(){
     QueueFree();
     if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "goon", spawnPoint);
-    //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
 }
 
 }

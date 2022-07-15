@@ -65,13 +65,14 @@ public override void _PhysicsProcess(float delta){
 
 public void _launch(float power, Vector3 cVec){
     state = states.launched;
-    if (power != 0) launchVec = new Vector3(cVec.x * power, 0, cVec.z * power);
+    if (power != 0) launchVec = new Vector3(cVec.x * power * 2F, 0, cVec.z * power * 2F);
     else launchVec = new Vector3(cVec.x, 0, cVec.z);
     yvelocity = power;
     deathTimer.Start(2);
     vulnerableClass = 0;
     lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .5);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
@@ -81,6 +82,7 @@ public void _squish(float power){ //check power vs health and all that here?
     lockable = false;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .5);
 }
 
 public void _on_ShootTimer_timeout(){

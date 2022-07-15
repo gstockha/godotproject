@@ -348,13 +348,16 @@ func _auto_move_camera(target: int, direction: String, neg: bool) -> void:
 	else:
 		lerpMove = true
 		shakeMove = false
-		if direction == "H":
+		if direction == "H" || direction == "HR":
 			if (target <= 3): target = 3 #some fuck shit
 			elif (target <= 6): target = 6
 			if neg: target *= -1
 			if (translation.y == baseY + target): return
 			targetY = baseY + target
-			targetRotX = baseRotX - target
+			if direction == "H": targetRotX = baseRotX - target
+			else:
+				var rot = 4 if target == 3 else 2
+				targetRotX = baseRotX - target * rot
 			heightMove = true
 		elif direction == "HA": #height angle hybrid (for ramps and stuff)
 			var htarg = 6

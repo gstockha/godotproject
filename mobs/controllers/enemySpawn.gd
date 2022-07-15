@@ -1,6 +1,7 @@
 extends Spatial
 
 onready var player = get_node("../../playerNode/PlayerBall")
+onready var bp = preload("res://items/bp.tscn")
 export var spawnTime = 60
 var enemyNodes = {}
 var enemyCount = {}
@@ -75,3 +76,9 @@ func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3, variables
 	spawnTimer.connect("timeout", self, "_spawnMob", [mobName, point, spawnTimer, variables])
 	spawnTimer.start(spawnTime)
 	enemyCount[mobName][0] -= 1
+
+func _dropBP(point: Vector3, chance: float) -> void:
+	if(randf() < chance):
+		var drop = bp.instance()
+		add_child(drop)
+		drop.global_transform.origin = point

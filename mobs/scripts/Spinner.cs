@@ -70,6 +70,7 @@ public void _launch(float power, Vector3 cVec){
     lockable = false;
     GetNode<CollisionShape>("CollisionShape").Disabled = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .75);
 }
 
 public void _squish(float power){
@@ -78,6 +79,7 @@ public void _squish(float power){
     vulnerableClass = 0;
     lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .75);
 }
 
 public void _on(){

@@ -127,6 +127,7 @@ public void _launch(float power, Vector3 cVec){
     vulnerableClass = 0;
     lockable = false;
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .3);
 }
 
 public void _squish(float power){ //check power vs health and all that here?
@@ -138,6 +139,7 @@ public void _squish(float power){ //check power vs health and all that here?
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     mesh.Scale = new Vector3(squishSet[0],squishSet[1],squishSet[2]);
     if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    parent.Call("_dropBP", GlobalTransform.origin, .3);
 }
 
 public void _on(){

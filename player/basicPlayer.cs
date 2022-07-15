@@ -135,14 +135,6 @@ public override void _Ready(){
     bpNote = GetNode<Label>("bpNote");
     bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
     statUI = GetNode<Control>("statUI");
-    if (Owner.Name == "demoWorld"){
-        speedrunNote = GetNode<Label>("../../speedrunNote");
-        prNote = GetNode<Label>("../../prNote");
-    }
-    else if (Owner.Name == "pyramidWorld"){
-        bpNote.Visible = true;
-        bpNote.Text = "0 / " + globals.Get("bpTotal") + " BP";
-    }
     statLabels = new Dictionary<string, ProgressBar>(){
         {"weight", GetNode<ProgressBar>("statUI/gravityBar")},
         {"traction", GetNode<ProgressBar>("statUI/tractionBar")},
@@ -151,6 +143,18 @@ public override void _Ready(){
         {"speed", GetNode<ProgressBar>("statUI/speedBar")},
         {"energy", GetNode<ProgressBar>("statUI/energyBar")}
     };
+    if (Owner.Name == "demoWorld"){
+        speedrunNote = GetNode<Label>("../../speedrunNote");
+        prNote = GetNode<Label>("../../prNote");
+        traction = 10;
+        speedPoints = 10;
+        _setStat(98, "traction");
+        _setStat(98, "speed");
+    }
+    else if (Owner.Name == "pyramidWorld"){
+        bpNote.Visible = true;
+        bpNote.Text = "0 / " + globals.Get("bpTotal") + " BP";
+    }
     #endregion
 
     #region initialize data structures
@@ -428,6 +432,7 @@ public void _isRolling(float delta){
     jumpwindow = 0;
 	wallb = false;
 	hasJumped = 0;
+    boingDash = false;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
             bounce = bounceBase;
@@ -470,12 +475,13 @@ public void _isRolling(float delta){
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
         // if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (jumpForce * baseWeight * .5F) || 
         // (yvelocity * bounce) * -1 > (jumpForce * 1.2F)) || idle == 1){
-        if (boingCharge || idle == 1 || (bounceDashing == 2 || launched) && yvelocity != -1){
+        launched = launched || -yvelocity > 40 + (weightPoints * .2F);
+        if (boingCharge || idle == 1 || (bounceDashing == 2 && yvelocity != -1)){
             if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
                     bounceDashing = 0;
-                    if (bounce != bounceBase) bounceCombo = 0; //not full bounce
+                    // if (bounce != bounceBase) bounceCombo = 0; //not full bounce
                 }
                 else{ //crashing
                     boing = yvelocity * (bounce * (1 - (weight * .2F)));
@@ -486,7 +492,7 @@ public void _isRolling(float delta){
                 basejumpwindow = Mathf.Round(boing * 1.2F);
                 if (boingTimer.IsStopped()) boingTimer.Start(boing * .02F);
                 rolling = false;
-                bounce -= weight * .1F;
+                // bounce -= weight * .1F;
             }
             else if (shiftedDir != 0) yvelocity *= bounce * -1; //on a shift
         }
@@ -828,7 +834,7 @@ public void _alterDirection(Vector3 alterNormal){
 }
 
 public void _jump(){
-    if (smushed) return;
+    if (smushed || idle > 0) return;
     boingCharge = true;
     bool trampolined = trampolineCast.IsColliding() && yvelocity >= -1;
     if (trampolined){
@@ -925,6 +931,7 @@ public void _jump(){
 }
 
 public void _normalJump(){
+    if (smushed || idle > 0) return;
 	boingCharge = false;
 	_drawMoveNote("boing");
 	yvelocity = jumpForce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 7) * .5F;
@@ -935,9 +942,10 @@ public void _normalJump(){
 }
 
 public void _dash(){
-if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
+    if (smushed || idle > 0) return;
+    if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
         if (leewayCast.IsColliding() && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
-            yvelocity = jumpForce * .5F;
+            yvelocity = 11.5F * (.5F + (bouncePoints * .005F));
             _drawMoveNote("dash");
             dashTimer.Stop();
             dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
@@ -1434,20 +1442,23 @@ public void _setStat(int points, string stat){
         return;
     }
     int oldPoints = 0;
-    bool hax = false;
+    int hax = 0;
     bool overflow = false;
     if (points == 5 && bpUnspent < 5){
         points = bpUnspent;
     }
     else if (Mathf.Abs(points) > 90){
-        if (points == 99) points = 5 * Mathf.Sign(points);
-        hax = true;
+        if (points == 99){
+            points = 5 * Mathf.Sign(points);
+            hax = 1;
+        }
+        else hax = 2;
     }
     switch (stat){
         case "traction":
             oldPoints = traction;
-            if (oldPoints == 30 && !hax) return;
-            if (!hax) traction += points;
+            if (oldPoints == 30 && hax < 1) return;
+            if (hax < 2) traction += points;
             overflow = traction > 30;
             traction = Mathf.Clamp(traction, 0, 30);
             // GD.Print("traction " + traction.ToString());
@@ -1455,8 +1466,8 @@ public void _setStat(int points, string stat){
             break;
         case "speed":
             oldPoints = speedPoints;
-            if (oldPoints == 30 && !hax) return;
-            if (!hax) speedPoints += points;
+            if (oldPoints == 30 && hax < 1) return;
+            if (hax < 2) speedPoints += points;
             overflow = speedPoints > 30;
             speedPoints = Mathf.Clamp(speedPoints, 0, 30);
             bool setSpd = speed == speedBase;
@@ -1467,8 +1478,8 @@ public void _setStat(int points, string stat){
             break;
         case "weight":
             oldPoints = weightPoints;
-            if (oldPoints == 30 && !hax) return;
-            if (!hax) weightPoints += points;
+            if (oldPoints == 30 && hax < 1) return;
+            if (hax < 2) weightPoints += points;
             overflow = weightPoints > 30;
             weightPoints = Mathf.Clamp(weightPoints, 0, 30);
             bool setWeight = weight == baseWeight;
@@ -1480,8 +1491,8 @@ public void _setStat(int points, string stat){
             break;
         case "size":
             oldPoints = sizePoints;
-            if (oldPoints == 30 && !hax) return;
-            if (!hax) sizePoints += points;
+            if (oldPoints == 30 && hax < 1) return;
+            if (hax < 2) sizePoints += points;
             overflow = sizePoints > 30;
             sizePoints = Mathf.Clamp(sizePoints, 0, 30);
             float increase = .6F + myMath.roundTo(sizePoints * (.015F + (sizePoints * .000165F)), 100);
@@ -1492,10 +1503,14 @@ public void _setStat(int points, string stat){
             floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((1.9F * scaleRatio), 100), 1);
             floorCast.Translation = new Vector3(0, 1 + myMath.roundTo(scaleRatio * .9F, 100), 0);
             collisionShape.Scale = new Vector3(collisionBaseScale, collisionBaseScale, collisionBaseScale);
+            shadowCast.Set("shadowScale", collisionBaseScale);
+            if (IsOnFloor() || yvelocity == -1){
+                Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + (collisionBaseScale * 2), Translation.z);
+                for (int c = 0; c < 3; c++) collisionScales[c] = collisionBaseScale;
+            }
             // float scaleRatio = myMath.roundTo((increase - .6F) / ((.6F + myMath.roundTo(sizePoints * (.015F + (30 * .000165F)), 100)) - .6F) * 30, 100);
             // floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.065F * scaleRatio), 100), 1);
             // floorCast.Translation = new Vector3(0, 1 + (scaleRatio * .032F), 0);
-            // shadowCast.Set("shadowScale", collisionBaseScale);
             statLabels[stat].Value = sizePoints;
             // GD.Print(scaleRatio);
             // GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
@@ -1505,8 +1520,8 @@ public void _setStat(int points, string stat){
             break;
         case "bounce":
             oldPoints = bouncePoints;
-            if (oldPoints == 30 && !hax) return;
-            if (!hax) bouncePoints += points;
+            if (oldPoints == 30 && hax < 1) return;
+            if (hax < 2) bouncePoints += points;
             overflow = bouncePoints > 30;
             bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
             jumpForce = 11.5F + myMath.roundTo(bouncePoints * .23F, 10);
@@ -1519,7 +1534,7 @@ public void _setStat(int points, string stat){
             
             break;
     }
-    if (!hax){
+    if (hax < 1){
         if (overflow) points = 30 - oldPoints;
         bpSpent += points;
         bpUnspent -= points;
