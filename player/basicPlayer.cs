@@ -1444,15 +1444,15 @@ public void _setStat(int points, string stat){
     int oldPoints = 0;
     int hax = 0;
     bool overflow = false;
-    if (points == 5 && bpUnspent < 5){
-        points = bpUnspent;
-    }
-    else if (Mathf.Abs(points) > 90){
+    if (Mathf.Abs(points) > 90){
         if (points == 99){
             points = 5 * Mathf.Sign(points);
             hax = 1;
         }
         else hax = 2;
+    }
+    else if (bpUnspent < points){
+        points = bpUnspent;
     }
     switch (stat){
         case "traction":
