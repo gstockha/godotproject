@@ -20,7 +20,7 @@ float basejumpwindow = 0;
 float jumpwindow = 0;
 float ang = 0;
 float angTarget = 0;
-bool camLock = false;
+int camLock = 0;
 bool angDelayFriction = true; //player friction modifies angTarget lerping or not
 bool wallb = false;
 float wallbx = 0;
@@ -32,8 +32,9 @@ bool invincible = false;
 bool dashing = false;
 bool sliding = false;
 int hasJumped = 0; //set to 2 (strong) in jump function, 1 in boing timer timeout (soft) (distinction for leeway jumping) CANCRASH == 2 == HASJUMPED
-int bounceDashing = 0; //determine if you're crashing or can crash
+int bounceDashing = 0; //determine if you're crashing or can crash, 1 means post crash/walldash, 2 means bounce on crash
 bool walldashing = false; //for speed boost after dashing into a wall
+bool canDash = false;
 bool rolling = true; //ball is rolling
 bool moving = false; //you're actually moving the ball
 static int dirSize = 10;
@@ -163,7 +164,7 @@ public override void _Ready(){
     //traction
     float x = 50;
     for (int p = 0; p < tractionList.Length; p++){
-        tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(0.01F*x,25)*.29F)+.7F)); //old (pre dirSize alteration)
+        tractionList[p] = (float)((Math.Pow(1.0475D,x)-1)*((Math.Pow(.01F*x,2)*.01F)+.7F)); //old (pre dirSize alteration)
         // tractionList[p] = (float)((Math.Pow(1.025D,x)-1)*((Math.Pow(0.01F*x,25)*.05F)+2.4F));
         // GD.Print("tractionList[" + p.ToString() + "]: " + tractionList[p].ToString());
         x += 1.66F;
@@ -253,7 +254,7 @@ public void _controller(float delta){
         stickDir[1] = 0;
     }
     moving = (stickDir[0] != 0 || stickDir[1] != 0);
-    _applyFriction(delta, 1);
+    _applyFriction(delta);
     direction_ground = new Vector2(moveDir[0],moveDir[1]).Rotated(ang).Normalized();
     float xvel = 0;
     float yvel = 0;
@@ -286,18 +287,18 @@ public void _controller(float delta){
     if (xvel != 0 || yvel != 0) _rotateMesh(xvel,yvel,delta);
 }
 
-public void _applyFriction(float delta, float camDrag){
+public void _applyFriction(float delta){//}, float camDrag){
     int current = dirSize - 1;
     int i;
     for (i = 0; i < current; i++){
-        dir[0,i] = dir[0,i+1] * camDrag;
-        dir[1,i] = dir[1,i+1] * camDrag;
+        dir[0,i] = dir[0,i+1];// * camDrag;
+        dir[1,i] = dir[1,i+1];// * camDrag;
     }
-    dir[0,current] = stickDir[0] * camDrag;
-    dir[1,current] = stickDir[1] * camDrag;
+    dir[0,current] = stickDir[0];// * camDrag;
+    dir[1,current] = stickDir[1];// * camDrag;
     dir[0,current] = myMath.array2dMean(dir, 0);
     dir[1,current] = myMath.array2dMean(dir, 1);
-    if (camDrag != 1) return;
+    // if (camDrag != 1) return;
     int signdir = 0;
     if (moving){
         moveDir[0] = myMath.array2dMean(dir,0);
@@ -306,7 +307,8 @@ public void _applyFriction(float delta, float camDrag){
             if (!float.IsNaN(stickDir[i])) signdir = Math.Sign(stickDir[i]);
             else signdir = Math.Sign(moveDir[i]);
             if (signdir != 0 && Math.Sign(moveDir[i]) != signdir){
-                dir[i,current] += (tractionList[traction] * signdir) * delta;
+                // dir[i,current] += (tractionList[(traction/5)] * signdir) * delta;
+                dir[i,current] += (6.5F + (traction * .1F)) * signdir * delta;
             }
         }
     }
@@ -316,7 +318,8 @@ public void _applyFriction(float delta, float camDrag){
             if (Math.Abs(moveDir[i]) > .015F){ //slowly reduce speed (friction)
                 moveDir[i] = myMath.array2dMean(dir,i);   
                 signdir = Math.Sign(dir[i,current]); //apply shift
-                dir[i,current] -= (tractionList[traction] * .03F * signdir) * delta;
+                //dir[i,current] -= (tractionList[traction] * .03F * signdir) * delta;
+                dir[i,current] -= (1 + (traction * .05F)) * signdir * delta;
                 if ((signdir == 1 && dir[i,current] < 0) || (signdir == -1 && dir[i,current] > 0)){
                     dir[i,current] = 0;
                 }
@@ -327,7 +330,7 @@ public void _applyFriction(float delta, float camDrag){
     float absx = Math.Abs(moveDir[0]);
     float absy = Math.Abs(moveDir[1]);
     float tempFric = (absx > absy) ? absx : absy;
-    float tractionBoost = .05F + (traction * .005F);
+    float tractionBoost = .15F;//.04F + (traction * .005F);
     friction = (moving && tempFric > (friction - tractionBoost)) ? tempFric + tractionBoost : tempFric;
     if (friction > 1) friction = 1;
     // GD.Print(friction);
@@ -433,6 +436,7 @@ public void _isRolling(float delta){
 	wallb = false;
 	hasJumped = 0;
     boingDash = false;
+    canDash = true;
     if (!walldashing){ //if landing, cancel dash
         if (dashing && (shiftedDir == 0)){
             bounce = bounceBase;
@@ -597,7 +601,7 @@ public void _isBoinging(float delta){
             if (offset > 1) offset = 1;
             stickDir[0] *= (1 - jumpratio);
             stickDir[1] *= (1 - jumpratio);
-            _applyFriction(delta, 1);
+            _applyFriction(delta);
             float fric = friction * (1 + ((10 - dirSize) * .1F));
             float spd = 13 * fric * (.7F * offset);
             if (boingDash){
@@ -782,27 +786,31 @@ public void _rotateMesh(float xvel, float yvel, float delta){
 
 public void _turnDelay(){
     if (angTarget == 0) return;
-    camLock = true;
-    if (lockOn == null && Math.Sign(ang) != Math.Sign(angTarget)){
-        float add = myMath.findDegreeDistance(ang,angTarget);
-        if ((string)camera.Get("turnDir") == "left") add *= -1;
-        ang = angTarget + add;
-    }
-    // float tractionFriction = (angDelayFriction) ? tractionList[traction] * .0007F : tractionList[0] * .0007F;
-    float tractionFriction = (angDelayFriction) ? .07F : 0;
+    if (camLock != 2) camLock = 1;
+    float tractionFriction;
+    if (camLock < 2) tractionFriction = (angDelayFriction) ? tractionList[30] * .001F : 0;
+    else tractionFriction = tractionList[traction] * .0008F;
     ang = Mathf.LerpAngle(ang,angTarget,.015F + tractionFriction);
     if (lockOn != null) return;
-    if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
-        ang = angTarget;
-        angTarget = 0;
-        angDelayFriction = true;
-        camLock = false;
+    // GD.Print("ang: " + ang.ToString() + ", angTarget: " + angTarget.ToString());
+    if (camLock == 1){
+        if (lockOn == null && Math.Sign(ang) != Math.Sign(angTarget)){
+            float add = myMath.findDegreeDistance(ang,angTarget);
+            if ((string)camera.Get("turnDir") == "left") add *= -1;
+            ang = angTarget + add;
+        }
+        if (myMath.roundTo(ang,10) == myMath.roundTo(angTarget,10)){
+            ang = angTarget;
+            angTarget = 0;
+            angDelayFriction = true;
+            camLock = 0;
+        }
     }
 }
 
 public void _lockOn(bool triggerScript, float delta){
     if (lockOn == null){
-        if (!camLock && moveDir[0] != 0){// && !wallb){//(Math.Abs(moveDir[0]) > .05F){
+        if (camLock == 0 && moveDir[0] != 0){// && !wallb){//(Math.Abs(moveDir[0]) > .05F){
             float addAng = 0;
             addAng += ((moveDir[0] * 2) * (speed * .05F)) * .01F;
             addAng *= (moveDir[1] > 0) ?  1 + (moveDir[1] * 1.1F) : 1 + (moveDir[1] * .6F); //speed up ang if moving backward, slow it down if forward
@@ -944,11 +952,12 @@ public void _normalJump(){
 public void _dash(){
     if (smushed || idle > 0) return;
     if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
-        if (leewayCast.IsColliding() && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
+        if (leewayCast.IsColliding() && canDash && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
             yvelocity = 11.5F * (.5F + (bouncePoints * .005F));
             _drawMoveNote("dash");
             dashTimer.Stop();
             dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
+            canDash = false;
         }
         else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
             dashTimer.Stop();
@@ -1461,6 +1470,18 @@ public void _setStat(int points, string stat){
             if (hax < 2) traction += points;
             overflow = traction > 30;
             traction = Mathf.Clamp(traction, 0, 30);
+            int oldDirSize = dirSize;
+            dirSize = 10 - (traction / 5);
+            if (dirSize != oldDirSize){
+                float meanX = myMath.array2dMean(dir,0);
+                float meanZ = myMath.array2dMean(dir,1);
+                dir = new float[2,dirSize];
+                for (int i = 0; i < dirSize; i++){
+                    dir[0,i] = meanX;
+                    dir[1,i] = meanZ;
+                }
+            }
+            // GD.Print(dirSize);
             // GD.Print("traction " + traction.ToString());
             statLabels[stat].Value = traction;
             break;

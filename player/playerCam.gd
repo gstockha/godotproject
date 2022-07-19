@@ -8,6 +8,7 @@ var cam = 0 #rotate mode
 var camsets = [135,45,-45,-135]
 var camsetarray = 1
 onready var lastAng = camsets[camsetarray]
+var drag = false
 var turnRate = 8
 var stickMove = false
 var turnDir = 'right'
@@ -31,77 +32,30 @@ var shakeAlternate = false #smoother shake
 func _ready():
 	player.rotation_degrees.y = 45
 	mesh.rotation_degrees.y = 45
+	InputMap.action_set_deadzone("pan_right", .3)
+	InputMap.action_set_deadzone("pan_left", .3)
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("pan_right") or event.is_action_pressed("pan_left"):
-		if fixedCamLock: return
-		if (lockOn == null): pass#_move_camera(event)
-		elif event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
+	if lockOn != null:
+		if event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
 		elif event.is_action_pressed("pan_left"): _directionalLockOn("L", true)
-	elif (event.is_action_pressed("lock_on")): _findLockOn(lockOn)
-
-func _move_camera(evn) -> void:
-	turnRate = 8
-	player.angDelayFriction = true
-#	var ones = 0
-#	var fives = 0
-#	for bp in get_tree().get_nodes_in_group("boingPoints"):
-#		print(bp.name)
-#		if bp.name.begins_with("5"): fives += 1
-#		else: ones += 1
-#	print("ones: " + str(ones))
-#	print("fives: " + str(fives))
-	if (cam != 1):
-		if player.rotation_degrees.y == camsets[camsetarray]:
-			if evn.get_action_strength("pan_left") > 0:
-				turnDir = 'left'
-				if camsetarray < 3:
-					camsetarray += 1
-					cam = 2
-				else:
-					camsetarray = 0
-					cam = 4
-			elif evn.get_action_strength("pan_right") > 0:
-				turnDir = 'right'
-				if camsetarray > 0:
-					camsetarray -= 1
-					cam = 2
-				else:
-					camsetarray = 3
-					cam = 3
-		else: #find closest 90 degree angle
-			var playerRot = round(player.rotation_degrees.y)
-			var rot = playerRot
-			playerRot = deg2rad(playerRot)
-			var set = false
-			var dist
-			var threshold = deg2rad(30)
-			if evn.get_action_strength("pan_left") > 0:
-				turnDir = 'left'
-				while(!set):
-					if rot > -179: rot -= 1
-					else: rot = 180
-					for i in range(4):
-						if (rot == camsets[i]):
-							if (findDegreeDistance(deg2rad(camsets[i]), playerRot) > threshold):
-								set = true
-								camsetarray = i
-								if (i == 0): cam = 4
-								else: cam = 2
-			elif evn.get_action_strength("pan_right") > 0:
-				turnDir = 'right'
-				while(!set):
-					if rot < 179: rot += 1
-					else: rot = -180
-					for i in range(4):
-						if (rot == camsets[i]):
-							if (findDegreeDistance(deg2rad(camsets[i]), playerRot) > threshold):
-								set = true
-								camsetarray = i
-								if (i == 3): cam = 3
-								else: cam = 2
-		lastAng = -1 * player.rotation.y
-		#stickMove = false
+	if (event.is_action_pressed("lock_on")) && !fixedCamLock: _findLockOn(lockOn)
+	elif event is InputEventMouseButton:
+		if event.is_pressed() && lockOn == null && !fixedCamLock: drag = true
+		else:
+			drag = false
+			stickMove = false
+			turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
+			if player.angTarget != 0: player.camLock = 1
+	elif drag && event is InputEventMouseMotion:
+		if !stickMove:
+			stickMove = true
+			InputMap.action_set_deadzone("pan_right", .3)
+			InputMap.action_set_deadzone("pan_left", .3)
+			if player.angTarget != 0: player.ang = player.angTarget
+		var strength = event.relative.x*abs(event.relative.x)*.023
+		strength = clamp(strength, -4.5, 4.5)
+		_moveCamera(.015, strength)
 
 func _process(delta: float) -> void:
 	if lerpMove:
@@ -142,59 +96,30 @@ func _process(delta: float) -> void:
 	elif fixedCamLock:
 		if lockOn != null || player.angTarget != 0:
 			fixedCamLock = false
-			player.camLock = false
+			player.camLock = 0
 			near = 10
-		else: player.camLock = true
-	if (lockOn != null): return
-	if cam > 1 and (player.rotation_degrees.y != camsets[camsetarray]): #q and e rotate
-		var proty = player.rotation_degrees.y
-		if cam == 2:
-			if proty < camsets[camsetarray] - turnRate: player.rotation_degrees.y += turnRate * delta * 60
-			elif proty > camsets[camsetarray] + turnRate: player.rotation_degrees.y -= turnRate * delta * 60
-			else:
-				player.rotation_degrees.y = camsets[camsetarray]
-				cam = 0
-		elif cam == 3: #over (135 to -135)
-			if proty >= 0:#134:
-				if proty < 180: player.rotation_degrees.y += turnRate * delta * 60
-				else: player.rotation_degrees.y = -179
-			else: #elif proty < 1:
-				if proty < -135 - (turnRate + 1): player.rotation_degrees.y += turnRate * delta * 60
-				else:
-					player.rotation_degrees.y = -135
-					cam = 0
-			#else: player.rotation_degrees.y = 134
-		elif cam == 4: #under (-135 to 135)
-			if proty <= 0: #-134
-				if proty > -180: player.rotation_degrees.y -= turnRate * delta * 60
-				else: player.rotation_degrees.y = 179
-			else: #elif proty > 1:
-				if proty > 135 + (turnRate + 1): player.rotation_degrees.y -= turnRate * delta * 60
-				else:
-					player.rotation_degrees.y = 135
-					cam = 0
-			#else: player.rotation_degrees.y = -134
-		player.angTarget = -1 * player.rotation.y
-		if cam == 0:
-			turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
-			player.call("_applyFriction", 0, .25 + (player.traction * .02))
-			if customset != 0:
-				cam = customset
-				customset = 0
-				return
-	elif Input.get_action_strength("move_camera_right") > 0 or Input.get_action_strength("move_camera_left") > 0:
-		var panStrength = Input.get_action_strength("move_camera_right") - Input.get_action_strength("move_camera_left")
-		player.rotate_y(lerp(0, .1, panStrength*abs(panStrength)*.25)) #needs to eventually just rotate camera not player
+		else: player.camLock = 1
+	if (lockOn != null || fixedCamLock || drag): return
+	if Input.get_action_strength("pan_right") > 0 or Input.get_action_strength("pan_left") > 0:
 		if !stickMove:
-			lastAng = player.rotation.y * -1
-			player.camLock = true
 			stickMove = true
-		setDelay.stop()
-		setDelay.start(6)
+			InputMap.action_set_deadzone("pan_right", .3)
+			InputMap.action_set_deadzone("pan_left", .3)
+			if player.angTarget != 0: player.ang = player.angTarget
+		var panStrength = Input.get_action_strength("pan_right") - Input.get_action_strength("pan_left")
+		panStrength = panStrength * abs(panStrength) *.23
+		_moveCamera(.15, panStrength)
 	elif stickMove == true:
 		stickMove = false
-		player.camLock = false
-		player.rotation.y = lastAng * -1
+		turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
+		if player.angTarget != 0: player.camLock = 1
+
+func _moveCamera(mod: float, strength: float) -> void:
+	player.rotate_y(lerp(0, mod, strength))
+	setDelay.stop()
+	setDelay.start(6)
+	player.angTarget = player.rotation.y * -1
+	player.camLock = 2
 
 func _findLockOn(lockOnMode) -> void:
 	if (lockOnMode != null): #revert to null
@@ -202,7 +127,7 @@ func _findLockOn(lockOnMode) -> void:
 			player.lockOn = null
 			player.angTarget = 0
 		player.ang = player.rotation.y * -1
-		player.camLock = false
+		player.camLock = 0
 		if lockOn != null && is_instance_valid(lockOn): lockOn.arrow.visible = false
 		lockOn = null
 		return
@@ -255,7 +180,9 @@ func _findLockOn(lockOnMode) -> void:
 	player.angTarget = player.rotation.y * -1
 	player.rotation.y = lastRot
 	lockOn.arrow.visible = true
-	player.camLock = false
+	player.camLock = 0
+	InputMap.action_set_deadzone("pan_right", 1)
+	InputMap.action_set_deadzone("pan_left", 1)
 
 func _directionalLockOn(direction: String, closest: bool) -> void:
 	var areas = []
@@ -301,7 +228,7 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	player.angTarget = player.rotation.y * -1
 	player.rotation.y = lastRot
 	lockOn.arrow.visible = true
-	player.camLock = false
+	player.camLock = 0
 
 func findClosestCamSet(rotation: float): #in degrees
 	if player.camLock: rotation = rad2deg(lastAng * -1)
@@ -324,7 +251,7 @@ func _auto_move_camera(target: int, direction: String, neg: bool) -> void:
 	camsetarray = findClosestCamSet(player.rotation_degrees.y)
 	if fixedCamLock:
 		fixedCamLock = false
-		player.camLock = false
+		player.camLock = 0
 		near = 10
 	if target == camsetarray && (direction == "R" || direction == "L"): return
 	if direction == "R" || direction == "L":
@@ -369,19 +296,19 @@ func _auto_move_camera(target: int, direction: String, neg: bool) -> void:
 			angMoveTarget = deg2rad(target - 180) #target goes to the angMove
 			angMove = true
 			player.angTarget = 0
-			player.camLock = false
+			player.camLock = 0
 			turnDir = 'left' if (player.ang + 3 > angMoveTarget + 3) else 'right'
 		elif direction == "O": #height animation reset
 			targetY = baseY
 			targetRotX = baseRotX
 			heightMove = true
 			angMove = false
-			player.camLock = false
+			player.camLock = 0
 		elif direction == "A" || direction == "AF":
 			angMoveTarget = deg2rad(target - 180)
 			angMove = true
 			player.angTarget = 0
-			player.camLock = false
+			player.camLock = 0
 			turnDir = 'left' if (player.ang + 3 > angMoveTarget + 3) else 'right'
 			if direction == "AF":
 				fixedCamLock = true
@@ -390,7 +317,7 @@ func _auto_move_camera(target: int, direction: String, neg: bool) -> void:
 
 func _setToDefaults() -> void:
 	player.lockOn = null
-	player.camLock = false
+	player.camLock = 0
 	player.angTarget = 0
 	_findLockOn(0)
 	translation.y = baseY
