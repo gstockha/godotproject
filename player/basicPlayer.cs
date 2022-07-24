@@ -43,7 +43,7 @@ float[] stickDir = new float[] {0,0};
 float[] moveDir = new float[] {0,0};
 float friction = 0;
 float wallFriction = 0;
-static float speedBase = 13;
+static float speedBase = 14;
 float speed = speedBase;
 int speedPoints, weightPoints, sizePoints, energyPoints, bouncePoints = 0;
 int traction = 0;
@@ -345,8 +345,8 @@ public void _applyShift(float delta, bool isGrounded){
             float fric = friction;
             Vector3 shift = floorCast.GetCollisionNormal();
             if (shiftedDir > 0){ //going down
-                if (!dashing) shiftedBoost[0] += delta * (baseWeight * 10); //charge up
-                else shiftedBoost[0] += delta * (baseWeight * 20);
+                if (!dashing) shiftedBoost[0] += delta * (speedBase * friction); //charge up
+                else shiftedBoost[0] += delta * (speedBase * friction * 1.5F);
                 if (shiftedBoost[0] > 30) shiftedBoost[0] = 30;
                 shiftedBoost[1] = shiftedBoost[0]; //records the max shiftedBoost[0]
                 if (shift.y != 1){ //make sure we're not passing a flat vector
@@ -372,6 +372,7 @@ public void _applyShift(float delta, bool isGrounded){
             yvelocity -= (gravity * weight) * delta;
             shiftedSticky = 0;
             floorCastTouching = true; //so we don't apply it twice (below)
+            GD.Print("thing");
         }
         if (dashing && dashTimer.IsStopped()) dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
     }
@@ -409,16 +410,19 @@ public void _applyShift(float delta, bool isGrounded){
             }
             else{ //shifted ground
                 if (shiftedDir != 0){
+                    bool lockVel = true;//(shiftedBoost[0] <= 0);
                     shiftedDir = (lastTranslationY - Translation.y);// * delta * 60;
                     if (shiftedDir > 0){ //going down slope
                         shiftedSticky = -1;
                         rampSlope = 0;
+                        lockVel = false;
                     }
-                    else if (shiftedLinger && colliderNode.IsInGroup("ramps")){
-                        if (friction > .7 && rampSlope < (1 - GetFloorNormal().y)){ //get downward Y normal
+                    else if (shiftedLinger){
+                        if (colliderNode.IsInGroup("ramps") && friction > .7 && rampSlope < (1 - GetFloorNormal().y)){ //get downward Y normal
                             rampSlope = (1 - GetFloorNormal().y) * friction;
                         }
                     }
+                    if (lockVel) yvelocity = -1;
                 }
                 else shiftedDir = -.1F;
                 lastTranslationY = Translation.y;
@@ -479,9 +483,10 @@ public void _isRolling(float delta){
         Node colliderNode = (Node)GetSlideCollision(0).Collider;
         // if (launched || yvelocity != -1 && (boingCharge || bounceDashing == 2 || !colliderNode.IsInGroup("obstacles") && (yvelocity * bounce) * -1 > (jumpForce * baseWeight * .5F) || 
         // (yvelocity * bounce) * -1 > (jumpForce * 1.2F)) || idle == 1){
+        bool onShift = colliderNode.IsInGroup("shifts");
         launched = launched || -yvelocity > 40 + (weightPoints * .2F);
         if (boingCharge || idle == 1 || (bounceDashing == 2 && yvelocity != -1)){
-            if (!colliderNode.IsInGroup("shifts") || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
+            if (!onShift || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
                     bounceDashing = 0;
@@ -501,15 +506,15 @@ public void _isRolling(float delta){
             else if (shiftedDir != 0) yvelocity *= bounce * -1; //on a shift
         }
         else{ //dont bounce up
-            if (yvelocity <= -10){
+            if (!onShift && yvelocity <= -10){
                 float squish = myMath.roundTo(-yvelocity * .025F, 100);
                 squishReverb[0] = Mathf.Clamp(squish, .25F, .7F);
                 if (squish > .5F) squish = .5F;
                 collisionScales[0] = collisionBaseScale * (1 - squish); //x
                 collisionScales[1] = collisionBaseScale * (1 + squish); //y
                 collisionScales[2] = collisionScales[0]; //z
+                yvelocity = -1;
             }
-            yvelocity = -1;
             bounce = bounceBase;
             bounceCombo = 0;
         }
@@ -520,12 +525,13 @@ public void _isRolling(float delta){
 }
 
 public void _isAirborne(float delta){
-	if (weight == baseWeight && (yvelocity > 0 || dashing)) yvelocity -= (gravity * 1.2F) * delta; //gravity
+	if (weight == baseWeight && (yvelocity > 0 || dashing)){ //gravity
+        if (!dashing) yvelocity -= (gravity * 1.2F) * delta;
+        else yvelocity -= (gravity * (1.2F - (bouncePoints * .015F))) * delta;
+    }
     else yvelocity -= (gravity * weight) * delta;
 	rolling = false;
-    if (yvelocity < -50) yvelocity = -50;
-	//_capSpeed(22,50);
-    
+    if (yvelocity < -50) yvelocity = -50; //_capSpeed(22,50);
 }
 
 public void _isWall(float delta){
@@ -721,7 +727,7 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
         if (translations.y > 0) mesh.Translation = new Vector3(translations.x, 0, translations.z);
         Vector3 collisionscales = skinBody.Scale;
         if (collisionscales.y < collisionBaseScale){
-            float meshTarg = 0 - (4.32F * (collisionBaseScale - collisionscales.y) / collisionBaseScale);
+            float meshTarg = 0 - (3 * (collisionBaseScale - collisionscales.y) / collisionBaseScale);
             meshTarg *= ((basejumpwindow*.5F)/jumpForce < 1) ? ((basejumpwindow*.5F)/jumpForce) : 1;
             translations = mesh.Translation;
             if (meshTarg < translations.y) mesh.Translation = new Vector3(translations.x,meshTarg,translations.z);
@@ -953,7 +959,8 @@ public void _dash(){
     if (smushed || idle > 0) return;
     if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
         if (leewayCast.IsColliding() && canDash && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
-            yvelocity = 11.5F * (.5F + (bouncePoints * .005F));
+            yvelocity = 5.75F;
+            dashSpeed = 20;
             _drawMoveNote("dash");
             dashTimer.Stop();
             dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
@@ -966,7 +973,7 @@ public void _dash(){
             _drawMoveNote("crash");
         }
         else if (shiftedDir != 0){ // is on shift
-            // dashSpeed = speedBase * 2;
+            dashSpeed = 25;
             _drawMoveNote("slope dash");
         }
         else return;
@@ -1194,7 +1201,7 @@ public void _on_hitBox_area_entered(Area area){
                 switch(area.Name){
 					case "moveTip": str = controlNames["roll"] + " to Roll"; break;
                     case "jumpTip": str = "Press and release\n" + controlNames["jump"] + " to Boing"; break;
-                    case "bounceTip": str = "Try jumping right when you hit the\nground to Bounce"; break;
+                    case "bounceTip": str = "Try boinging quickly to\nBoing combo!"; break;
                     case "camTip": str = controlNames["camera"] + "\nto pan the camera"; break;
                     case "restartTip": 
                         str = controlNames["restart"] + " to restart from checkpoint\n" +
@@ -1492,7 +1499,7 @@ public void _setStat(int points, string stat){
             overflow = speedPoints > 30;
             speedPoints = Mathf.Clamp(speedPoints, 0, 30);
             bool setSpd = speed == speedBase;
-            speedBase = 13 + myMath.roundTo(speedPoints * .18F, 10);
+            speedBase = 14 + myMath.roundTo(speedPoints * .134F, 10);
             if (setSpd) speed = speedBase;
             // GD.Print("speed " + speedBase.ToString());
             statLabels[stat].Value = speedPoints;

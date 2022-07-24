@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 	if lockOn != null:
 		if event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
 		elif event.is_action_pressed("pan_left"): _directionalLockOn("L", true)
-	if (event.is_action_pressed("lock_on")) && !fixedCamLock: _findLockOn(lockOn)
+	if event.is_action_pressed("lock_on") && !fixedCamLock: _findLockOn(lockOn)
 	elif event is InputEventMouseButton:
 		if event.is_pressed() && lockOn == null && !fixedCamLock: drag = true
 		else:
@@ -73,6 +73,7 @@ func _process(delta: float) -> void:
 				if (turnDir == "left"): add *= -1;
 				player.ang = angMoveTarget + add
 			player.ang = lerp_angle(player.ang, angMoveTarget, .1)
+			player.rotation.y = player.ang * -1
 			if (player.ang > angMoveTarget - .005 && player.ang < angMoveTarget + .005):
 				player.ang = angMoveTarget
 				angMove = false
@@ -261,6 +262,7 @@ func _auto_move_camera(target: int, direction: String, neg: bool) -> void:
 			elif (target == 2): cam = 2# if (camsetarray != 0) else 2
 			elif (target == 3): cam = 3 if (camsetarray != 2) else 2
 		elif direction == "R":
+			turnDir = 'right'
 			if (target == 2): 
 				if (camsetarray != 0): cam = 2
 				else:

@@ -402,7 +402,7 @@ collision_mask = 0
 monitorable = false
 
 [node name="scanBody" type="CollisionShape" parent="lockOnScanner"]
-transform = Transform( 25, 0, 0, 0, 5.75, 0, 0, 0, 25, 0, 1.9, -9 )
+transform = Transform( 25, 0, 0, 0, 6, 0, 0, 0, 25, 0, 1.8, -9 )
 shape = SubResource( 18 )
 
 [node name="DashTimer" type="Timer" parent="."]
@@ -562,14 +562,14 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -25.5
-margin_top = -10.5
-margin_right = 25.5
-margin_bottom = 10.5
+margin_left = -42.5
+margin_top = -10.0
+margin_right = 43.5
+margin_bottom = 11.0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 2
 custom_fonts/font = SubResource( 22 )
-text = "Traction"
+text = "Handling"
 align = 1
 valign = 1
 __meta__ = {
@@ -685,7 +685,7 @@ margin_bottom = 10.5
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 2
 custom_fonts/font = SubResource( 22 )
-text = "Girth"
+text = "Volume"
 align = 1
 valign = 1
 __meta__ = {
