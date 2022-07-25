@@ -198,7 +198,7 @@ shape = SubResource( 4 )
 [node name="playerNode" type="Spatial" parent="."]
 
 [node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 97.336, 18, 202.068 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 97.336, 20.104, 202.068 )
 
 [node name="envStarting" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.23, 26 )
@@ -727,7 +727,7 @@ transform = Transform( 2.25, 0, 0, 0, 1, 0, 0, 0, 2.25, -30.7643, -20, -8 )
 transform = Transform( 0.1, 0, 0, 0, 10, 0, 0, 0, 1, -43.8033, -13.4438, -7.957 )
 
 [node name="wallBlock" parent="envMainCourse/part2" instance=ExtResource( 17 )]
-transform = Transform( 0.098774, 1.87328, 0, -0.0156107, 11.8529, 0, 0, 0, 1, -40.151, -7.69734, -8 )
+transform = Transform( 0.098774, 1.87328, 0, -0.0156107, 11.8529, 0, 0, 0, 1, -40.151, -9.5, -8 )
 
 [node name="plat2" parent="envMainCourse/part2" instance=ExtResource( 4 )]
 transform = Transform( 9, 0, 0, 0, 1, 0, 0, 0, 3, -78.9986, -13, -8 )
@@ -923,7 +923,7 @@ transform = Transform( 3, 0, 0, 0, 0.141421, 1.06066, 0, -0.141421, 1.06066, 1.5
 transform = Transform( -4.37115e-08, 0, -1, 0, 1, 0, 1, 0, -4.37115e-08, 1.25925, 23.8384, -22.9436 )
 
 [node name="landingSpace" type="Spatial" parent="envMainCourse/part4"]
-transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, 3.25395, 0, 145.95 )
+transform = Transform( 0.742461, 0, -0.707108, 0, 1, 0, 0.742463, 0, 0.707106, 3.48247, -8, 144.741 )
 
 [node name="camerasetO-0" parent="envMainCourse/part4/landingSpace" instance=ExtResource( 13 )]
 transform = Transform( 0.952381, 0, 6.07438e-06, 0, 1.5, 0, -6.36957e-06, 0, 1, -93.9432, -21, 43.0996 )

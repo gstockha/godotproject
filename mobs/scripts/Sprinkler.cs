@@ -22,6 +22,7 @@ Area hitbox;
 Vector3 spawnPoint;
 Vector3 launchVec;
 float yvelocity;
+bool wallb = false;
 Spatial target;
 Spatial parent;
 PackedScene bullet;
@@ -65,9 +66,12 @@ public override void _PhysicsProcess(float delta){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 27 * delta;
         if (IsOnFloor()) _on_DeathTimer_timeout();
-        else if (IsOnWall()){
+        else if (!wallb && IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
-            if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+            if (collider.IsInGroup("walls")){
+                launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+                wallb = true;
+            }
         }
     }
 }

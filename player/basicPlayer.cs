@@ -235,7 +235,7 @@ public override void _PhysicsProcess(float delta){ //run physics
             yvelocity *= -1;
         }
         _applyShift(delta, isGrounded);
-        if (!isGrounded || collisionScales[0] != collisionBaseScale) _squishNScale(delta, new Vector3(0,0,0), true);
+        if (collisionScales[0] != collisionBaseScale) _squishNScale(delta, new Vector3(0,0,0), true);
     }
     else _isBoinging(delta);
     _turnDelay();
@@ -506,13 +506,15 @@ public void _isRolling(float delta){
             else if (shiftedDir != 0) yvelocity *= bounce * -1; //on a shift
         }
         else{ //dont bounce up
-            if (!onShift && yvelocity <= -10){
-                float squish = myMath.roundTo(-yvelocity * .025F, 100);
-                squishReverb[0] = Mathf.Clamp(squish, .25F, .7F);
-                if (squish > .5F) squish = .5F;
-                collisionScales[0] = collisionBaseScale * (1 - squish); //x
-                collisionScales[1] = collisionBaseScale * (1 + squish); //y
-                collisionScales[2] = collisionScales[0]; //z
+            if (!onShift){
+                if (yvelocity <= -10){
+                    float squish = myMath.roundTo(-yvelocity * .025F, 100);
+                    squishReverb[0] = Mathf.Clamp(squish, .25F, .7F);
+                    if (squish > .5F) squish = .5F;
+                    collisionScales[0] = collisionBaseScale * (1 - squish); //x
+                    collisionScales[1] = collisionBaseScale * (1 + squish); //y
+                    collisionScales[2] = collisionScales[0]; //z
+                }
                 yvelocity = -1;
             }
             bounce = bounceBase;
@@ -532,6 +534,29 @@ public void _isAirborne(float delta){
     else yvelocity -= (gravity * weight) * delta;
 	rolling = false;
     if (yvelocity < -50) yvelocity = -50; //_capSpeed(22,50);
+    // Node leewayCollision = (Node)leewayCast.GetCollider();
+    // if (leewayCollision == null || !leewayCollision.IsInGroup("shifts")) return;
+    // float grav = .05F + (baseWeight * .01F);
+    // float fric = friction;
+    // Vector3 shift = leewayCast.GetCollisionNormal();
+    // if (!dashing) shiftedBoost[0] += delta * (speedBase * friction); //charge up
+    // else shiftedBoost[0] += delta * (speedBase * friction * 1.5F);
+    // if (shiftedBoost[0] > 30) shiftedBoost[0] = 30;
+    // shiftedBoost[1] = shiftedBoost[0]; //records the max shiftedBoost[0]
+    // if (shift.y != 1){ //make sure we're not passing a flat vector
+    //     bool record = true;
+    //     if (shiftedLastYNorm == 0) shiftedLastYNorm = shift.y;
+    //     else if (Mathf.Round(shift.y * 10) > Mathf.Round(shiftedLastYNorm * 10)) record = false;
+    //     else shiftedLastYNorm = shift.y;
+    //     if (record){ //save the last rolling vector
+    //         lastTranslationY = Translation.y;
+    //         fric *= (shiftedBoost[0] * (1 - shiftedLastYNorm));
+    //         shiftedLingerVec = new Vector3(shift.x*grav*fric, 0, shift.z*grav*fric);
+    //     }
+    //     _rotateMesh(shiftedLingerVec.x*2*60, shiftedLingerVec.z*2*60, delta);
+    // }
+    // GD.Print("shit");
+    // MoveAndCollide(new Vector3(shift.x*fric*grav, shiftedSticky, shift.z*fric*grav));
 }
 
 public void _isWall(float delta){
@@ -653,6 +678,7 @@ public void _isBoinging(float delta){
 
 public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
     float rate = delta * 6;
+    GD.Print(GD.Randf());
     if (!reset && !squishSet){
         float squish = boing /  22;
         if (squish > .9F) squish = .9F;
@@ -669,29 +695,29 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
             squish *= 1.5F;
             float add = collisionBaseScale * (1 + (squish * .7F));
             float sub = collisionBaseScale * (1 - (squish * .7F));
-            int camAng = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
+            // int camAng = (int)camera.Call("findClosestCamSet", RotationDegrees.y);
             collisionScales[1] = add; //go ahead and set y now
-            float normx = Mathf.Round(squishNormal.x);
-            float normz = Mathf.Round(squishNormal.z);
-            bool flip = false;
-            if (normx == 0 || normz == 0){ //45 degree flip
-                //skinBody.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
-                flip = (Math.Sign(Math.Abs(normx)) == 1 && Math.Sign(Math.Abs(normz)) == 0);
-            }
-            else flip = (normx == 1 && normz == 1) || (normx == -1 && normz == -1);
-            if (flip){
-                float temp = add;
-                add = sub;
-                sub = temp;
-            }
-            if (camAng == 1 || camAng == 3){
-                collisionScales[0] = sub; //x
-                collisionScales[2] = add; //z
-            }
-            else if (camAng == 0 || camAng == 2){
+            // float normx = Mathf.Round(squishNormal.x);
+            // float normz = Mathf.Round(squishNormal.z);
+            // bool flip = false;
+            // if (normx == 0 || normz == 0){ //45 degree flip
+            //     //skinBody.RotationDegrees = new Vector3(rotation.x,45,rotation.z);
+            //     flip = (Math.Sign(Math.Abs(normx)) == 1 && Math.Sign(Math.Abs(normz)) == 0);
+            // }
+            // else flip = (normx == 1 && normz == 1) || (normx == -1 && normz == -1);
+            // if (flip){
+            //     float temp = add;
+            //     add = sub;
+            //     sub = temp;
+            // }
+            // if (camAng == 1 || camAng == 3){
+                // collisionScales[0] = sub; //x
+                // collisionScales[2] = add; //z
+            // }
+            // else if (camAng == 0 || camAng == 2){
                 collisionScales[0] = add; //x
                 collisionScales[2] = sub; //z
-            }
+            // }
         }
         squishSet = true;
     }

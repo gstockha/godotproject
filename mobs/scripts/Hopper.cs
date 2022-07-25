@@ -27,6 +27,7 @@ MeshInstance arrow;
 Timer deathTimer;
 Timer aggroTimer;
 RayCast bottom;
+bool wallb = false;
 bool ascending = false;
 float landingCooldown = 0;
 float baseScale;
@@ -110,9 +111,12 @@ public override void _PhysicsProcess(float delta){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 27 * delta;
         if (IsOnFloor()) _on_DeathTimer_timeout();
-        else if (IsOnWall()){
+        else if (!wallb && IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
-            if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+            if (collider.IsInGroup("walls")){
+                launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+                wallb = true;
+            }
         }
     }
 }

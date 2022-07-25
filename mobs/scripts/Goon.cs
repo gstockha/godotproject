@@ -33,6 +33,7 @@ Vector3 spawnPoint;
 Spatial parent;
 MeshInstance arrow;
 bool active = false;
+bool wallb = false;
 [Export] bool lockable = true;
 [Export] bool passive = false;
 
@@ -75,9 +76,12 @@ public override void _PhysicsProcess(float delta){
             }
             else _on_DeathTimer_timeout();
         }
-        else if (IsOnWall()){
+        else if (!wallb && IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
-            if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+            if (collider.IsInGroup("walls")){
+                launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+                wallb = true;
+            }
         }
     }
 }

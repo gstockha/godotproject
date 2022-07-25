@@ -15,7 +15,7 @@ _global_script_class_icons={
 [application]
 
 config/name="marblebounce"
-run/main_scene="res://levels/demo.tscn"
+run/main_scene="res://levels/hub.tscn"
 
 [autoload]
 

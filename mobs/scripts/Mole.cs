@@ -30,8 +30,7 @@ Position3D shooter;
 MeshInstance arrow;
 bool active = false;
 bool lockable = true;
-
-
+bool wallb = false;
 
 public override void _Ready(){
     burrowTimer = GetNode<Timer>("BurrowTimer");
@@ -60,9 +59,12 @@ public override void _PhysicsProcess(float delta){
         MoveAndSlide(new Vector3(launchVec.x, yvelocity, launchVec.z), Vector3.Up);
         yvelocity -= 27 * delta;
         if (IsOnFloor()) _on_DeathTimer_timeout();
-        else if (IsOnWall()){
+        else if (!wallb && IsOnWall()){
             Node collider = (Node)GetSlideCollision(0).Collider;
-            if (collider.IsInGroup("walls")) launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+            if (collider.IsInGroup("walls")){
+                launchVec = launchVec.Bounce(GetSlideCollision(0).Normal);
+                wallb = true;
+            }
         }
     }
 }

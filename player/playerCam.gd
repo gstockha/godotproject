@@ -100,8 +100,8 @@ func _process(delta: float) -> void:
 			player.camLock = 0
 			near = 10
 		else: player.camLock = 1
-	if (lockOn != null || fixedCamLock || drag): return
 	if Input.get_action_strength("pan_right") > 0 or Input.get_action_strength("pan_left") > 0:
+		if (lockOn != null || fixedCamLock || drag || player.idle == 2): return
 		if !stickMove:
 			stickMove = true
 			InputMap.action_set_deadzone("pan_right", .3)
@@ -111,6 +111,7 @@ func _process(delta: float) -> void:
 		panStrength = panStrength * abs(panStrength) *.23
 		_moveCamera(.15, panStrength)
 	elif stickMove == true:
+		if (lockOn != null || fixedCamLock || drag || player.idle == 2): return
 		stickMove = false
 		turnDir = 'left' if (player.ang + 3 > player.angTarget + 3) else 'right'
 		if player.angTarget != 0: player.camLock = 1
