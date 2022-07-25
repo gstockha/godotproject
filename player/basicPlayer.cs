@@ -55,7 +55,7 @@ float dashSpeed = 20;
 float boing = 0;
 bool boingCharge = false;
 bool boingDash = false; //use dashSpeed in boing slide (turned on in isRolling() and turned off in boing jump and boing timer)
-bool squishSet = false; //only run the mesh squish settings once in _squishNScale
+bool squishSet = false; //only run the mesh squish settings once in squishNScale
 float[] squishReverb = new float[] {0,1,0}; //0 is target jiggle intensity, 1 is the comparison bool guard (so we don't fire the code too much), 2 is a bool for airborne
 #endregion
 
@@ -235,7 +235,8 @@ public override void _PhysicsProcess(float delta){ //run physics
             yvelocity *= -1;
         }
         _applyShift(delta, isGrounded);
-        if (collisionScales[0] != collisionBaseScale) _squishNScale(delta, new Vector3(0,0,0), true);
+        //if (collisionScales[0] != collisionBaseScale || launched) _squishNScale(delta, new Vector3(0,0,0), true);
+        if (boingCharge || squishReverb[0] != 0) _squishNScale(delta, new Vector3(0,0,0), true);
     }
     else _isBoinging(delta);
     _turnDelay();
@@ -485,7 +486,7 @@ public void _isRolling(float delta){
         // (yvelocity * bounce) * -1 > (jumpForce * 1.2F)) || idle == 1){
         bool onShift = colliderNode.IsInGroup("shifts");
         launched = launched || -yvelocity > 40 + (weightPoints * .2F);
-        if (boingCharge || idle == 1 || (bounceDashing == 2 && yvelocity != -1)){
+        if ((boingCharge || (bounceDashing == 2 && yvelocity != -1)) && idle != 1){
             if (!onShift || yvelocity < (weight * 100 - 100) * -1 || boingCharge || bounceDashing == 2){
                 if (bounceDashing != 2){ //not crashing (bounceDashing == 2 is crashing)
                     boing = yvelocity * bounce;
@@ -678,7 +679,6 @@ public void _isBoinging(float delta){
 
 public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
     float rate = delta * 6;
-    GD.Print(GD.Randf());
     if (!reset && !squishSet){
         float squish = boing /  22;
         if (squish > .9F) squish = .9F;
@@ -956,6 +956,7 @@ public void _jump(){
             yvelocity = (nuyvel > lastyvel) ? nuyvel : lastyvel; //never go below a dirbble boing
         }
         squishReverb[0] = yvelocity * .035F;
+        if (wallb) squishReverb[0] += .5F;
         //_capSpeed(22, 50);
         if (!trampolined && yvelocity > (jumpForce + 10)) yvelocity = jumpForce + 10;
         jumpwindow = 0;
@@ -1032,7 +1033,6 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
         wallbx = launchVec.x;
         wallby = launchVec.z;
         wallFriction = 0;
-        _alterDirection(launchVec.Normalized());
     }
     launched = true;
     yvelocity = power;
@@ -1115,7 +1115,7 @@ public void _on_boingTimer_timeout(){
         squishReverb[0] = yvelocity * .035F;
     }
     else{
-        squishReverb[0] = boing * .12F;
+        squishReverb[0] = boing * .2F;
         squishReverb[2] = 1; //proc wall wiggle
     }
     hasJumped = yvelocity >= (bounceBase * jumpForce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
