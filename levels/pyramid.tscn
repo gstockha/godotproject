@@ -1,4 +1,4 @@
-[gd_scene load_steps=100 format=2]
+[gd_scene load_steps=98 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=4]
@@ -301,26 +301,6 @@ onready var textTimer = $Timer
 
 func _on_Timer_timeout():
 	text = ''
-"
-
-[sub_resource type="DynamicFont" id=7]
-size = 24
-outline_color = Color( 0, 0, 0, 1 )
-use_filter = true
-font_data = ExtResource( 14 )
-
-[sub_resource type="GDScript" id=84]
-script/source = "extends Label
-var alpha = 2
-
-func _process(delta):
-	if (text != \"\"):
-		alpha -= .01
-		if alpha < 1:
-			if alpha < 0:
-				alpha = 0
-				text = \"\"
-			add_color_override(\"font_color\", Color(1,1,1,alpha))
 "
 
 [sub_resource type="BoxShape" id=6]
@@ -1023,12 +1003,16 @@ material = SubResource( 43 )
 
 [node name="cornerWallSide" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/cornerLShift" groups=["walls"]]
 transform = Transform( 0.707106, 0, 0.707108, 0, 1, 0, -0.707108, 0, 0.707106, -34.474, 15.956, 22.985 )
+use_collision = true
+collision_mask = 0
 polygon = PoolVector2Array( 0, 0, 0, 8.921, 9.792, 0 )
 depth = 0.2
 material = SubResource( 36 )
 
 [node name="cornerWallSide2" type="CSGPolygon" parent="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/cornerLShift" groups=["walls"]]
 transform = Transform( 0.707106, 0, 0.707108, 0, 1, 0, -0.707108, 0, 0.707106, -22.917, 15.956, 34.564 )
+use_collision = true
+collision_mask = 0
 polygon = PoolVector2Array( 0, 0, 0, 8.921, 9.792, 0 )
 depth = 0.2
 material = SubResource( 36 )
@@ -1170,7 +1154,7 @@ transform = Transform( -3.49691e-08, 0, 0.8, 0, 0.3, 0, -0.8, 0, -3.49691e-08, -
 transform = Transform( -4.37114e-08, 0, 1, 0, 0.3, 0, -1, 0, -4.37114e-08, -25.0219, 11.41, -24.7534 )
 
 [node name="cameraAreaAF-135" parent="environment/Pyramid/PyramidInternal/upperLevel/stairPlatArea/plats" instance=ExtResource( 22 )]
-transform = Transform( 5.65685, 0, 10.6066, 0, 2.6, 0, -5.65685, 0, 10.6066, -38.645, 11, -38.193 )
+transform = Transform( 5.65685, 0, 10.6066, 0, 2.5, 0, -5.65685, 0, 10.6066, -38.645, 11.5, -38.193 )
 
 [node name="camerasetO-0" parent="environment/Pyramid/PyramidInternal/upperLevel/stairPlatArea/plats" instance=ExtResource( 21 )]
 transform = Transform( -4.37114e-08, 8.5, 0, -1, -3.71547e-07, 0, 0, 0, 4, -19.021, 6.5, -28.97 )
@@ -1949,11 +1933,14 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -12.8824, 40.0777, -12.9
 [node name="bp12" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 49.0968, 24.7074, 13.5711 )
 
-[node name="bp13" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, -0.747971 )
-
 [node name="bp16" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -87.6277, 21.7902, -12.5878 )
+
+[node name="bp13" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, -1.41728 )
+
+[node name="bp17" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, 3.11487 )
 
 [node name="bp18" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 93.9718, 18.8807, -6.65128 )
@@ -2040,9 +2027,6 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.04382, 6.00299, 41.81
 
 [node name="bp2" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 42.0094, 5.3436, 19.3951 )
-
-[node name="bp8" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 51.5093, 20.5838, 50.2169 )
 
 [node name="bp9" parent="environment/Outside/bottomSpawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 55.7182, 6.5083, 3.32381 )
@@ -3275,23 +3259,6 @@ __meta__ = {
 
 [node name="Timer" type="Timer" parent="tipNote"]
 one_shot = true
-
-[node name="moveNote" type="Label" parent="."]
-anchor_left = 0.499652
-anchor_top = 1.0
-anchor_right = 0.499652
-anchor_bottom = 1.00417
-margin_left = -84.5546
-margin_top = -51.0
-margin_right = 41.4454
-margin_bottom = -23.0024
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_fonts/font = SubResource( 7 )
-align = 1
-script = SubResource( 84 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="DefaultWorld" type="WorldEnvironment" parent="."]
 environment = ExtResource( 1 )

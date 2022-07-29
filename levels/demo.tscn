@@ -184,7 +184,7 @@ transform = Transform( 2.5, 0, 0, 0, 1.5, 0, 0, 0, 1.99999, -5.68757, 65.1051, 4
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpoint11"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148705, 0 )
+transform = Transform( 0.9, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148708, 0 )
 shape = SubResource( 4 )
 
 [node name="checkpointEnd" type="Area" parent="checkpoints" groups=["checkpoints"]]
@@ -192,7 +192,7 @@ transform = Transform( 2.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, 100.31, 57.7511, 42.9108
 monitoring = false
 
 [node name="CollisionShape" type="CollisionShape" parent="checkpoints/checkpointEnd"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.148701, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -15.3462, -0.357918 )
 shape = SubResource( 4 )
 
 [node name="playerNode" type="Spatial" parent="."]
@@ -573,7 +573,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roof5" type="StaticBody" parent="envStarting/part6walljumping" groups=["flats", "slides"]]
-transform = Transform( -3.5, 5.62503e-16, -4.52987e-07, 0, 0.1, 1.11759e-07, 5.28485e-07, 3.72529e-09, -3, 61.5599, 26.4134, -168.344 )
+transform = Transform( -3.5, 5.62503e-16, -4.52987e-07, 0, 0.1, 1.11759e-07, 5.28485e-07, 3.72529e-09, -3, 61.4473, 26.4134, -168.344 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part6walljumping/roof5"]
 shape = SubResource( 9 )
@@ -584,7 +584,7 @@ mesh = SubResource( 10 )
 material/0 = SubResource( 11 )
 
 [node name="roofShift2" type="StaticBody" parent="envStarting/part6walljumping" groups=["shifts", "slides"]]
-transform = Transform( -2.60245e-07, -9.33141e-10, -3.5, -2.17932, 0.0931704, 2.47108e-08, 5.59022, 0.0363219, -1.53304e-07, 61.63, 28.615, -176.761 )
+transform = Transform( -2.60245e-07, -9.33141e-10, -3.5, -2.17932, 0.0931704, 2.47108e-08, 5.59022, 0.0363219, -1.53304e-07, 61.5174, 28.615, -176.761 )
 
 [node name="CollisionShape" type="CollisionShape" parent="envStarting/part6walljumping/roofShift2"]
 shape = SubResource( 9 )
@@ -712,7 +712,7 @@ transform = Transform( 1.5, 0, 0, 0, 0.5, 0, 0, 0, 1.5, -13, 11, -11 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 25, -2 )
 
 [node name="plat" parent="envMainCourse/part2" instance=ExtResource( 4 )]
-transform = Transform( 6, 0, 0, 0, 1, 0, 0, 0, 3, 8.58018, -13, -8 )
+transform = Transform( 5.5, 0, 0, 0, 1, 0, 0, 0, 3, 9.88185, -13, -8 )
 
 [node name="camerasetHA-90" parent="envMainCourse/part2" instance=ExtResource( 13 )]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 6, -7, -8 )
@@ -965,14 +965,12 @@ transform = Transform( 1.28156e-05, 0, -1.35, 0, 0.1, 0, 1.35, 0, 1.28156e-05, -
 shape = SubResource( 4 )
 
 [node name="moveNote" type="Label" parent="."]
-anchor_left = 0.499652
-anchor_top = 1.0
-anchor_right = 0.499652
-anchor_bottom = 1.00417
-margin_left = -84.5546
-margin_top = -51.0
-margin_right = 41.4454
-margin_bottom = -23.0024
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -230.0
+margin_top = 37.0
+margin_right = 232.0
+margin_bottom = 68.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_fonts/font = SubResource( 13 )
 align = 1

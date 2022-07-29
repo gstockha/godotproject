@@ -16,7 +16,7 @@ var buttonName = "Alt"
 var bpPreset = 0
 var presetList = []
 var targetInput = 'D :  + 1    E :  + 5    Space :  fill'
-var targetInputAlt = targetInput + '    Q :  clear preset'
+var targetInputAlt = 'Q :  clear preset    ' + targetInput
 
 func _ready():
 	for i in range(90): presetList.append(null)
@@ -29,7 +29,7 @@ func _ready():
 		else:
 			buttonName = "Y"
 			targetInput += "A :  fill"
-	targetInputAlt = targetInput + '    L trigger :  clear preset'
+		targetInputAlt =  'L trigger :  clear preset    ' + targetInput
 	alertBar.text = "Press " + buttonName + " to spend points!";
 	$exitNote.text = "Press " + buttonName + " to close"
 	targetInputNote.text = targetInput
@@ -69,16 +69,16 @@ func _input(event: InputEvent) -> void:
 		targetBar.visible = bpSpent < 90# && bpUnspent > 0
 		if (bpSpent < 90):
 			if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
-			else: spendNote.text = str(bpPreset + bpSpent) + ' / 90  set'
+			else: spendNote.text = str(bpSpent) + ' / 90  set'
 		else: spendNote.text = 'max points spent'
 	elif event.is_action_pressed("pan_left"): _clear_PresetList(target)
 
 func _add_Preset(points) -> void:
 	if barNodes[target].value >= 30: return
-	while points > 0:
+	while points > 0 && bpPreset + bpSpent < 90:
 		if preSpendNodes[target].value >= 30: return
+		presetList[bpPreset + bpSpent] = target
 		bpPreset += 1
-		presetList[bpPreset + bpSpent - 1] = target
 		var diff = preSpendNodes[target].value - barNodes[target].value
 		if diff < 0: diff = 0
 		preSpendNodes[target].value = barNodes[target].value + diff + 1
@@ -104,7 +104,7 @@ func _check_PresetList(bpsent, unspent) -> void:
 		targetBar.visible = bpSpent < 90
 		if (bpSpent < 90):
 			if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
-			else: spendNote.text = str(bpPreset + bpSpent) + ' / 90  set'
+			else: spendNote.text = str(bpSpent) + ' / 90  set'
 		else: spendNote.text = 'max points spent'
 		if targetIndex != null && barNodes[targetIndex].value >= preSpendNodes[targetIndex].value:
 			preSpendNodes[targetIndex].value = 0
@@ -130,6 +130,6 @@ func _clear_PresetList(target) -> void:
 	targetInputNote.text = targetInput
 	if (bpSpent < 90):
 		if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
-		else: spendNote.text = str(bpPreset + bpSpent) + ' / 90  set'
+		else: spendNote.text = str(bpSpent) + ' / 90  set'
 	else: spendNote.text = 'max points spent'
 

@@ -29,17 +29,18 @@ func _ready():
 				break
 		enemyChildren.append(child)
 
-func _process(_delta):
-	distanceChecker += _delta
+func _process(delta):
+	distanceChecker += delta
 	if distanceChecker > checkerThreshold:
 		distanceChecker = 0
 		var pLocation = player.global_transform.origin
 		var myLocation = global_transform.origin
-		if !active && myLocation.distance_to(pLocation) < distanceTreshold && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
+		var nuDist = distanceTreshold + 50
+		if !active && myLocation.distance_to(pLocation) < nuDist && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
 			active = true
 			checkerThreshold = checkFrequencies[1]
 			for enemy in enemyChildren: enemy.call("_on")
-		elif active && (myLocation.distance_to(pLocation) >= distanceTreshold || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
+		elif active && (myLocation.distance_to(pLocation) >= nuDist || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
 			active = false
 			checkerThreshold = checkFrequencies[0]
 			for enemy in enemyChildren:

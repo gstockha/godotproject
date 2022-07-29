@@ -102,9 +102,8 @@ Area checkpoint;
 Camera camera;
 Label moveNote;
 Label tipNote;
-Label speedrunNote;
 Label prNote;
-Label bpNote, bpSpendNote;
+Label bpSpendNote;
 Control statUI;
 Spatial lockOn = null;
 Node globals;
@@ -131,9 +130,7 @@ public override void _Ready(){
     shadowCast = GetNode<RayCast>("shadowCast");
     checkpoint = GetNode<Area>("../../checkpoints/checkpointSpawn");
     camera = GetNode<Camera>("Position3D/playerCam");
-    moveNote = GetNode<Label>("../../moveNote");
     tipNote = GetNode<Label>("../../tipNote");
-    bpNote = GetNode<Label>("bpNote");
     bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
     statUI = GetNode<Control>("statUI");
     statLabels = new Dictionary<string, ProgressBar>(){
@@ -145,16 +142,14 @@ public override void _Ready(){
         {"energy", GetNode<ProgressBar>("statUI/energyBar")}
     };
     if (Owner.Name == "demoWorld"){
-        speedrunNote = GetNode<Label>("../../speedrunNote");
-        prNote = GetNode<Label>("../../prNote");
         traction = 10;
         speedPoints = 10;
         _setStat(98, "traction");
         _setStat(98, "speed");
+        moveNote = GetNode<Label>("../../moveNote");
     }
-    else if (Owner.Name == "pyramidWorld"){
-        bpNote.Visible = true;
-        bpNote.Text = "0 / " + globals.Get("bpTotal") + " BP";
+    else{
+        moveNote = null;
     }
     #endregion
 
@@ -236,7 +231,7 @@ public override void _PhysicsProcess(float delta){ //run physics
         }
         _applyShift(delta, isGrounded);
         //if (collisionScales[0] != collisionBaseScale || launched) _squishNScale(delta, new Vector3(0,0,0), true);
-        if (boingCharge || squishReverb[0] != 0) _squishNScale(delta, new Vector3(0,0,0), true);
+        if (boing != 0 || boingCharge || squishReverb[0] != 0) _squishNScale(delta, new Vector3(0,0,0), true);
     }
     else _isBoinging(delta);
     _turnDelay();
@@ -1206,6 +1201,8 @@ public void _on_hitBox_area_entered(Area area){
             case "warps":
                 Area checkpoint1 = (Area)GetNode("../../checkpoints/checkpointSpawn");
                 Translation = checkpoint1.GlobalTransform.origin;
+                Label prNote = GetNode<Label>("../../prNote");
+                Label speedrunNote = GetNode<Label>("../../speedrunNote");
                 if (speedRun){
                     if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
                         prNote.Text = "PR: " + speedrunNote.Text;
@@ -1281,7 +1278,7 @@ public void _on_hitBox_area_entered(Area area){
                 int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
                 bp += newBp;
                 int bpTotal = (int)globals.Get("bpTotal");
-                bpNote.Text = bp.ToString() + " / " + bpTotal.ToString() + " BP";
+                // bpNote.Text = bp.ToString() + " / " + bpTotal.ToString() + " BP";
                 int oldUnspent = bpUnspent;
                 int totalBp = bpSpent + bpUnspent;
                 while(newBp > 0 && totalBp < 90){
@@ -1292,7 +1289,7 @@ public void _on_hitBox_area_entered(Area area){
                 if (bpSpent < 90){
                     do{
                         statUI.Call("_check_PresetList", bpSpent, bpUnspent);
-                    } while (bpUnspent > 0 && (int)statUI.Get("bpPreset") > 0);
+                    } while (bpUnspent > 0 && bpSpent < 90 && (int)statUI.Get("bpPreset") > 0);
                 }
                 // GD.Print("done");
                 area.QueueFree();
@@ -1448,6 +1445,7 @@ public void _on_hitBox_area_exited(Area area){
         switch(groups[i].ToString()){
             case "checkpoints":
                 if (speedRun && area.Name == "checkpointSpawn"){
+                    Label speedrunNote = GetNode<Label>("../../speedrunNote");
                     speedrunNote.Set("timerOn", true);
                     speedrunNote.Set("time", 0);
                 }
@@ -1596,6 +1594,7 @@ public void _setStat(int points, string stat){
 }
 
 public void _drawMoveNote(string text){
+    if (moveNote == null) return;
     moveNote.Text = text;
     moveNote.Set("alpha", 2.5);
     moveNote.AddColorOverride("font_color", new Color(1,1,1,1));
