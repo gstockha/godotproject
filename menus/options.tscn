@@ -1,0 +1,140 @@
+[gd_scene load_steps=22 format=2]
+
+[ext_resource path="res://fonts/troika.otf" type="DynamicFontData" id=1]
+[ext_resource path="res://sprites/UI/slider_grabber.png" type="Texture" id=3]
+[ext_resource path="res://sounds/gear.wav" type="AudioStream" id=4]
+[ext_resource path="res://menus/music_slider.gd" type="Script" id=5]
+[ext_resource path="res://menus/backButton.gd" type="Script" id=6]
+[ext_resource path="res://menus/sfx_slider.gd" type="Script" id=7]
+[ext_resource path="res://menus/options.gd" type="Script" id=8]
+
+
+[sub_resource type="DynamicFont" id=1]
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxTexture" id=2]
+region_rect = Rect2( 0, 0, 16, 64 )
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=4]
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxTexture" id=6]
+region_rect = Rect2( 0, 0, 16, 64 )
+
+[sub_resource type="StyleBoxEmpty" id=7]
+
+[sub_resource type="StyleBoxEmpty" id=8]
+
+[sub_resource type="DynamicFont" id=14]
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxEmpty" id=9]
+
+[sub_resource type="StyleBoxEmpty" id=10]
+
+[sub_resource type="StyleBoxEmpty" id=11]
+
+[sub_resource type="StyleBoxEmpty" id=12]
+
+[sub_resource type="StyleBoxEmpty" id=13]
+
+[node name="options" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 8 )
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="HBoxContainer" parent="VBoxContainer2"]
+margin_right = 77.0
+margin_bottom = 23.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="VBoxContainer" parent="VBoxContainer2/VBoxContainer"]
+margin_right = 41.0
+margin_bottom = 23.0
+
+[node name="Label" type="Label" parent="VBoxContainer2/VBoxContainer/HBoxContainer"]
+margin_right = 41.0
+margin_bottom = 19.0
+custom_fonts/font = SubResource( 1 )
+text = "music"
+
+[node name="music_slider" type="VSlider" parent="VBoxContainer2/VBoxContainer/HBoxContainer"]
+margin_top = 23.0
+margin_right = 41.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_icons/grabber_disabled = ExtResource( 3 )
+custom_icons/grabber_highlight = ExtResource( 3 )
+custom_icons/grabber = ExtResource( 3 )
+custom_styles/slider = SubResource( 2 )
+custom_styles/grabber_area_highlight = SubResource( 3 )
+custom_styles/grabber_area = SubResource( 4 )
+min_value = -20.0
+max_value = 5.0
+script = ExtResource( 5 )
+
+[node name="HBoxContainer2" type="VBoxContainer" parent="VBoxContainer2/VBoxContainer"]
+margin_left = 45.0
+margin_right = 77.0
+margin_bottom = 23.0
+
+[node name="Label" type="Label" parent="VBoxContainer2/VBoxContainer/HBoxContainer2"]
+margin_right = 32.0
+margin_bottom = 19.0
+custom_fonts/font = SubResource( 5 )
+text = "sfx"
+
+[node name="sfx_slider" type="VSlider" parent="VBoxContainer2/VBoxContainer/HBoxContainer2"]
+margin_top = 23.0
+margin_right = 32.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_icons/grabber_disabled = ExtResource( 3 )
+custom_icons/grabber_highlight = ExtResource( 3 )
+custom_icons/grabber = ExtResource( 3 )
+custom_styles/slider = SubResource( 6 )
+custom_styles/grabber_area_highlight = SubResource( 7 )
+custom_styles/grabber_area = SubResource( 8 )
+min_value = -20.0
+max_value = 5.0
+script = ExtResource( 7 )
+
+[node name="demoSound" type="AudioStreamPlayer" parent="VBoxContainer2/VBoxContainer/HBoxContainer2/sfx_slider"]
+stream = ExtResource( 4 )
+volume_db = 1.0
+
+[node name="backButton" type="Button" parent="VBoxContainer2"]
+margin_top = 27.0
+margin_right = 77.0
+margin_bottom = 46.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 0, 0, 1 )
+custom_colors/font_color_pressed = Color( 1, 0.992157, 0, 1 )
+custom_fonts/font = SubResource( 14 )
+custom_styles/hover = SubResource( 9 )
+custom_styles/pressed = SubResource( 10 )
+custom_styles/focus = SubResource( 11 )
+custom_styles/disabled = SubResource( 12 )
+custom_styles/normal = SubResource( 13 )
+text = "back"
+script = ExtResource( 6 )
+
+[connection signal="value_changed" from="VBoxContainer2/VBoxContainer/HBoxContainer/music_slider" to="VBoxContainer2/VBoxContainer/HBoxContainer/music_slider" method="_on_music_slider_value_changed"]
+[connection signal="value_changed" from="VBoxContainer2/VBoxContainer/HBoxContainer2/sfx_slider" to="VBoxContainer2/VBoxContainer/HBoxContainer2/sfx_slider" method="_on_sfx_slider_value_changed"]
+[connection signal="goToRoom" from="VBoxContainer2/backButton" to="." method="_on_backButton_goToRoom"]
+[connection signal="pressed" from="VBoxContainer2/backButton" to="VBoxContainer2/backButton" method="_on_backButton_pressed"]
