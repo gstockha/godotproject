@@ -415,23 +415,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\aravi\\.nuget\\packages\\": {},
+    "C:\\Users\\AAAAAAA\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\marblebounce.csproj",
+      "projectUniqueName": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\marblebounce.csproj",
       "projectName": "marblebounce",
-      "projectPath": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\marblebounce.csproj",
-      "packagesPath": "C:\\Users\\aravi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\.mono\\temp\\obj\\",
+      "projectPath": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\marblebounce.csproj",
+      "packagesPath": "C:\\Users\\AAAAAAA\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\.mono\\temp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\aravi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\AAAAAAA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -465,7 +465,7 @@
             "autoReferenced": true
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.303\\RuntimeIdentifierGraph.json"
       }
     }
   }
