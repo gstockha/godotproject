@@ -1576,7 +1576,7 @@ public void _setStat(int points, string stat){
             if (hax < 2) bouncePoints += points;
             overflow = bouncePoints > 30;
             bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
-            jumpForce = 11.5F + myMath.roundTo(bouncePoints * .23F, 10);
+            jumpForce = 11.5F + myMath.roundTo(bouncePoints * .2F, 10);
             bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
             statLabels[stat].Value = bouncePoints;
             // GD.Print("jumpForce " + jumpForce.ToString());

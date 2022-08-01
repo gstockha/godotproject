@@ -44,6 +44,12 @@ shadow_color = Color( 0.490196, 1, 0.878431, 0.882353 )
 [sub_resource type="StyleBoxFlat" id=60]
 bg_color = Color( 0, 0, 0, 0 )
 
+[sub_resource type="DynamicFont" id=34]
+size = 25
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 5 )
+
 [sub_resource type="StyleBoxFlat" id=20]
 bg_color = Color( 0.384314, 1, 0.368627, 1 )
 border_width_left = 2
@@ -332,12 +338,6 @@ outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
 font_data = ExtResource( 5 )
 
-[sub_resource type="DynamicFont" id=34]
-size = 25
-outline_size = 1
-outline_color = Color( 0, 0, 0, 1 )
-font_data = ExtResource( 5 )
-
 [node name="PlayerBall" type="KinematicBody" groups=["players"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 76.523, 43.104, -147.733 )
 collision_layer = 2
@@ -457,9 +457,9 @@ anchor_left = 0.094
 anchor_top = 0.902
 anchor_right = 0.328
 anchor_bottom = 0.927
-margin_left = -9.56696
+margin_left = -4.56696
 margin_top = 0.151489
-margin_right = -9.08698
+margin_right = -4.08698
 margin_bottom = 0.151428
 custom_styles/fg = SubResource( 57 )
 custom_styles/bg = SubResource( 58 )
@@ -474,14 +474,29 @@ anchor_left = 0.094
 anchor_top = 0.934
 anchor_right = 0.328
 anchor_bottom = 0.959
-margin_left = -9.56696
+margin_left = -4.56696
 margin_top = 0.111572
-margin_right = -9.08698
+margin_right = -4.08698
 margin_bottom = 0.11145
 custom_styles/fg = SubResource( 59 )
 custom_styles/bg = SubResource( 60 )
 value = 100.0
 percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bpSpendAlert" type="Label" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.941176 )
+margin_left = 926.153
+margin_top = 659.592
+margin_right = 1257.15
+margin_bottom = 715.592
+custom_fonts/font = SubResource( 34 )
+text = "Hold Y to spend points!"
+align = 2
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -536,9 +551,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -25.5
-margin_top = -10.5
+margin_top = -11.5
 margin_right = 25.5
-margin_bottom = 10.5
+margin_bottom = 9.5
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 2
 custom_fonts/font = SubResource( 22 )
@@ -594,9 +609,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -42.5
-margin_top = -10.0
+margin_top = -11.0
 margin_right = 43.5
-margin_bottom = 11.0
+margin_bottom = 10.0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 2
 custom_fonts/font = SubResource( 22 )
@@ -890,21 +905,6 @@ margin_right = 1189.61
 margin_bottom = -143.154
 custom_fonts/font = SubResource( 54 )
 text = "Press alt to close"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="bpSpendAlert" type="Label" parent="."]
-visible = false
-modulate = Color( 1, 1, 1, 0.941176 )
-margin_left = 926.153
-margin_top = 659.592
-margin_right = 1257.15
-margin_bottom = 715.592
-custom_fonts/font = SubResource( 34 )
-text = "Hold Y to spend points!"
-align = 2
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
