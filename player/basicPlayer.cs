@@ -46,6 +46,8 @@ float wallFriction = 0;
 static float speedBase = 14;
 float speed = speedBase;
 int speedPoints, weightPoints, sizePoints, energyPoints, bouncePoints = 0;
+float[] energy = new float[] {300, 300, 0};
+int[] hp = new int[] {300, 300};
 int traction = 0;
 float[] tractionList = new float[31];
 static float baseWeight = 1.2F;
@@ -105,6 +107,8 @@ Label tipNote;
 Label prNote;
 Label bpSpendNote;
 Control statUI;
+ProgressBar energyBar;
+ProgressBar hpBar;
 Spatial lockOn = null;
 Node globals;
 
@@ -133,6 +137,8 @@ public override void _Ready(){
 	tipNote = GetNode<Label>("../../tipNote");
 	bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
 	statUI = GetNode<Control>("statUI");
+	energyBar = GetNode<ProgressBar>("statusHUD/energyBar");
+	hpBar = GetNode<ProgressBar>("statusHUD/hpBar");
 	statLabels = new Dictionary<string, ProgressBar>(){
 		{"weight", GetNode<ProgressBar>("statUI/gravityBar")},
 		{"traction", GetNode<ProgressBar>("statUI/tractionBar")},
@@ -236,6 +242,17 @@ public override void _PhysicsProcess(float delta){ //run physics
 	else _isBoinging(delta);
 	_turnDelay();
 	_lockOn(false, delta);
+	if (energy[0] < energy[1]){
+		int mult = Mathf.FloorToInt(energy[2]);
+		// GD.Print(mult);
+		energy[0] += delta * (10 + (10 * mult));
+		if (energy[0] > energy[1]) energy[0] = energy[1];
+		energyBar.Value = energy[0];
+	}
+	if (energy[2] < 10){
+		energy[2] += 2 * delta;
+		if (energy[2] > 10) energy[2] = 10;
+	}
 }
 
 public void _controller(float delta){
@@ -635,7 +652,9 @@ public void _isBoinging(float delta){
 				float dashSpd = (20 * fric * 2) * (.7F * offset);
 				if (dashSpd > spd) spd = dashSpd;
 			}
-			velocity = new Vector3(direction_ground.x*spd, yvelocity, direction_ground.y*spd);
+			float energyMult = energy[0] / 30;
+			energyMult = Mathf.Clamp(energyMult, .5F, 1);
+			velocity = new Vector3(direction_ground.x*(spd*energyMult), yvelocity, direction_ground.y*(spd*energyMult));
 			if (spd > 7){
 				if (!sliding) _drawMoveNote("slide");
 				sliding = true;
@@ -878,6 +897,9 @@ public void _jump(){
 	}
 	if (boing != 0){ //boing jump
 		yvelocity = boing;
+		float energyMult = (!trampolined) ? energy[0] / 30 : 1;
+		energyMult = Mathf.Clamp(energyMult, .5F, 1);
+		yvelocity *= energyMult;
 		boingDash = false;
 		_squishNScale((gravity * .017F), new Vector3(0,0,0), true);
 		squishSet = false;
@@ -911,7 +933,7 @@ public void _jump(){
 		float nuyvel = 0;
 		if (bounceDashing != 1){ //regular boingjump
 			jumpwindow = (jumpwindow / basejumpwindow * .75F) + bounceBase;
-			nuyvel = myMath.roundTo((jumpForce*(1 + combo * .035F)) * jumpwindow, 10);
+			nuyvel = myMath.roundTo((jumpForce*(1 + combo * .035F)) * jumpwindow, 10) * energyMult;
 			bounceCombo += 1;
 			if (!wallb && !slopeSquish){
 				if (chargedNote == ""){
@@ -934,7 +956,7 @@ public void _jump(){
 		else{ //crashing or walldashing
 			jumpwindow = (jumpwindow / basejumpwindow) + bounceBase;
 			bounceDashing = 0;
-			nuyvel = myMath.roundTo((jumpForce * (1.3F - (bouncePoints * .002F))) * jumpwindow,10);
+			nuyvel = myMath.roundTo((jumpForce * (1.3F - (bouncePoints * .002F))) * jumpwindow,10) * energyMult;
 			if (wallb){ //if off wall
 				if (!slopeSquish){
 					_drawMoveNote(chargedNote + "crash wallboing");
@@ -956,6 +978,9 @@ public void _jump(){
 		if (!trampolined && yvelocity > (jumpForce + 10)) yvelocity = jumpForce + 10;
 		jumpwindow = 0;
 		bounce = bounceBase;
+		energy[0] = (energy[0] - (30 - (bounceCombo * 2)) >= 0) ? energy[0] - (30 - (bounceCombo * 2)) : 0;
+		energyBar.Value = energy[0];
+		energy[2] = 0;
 	}
 	else if (yvelocity == -1 || (IsOnFloor() && shiftedDir == 0) || (shiftedDir != 0 && floorCast.IsColliding())){
 		if (preBoingTimer.IsStopped() && shiftedDir == 0) preBoingTimer.Start(.2F); //idle charge jump
@@ -971,31 +996,39 @@ public void _normalJump(){
 	boingCharge = false;
 	_drawMoveNote("boing");
 	yvelocity = jumpForce - Mathf.Round(((Translation.y - collisionBaseScale) - leewayCast.GetCollisionPoint().y) * 7) * .5F;
+	float energyMult = energy[0] / 30;
+	energyMult = Mathf.Clamp(energyMult, .5F, 1);
+	yvelocity *= energyMult;
 	squishReverb[0] = yvelocity * .035F;
 	preBoingTimer.Stop();
 	hasJumped = 2;
 	if (shiftedDir != 0) shiftedSticky = 0;
+	energy[0] = (energy[0] - 30 >= 0) ? energy[0] - 30 : 0;
+	energyBar.Value = energy[0];
+	energy[2] = 0;
 }
 
 public void _dash(){
 	if (smushed || idle > 0) return;
 	if ((moving || (moveDir[0] != 0 || moveDir[1] != 0)) && !dashing){
+		float energyMult = energy[0] / 30;
+		energyMult = Mathf.Clamp(energyMult, .5F, 1);
 		if (leewayCast.IsColliding() && canDash && hasJumped == 0 && shiftedDir == 0){ // on ground and not on shift
-			yvelocity = 5.75F;
-			dashSpeed = 20;
+			yvelocity = 5.75F * energyMult;
+			dashSpeed = 20 * energyMult;
 			_drawMoveNote("dash");
 			dashTimer.Stop();
 			dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
 			canDash = false;
 		}
-		else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift
+		else if (hasJumped > 0 && !IsOnWall()){ // in air and not on shift, crash
 			dashTimer.Stop();
-			weight = baseWeight * 3;
+			weight = baseWeight * (3 * energyMult);
 			shiftedDir = 0; // don't need to apply shifted gravity anymore if doing this
 			_drawMoveNote("crash");
 		}
 		else if (shiftedDir != 0){ // is on shift
-			dashSpeed = 25;
+			dashSpeed = 24 * energyMult;
 			_drawMoveNote("slope dash");
 		}
 		else return;
@@ -1003,6 +1036,9 @@ public void _dash(){
 		if (Math.Sign(stickDir[0]) != 0 && Math.Sign(moveDir[0]) != Math.Sign(stickDir[0])) for (i = 0; i < dirSize; i++) dir[0,i] = 0;//stickDir[0] * friction;
 		if (Math.Sign(stickDir[1]) != 0 && Math.Sign(moveDir[1]) != Math.Sign(stickDir[1])) for (i = 0; i < dirSize; i++) dir[1,i] = 0;//stickDir[1] * friction;
 		dashing = true;
+		energy[0] = (energy[0] - 30 >= 0) ? energy[0] - 30 : 0;
+		energyBar.Value = energy[0];
+		energy[2] = 0;
 	}
 }
 
@@ -1540,6 +1576,12 @@ public void _setStat(int points, string stat){
             // GD.Print("weight " + baseWeight.ToString());
             dashSpeed = 20 + (.1F * weightPoints);
             statLabels[stat].Value = weightPoints;
+			hp[1] = 300 + (weightPoints * 15);
+			hp[0] += weightPoints * 15;
+			hp[0] = Mathf.Clamp(hp[0], 0, hp[1]);
+			hpBar.MaxValue = hp[1];
+			hpBar.Value = hp[0];
+			hpBar.SetSize(new Vector2(hp[1], hpBar.RectSize.y));
             break;
         case "size":
             oldPoints = sizePoints;
@@ -1583,7 +1625,18 @@ public void _setStat(int points, string stat){
             // GD.Print("bounceComboCap " + bounceComboCap.ToString());
             break;
         case "energy":
-            
+            oldPoints = energyPoints;
+			if (oldPoints == 30 && hax < 1) return;
+			if (hax < 2) energyPoints += points;
+			overflow = energyPoints > 30;
+			energyPoints = Mathf.Clamp(energyPoints, 0, 30);
+			statLabels[stat].Value = energyPoints;
+			energy[1] = 300 + (energyPoints * 15);
+			energy[0] += energyPoints * 15;
+			energy[0] = Mathf.Clamp(energy[0], 0, energy[1]);
+			energyBar.MaxValue = energy[1];
+			energyBar.Value = energy[0];
+			energyBar.SetSize(new Vector2(energy[1], energyBar.RectSize.y));
             break;
     }
     if (hax < 1){

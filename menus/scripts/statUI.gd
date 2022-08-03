@@ -16,7 +16,7 @@ var buttonName = "Alt"
 var bpPreset = 0
 var presetList = []
 var targetInput = 'D :  + 1    E :  + 5    Space :  fill'
-var targetInputAlt = 'Q :  clear preset    ' + targetInput
+var targetInputAlt = 'Q :  clear preset'
 
 func _ready():
 	for i in range(90): presetList.append(null)
@@ -29,7 +29,7 @@ func _ready():
 		else:
 			buttonName = "Y"
 			targetInput += "A :  fill"
-		targetInputAlt =  'L trigger :  clear preset    ' + targetInput
+		targetInputAlt =  'L trigger :  clear preset'
 	alertBar.text = "Press " + buttonName + " to spend points!";
 	$exitNote.text = "Press " + buttonName + " to close"
 	targetInputNote.text = targetInput
@@ -44,15 +44,15 @@ func _input(event: InputEvent) -> void:
 			bpSpent = player.bpSpent
 			targetBar.visible = bpSpent < 90# && bpUnspent > 0
 			alertBar.visible = false
-			targetInputNote.text = targetInput if preSpendNodes[target].value < 1 else targetInputAlt
+			_draw_InputNote(1)
 		else: player.idle = 0
 	if (allocateMode == false): return
 	if event.is_action_pressed("ui_up") || event.is_action_pressed("ui_down"):
-		if event.is_action_pressed("ui_up"): target = target - 1 if (target > 0) else 4
-		elif event.is_action_pressed("ui_down"): target = target + 1 if (target < 4) else 0
+		if event.is_action_pressed("ui_up"): target = target - 1 if (target > 0) else 5
+		elif event.is_action_pressed("ui_down"): target = target + 1 if (target < 5) else 0
 		targetBar.rect_position.x = barNodes[target].rect_position.x - 1.418
 		targetBar.rect_position.y = barNodes[target].rect_position.y - 1.92
-		targetInputNote.text = targetInput if preSpendNodes[target].value < 1 else targetInputAlt
+		_draw_InputNote(1)
 	elif event.is_action_pressed("ui_right") || event.is_action_pressed("pan_right") || event.is_action_pressed("jump"):
 		if bpSpent >= 90: return
 		var points = 1
@@ -64,13 +64,13 @@ func _input(event: InputEvent) -> void:
 		else: return
 		bpUnspent = player.bpUnspent
 		bpSpent = player.bpSpent
-		if bpSpent != oldbpSpent && bpSpent - oldbpSpent < points:
-			_add_Preset(points - (bpSpent - oldbpSpent))
+		if bpSpent != oldbpSpent && bpSpent - oldbpSpent < points: _add_Preset(points - (bpSpent - oldbpSpent))
 		targetBar.visible = bpSpent < 90# && bpUnspent > 0
 		if (bpSpent < 90):
 			if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
 			else: spendNote.text = str(bpSpent) + ' / 90  set'
 		else: spendNote.text = 'max points spent'
+		_draw_InputNote(0)
 	elif event.is_action_pressed("pan_left"): _clear_PresetList(target)
 
 func _add_Preset(points) -> void:
@@ -83,7 +83,7 @@ func _add_Preset(points) -> void:
 		if diff < 0: diff = 0
 		preSpendNodes[target].value = barNodes[target].value + diff + 1
 		points -= 1
-	targetInputNote.text = targetInputAlt
+	_draw_InputNote(0)
 
 func _check_PresetList(bpsent, unspent) -> void:
 	var targetIndex = presetList[bpsent]
@@ -118,13 +118,15 @@ func _clear_PresetList(target) -> void:
 		for bar in preSpendNodes: bar.value = 0
 	else: #clear selected
 		var newList = []
+		var nullList = []
 		var val
 		for i in range(90):
 			val = presetList[i]
-			if val == null || val == target: newList.append(null)
+			if val == null || val == target: nullList.append(null)
 			else:
 				newList.append(val)
 				bpPreset += 1
+		for i in range(bpPreset, 90): newList.append(nullList[i - bpPreset])
 		presetList = newList
 		preSpendNodes[target].value = 0
 	targetInputNote.text = targetInput
@@ -133,3 +135,11 @@ func _clear_PresetList(target) -> void:
 		else: spendNote.text = str(bpSpent) + ' / 90  set'
 	else: spendNote.text = 'max points spent'
 
+func _draw_InputNote(mode: int) -> void:
+	if mode == 0:
+		if preSpendNodes[target].value >= 30: targetInputNote.text = targetInputAlt
+		else: targetInputNote.text = targetInputAlt + '    ' + targetInput
+	else:
+		if preSpendNodes[target].value < 1: targetInputNote.text = targetInput
+		elif preSpendNodes[target].value >= 30: targetInputNote.text = targetInputAlt
+		else: targetInputNote.text = targetInputAlt + '    ' + targetInput

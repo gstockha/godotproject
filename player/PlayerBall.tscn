@@ -463,7 +463,8 @@ margin_right = -4.08698
 margin_bottom = 0.151428
 custom_styles/fg = SubResource( 57 )
 custom_styles/bg = SubResource( 58 )
-value = 100.0
+max_value = 300.0
+value = 300.0
 percent_visible = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -476,11 +477,12 @@ anchor_right = 0.328
 anchor_bottom = 0.959
 margin_left = -4.56696
 margin_top = 0.111572
-margin_right = -4.08698
-margin_bottom = 0.11145
+margin_right = -4.08701
+margin_bottom = 0.111572
 custom_styles/fg = SubResource( 59 )
 custom_styles/bg = SubResource( 60 )
-value = 100.0
+max_value = 300.0
+value = 300.0
 percent_visible = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -798,7 +800,6 @@ __meta__ = {
 }
 
 [node name="energyBar" type="ProgressBar" parent="statUI"]
-modulate = Color( 1, 1, 1, 0.588235 )
 anchor_left = 0.03
 anchor_top = 0.901
 anchor_right = 0.03
