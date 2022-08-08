@@ -47,7 +47,7 @@ static float speedBase = 14;
 float speed = speedBase;
 int speedPoints, weightPoints, sizePoints, energyPoints, bouncePoints = 0;
 float[] energy = new float[] {300, 300, 0};
-int[] hp = new int[] {300, 300};
+float[] hp = new float[] {300, 300};
 int traction = 0;
 float[] tractionList = new float[31];
 static float baseWeight = 1.2F;
@@ -1074,6 +1074,16 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
 	squishReverb[2] = 1; //proc wall wiggle
 }
 
+public void _damage(float damage, float iFrames){
+	hp[0] -= Mathf.RoundToInt(damage * 2);
+	hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
+	hpBar.Value = hp[0];
+	if (iFrames > 0){
+		invincible = true;
+		invincibleTimer.Start(iFrames);
+	}
+}
+
 public override void _Input(InputEvent @event){
 	if (@event.IsActionPressed("jump")) _jump();
 	else if (@event.IsActionReleased("jump")){
@@ -1340,7 +1350,8 @@ public void _collisionDamage(Spatial collisionNode){
 	int damage, vulnerableClass; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 	bool doShake = true;
 	bool notCrashing = (!dashing || weight <= baseWeight);
-	float vecx, vecz, power;
+	float vecx, vecz;
+	float power = 0;
 	Vector3 launch;
 	for (int i = 0; i < groups.Count; i++){
 		switch(groups[i].ToString()){
@@ -1350,31 +1361,33 @@ public void _collisionDamage(Spatial collisionNode){
 				vulnerableClass = (int)collisionNode.Get("vulnerableClass");
 				if (vulnerableClass == 0) return;
 				damage = (int)collisionNode.Get("damage");
+				_damage(damage, .1F);
 				Vector3 vel = (Vector3)collisionNode.Get("velocity");
-				power = (damage / baseWeight) * .5F;
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing && vulnerableClass > 1){
 						collisionNode.Call("_launch", collisionBaseScale * (10 + (speed * friction * .1F)), new Vector3(direction_ground.x, 0, direction_ground.y));
 						float weightPowerMod = 1 - (baseWeight * .3F);
 						if (weightPowerMod > 1) weightPowerMod = 1;
-						power *= weightPowerMod; //don't send me as far
+						power = (damage / baseWeight) * .5F * weightPowerMod; //don't send me as far
 						doShake = false;
 					}
 					else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
 						collisionNode.Call("_squish", collisionBaseScale * ((baseWeight * 10) * .5F)); //crashing
-						power *= 1.5F;
+						power = damage / (2 - (jumpForce * .05F));
 						doShake = false;
 					}
 				}
-				if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .3F, 0, vel.z * power * .3F);
+				else{
+					power = damage / (.8F + (hp[0] * .0015F));
+					if (hp[0] <= 1) power *= 2;
+				}
+				if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .1F, 0, vel.z * power * .1F);
 				else{
 					vecx = (velocity.x != 0) ? velocity.x : .1F;
 					vecz = (velocity.z != 0) ? velocity.z : .1F;
 					launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
 				}
 				_launch(launch, power, notCrashing);
-				invincible = true;
-				invincibleTimer.Start(.1F);
 				if (doShake) camera.Call("_shakeMove", 10, damage * .1F, 0);
 				break;
 				#endregion
@@ -1383,20 +1396,19 @@ public void _collisionDamage(Spatial collisionNode){
 				if (invincible) return;
 				vulnerableClass = (int)collisionNode.Get("vulnerableClass");
 				if (vulnerableClass == 0) return;
-				power = (15 / baseWeight) * .5F;
+				_damage(15, .1F);
 				Timer springTimer = (Timer)collisionNode.Get("springTimer");
-				if (!springTimer.IsStopped()) power *= 2;
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing && vulnerableClass > 1){
 						collisionNode.Call("_launch", collisionBaseScale * (10 + (speed * friction * .1F)), new Vector3(direction_ground.x, 0, direction_ground.y));
-						float weightPowerMod = 1 - (baseWeight * .5F);
+						float weightPowerMod = 1 - (baseWeight * .3F);
 						if (weightPowerMod > 1) weightPowerMod = 1;
-						power *= weightPowerMod; //don't send me as far
+						power = (15 / baseWeight) * .5F * weightPowerMod; //don't send me as far
 						doShake = false;
 					}
 					else if (!notCrashing && vulnerableClass != 3 && GlobalTransform.origin.y > collisionNode.GlobalTransform.origin.y){
 						collisionNode.Call("_squish", collisionBaseScale * ((baseWeight * 10) * .5F)); //crashing
-						power *= 1.5F;
+						power = 15 / (2 - (jumpForce * .05F));
 						doShake = false;
 					}
 					dashTimer.Stop();
@@ -1404,12 +1416,15 @@ public void _collisionDamage(Spatial collisionNode){
 					weight = baseWeight;
 					//speed = speedBase;
 				}
+				else{
+					power = 15 / (.8F + (hp[0] * .0015F));
+					if (!springTimer.IsStopped()) power *= 1.5F;
+					if (hp[0] <= 1) power *= 2;
+				}
 				vecx = (velocity.x != 0) ? velocity.x : .1F;
 				vecz = (velocity.z != 0) ? velocity.z : .1F;
-				launch = new Vector3(vecx * -1 * power * 2, 0, vecz * -1 * power * 2).Normalized();
+				launch = new Vector3(vecx * -1 * power * .1F, 0, vecz * -1 * power * .1F);
 				_launch(launch, power, notCrashing);
-				invincible = true;
-				invincibleTimer.Start(.1F);
 				if (doShake) camera.Call("_shakeMove", 10, 2.5F, 0);
 				break;
 				#endregion
@@ -1451,24 +1466,23 @@ public void _collisionDamage(Spatial collisionNode){
 				if (invincible) return;
 				damage = (int)collisionNode.Get("damage");
 				Vector3 trajectory = ((Vector3)collisionNode.Get("trajectory") - collisionNode.GlobalTransform.origin).Normalized();
-				power = (damage / baseWeight);
+				_damage(damage, .1F);
+				power = damage / (.8F + (hp[0] * .0015F));
+				if (hp[0] <= 1) power *= 2;
 				launch = new Vector3(trajectory.x * -1 * power, 0, trajectory.z * -1 * power);
 				_launch(launch, power, true);
 				collisionNode.Call("_on_DeleteTimer_timeout");
-				invincible = true;
-				invincibleTimer.Start(.1F);
 				camera.Call("_shakeMove", damage * .5F, damage * .15F, 0);
 				break;
 				#endregion
 			case("lavas"):
 				#region
-				//if ((bool)collisionNode.Get("invincible")) return;
 				if (invincible) return;
-				damage = 25;
-				_launch(Vector3.Zero, damage, false);
-				camera.Call("_shakeMove", 10, damage * .1F, 0);
-				invincible = true;
-				invincibleTimer.Start(.1F);
+				_damage(25, .1F);
+				power = 25 / (.8F + (hp[0] * .0015F));
+				if (hp[0] <= 1) power *= 2;
+				_launch(Vector3.Zero, power, false);
+				camera.Call("_shakeMove", 10, 2.5F, 0);
 				break;
 				#endregion
 			}

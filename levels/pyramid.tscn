@@ -862,9 +862,6 @@ material = SubResource( 71 )
 [node name="bpParent" type="Spatial" parent="environment/Pyramid/PyramidExternal"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 26.9236, 0 )
 
-[node name="bp2" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -34.2, 3.5, -0.250165 )
-
 [node name="bp3" parent="environment/Pyramid/PyramidExternal/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -34.2, 3.5, -25.238 )
 
@@ -1951,6 +1948,9 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 18.6888, 15.7912, -38.48
 [node name="bp14" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 83.2168, 19.3244, -50.0444 )
 
+[node name="bp19" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 89.8855, 19.3244, -81.1611 )
+
 [node name="bp7" parent="environment/Outside/spawnZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -64.0612, 24.66, 2.80673 )
 
@@ -2321,6 +2321,9 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, -50.885 )
 [node name="bp9" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.08223, 35.6977, -37.0159 )
 
+[node name="bp15" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.8862, 43.6185, -52.6354 )
+
 [node name="bp10" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -1.08223, 26.0204, -15.7393 )
 
@@ -2329,6 +2332,9 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.722878, 16.2598, 52.4
 
 [node name="bp12" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -0.722878, 25.7548, 31.4523 )
+
+[node name="bp14" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -3.3378, 25.7548, 13.9323 )
 
 [node name="5bp" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 28 )]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -1.00087, 36.845, -70.6891 )
@@ -2878,15 +2884,6 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 14, 10.2, -32 )
 
 [node name="bp5" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 14, 10.2, -52 )
-
-[node name="bp6" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 4.33604, 0.8, -12.237 )
-
-[node name="bp8" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 4.33604, 0.8, 9.70959 )
-
-[node name="bp7" parent="environment/Outside/thumpZone/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 4.33604, 0.8, -32.2099 )
 
 [node name="spireZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -82.514, 2, -139.013 )

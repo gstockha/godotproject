@@ -129,7 +129,7 @@ public void _on_BurrowTimer_timeout(){
         LookAt(target.GlobalTransform.origin, Vector3.Up);
         nuRot = Rotation.y;
         Rotation = new Vector3(oldRot.x, nuRot, oldRot.z);
-        shootTimer.Start(.5F);
+        shootTimer.Start(1);
         timerSet += 1;
     }
     else if (state == states.attack){
