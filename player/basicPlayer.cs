@@ -111,7 +111,10 @@ ProgressBar energyBar;
 ProgressBar hpBar;
 Spatial lockOn = null;
 Node globals;
-
+[Export] int playerId = 0;
+Dictionary<string, string> controls = new Dictionary<string, string>(){
+	{"move_left", ""}, {"move_right", ""}, {"move_up", ""}, {"move_down", ""}, {"jump",""}, {"dash",""}, {"special", ""}
+};
 #endregion
 
 public override void _Ready(){
@@ -157,6 +160,7 @@ public override void _Ready(){
 	else{
 		moveNote = null;
 	}
+	// if (controls == null) controls = GetResource<Resource>("")
 	#endregion
 
 	#region initialize data structures
@@ -170,7 +174,7 @@ public override void _Ready(){
 		// GD.Print("tractionList[" + p.ToString() + "]: " + tractionList[p].ToString());
 		x += 1.66F;
 	}
-	//control dictionary
+	#region control dictionary
 	string[] controllerStr = new string[8];
 	if (Input.IsJoyKnown(0) == false){ //keyboard mouse
 		controllerStr[0] = "WASD or Arrow Keys";
@@ -209,6 +213,17 @@ public override void _Ready(){
 	controlNames["restart"] = controllerStr[4];
 	controlNames["speedrun"] = controllerStr[5];
 	controlNames["target"] = controllerStr[6];
+	#endregion
+	#region define controls
+	string id = playerId.ToString();
+	controls["move_up"] = (string)globals.Get("move_up") + id;
+	controls["move_down"] = (string)globals.Get("move_down") + id;
+	controls["move_left"] = (string)globals.Get("move_left") + id;
+	controls["move_right"] = (string)globals.Get("move_right") + id;
+	controls["jump"] = (string)globals.Get("jump") + id;
+	controls["dash"] = (string)globals.Get("dash") + id;
+	controls["special"] = (string)globals.Get("special") + id;
+	#endregion
 	#endregion
 	//skinBody.RotationDegrees = new Vector3(skinBody.RotationDegrees.x,45,skinBody.RotationDegrees.z);
 	ang = (-1 * Rotation.y);
@@ -257,8 +272,8 @@ public override void _PhysicsProcess(float delta){ //run physics
 
 public void _controller(float delta){
 	if (idle == 0){ //update direction
-		stickDir[0] = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-		stickDir[1] = Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up");
+		stickDir[0] = Input.GetActionStrength(controls["move_right"]) - Input.GetActionStrength(controls["move_left"]);
+		stickDir[1] = Input.GetActionStrength(controls["move_down"]) - Input.GetActionStrength(controls["move_up"]);
 		if (Mathf.Abs(stickDir[0]) > Mathf.Abs(stickDir[1])) stickDir[0] = Mathf.Round(stickDir[0]);
 		else stickDir[1] = Mathf.Round(stickDir[1]);
 	}
@@ -1085,8 +1100,8 @@ public void _damage(float damage, float iFrames){
 }
 
 public override void _Input(InputEvent @event){
-	if (@event.IsActionPressed("jump")) _jump();
-	else if (@event.IsActionReleased("jump")){
+	if (@event.IsActionPressed(controls["jump"])) _jump();
+	else if (@event.IsActionReleased(controls["jump"])){
 		if (boingCharge){  //below check: leeway ray and moving up and haven't hard jumped (hasJumped != 2) or yvel = -1 or wall
 			if (IsOnFloor() || yvelocity == -1 || IsOnWall() && wallb || (leewayCast.IsColliding() && yvelocity > 0 && hasJumped != 2 && boing == 0)){
 				if (boing != 0){
@@ -1098,7 +1113,10 @@ public override void _Input(InputEvent @event){
 			boingCharge = false;
 		}
 	}
-	else if (@event.IsActionPressed("dash")) _dash();
+	else if (@event.IsActionPressed(controls["dash"])) _dash();
+	if (playerId != 0) return;
+	if (@event.IsActionPressed("add_stat")) _setStat(99, statSet);
+	else if (@event.IsActionPressed("sub_stat")) _setStat(-99, statSet);
 	else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
 	else if (@event.IsActionPressed("speedrun_reset")){
 		if (Owner.Name != "demoWorld") return;
@@ -1112,8 +1130,6 @@ public override void _Input(InputEvent @event){
 			textTimer.Start(2);
 		}
 	}
-	else if (@event.IsActionPressed("add_stat")) _setStat(99, statSet);
-	else if (@event.IsActionPressed("sub_stat")) _setStat(-99, statSet);
 	else if (@event.IsActionPressed("set_traction")) statSet = "traction";
 	else if (@event.IsActionPressed("set_speed")) statSet = "speed";
 	else if (@event.IsActionPressed("set_weight")) statSet = "weight";
@@ -1207,6 +1223,8 @@ public void _dieNRespawn(){
 	}
 	Translation = new Vector3(checkpoint.GlobalTransform.origin.x, checkpoint.GlobalTransform.origin.y + 2, checkpoint.GlobalTransform.origin.z);
 	camera.Call("_setToDefaults"); //turn off player: lockOn, camLock, angTarget ; turn off cam: lockOn, heightMove, angMove, lerpMove
+	hp[0] = hp[1];
+	energy[0] = energy[1];
 }
 
 public void _on_deathtimer_timeout(){
@@ -1361,7 +1379,6 @@ public void _collisionDamage(Spatial collisionNode){
 				vulnerableClass = (int)collisionNode.Get("vulnerableClass");
 				if (vulnerableClass == 0) return;
 				damage = (int)collisionNode.Get("damage");
-				_damage(damage, .1F);
 				Vector3 vel = (Vector3)collisionNode.Get("velocity");
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing && vulnerableClass > 1){
@@ -1378,6 +1395,7 @@ public void _collisionDamage(Spatial collisionNode){
 					}
 				}
 				else{
+					_damage(damage, .1F);
 					power = damage / (.8F + (hp[0] * .0015F));
 					if (hp[0] <= 1) power *= 2;
 				}
@@ -1396,7 +1414,6 @@ public void _collisionDamage(Spatial collisionNode){
 				if (invincible) return;
 				vulnerableClass = (int)collisionNode.Get("vulnerableClass");
 				if (vulnerableClass == 0) return;
-				_damage(15, .1F);
 				Timer springTimer = (Timer)collisionNode.Get("springTimer");
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing && vulnerableClass > 1){
@@ -1417,6 +1434,7 @@ public void _collisionDamage(Spatial collisionNode){
 					//speed = speedBase;
 				}
 				else{
+					_damage(15, .1F);
 					power = 15 / (.8F + (hp[0] * .0015F));
 					if (!springTimer.IsStopped()) power *= 1.5F;
 					if (hp[0] <= 1) power *= 2;
@@ -1587,11 +1605,12 @@ public void _setStat(int points, string stat){
             bool setWeight = weight == baseWeight;
             baseWeight = 1.2F + myMath.roundTo(weightPoints * .04F, 100);
             if (setWeight) weight = baseWeight;
-            // GD.Print("weight " + baseWeight.ToString());
             dashSpeed = 20 + (.1F * weightPoints);
             statLabels[stat].Value = weightPoints;
+			float oldH = hp[1];
 			hp[1] = 300 + (weightPoints * 15);
-			hp[0] += weightPoints * 15;
+			int increase = Mathf.RoundToInt((oldH / hp[1]) * hp[0]);
+			hp[0] = increase;
 			hp[0] = Mathf.Clamp(hp[0], 0, hp[1]);
 			hpBar.MaxValue = hp[1];
 			hpBar.Value = hp[0];
@@ -1603,8 +1622,8 @@ public void _setStat(int points, string stat){
             if (hax < 2) sizePoints += points;
             overflow = sizePoints > 30;
             sizePoints = Mathf.Clamp(sizePoints, 0, 30);
-            float increase = .6F + myMath.roundTo(sizePoints * (.015F + (sizePoints * .000165F)), 100);
-            collisionBaseScale = increase;
+            float hIncrease = .6F + myMath.roundTo(sizePoints * (.015F + (sizePoints * .000165F)), 100);
+            collisionBaseScale = hIncrease;
             collisionBaseScale = myMath.roundTo(collisionBaseScale, 100);
             hitBoxShape.Scale = new Vector3(collisionBaseScale + .05F, collisionBaseScale + .05F, collisionBaseScale + .05F);
             float scaleRatio = (collisionBaseScale - .6F) / .6F;
@@ -1645,8 +1664,10 @@ public void _setStat(int points, string stat){
 			overflow = energyPoints > 30;
 			energyPoints = Mathf.Clamp(energyPoints, 0, 30);
 			statLabels[stat].Value = energyPoints;
+			float oldE = energy[1];
 			energy[1] = 300 + (energyPoints * 15);
-			energy[0] += energyPoints * 15;
+			int eIncrease = Mathf.RoundToInt((oldE / energy[1]) * energy[0]);
+			energy[0] = eIncrease;
 			energy[0] = Mathf.Clamp(energy[0], 0, energy[1]);
 			energyBar.MaxValue = energy[1];
 			energyBar.Value = energy[0];

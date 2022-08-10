@@ -16,7 +16,8 @@ var buttonName = "Alt"
 var bpPreset = 0
 var presetList = []
 var targetInput = 'D :  + 1    E :  + 5    Space :  fill'
-var targetInputAlt = 'Q :  clear preset'
+var targetInputAlt = 'A :  clear preset'
+var controls = {"allocate_stats": "", "ui_up": "", "ui_down": "", "ui_right": "", "pan_right": "", "ui_left": "", "jump": ""}
 
 func _ready():
 	for i in range(90): presetList.append(null)
@@ -29,13 +30,23 @@ func _ready():
 		else:
 			buttonName = "Y"
 			targetInput += "A :  fill"
-		targetInputAlt =  'L trigger :  clear preset'
+		targetInputAlt =  '<- :  clear preset'
 	alertBar.text = "Press " + buttonName + " to spend points!";
 	$exitNote.text = "Press " + buttonName + " to close"
 	targetInputNote.text = targetInput
+	#get controls
+	var id = str(player.playerId)
+	controls["allocate_stats"] = globals.allocate_stats + id
+	controls["pan_right"] = globals.pan_right + id
+	controls["jump"] = globals.jump + id
+	if id == "0": id = ""
+	controls["ui_up"] = globals.ui_up + id
+	controls["ui_down"] = globals.ui_down + id
+	controls["ui_left"] = globals.ui_left + id
+	controls["ui_right"] = globals.ui_right + id
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("allocate_stats"):
+	if event.is_action_pressed(controls["allocate_stats"]):
 		allocateMode = !allocateMode
 		visible = allocateMode
 		if allocateMode:
@@ -47,17 +58,17 @@ func _input(event: InputEvent) -> void:
 			_draw_InputNote(1)
 		else: player.idle = 0
 	if (allocateMode == false): return
-	if event.is_action_pressed("ui_up") || event.is_action_pressed("ui_down"):
-		if event.is_action_pressed("ui_up"): target = target - 1 if (target > 0) else 5
-		elif event.is_action_pressed("ui_down"): target = target + 1 if (target < 5) else 0
+	if event.is_action_pressed(controls["ui_up"]) || event.is_action_pressed(controls["ui_down"]):
+		if event.is_action_pressed(controls["ui_up"]): target = target - 1 if (target > 0) else 5
+		elif event.is_action_pressed(controls["ui_down"]): target = target + 1 if (target < 5) else 0
 		targetBar.rect_position.x = barNodes[target].rect_position.x - 1.418
 		targetBar.rect_position.y = barNodes[target].rect_position.y - 1.92
 		_draw_InputNote(1)
-	elif event.is_action_pressed("ui_right") || event.is_action_pressed("pan_right") || event.is_action_pressed("jump"):
+	elif event.is_action_pressed(controls["ui_right"]) || event.is_action_pressed(controls["pan_right"]) || event.is_action_pressed(controls["jump"]):
 		if bpSpent >= 90: return
 		var points = 1
-		if (event.is_action_pressed("pan_right")): points = 5
-		elif (event.is_action_pressed("jump")): points = 30
+		if (event.is_action_pressed(controls["pan_right"])): points = 5
+		elif (event.is_action_pressed(controls["jump"])): points = 30
 		var oldbpSpent = bpSpent
 		if bpUnspent > 0: player._setStat(points, barMap[target])
 		elif bpPreset + bpSpent < 90: _add_Preset(points)
@@ -71,7 +82,7 @@ func _input(event: InputEvent) -> void:
 			else: spendNote.text = str(bpSpent) + ' / 90  set'
 		else: spendNote.text = 'max points spent'
 		_draw_InputNote(0)
-	elif event.is_action_pressed("pan_left"): _clear_PresetList(target)
+	elif event.is_action_pressed(controls["ui_left"]): _clear_PresetList(target)
 
 func _add_Preset(points) -> void:
 	if barNodes[target].value >= 30: return

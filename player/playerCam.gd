@@ -28,18 +28,24 @@ var shakeMove = false
 var shakeMoveTimer = 0
 var shakeIntensity = 0
 var shakeAlternate = false #smoother shake
+var controls = {"pan_right": "", "pan_left": "", "lock_on": ""}
 
 func _ready():
 	player.rotation_degrees.y = 45
 	mesh.rotation_degrees.y = 45
-	InputMap.action_set_deadzone("pan_right", .3)
-	InputMap.action_set_deadzone("pan_left", .3)
+	InputMap.action_set_deadzone(controls["pan_right"], .3)
+	InputMap.action_set_deadzone(controls["pan_left"], .3)
+	#define controls
+	var id = str(player.playerId)
+	controls["pan_right"] = globals.pan_right + id
+	controls["pan_left"] = globals.pan_left + id
+	controls["lock_on"] = globals.lock_on + id
 
 func _input(event: InputEvent) -> void:
 	if lockOn != null:
-		if event.is_action_pressed("pan_right"): _directionalLockOn("R", true)
-		elif event.is_action_pressed("pan_left"): _directionalLockOn("L", true)
-	if event.is_action_pressed("lock_on") && !fixedCamLock: _findLockOn(lockOn)
+		if event.is_action_pressed(controls["pan_right"]): _directionalLockOn("R", true)
+		elif event.is_action_pressed(controls["pan_left"]): _directionalLockOn("L", true)
+	if event.is_action_pressed(controls["lock_on"]) && !fixedCamLock: _findLockOn(lockOn)
 	elif event is InputEventMouseButton:
 		if event.is_pressed() && lockOn == null && !fixedCamLock: drag = true
 		else:
@@ -50,8 +56,8 @@ func _input(event: InputEvent) -> void:
 	elif drag && event is InputEventMouseMotion:
 		if !stickMove:
 			stickMove = true
-			InputMap.action_set_deadzone("pan_right", .3)
-			InputMap.action_set_deadzone("pan_left", .3)
+			InputMap.action_set_deadzone(controls["pan_right"], .3)
+			InputMap.action_set_deadzone(controls["pan_left"], .3)
 			if player.angTarget != 0: player.ang = player.angTarget
 		var strength = event.relative.x*abs(event.relative.x)*.023
 		strength = clamp(strength, -4.5, 4.5)
@@ -100,14 +106,14 @@ func _process(delta: float) -> void:
 			player.camLock = 0
 			near = 10
 		else: player.camLock = 1
-	if Input.get_action_strength("pan_right") > 0 or Input.get_action_strength("pan_left") > 0:
+	if Input.get_action_strength(controls["pan_right"]) > 0 or Input.get_action_strength(controls["pan_left"]) > 0:
 		if (lockOn != null || fixedCamLock || drag || player.idle == 2): return
 		if !stickMove:
 			stickMove = true
-			InputMap.action_set_deadzone("pan_right", .3)
-			InputMap.action_set_deadzone("pan_left", .3)
+			InputMap.action_set_deadzone(controls["pan_right"], .3)
+			InputMap.action_set_deadzone(controls["pan_left"], .3)
 			if player.angTarget != 0: player.ang = player.angTarget
-		var panStrength = Input.get_action_strength("pan_right") - Input.get_action_strength("pan_left")
+		var panStrength = Input.get_action_strength(controls["pan_right"]) - Input.get_action_strength(controls["pan_left"])
 		panStrength = panStrength * abs(panStrength) *.23
 		_moveCamera(.15, panStrength)
 	elif stickMove == true:
@@ -183,8 +189,8 @@ func _findLockOn(lockOnMode) -> void:
 	player.rotation.y = lastRot
 	lockOn.arrow.visible = true
 	player.camLock = 0
-	InputMap.action_set_deadzone("pan_right", 1)
-	InputMap.action_set_deadzone("pan_left", 1)
+	InputMap.action_set_deadzone(controls["pan_right"], 1)
+	InputMap.action_set_deadzone(controls["pan_left"], 1)
 
 func _directionalLockOn(direction: String, closest: bool) -> void:
 	var areas = []

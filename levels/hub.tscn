@@ -231,15 +231,19 @@ spawnTime = 15
 
 [node name="Goon" parent="Enemies/Enemies" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -23.801, -0.4, 13.7975 )
+passive = true
 
 [node name="Goon2" parent="Enemies/Enemies" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5818, -0.4, 34.7797 )
+passive = true
 
 [node name="Goon3" parent="Enemies/Enemies" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -39.0169, -0.4, 29.1049 )
+passive = true
 
 [node name="Goon4" parent="Enemies/Enemies" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -38.4431, -0.4, 10.0402 )
+passive = true
 
 [node name="levelWarp" parent="." instance=ExtResource( 13 )]
 transform = Transform( -3.53551, 0, -0.707111, 0, 5, 0, 3.53555, 0, -0.707103, -33.2472, 7.204, -33.2252 )
