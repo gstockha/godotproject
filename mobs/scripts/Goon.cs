@@ -27,6 +27,7 @@ Timer pathTimer;
 Timer deathTimer;
 Timer angleChecker;
 Spatial target;
+Godot.Collections.Array players = new Godot.Collections.Array {};
 MeshInstance mesh;
 RayCast bottom;
 Vector3 spawnPoint;
@@ -43,10 +44,11 @@ public override void _Ready(){
     pathTimer = GetNode<Timer>("PathTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
     angleChecker = GetNode<Timer>("AngleChecker");
-    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
+    // target = GetNode<Spatial>("../../../playerNode/VBoxContainer/ViewportContainer/Viewport/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bottom = GetNode<RayCast>("RayCast");
     parent = GetNode<Spatial>("../.");
+    // players = (Godot.Collections.Array)parent.Get("players");
     arrow = GetNode<MeshInstance>("Arrow");
     squishSet[0] = mesh.Scale.x * 1.3F;
     squishSet[1] = mesh.Scale.y * .7F;
@@ -125,7 +127,7 @@ public void _launch(float power, Vector3 cVec){
     if (stunned){
         vulnerableClass = 0;
         lockable = false;
-        target.Call("_lockOn", true, 0);
+        foreach (Node player in players) player.Call("_lockOn", this, 0);
         deathTimer.Start(2.5F);
         parent.Call("_dropBP", GlobalTransform.origin, .3);
     }
@@ -138,7 +140,7 @@ public void _squish(float power){ //check power vs health and all that here?
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
     lockable = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .3);
 }
 
@@ -170,6 +172,18 @@ public void _off(){
 public void _on_PathTimer_timeout(){
     pathTimer.Stop();
     skrrt = 1;
+    if (!passive){
+        float dist = 0;
+        float targ = -1;
+        Vector3 location = GlobalTransform.origin;
+        foreach (Spatial player in players){
+            dist = location.DistanceTo(player.GlobalTransform.origin);
+            if (targ == -1 || dist < targ){
+                targ = dist;
+                target = player;
+            }
+        }
+    }
     if (stunned){ //wake up
         mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y + .3F, mesh.Translation.z);
         stunned = false;
@@ -211,7 +225,7 @@ public void _on_AngleChecker_timeout(){ //only fire infrequently
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "goon", spawnPoint);
 }
 

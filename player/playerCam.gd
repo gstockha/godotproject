@@ -28,14 +28,14 @@ var shakeMove = false
 var shakeMoveTimer = 0
 var shakeIntensity = 0
 var shakeAlternate = false #smoother shake
-var controls = {"pan_right": "", "pan_left": "", "lock_on": ""}
+var controls = {"pan_right": "pan_right0", "pan_left": "pan_left0", "lock_on": "lock_on0"}
 
 func _ready():
 	player.rotation_degrees.y = 45
 	mesh.rotation_degrees.y = 45
 	InputMap.action_set_deadzone(controls["pan_right"], .3)
 	InputMap.action_set_deadzone(controls["pan_left"], .3)
-	#define controls
+	#region define controls
 	var id = str(player.playerId)
 	controls["pan_right"] = globals.pan_right + id
 	controls["pan_left"] = globals.pan_left + id

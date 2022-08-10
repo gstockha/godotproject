@@ -58,8 +58,46 @@ font_data = ExtResource( 9 )
 
 [node name="playerNode" type="Spatial" parent="."]
 
-[node name="PlayerBall" parent="playerNode" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0 )
+[node name="VBoxContainer" type="VBoxContainer" parent="playerNode"]
+margin_right = 1280.0
+margin_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="playerNode/VBoxContainer"]
+margin_right = 1280.0
+margin_bottom = 358.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="playerNode/VBoxContainer/ViewportContainer"]
+size = Vector2( 1280, 358 )
+handle_input_locally = false
+render_target_update_mode = 3
+shadow_atlas_size = 1
+
+[node name="PlayerBall" parent="playerNode/VBoxContainer/ViewportContainer/Viewport" instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.71401, 6.5, 1.55099 )
+
+[node name="ViewportContainer2" type="ViewportContainer" parent="playerNode/VBoxContainer"]
+margin_top = 362.0
+margin_right = 1280.0
+margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="playerNode/VBoxContainer/ViewportContainer2"]
+size = Vector2( 1280, 358 )
+handle_input_locally = false
+render_target_update_mode = 3
+shadow_atlas_size = 1
+
+[node name="PlayerBall1" parent="playerNode/VBoxContainer/ViewportContainer2/Viewport" instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.69208, 6.5, -1.73835 )
+playerId = 1
 
 [node name="checkpoints" type="Spatial" parent="."]
 
@@ -161,7 +199,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 21.3396, 3.6092, 20.8793 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2219, 3.6092, 22.2015 )
 
 [node name="welcomeTip" parent="environment" instance=ExtResource( 11 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0 )
+transform = Transform( 4.24264, 0, 0.707107, 0, 3, 0, -4.24264, 0, 0.707107, -8.8583, 4.81353, -8.88949 )
 visible = false
 
 [node name="jumpTip" parent="environment" instance=ExtResource( 11 )]

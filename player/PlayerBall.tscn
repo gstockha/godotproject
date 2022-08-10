@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=2]
+[gd_scene load_steps=47 format=2]
 
 [ext_resource path="res://player/playerCam.gd" type="Script" id=1]
 [ext_resource path="res://assets/ballSkin.obj" type="ArrayMesh" id=2]
@@ -337,6 +337,11 @@ font_data = ExtResource( 5 )
 outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
 font_data = ExtResource( 5 )
+
+[sub_resource type="SpatialMaterial" id=61]
+albedo_color = Color( 1, 0, 0, 1 )
+
+[sub_resource type="PrismMesh" id=62]
 
 [node name="PlayerBall" type="KinematicBody" groups=["players"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 76.523, 43.104, -147.733 )
@@ -910,6 +915,14 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Arrow" type="MeshInstance" parent="."]
+transform = Transform( -0.3, 4.52987e-08, 0, -4.52987e-08, -0.3, 0, 0, 0, 0.3, 0, 2, 0 )
+visible = false
+material_override = SubResource( 61 )
+cast_shadow = 0
+mesh = SubResource( 62 )
+material/0 = null
 
 [connection signal="timeout" from="Position3D/playerCam/bufferTimer" to="Position3D/playerCam" method="_on_bufferTimer_timeout"]
 [connection signal="area_entered" from="hitBox" to="." method="_on_hitBox_area_entered"]

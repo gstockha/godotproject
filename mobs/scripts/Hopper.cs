@@ -21,6 +21,7 @@ Vector3 velocity;
 Vector3 velocityNormal;
 float yvelocity;
 Spatial target;
+Godot.Collections.Array players = new Godot.Collections.Array {};
 Spatial parent;
 MeshInstance mesh;
 MeshInstance arrow;
@@ -37,7 +38,7 @@ bool meshSquished = false;
 
 public override void _Ready(){
     hitbox = GetNode<Area>("Hitbox");
-    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
+    //target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     parent = GetNode<Spatial>("../.");
     arrow = GetNode<MeshInstance>("Arrow");
@@ -130,7 +131,7 @@ public void _launch(float power, Vector3 cVec){
     aggroTimer.Stop();
     vulnerableClass = 0;
     lockable = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .3);
 }
 
@@ -142,7 +143,7 @@ public void _squish(float power){ //check power vs health and all that here?
     aggroTimer.Stop();
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
     mesh.Scale = new Vector3(squishSet[0],squishSet[1],squishSet[2]);
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .3);
 }
 
@@ -170,6 +171,16 @@ public void _off(){
 
 
 public void _on_AggroTimer_timeout(){
+    float dist = -1;
+    float targ = 0;
+    Vector3 location = GlobalTransform.origin;
+    foreach (Spatial player in players){
+        dist = location.DistanceTo(player.GlobalTransform.origin);
+        if (dist == -1 || dist < targ){
+            targ = dist;
+            target = player;
+        }
+    }
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) aggroTimer.Start(2.5F);
     else{
         state = states.attack;
@@ -180,7 +191,7 @@ public void _on_AggroTimer_timeout(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "hopper", spawnPoint);
 }
 

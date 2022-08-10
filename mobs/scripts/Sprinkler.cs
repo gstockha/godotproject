@@ -24,6 +24,7 @@ Vector3 launchVec;
 float yvelocity;
 bool wallb = false;
 Spatial target;
+Godot.Collections.Array players = new Godot.Collections.Array {};
 Spatial parent;
 PackedScene bullet;
 MeshInstance mesh;
@@ -43,7 +44,7 @@ public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
     aggroTimer = GetNode<Timer>("aggroTimer");
     hitbox = GetNode<Area>("Hitbox");
-    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
+    //target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bullet = (PackedScene)GD.Load("res://mobs/scenes/Bullet.tscn");
     parent = GetNode<Spatial>("../.");
@@ -85,7 +86,7 @@ public void _launch(float power, Vector3 cVec){
     deathTimer.Start(2);
     vulnerableClass = 0;
     lockable = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .4);
 }
 
@@ -96,7 +97,7 @@ public void _squish(float power){ //check power vs health and all that here?
     vulnerableClass = 0;
     lockable = false;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .4);
 }
 
@@ -118,6 +119,16 @@ public void _off(){
 }
 
 public void _on_aggroTimer_timeout(){
+    float dist = -1;
+    float targ = 0;
+    Vector3 location = GlobalTransform.origin;
+    foreach (Spatial player in players){
+        dist = location.DistanceTo(player.GlobalTransform.origin);
+        if (dist == -1 || dist < targ){
+            targ = dist;
+            target = player;
+        }
+    }
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) state = states.search;
     else if (state == states.search){
         state = states.attack;
@@ -152,7 +163,7 @@ public void _on_ShootTimer_timeout(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "sprinkler", spawnPoint, new float[] {startAngle, oscillationRate});
 }
 

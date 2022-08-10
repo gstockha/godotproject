@@ -20,6 +20,7 @@ Vector3 launchVec;
 float yvelocity;
 float fireRate = 3.5F;
 Spatial target;
+Godot.Collections.Array players = new Godot.Collections.Array {};
 Spatial parent;
 PackedScene bullet;
 MeshInstance mesh;
@@ -36,7 +37,7 @@ public override void _Ready(){
     springTimer = GetNode<Timer>("SpringTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
     hitbox = GetNode<Area>("Hitbox");
-    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
+    //target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bullet = (PackedScene)GD.Load("res://mobs/scenes/CannonBall.tscn");
     parent = GetNode<Spatial>("../.");
@@ -75,7 +76,7 @@ public void _launch(float power, Vector3 cVec){
     deathTimer.Start(2);
     vulnerableClass = 0;
     lockable = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .5);
 }
 
@@ -85,7 +86,7 @@ public void _squish(float power){ //check power vs health and all that here?
     vulnerableClass = 0;
     lockable = false;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .5);
 }
 
@@ -120,7 +121,7 @@ public void _off(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "cannon", spawnPoint, new float[] {startAngle, bltSpeed, bltVel});
 }
 

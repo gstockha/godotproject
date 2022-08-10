@@ -1,6 +1,6 @@
 extends Spatial
 
-onready var player = get_node("../../playerNode/PlayerBall")
+onready var player = get_node("../../playerNode/VBoxContainer/ViewportContainer/Viewport/PlayerBall")
 onready var bp = preload("res://items/bp.tscn")
 export var spawnTime = 60
 var enemyNodes = {}
@@ -13,11 +13,15 @@ var distanceChecker = checkerThreshold
 var active = false
 export var distanceTreshold = 90
 export var distanceTresholdY = 15
+var players = []
 
 func _ready():
+	for plyr in get_tree().get_nodes_in_group("players"):
+		if (plyr.name.begins_with("Player")): players.append(plyr)
 	var childName
 	for enemy in enemies: enemyCount[enemy] = [0,0]
 	for child in get_children():
+		child.players = players
 		childName = child.name.to_lower()
 		for enemy in enemies:
 			if childName.begins_with(enemy):
@@ -53,6 +57,7 @@ func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer, variables: A
 		add_child(spawnedEnemy)
 		spawnedEnemy.global_transform.origin = point
 		spawnedEnemy.spawnPoint = point
+		spawnedEnemy.players = players
 		enemyCount[mobName][0] += 1
 		enemyChildren.append(spawnedEnemy)
 		if active: spawnedEnemy.call("_on")

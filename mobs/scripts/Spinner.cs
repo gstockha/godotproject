@@ -20,6 +20,7 @@ states state = states.spin;
 float[] squishSet = new float[] {0,0,0};
 Timer deathTimer;
 Spatial target;
+Godot.Collections.Array players = new Godot.Collections.Array {};
 CSGCylinder mesh;
 Vector3 spawnPoint;
 Spatial parent;
@@ -29,7 +30,7 @@ bool lockable = true;
 
 public override void _Ready(){
     deathTimer = GetNode<Timer>("DeathTimer");
-    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
+    //target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<CSGCylinder>("CSGCylinder");
     parent = GetNode<Spatial>("../.");
     arrow = GetNode<MeshInstance>("Arrow");
@@ -69,7 +70,7 @@ public void _launch(float power, Vector3 cVec){
     vulnerableClass = 0;
     lockable = false;
     GetNode<CollisionShape>("CollisionShape").Disabled = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .75);
 }
 
@@ -78,7 +79,7 @@ public void _squish(float power){
     deathTimer.Start(1.5F);
     vulnerableClass = 0;
     lockable = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .75);
 }
 
@@ -99,9 +100,9 @@ public void _off(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "spinner", spawnPoint, new float[] {angMod, dirMod});
-    //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) target.Call("_lockOn", true, 0);
+    //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) foreach (Node player in players) player.Call("_lockOn", this, 0);
 }
 
 }

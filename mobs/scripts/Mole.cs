@@ -23,6 +23,7 @@ Vector3 spawnPoint;
 Vector3 launchVec;
 float yvelocity;
 Spatial target;
+Godot.Collections.Array players = new Godot.Collections.Array {};
 Spatial parent;
 PackedScene bullet;
 MeshInstance mesh;
@@ -38,7 +39,7 @@ public override void _Ready(){
     springTimer = GetNode<Timer>("SpringTimer");
     deathTimer = GetNode<Timer>("DeathTimer");
     hitbox = GetNode<Area>("Hitbox");
-    target = GetNode<Spatial>("../../../playerNode/PlayerBall");
+    //target = GetNode<Spatial>("../../../playerNode/PlayerBall");
     mesh = GetNode<MeshInstance>("MeshInstance");
     bullet = (PackedScene)GD.Load("res://mobs/scenes/Bullet.tscn");
     parent = GetNode<Spatial>("../.");
@@ -78,7 +79,7 @@ public void _launch(float power, Vector3 cVec){
     deathTimer.Start(2);
     vulnerableClass = 0;
     lockable = false;
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .4);
 }
 
@@ -89,7 +90,7 @@ public void _squish(float power){ //check power vs health and all that here?
     vulnerableClass = 0;
     lockable = false;
     mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y - 1.1F, mesh.Translation.z);
-    if (target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_dropBP", GlobalTransform.origin, .4);
 }
 
@@ -120,6 +121,16 @@ public void _on_BurrowTimer_timeout(){
         vulnerableClass = 2;
         mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
         mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y + 1, mesh.Translation.z);
+    }
+    float dist = -1;
+    float targ = 0;
+    Vector3 location = GlobalTransform.origin;
+    foreach (Spatial player in players){
+        dist = location.DistanceTo(player.GlobalTransform.origin);
+        if (dist == -1 || dist < targ){
+            targ = dist;
+            target = player;
+        }
     }
     if (GlobalTransform.origin.DistanceTo(target.GlobalTransform.origin) > aggroRange) state = states.search;
     else if (state == states.search || state == states.burrowed){
@@ -155,7 +166,7 @@ public void _on_ShootTimer_timeout(){
 public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
-    if (lockable && target.Get("lockOn") == this) target.Call("_lockOn", true, 0);
+    if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
     parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "mole", spawnPoint);
 }
 

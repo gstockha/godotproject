@@ -73,6 +73,7 @@ bool shiftedLinger = false;
 #endregion
 
 #region misc. game variables
+bool lockable = true;
 bool slowMo = false;
 bool speedRun = false;
 string statSet = "traction";
@@ -110,6 +111,7 @@ Control statUI;
 ProgressBar energyBar;
 ProgressBar hpBar;
 Spatial lockOn = null;
+MeshInstance arrow;
 Node globals;
 [Export] int playerId = 0;
 Dictionary<string, string> controls = new Dictionary<string, string>(){
@@ -135,13 +137,14 @@ public override void _Ready(){
 	leewayCast = GetNode<RayCast>("leewayCast");
 	trampolineCast = GetNode<RayCast>("trampolineCast");
 	shadowCast = GetNode<RayCast>("shadowCast");
-	checkpoint = GetNode<Area>("../../checkpoints/checkpointSpawn");
+	checkpoint = GetNode<Area>("../../../../../checkpoints/checkpointSpawn");
 	camera = GetNode<Camera>("Position3D/playerCam");
-	tipNote = GetNode<Label>("../../tipNote");
+	tipNote = GetNode<Label>("../../../../../tipNote");
 	bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
 	statUI = GetNode<Control>("statUI");
 	energyBar = GetNode<ProgressBar>("statusHUD/energyBar");
 	hpBar = GetNode<ProgressBar>("statusHUD/hpBar");
+	arrow = GetNode<MeshInstance>("Arrow");
 	statLabels = new Dictionary<string, ProgressBar>(){
 		{"weight", GetNode<ProgressBar>("statUI/gravityBar")},
 		{"traction", GetNode<ProgressBar>("statUI/tractionBar")},
@@ -155,7 +158,7 @@ public override void _Ready(){
 		speedPoints = 10;
 		_setStat(98, "traction");
 		_setStat(98, "speed");
-		moveNote = GetNode<Label>("../../moveNote");
+		moveNote = GetNode<Label>("../../../../../moveNote");
 	}
 	else{
 		moveNote = null;
@@ -256,7 +259,7 @@ public override void _PhysicsProcess(float delta){ //run physics
 	}
 	else _isBoinging(delta);
 	_turnDelay();
-	_lockOn(false, delta);
+	_lockOn(null, delta);
 	if (energy[0] < energy[1]){
 		int mult = Mathf.FloorToInt(energy[2]);
 		// GD.Print(mult);
@@ -869,7 +872,7 @@ public void _turnDelay(){
 	}
 }
 
-public void _lockOn(bool triggerScript, float delta){
+public void _lockOn(Node enemyTarget, float delta){
 	if (lockOn == null){
 		if (camLock == 0 && moveDir[0] != 0){// && !wallb){//(Math.Abs(moveDir[0]) > .05F){
 			float addAng = 0;
@@ -880,7 +883,7 @@ public void _lockOn(bool triggerScript, float delta){
 		}
 		return;
 	}
-	if (triggerScript == true || IsInstanceValid(lockOn) == false){// || IsInstanceValid(lockOn)){
+	if (enemyTarget != null && lockOn == enemyTarget || IsInstanceValid(lockOn) == false){// || IsInstanceValid(lockOn)){
 		camera.Call("_findLockOn", new object{}); //turn off lockOn on camera node
 		return;
 	}
@@ -1120,12 +1123,12 @@ public override void _Input(InputEvent @event){
 	else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
 	else if (@event.IsActionPressed("speedrun_reset")){
 		if (Owner.Name != "demoWorld") return;
-		Area checkpnt = (Area)GetNode("../../checkpoints/checkpointSpawn");
+		Area checkpnt = (Area)GetNode("../../../../../checkpoints/checkpointSpawn");
 		Translation = checkpnt.GlobalTransform.origin;
 		if (!speedRun){
 			_drawTip("Speedrun mode activated!\nPress T to restart speedrun");
 			speedRun = true;
-			Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+			Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
 			if (!textTimer.IsStopped()) textTimer.Stop();
 			textTimer.Start(2);
 		}
@@ -1263,10 +1266,10 @@ public void _on_hitBox_area_entered(Area area){
 				else if (deathtimer.IsStopped()) deathtimer.Start(2);
 				break;
 			case "warps":
-				Area checkpoint1 = (Area)GetNode("../../checkpoints/checkpointSpawn");
+				Area checkpoint1 = (Area)GetNode("../../../../../checkpoints/checkpointSpawn");
 				Translation = checkpoint1.GlobalTransform.origin;
-				Label prNote = GetNode<Label>("../../prNote");
-				Label speedrunNote = GetNode<Label>("../../speedrunNote");
+				Label prNote = GetNode<Label>("../../../../../prNote");
+				Label speedrunNote = GetNode<Label>("../../../../../speedrunNote");
 				if (speedRun){
 					if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
 						prNote.Text = "PR: " + speedrunNote.Text;
@@ -1276,7 +1279,7 @@ public void _on_hitBox_area_entered(Area area){
 				else{
 					_drawTip("Speedrun mode activated!\nPress " + controlNames["speedrun"] + " to restart speedrun");
 					speedRun = true;
-					Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+					Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
 					if (!textTimer.IsStopped()) textTimer.Stop();
 					textTimer.Start(2);
 				}
@@ -1513,14 +1516,14 @@ public void _on_hitBox_area_exited(Area area){
 		switch(groups[i].ToString()){
 			case "checkpoints":
 				if (speedRun && area.Name == "checkpointSpawn"){
-					Label speedrunNote = GetNode<Label>("../../speedrunNote");
+					Label speedrunNote = GetNode<Label>("../../../../../speedrunNote");
 					speedrunNote.Set("timerOn", true);
 					speedrunNote.Set("time", 0);
 				}
 				break;
 			case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
 			case "tips": 
-				Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+				Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
 				if (!textTimer.IsStopped()) textTimer.Stop();
 				textTimer.Start(2);
 				break;
@@ -1689,7 +1692,7 @@ public void _drawMoveNote(string text){
 }
 
 public void _drawTip(string text){
-	Timer textTimer = (Timer)GetNode("../../tipNote/Timer");
+	Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
 	if (!textTimer.IsStopped()) textTimer.Stop();
 	tipNote.Text = text;
 }
