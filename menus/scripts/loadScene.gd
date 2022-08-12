@@ -3,7 +3,7 @@ extends Node
 export var maxLoadTime = 10000
 
 func _ready():
-	goto_scene(globals.currentScene)
+	goto_scene("res://levels/" + globals.currentScene + ".tscn")
 
 func goto_scene(path):
 	var loader = ResourceLoader.load_interactive(path)

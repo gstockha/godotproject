@@ -16,8 +16,7 @@ export var distanceTresholdY = 15
 var players = []
 
 func _ready():
-	for plyr in get_tree().get_nodes_in_group("players"):
-		if (plyr.name.begins_with("Player")): players.append(plyr)
+	for plyr in get_tree().get_nodes_in_group("players"): players.append(plyr)
 	var childName
 	for enemy in enemies: enemyCount[enemy] = [0,0]
 	for child in get_children():

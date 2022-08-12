@@ -122,12 +122,12 @@ public void _on_BurrowTimer_timeout(){
         mesh.Scale = new Vector3(mesh.Scale.x, meshY, mesh.Scale.z);
         mesh.Translation = new Vector3(mesh.Translation.x, mesh.Translation.y + 1, mesh.Translation.z);
     }
-    float dist = -1;
-    float targ = 0;
+    float dist = 0;
+    float targ= -1;
     Vector3 location = GlobalTransform.origin;
     foreach (Spatial player in players){
         dist = location.DistanceTo(player.GlobalTransform.origin);
-        if (dist == -1 || dist < targ){
+        if (targ == -1 || dist < targ){
             targ = dist;
             target = player;
         }

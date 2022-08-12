@@ -171,12 +171,12 @@ public void _off(){
 
 
 public void _on_AggroTimer_timeout(){
-    float dist = -1;
-    float targ = 0;
+    float dist = 0;
+    float targ= -1;
     Vector3 location = GlobalTransform.origin;
     foreach (Spatial player in players){
         dist = location.DistanceTo(player.GlobalTransform.origin);
-        if (dist == -1 || dist < targ){
+        if (targ == -1 || dist < targ){
             targ = dist;
             target = player;
         }

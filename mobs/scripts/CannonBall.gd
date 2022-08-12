@@ -29,7 +29,7 @@ func _physics_process(delta):
 func _on_Shakebox_area_entered(area):
 	var groups = area.get_groups()
 	for i in range(len(groups)):
-		if (groups[i] == "players"):
+		if (groups[i] == "playerHitboxes"):
 			var cam = area.owner.get("camera");
 			var player = area.owner;
 			cam.call("_shakeMove", 12, damage * .15, global_transform.origin.distance_to(player.global_transform.origin));

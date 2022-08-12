@@ -1,10 +1,9 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://player/tipNote.gd" type="Script" id=1]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=2]
-[ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=3]
+[ext_resource path="res://player/playerController.gd" type="Script" id=3]
 [ext_resource path="res://geography/structures/obstacle.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scripts/level.gd" type="Script" id=5]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=6]
 [ext_resource path="res://geography/misc/checkpoint.tscn" type="PackedScene" id=7]
 [ext_resource path="res://world/env1.tres" type="Environment" id=8]
@@ -56,9 +55,9 @@ font_data = ExtResource( 9 )
 [sub_resource type="BoxShape" id=13]
 
 [node name="hubWorld" type="Spatial"]
-script = ExtResource( 5 )
 
 [node name="playerNode" type="Spatial" parent="."]
+script = ExtResource( 3 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="playerNode"]
 margin_right = 1280.0
@@ -66,40 +65,6 @@ margin_bottom = 720.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="ViewportContainer" type="ViewportContainer" parent="playerNode/VBoxContainer"]
-margin_right = 1280.0
-margin_bottom = 358.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
-
-[node name="Viewport" type="Viewport" parent="playerNode/VBoxContainer/ViewportContainer"]
-size = Vector2( 1280, 358 )
-handle_input_locally = false
-render_target_update_mode = 3
-shadow_atlas_size = 1
-
-[node name="PlayerBall" parent="playerNode/VBoxContainer/ViewportContainer/Viewport" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.71401, 6.5, 1.55099 )
-
-[node name="ViewportContainer2" type="ViewportContainer" parent="playerNode/VBoxContainer"]
-margin_top = 362.0
-margin_right = 1280.0
-margin_bottom = 720.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
-
-[node name="Viewport" type="Viewport" parent="playerNode/VBoxContainer/ViewportContainer2"]
-size = Vector2( 1280, 358 )
-handle_input_locally = false
-render_target_update_mode = 3
-shadow_atlas_size = 1
-
-[node name="PlayerBall1" parent="playerNode/VBoxContainer/ViewportContainer2/Viewport" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.69208, 6.5, -1.73835 )
-playerId = 1
 
 [node name="checkpoints" type="Spatial" parent="."]
 

@@ -43,9 +43,9 @@ func _ready():
 	#tweak camera stuff if multiplayer
 	if globals.player_count > 1:
 		if globals.player_count == 2:
-			fov = 30
-			translation.y = 5
-			rotation_degrees.x = -5
+			fov = 35
+			translation.y = 4
+			rotation_degrees.x = -4
 		baseY = translation.y
 		baseRotX = rotation_degrees.x
 		targetY = baseY
@@ -154,6 +154,7 @@ func _findLockOn(lockOnMode) -> void:
 	var areas = []
 	for area in lockScanner.get_overlapping_areas():
 		if (area.get_parent().name == player.name): continue
+		else: print('player')
 		areas.append(area.get_parent())
 	if len(areas) == 0:
 		_findLockOn(0)

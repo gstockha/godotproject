@@ -1,6 +1,6 @@
 extends Node
 
-var currentScene = "res://levels/hub.tscn"
+var currentScene = "hub"
 var bpTotal = 160
 var jump = "jump"
 var move_up = "move_up"
@@ -21,5 +21,3 @@ var player_count = 2
 
 #func _detectPlayers() -> void:
 #	player_count = len(get_tree().get_nodes_in_group("players"))
-#	player_count /= 2
-#	print(str(player_count) + ' players detected!')

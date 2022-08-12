@@ -153,7 +153,7 @@ public override void _Ready(){
 		{"speed", GetNode<ProgressBar>("statUI/speedBar")},
 		{"energy", GetNode<ProgressBar>("statUI/energyBar")}
 	};
-	if (Owner.Name == "demoWorld"){
+	if ((string)globals.Get("currentScene") == "demo"){
 		traction = 10;
 		speedPoints = 10;
 		_setStat(98, "traction");
@@ -1122,7 +1122,7 @@ public override void _Input(InputEvent @event){
 	else if (@event.IsActionPressed("sub_stat")) _setStat(-99, statSet);
 	else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
 	else if (@event.IsActionPressed("speedrun_reset")){
-		if (Owner.Name != "demoWorld") return;
+		if ((string)globals.Get("currentScene") == "demo") return;
 		Area checkpnt = (Area)GetNode("../../../../../checkpoints/checkpointSpawn");
 		Translation = checkpnt.GlobalTransform.origin;
 		if (!speedRun){
@@ -1250,6 +1250,7 @@ public void _on_hitBox_area_entered(Area area){
 	Godot.Collections.Array groups = area.GetGroups();
 	for (int i = 0; i < groups.Count; i++){
 		switch(groups[i].ToString()){
+			case "playerHitboxes": _collisionDamage((Spatial)area.GetParentSpatial()); break;
 			case "mobs": _collisionDamage((Spatial)area.GetParentSpatial()); break;
 			case "thumps": _collisionDamage((Spatial)area.GetParentSpatial()); break;
 			case "trampolines":
@@ -1368,21 +1369,49 @@ public void _on_hitBox_area_entered(Area area){
 
 public void _collisionDamage(Spatial collisionNode){
 	Godot.Collections.Array groups = collisionNode.GetGroups();
-	int damage, vulnerableClass; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
+	int vulnerableClass; //0: none, 1: just crash, 2: killed by dash and crash, 3: just dash
 	bool doShake = true;
 	bool notCrashing = (!dashing || weight <= baseWeight);
-	float vecx, vecz;
+	float vecx, vecz, damage;
 	float power = 0;
-	Vector3 launch;
+	Vector3 launch, vel;
 	for (int i = 0; i < groups.Count; i++){
 		switch(groups[i].ToString()){
+			case("players"):
+				if (invincible) return;
+				bool hesDashing = (bool)collisionNode.Get("dashing");
+				damage = (float)collisionNode.Get("collisionBaseScale") * (10 + ((float)collisionNode.Get("speed") * (float)collisionNode.Get("friction") * .2F));
+				if (hesDashing) damage *= 1.5F;
+				vel = (Vector3)collisionNode.Get("velocity");
+				if (dashing || (sliding && boing != 0)){
+					if (notCrashing){
+						float weightPowerMod = 1 - (baseWeight * .3F);
+						if (weightPowerMod > 1) weightPowerMod = 1;
+						power = (damage / baseWeight) * .5F * weightPowerMod; //don't send me as far
+						doShake = false;
+					}
+				}
+				else{
+					if (hesDashing) _damage(damage, .1F);
+					power = damage / (.8F + (hp[0] * .0015F));
+					if (hp[0] <= 1) power *= 2;
+				}
+				if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .1F, 0, vel.z * power * .1F);
+				else{
+					vecx = (velocity.x != 0) ? velocity.x : .1F;
+					vecz = (velocity.z != 0) ? velocity.z : .1F;
+					launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
+				}
+				_launch(launch, power, notCrashing);
+				if (doShake) camera.Call("_shakeMove", 10, damage * .1F, 0);
+				break;
 			case("goons"):
 				#region
 				if (invincible) return;
 				vulnerableClass = (int)collisionNode.Get("vulnerableClass");
 				if (vulnerableClass == 0) return;
 				damage = (int)collisionNode.Get("damage");
-				Vector3 vel = (Vector3)collisionNode.Get("velocity");
+				vel = (Vector3)collisionNode.Get("velocity");
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing && vulnerableClass > 1){
 						collisionNode.Call("_launch", collisionBaseScale * (10 + (speed * friction * .1F)), new Vector3(direction_ground.x, 0, direction_ground.y));

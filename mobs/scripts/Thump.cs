@@ -81,7 +81,7 @@ public override void _PhysicsProcess(float delta){
 public void _on_Shakebox_area_entered(Area area){
     Godot.Collections.Array groups = area.GetGroups();
     for (int i = 0; i < groups.Count; i++){
-        if (groups[i].ToString() == "players"){
+        if (groups[i].ToString() == "playerHotboxes"){
             Camera cam = (Camera)area.Owner.Get("camera");
             Spatial player = (Spatial)area.Owner;
             cam.Call("_shakeMove", 10, damage, player.GlobalTransform.origin.DistanceTo(player.GlobalTransform.origin));
