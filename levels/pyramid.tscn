@@ -1,6 +1,7 @@
 [gd_scene load_steps=98 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
+[ext_resource path="res://scripts/level.gd" type="Script" id=2]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=4]
 [ext_resource path="res://mobs/scripts/Thump.cs" type="Script" id=5]
 [ext_resource path="res://player/PlayerBall.tscn" type="PackedScene" id=6]
@@ -25,83 +26,6 @@
 [ext_resource path="res://scripts/warp.gd" type="Script" id=26]
 [ext_resource path="res://items/bp.tscn" type="PackedScene" id=27]
 [ext_resource path="res://items/5bp.tscn" type="PackedScene" id=28]
-
-[sub_resource type="GDScript" id=78]
-script/source = "extends Spatial
-
-onready var player = get_node(\"../../playerNode/PlayerBall\")
-export var spawnTime = 6
-var enemyNodes = {}
-var enemyCount = {}
-var enemies = [\"goon\", \"mole\", \"spinner\", \"hopper\", \"cannon\", \"sprinkler\"]
-var enemyChildren = []
-export var checkFrequencies = [3, 15]
-var checkerThreshold = checkFrequencies[0]
-var distanceChecker = checkerThreshold
-var active = false
-export var distanceTreshold = 90
-export var distanceTresholdY = 15
-
-func _ready():
-	var childName
-	for enemy in enemies: enemyCount[enemy] = [0,0]
-	for child in get_children():
-		childName = child.name.to_lower()
-		for enemy in enemies:
-			if childName.begins_with(enemy):
-				enemyCount[enemy][0] += 1
-				enemyCount[enemy][1] += 1
-				if (enemyCount[enemy][1] == 1): #add to load object if it exists
-					var eCap = enemy[0].to_upper() + enemy.substr(1,-1)
-					enemyNodes[enemy] = load('res://mobs/scenes/' + eCap + '.tscn')
-				break
-		enemyChildren.append(child)
-
-func _process(_delta):
-	distanceChecker += _delta
-	if distanceChecker > checkerThreshold:
-		distanceChecker = 0
-		var pLocation = player.global_transform.origin
-		var myLocation = global_transform.origin
-		if !active && myLocation.distance_to(pLocation) < distanceTreshold && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
-			active = true
-			checkerThreshold = checkFrequencies[1]
-			for enemy in enemyChildren: enemy.call(\"_on\")
-		elif active && (myLocation.distance_to(pLocation) >= distanceTreshold || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
-			active = false
-			checkerThreshold = checkFrequencies[0]
-			for enemy in enemyChildren:
-				enemy.call(\"_off\")
-				enemy.global_transform.origin = enemy.spawnPoint
-
-func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer, variables: Array) -> void:
-	if (enemyCount[mobName][0] < enemyCount[mobName][1]):
-		var spawnedEnemy = enemyNodes[mobName].instance()
-		add_child(spawnedEnemy)
-		spawnedEnemy.global_transform.origin = point
-		spawnedEnemy.spawnPoint = point
-		enemyCount[mobName][0] += 1
-		enemyChildren.append(spawnedEnemy)
-		if active: spawnedEnemy.call(\"_on\")
-		if variables:
-			match mobName:
-				\"spinner\":
-					spawnedEnemy.angMod = variables[0]
-					spawnedEnemy.dirMod = variables[1]
-				\"cannon\":
-					spawnedEnemy.startAngle = variables[0]
-					spawnedEnemy.bltSpeed = variables[1]
-					spawnedEnemy.bltVel = variables[2]
-	spawnTimer.queue_free()
-
-func _spawnTimerSet(mobNode: Spatial, mobName: String, point: Vector3, variables=[]) -> void:
-	enemyChildren.erase(mobNode)
-	var spawnTimer = Timer.new()
-	add_child(spawnTimer)
-	spawnTimer.connect(\"timeout\", self, \"_spawnMob\", [mobName, point, spawnTimer, variables])
-	spawnTimer.start(spawnTime)
-	enemyCount[mobName][0] -= 1
-"
 
 [sub_resource type="SpatialMaterial" id=9]
 albedo_color = Color( 1, 0, 0.890196, 1 )
@@ -306,22 +230,50 @@ func _on_Timer_timeout():
 [sub_resource type="BoxShape" id=6]
 
 [node name="pyramidWorld" type="Spatial"]
+script = ExtResource( 2 )
 
 [node name="playerNode" type="Spatial" parent="."]
 
-[node name="PlayerBall" parent="playerNode" instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24, 173.5 )
+[node name="VBoxContainer" type="VBoxContainer" parent="playerNode"]
+margin_right = 1280.0
+margin_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="SpotLight" type="SpotLight" parent="playerNode/PlayerBall"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0 )
-light_energy = 0.5
-light_bake_mode = 0
-light_cull_mask = 4293918723
-shadow_enabled = true
-shadow_bias = 0.35
-spot_range = 15.0
-spot_angle = 35.0
-spot_angle_attenuation = 0.5
+[node name="ViewportContainer" type="ViewportContainer" parent="playerNode/VBoxContainer"]
+margin_right = 1280.0
+margin_bottom = 358.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="playerNode/VBoxContainer/ViewportContainer"]
+size = Vector2( 1280, 358 )
+handle_input_locally = false
+render_target_update_mode = 3
+shadow_atlas_size = 1
+
+[node name="PlayerBall" parent="playerNode/VBoxContainer/ViewportContainer/Viewport" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.437765, 22.0631, 173.316 )
+
+[node name="ViewportContainer2" type="ViewportContainer" parent="playerNode/VBoxContainer"]
+margin_top = 362.0
+margin_right = 1280.0
+margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="playerNode/VBoxContainer/ViewportContainer2"]
+size = Vector2( 1280, 358 )
+handle_input_locally = false
+render_target_update_mode = 3
+shadow_atlas_size = 1
+
+[node name="PlayerBall1" parent="playerNode/VBoxContainer/ViewportContainer2/Viewport" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.69208, 6.5, -1.73835 )
+playerId = 1
 
 [node name="checkpoints" type="Spatial" parent="."]
 
@@ -603,11 +555,7 @@ bltVel = 3.0
 
 [node name="space" type="Spatial" parent="Enemies"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 176, 0 )
-script = SubResource( 78 )
-spawnTime = 60
-checkFrequencies = [ 2, 15 ]
-distanceTreshold = 30
-distanceTresholdY = 10
+script = ExtResource( 12 )
 
 [node name="Sprinkler" parent="Enemies/space" instance=ExtResource( 25 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 16 )

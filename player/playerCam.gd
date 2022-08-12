@@ -40,6 +40,16 @@ func _ready():
 	controls["pan_right"] = globals.pan_right + id
 	controls["pan_left"] = globals.pan_left + id
 	controls["lock_on"] = globals.lock_on + id
+	#tweak camera stuff if multiplayer
+	if globals.player_count > 1:
+		if globals.player_count == 2:
+			fov = 30
+			translation.y = 5
+			rotation_degrees.x = -5
+		baseY = translation.y
+		baseRotX = rotation_degrees.x
+		targetY = baseY
+		targetRotX = baseRotX
 
 func _input(event: InputEvent) -> void:
 	if lockOn != null:
