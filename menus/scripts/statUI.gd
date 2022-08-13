@@ -20,8 +20,8 @@ var targetInputAlt = 'A :  clear preset'
 var controls = {"allocate_stats": "", "ui_up": "", "ui_down": "", "ui_right": "", "pan_right": "", "ui_left": "", "jump": ""}
 
 func _ready():
-	if globals.player_count == 2: rect_scale = Vector2(1,.8)
-	elif globals.player_count > 2: rect_scale = Vector2(1,.6)
+#	if globals.player_count == 2: rect_scale = Vector2(.8,.8)
+#	elif globals.player_count > 2: rect_scale = Vector2(.6,.6)
 	for i in range(90): presetList.append(null)
 	if Input.is_joy_known(0):
 		targetInput = "-> :  + 1    R trigger :  + 5    "

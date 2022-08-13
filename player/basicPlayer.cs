@@ -12,8 +12,8 @@ Vector3 platformStickDifference = Vector3.Zero; //stick on thumps and stuff
 float gravity = 23.0F;
 float jumpForce = 11.5F;
 float yvelocity = -1;
-static float bounceBase = .7F;
-float bounce = bounceBase;
+float bounceBase = .7F;
+float bounce = .7F;
 int bounceCombo = 0;
 int bounceComboCap = 3;
 float basejumpwindow = 0;
@@ -37,21 +37,21 @@ bool walldashing = false; //for speed boost after dashing into a wall
 bool canDash = false;
 bool rolling = true; //ball is rolling
 bool moving = false; //you're actually moving the ball
-static int dirSize = 10;
-float[,] dir = new float[2,dirSize];
+int dirSize = 10;
+float[,] dir = new float[2, 10];
 float[] stickDir = new float[] {0,0};
 float[] moveDir = new float[] {0,0};
 float friction = 0;
 float wallFriction = 0;
-static float speedBase = 14;
-float speed = speedBase;
+float speedBase = 14;
+float speed = 14;
 int speedPoints, weightPoints, sizePoints, energyPoints, bouncePoints = 0;
 float[] energy = new float[] {300, 300, 0};
 float[] hp = new float[] {300, 300};
 int traction = 0;
 float[] tractionList = new float[31];
-static float baseWeight = 1.2F;
-float weight = baseWeight;
+float baseWeight = 1.2F;
+float weight = 1.2F;
 int bp, bpUnspent, bpSpent = 0;
 float dashSpeed = 20;
 float boing = 0;
@@ -139,7 +139,7 @@ public override void _Ready(){
 	shadowCast = GetNode<RayCast>("shadowCast");
 	checkpoint = GetNode<Area>("../../../../../checkpoints/checkpointSpawn");
 	camera = GetNode<Camera>("Position3D/playerCam");
-	tipNote = GetNode<Label>("../../../../../tipNote");
+	tipNote = GetNode<Label>("tipNote");
 	bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
 	statUI = GetNode<Control>("statUI");
 	energyBar = GetNode<ProgressBar>("statusHUD/energyBar");
@@ -158,7 +158,7 @@ public override void _Ready(){
 		speedPoints = 10;
 		_setStat(98, "traction");
 		_setStat(98, "speed");
-		moveNote = GetNode<Label>("../../../../../moveNote");
+		moveNote = GetNode<Label>("moveNote");
 	}
 	else{
 		moveNote = null;
@@ -912,6 +912,7 @@ public void _jump(){
 	if (trampolined){
 		boing = yvelocity * 1.25F;
 		if (boing < 15 + (bouncePoints * .1F)) boing = 15 + (bouncePoints * .1F);
+		wallb = false;
 	}
 	if (boing != 0){ //boing jump
 		yvelocity = boing;
@@ -1075,7 +1076,6 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
 		dashTimer.Stop();
 		dashing = false;
 		weight = baseWeight;
-		//speed = speedBase;
 	}
 	if (alterDir){
 		wallb = true;
@@ -1128,7 +1128,7 @@ public override void _Input(InputEvent @event){
 		if (!speedRun){
 			_drawTip("Speedrun mode activated!\nPress T to restart speedrun");
 			speedRun = true;
-			Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
+			Timer textTimer = (Timer)GetNode("tipNote/Timer");
 			if (!textTimer.IsStopped()) textTimer.Stop();
 			textTimer.Start(2);
 		}
@@ -1256,6 +1256,7 @@ public void _on_hitBox_area_entered(Area area){
 			case "trampolines":
 				float boingPower = !area.Owner.Name.BeginsWith("big") ? 16 : 30;
 				boingPower += Mathf.Abs(yvelocity * .25F);
+				wallb = false;
 				_launch(Vector3.Zero, boingPower, false);
 				break;
 			case "projectiles": _collisionDamage(area); break;
@@ -1269,8 +1270,8 @@ public void _on_hitBox_area_entered(Area area){
 			case "warps":
 				Area checkpoint1 = (Area)GetNode("../../../../../checkpoints/checkpointSpawn");
 				Translation = checkpoint1.GlobalTransform.origin;
-				Label prNote = GetNode<Label>("../../../../../prNote");
-				Label speedrunNote = GetNode<Label>("../../../../../speedrunNote");
+				Label prNote = GetNode<Label>("prNote");
+				Label speedrunNote = GetNode<Label>("speedrunNote");
 				if (speedRun){
 					if (prNote.Text == "" || (float)speedrunNote.Get("time") < (float)speedrunNote.Get("prtime")){
 						prNote.Text = "PR: " + speedrunNote.Text;
@@ -1280,7 +1281,7 @@ public void _on_hitBox_area_entered(Area area){
 				else{
 					_drawTip("Speedrun mode activated!\nPress " + controlNames["speedrun"] + " to restart speedrun");
 					speedRun = true;
-					Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
+					Timer textTimer = (Timer)GetNode("tipNote/Timer");
 					if (!textTimer.IsStopped()) textTimer.Stop();
 					textTimer.Start(2);
 				}
@@ -1344,8 +1345,11 @@ public void _on_hitBox_area_entered(Area area){
 				break;
 			case "boingPoints":
 				int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
+				hp[0] += newBp * 30;
+				hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
+				hpBar.Value = hp[0];
 				bp += newBp;
-				int bpTotal = (int)globals.Get("bpTotal");
+				// int bpTotal = (int)globals.Get("bpTotal");
 				// bpNote.Text = bp.ToString() + " / " + bpTotal.ToString() + " BP";
 				int oldUnspent = bpUnspent;
 				int totalBp = bpSpent + bpUnspent;
@@ -1359,9 +1363,8 @@ public void _on_hitBox_area_entered(Area area){
 						statUI.Call("_check_PresetList", bpSpent, bpUnspent);
 					} while (bpUnspent > 0 && bpSpent < 90 && (int)statUI.Get("bpPreset") > 0);
 				}
-				// GD.Print("done");
 				area.QueueFree();
-				if (bp >= bpTotal) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
+				// if (bp >= bpTotal) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
 				break;
 		}
 	}
@@ -1380,28 +1383,39 @@ public void _collisionDamage(Spatial collisionNode){
 			case("players"):
 				if (invincible) return;
 				bool hesDashing = (bool)collisionNode.Get("dashing");
-				damage = (float)collisionNode.Get("collisionBaseScale") * (10 + ((float)collisionNode.Get("speed") * (float)collisionNode.Get("friction") * .2F));
+				bool hesCrashing = (float)collisionNode.Get("weight") > (float)collisionNode.Get("baseWeight");
+				float fric = (float)collisionNode.Get("friction");
+				if (fric < .2F) fric = .2F;
+				damage = (.6F + (int)collisionNode.Get("sizePoints") * .012F) * (30 + ((float)collisionNode.Get("speed") * fric * .4F));
 				if (hesDashing) damage *= 1.5F;
+				else if (hesCrashing) damage *= 2;
 				vel = (Vector3)collisionNode.Get("velocity");
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing){
 						float weightPowerMod = 1 - (baseWeight * .3F);
 						if (weightPowerMod > 1) weightPowerMod = 1;
-						power = (damage / baseWeight) * .5F * weightPowerMod; //don't send me as far
-						doShake = false;
+						power = (damage / baseWeight) * weightPowerMod; //don't send me as far
 					}
+					else power = damage / (1.5F - (jumpForce * .02F));
+					doShake = false;
 				}
 				else{
-					if (hesDashing) _damage(damage, .1F);
-					power = damage / (.8F + (hp[0] * .0015F));
+					if (hesDashing || hesCrashing){
+						_damage(damage, .1F);
+						GD.Print("player " + playerId.ToString() + " took " + (Mathf.RoundToInt(damage * 2)).ToString() + " damage!");
+					}
+					power = damage / (2 + (hp[0] * .001F));
 					if (hp[0] <= 1) power *= 2;
 				}
-				if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .1F, 0, vel.z * power * .1F);
+				if (!invincible) _damage(0, .1F);
+				if (vel != Vector3.Zero) launch = new Vector3(vel.x * power * .05F, 0, vel.z * power * .05F);
 				else{
 					vecx = (velocity.x != 0) ? velocity.x : .1F;
 					vecz = (velocity.z != 0) ? velocity.z : .1F;
 					launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
 				}
+				collisionNode.Call("_collisionDamage", this);
+				if (hesCrashing && yvelocity != -1) power *= -1;
 				_launch(launch, power, notCrashing);
 				if (doShake) camera.Call("_shakeMove", 10, damage * .1F, 0);
 				break;
@@ -1545,14 +1559,14 @@ public void _on_hitBox_area_exited(Area area){
 		switch(groups[i].ToString()){
 			case "checkpoints":
 				if (speedRun && area.Name == "checkpointSpawn"){
-					Label speedrunNote = GetNode<Label>("../../../../../speedrunNote");
+					Label speedrunNote = GetNode<Label>("speedrunNote");
 					speedrunNote.Set("timerOn", true);
 					speedrunNote.Set("time", 0);
 				}
 				break;
 			case "killboxes": if (area.Name.BeginsWith("delay")) deathtimer.Stop(); break;
 			case "tips": 
-				Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
+				Timer textTimer = (Timer)GetNode("tipNote/Timer");
 				if (!textTimer.IsStopped()) textTimer.Stop();
 				textTimer.Start(2);
 				break;
@@ -1639,13 +1653,13 @@ public void _setStat(int points, string stat){
             if (setWeight) weight = baseWeight;
             dashSpeed = 20 + (.1F * weightPoints);
             statLabels[stat].Value = weightPoints;
-			float oldH = hp[1];
+			// float oldH = hp[1];
 			hp[1] = 300 + (weightPoints * 15);
-			int increase = Mathf.RoundToInt((oldH / hp[1]) * hp[0]);
-			hp[0] = increase;
-			hp[0] = Mathf.Clamp(hp[0], 0, hp[1]);
+			// int increase = Mathf.RoundToInt((hp[1] / oldH) * hp[0]);
+			// hp[0] = increase;
+			// hp[0] = Mathf.Clamp(hp[0], 0, hp[1]);
 			hpBar.MaxValue = hp[1];
-			hpBar.Value = hp[0];
+			// hpBar.Value = hp[0];
 			hpBar.SetSize(new Vector2(hp[1], hpBar.RectSize.y));
             break;
         case "size":
@@ -1698,7 +1712,7 @@ public void _setStat(int points, string stat){
 			statLabels[stat].Value = energyPoints;
 			float oldE = energy[1];
 			energy[1] = 300 + (energyPoints * 15);
-			int eIncrease = Mathf.RoundToInt((oldE / energy[1]) * energy[0]);
+			int eIncrease = Mathf.RoundToInt((energy[1] / oldE) * energy[0]);
 			energy[0] = eIncrease;
 			energy[0] = Mathf.Clamp(energy[0], 0, energy[1]);
 			energyBar.MaxValue = energy[1];
@@ -1721,7 +1735,7 @@ public void _drawMoveNote(string text){
 }
 
 public void _drawTip(string text){
-	Timer textTimer = (Timer)GetNode("../../../../../tipNote/Timer");
+	Timer textTimer = (Timer)GetNode("tipNote/Timer");
 	if (!textTimer.IsStopped()) textTimer.Stop();
 	tipNote.Text = text;
 }

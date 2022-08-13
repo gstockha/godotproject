@@ -153,8 +153,7 @@ func _findLockOn(lockOnMode) -> void:
 	lockOn = null
 	var areas = []
 	for area in lockScanner.get_overlapping_areas():
-		if (area.get_parent().name == player.name): continue
-		else: print('player')
+		if (area.get_parent() == player): continue
 		areas.append(area.get_parent())
 	if len(areas) == 0:
 		_findLockOn(0)

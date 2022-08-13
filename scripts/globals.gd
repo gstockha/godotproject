@@ -18,6 +18,3 @@ var ui_right = "ui_right"
 var ui_up = "ui_up"
 var ui_down = "ui_down"
 var player_count = 2
-
-#func _detectPlayers() -> void:
-#	player_count = len(get_tree().get_nodes_in_group("players"))

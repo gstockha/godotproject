@@ -1,6 +1,6 @@
 extends Spatial
 
-onready var player = get_node("../../playerNode/VBoxContainer/ViewportContainer/Viewport/PlayerBall")
+#onready var player = get_node("../../playerNode/VBoxContainer/ViewportContainer/Viewport/PlayerBall")
 onready var bp = preload("res://items/bp.tscn")
 export var spawnTime = 60
 var enemyNodes = {}
@@ -36,19 +36,24 @@ func _process(delta):
 	distanceChecker += delta
 	if distanceChecker > checkerThreshold:
 		distanceChecker = 0
-		var pLocation = player.global_transform.origin
 		var myLocation = global_transform.origin
 		var nuDist = distanceTreshold + 50
-		if !active && myLocation.distance_to(pLocation) < nuDist && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
-			active = true
-			checkerThreshold = checkFrequencies[1]
-			for enemy in enemyChildren: enemy.call("_on")
-		elif active && (myLocation.distance_to(pLocation) >= nuDist || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
-			active = false
-			checkerThreshold = checkFrequencies[0]
-			for enemy in enemyChildren:
-				enemy.call("_off")
-				enemy.global_transform.origin = enemy.spawnPoint
+		var checkForPlayers = 0
+		for player in players:
+			var pLocation = player.global_transform.origin
+			if !active && myLocation.distance_to(pLocation) < nuDist && pLocation.y < myLocation.y + distanceTresholdY && pLocation.y > myLocation.y - distanceTresholdY:
+				active = true
+				checkerThreshold = checkFrequencies[1]
+				for enemy in enemyChildren: enemy.call("_on")
+				break
+			elif active && (myLocation.distance_to(pLocation) >= nuDist || pLocation.y > myLocation.y + distanceTresholdY || pLocation.y < myLocation.y - distanceTresholdY):
+				checkForPlayers += 1
+				if checkForPlayers >= globals.player_count:
+					active = false
+					checkerThreshold = checkFrequencies[0]
+					for enemy in enemyChildren:
+						enemy.call("_off")
+						enemy.global_transform.origin = enemy.spawnPoint
 
 func  _spawnMob(mobName: String, point: Vector3, spawnTimer: Timer, variables: Array) -> void:
 	if (enemyCount[mobName][0] < enemyCount[mobName][1]):

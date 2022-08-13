@@ -1,4 +1,4 @@
-[gd_scene load_steps=97 format=2]
+[gd_scene load_steps=94 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://player/playerController.gd" type="Script" id=2]
@@ -10,7 +10,6 @@
 [ext_resource path="res://geography/structures/flatBlock.tscn" type="PackedScene" id=10]
 [ext_resource path="res://geography/misc/checkpoint.tscn" type="PackedScene" id=11]
 [ext_resource path="res://mobs/controllers/enemySpawn.gd" type="Script" id=12]
-[ext_resource path="res://assets/Staatliches-Regular.ttf" type="DynamicFontData" id=14]
 [ext_resource path="res://scripts/Lift.cs" type="Script" id=15]
 [ext_resource path="res://mobs/scenes/Goon.tscn" type="PackedScene" id=16]
 [ext_resource path="res://mobs/scenes/Spinner.tscn" type="PackedScene" id=17]
@@ -211,21 +210,6 @@ albedo_color = Color( 0.321569, 1, 0.411765, 1 )
 
 [sub_resource type="BoxShape" id=82]
 
-[sub_resource type="DynamicFont" id=53]
-size = 36
-outline_size = 1
-outline_color = Color( 0, 0, 0, 1 )
-use_filter = true
-font_data = ExtResource( 14 )
-
-[sub_resource type="GDScript" id=83]
-script/source = "extends Label
-onready var textTimer = $Timer
-
-func _on_Timer_timeout():
-	text = ''
-"
-
 [sub_resource type="BoxShape" id=6]
 
 [node name="pyramidWorld" type="Spatial"]
@@ -234,8 +218,8 @@ func _on_Timer_timeout():
 script = ExtResource( 2 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="playerNode"]
-margin_right = 1280.0
-margin_bottom = 720.0
+margin_right = 1920.0
+margin_bottom = 1080.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -3180,26 +3164,6 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -11, 2.3, -11 )
 [node name="bp4" parent="environment/Outside/spaceZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 11, 2.3, -11 )
 
-[node name="tipNote" type="Label" parent="."]
-anchor_top = 0.124
-anchor_right = 1.0
-anchor_bottom = 0.26
-margin_top = -0.280006
-margin_bottom = 10.8
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_y = 3
-custom_constants/shadow_as_outline = 0
-custom_fonts/font = SubResource( 53 )
-align = 1
-valign = 1
-script = SubResource( 83 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Timer" type="Timer" parent="tipNote"]
-one_shot = true
-
 [node name="DefaultWorld" type="WorldEnvironment" parent="."]
 environment = ExtResource( 1 )
 
@@ -3270,6 +3234,5 @@ shape = SubResource( 6 )
 [connection signal="timeout" from="environment/Outside/thumpZone/Thump5/FallTimer" to="environment/Outside/thumpZone/Thump5" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Outside/thumpZone/Thump5/ShakeTimer" to="environment/Outside/thumpZone/Thump5" method="_on_ShakeTimer_timeout"]
 [connection signal="body_entered" from="environment/Outside/spaceZone/warp" to="environment/Outside/spaceZone/warp" method="_on_warp_body_entered"]
-[connection signal="timeout" from="tipNote/Timer" to="tipNote" method="_on_Timer_timeout"]
 
 [editable path="environment/Pyramid/PyramidInternal/upperLevel/stairPlatArea/upperRailing/beams/upperPlatBase7"]

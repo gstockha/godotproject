@@ -3,17 +3,17 @@ onready var vbox = $VBoxContainer
 onready var playerPort = preload("res://player/ViewportContainer.tscn")
 onready var player = preload("res://player/PlayerBall.tscn")
 onready var checkpointSpawn = get_node("../checkpoints/checkpointSpawn")
-var spawnPoints = {0: Vector3(0,0,0)}
+var spawnPoints = {0: Vector3(0,2,0)}
 
 func _ready():
 	if globals.player_count > 1:
 		match globals.currentScene:
 			"hub":
-				spawnPoints = {0: Vector3(-2,0,2), 1: Vector3(2,0,-2), 2: Vector3(-2,0,-2), 3: Vector3(2,0,2)}
+				spawnPoints = {0: Vector3(-2,2,2), 1: Vector3(2,2,-2), 2: Vector3(-2,2,-2), 3: Vector3(2,2,2)}
 			"pyramid":
-				spawnPoints = {0: Vector3(-2,0,2), 1: Vector3(2,0,-2), 2: Vector3(-2,0,-2), 3: Vector3(2,0,2)}
+				spawnPoints = {0: Vector3(-2,2,2), 1: Vector3(2,2,-2), 2: Vector3(-2,2,-2), 3: Vector3(2,2,2)}
 			"demo":
-				spawnPoints = {0: Vector3(-2,0,2), 1: Vector3(2,0,-2), 2: Vector3(-2,0,-2), 3: Vector3(2,0,2)}
+				spawnPoints = {0: Vector3(-2,2,2), 1: Vector3(2,2,-2), 2: Vector3(-2,2,-2), 3: Vector3(2,2,2)}
 	var spawn = checkpointSpawn.global_transform.origin
 	var offset
 	for i in range(globals.player_count):
