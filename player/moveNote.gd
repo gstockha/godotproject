@@ -1,6 +1,10 @@
 extends Label
 var alpha = 2
 
+func _ready():
+	if globals.player_count > 1:
+		 add_font_override("font", load("res://fonts/tipSmall.tres"))
+
 func _process(delta):
 	if (text != ""):
 		alpha -= .01

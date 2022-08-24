@@ -1,5 +1,6 @@
 extends Spatial
 onready var vbox = $VBoxContainer
+onready var hbox = preload("res://player/HSplitScreen.tscn")
 onready var playerPort = preload("res://player/ViewportContainer.tscn")
 onready var player = preload("res://player/PlayerBall.tscn")
 onready var checkpointSpawn = get_node("../checkpoints/checkpointSpawn")
@@ -16,11 +17,31 @@ func _ready():
 				spawnPoints = {0: Vector3(-2,2,2), 1: Vector3(2,2,-2), 2: Vector3(-2,2,-2), 3: Vector3(2,2,2)}
 	var spawn = checkpointSpawn.global_transform.origin
 	var offset
-	for i in range(globals.player_count):
-		var port = playerPort.instance()
-		var plr = player.instance()
-		plr.playerId = i
-		port.get_child(0).add_child(plr)
-		vbox.add_child(port)
-		offset = spawnPoints[i]
-		plr.global_transform.origin = Vector3(spawn.x + offset.x, spawn.y + offset.y, spawn.z + offset.z)
+	if (globals.player_count < 3):
+		for i in range(globals.player_count):
+			var hport = hbox.instance()
+			var port = playerPort.instance()
+			var plr = player.instance()
+			plr.playerId = i
+			port.get_child(0).add_child(plr)
+			hport.add_child(port)
+			vbox.add_child(hport)
+			offset = spawnPoints[i]
+			plr.global_transform.origin = Vector3(spawn.x + offset.x, spawn.y + offset.y, spawn.z + offset.z)
+	else:
+		var hport = [hbox.instance(), hbox.instance()]
+		for i in range(globals.player_count):
+			var port = playerPort.instance()
+			var plr = player.instance()
+			plr.playerId = i
+			port.get_child(0).add_child(plr)
+			if (globals.player_count == 3):
+				if (i == 0): hport[0].add_child(port)
+				else: hport[1].add_child(port)
+			else:
+				if (i < 2): hport[0].add_child(port)
+				else: hport[1].add_child(port)
+			offset = spawnPoints[i]
+			plr.global_transform.origin = Vector3(spawn.x + offset.x, spawn.y + offset.y, spawn.z + offset.z)
+		vbox.add_child(hport[0])
+		vbox.add_child(hport[1])

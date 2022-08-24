@@ -137,7 +137,7 @@ public override void _Ready(){
 	leewayCast = GetNode<RayCast>("leewayCast");
 	trampolineCast = GetNode<RayCast>("trampolineCast");
 	shadowCast = GetNode<RayCast>("shadowCast");
-	checkpoint = GetNode<Area>("../../../../../checkpoints/checkpointSpawn");
+	checkpoint = GetNode<Area>("../../../../../../checkpoints/checkpointSpawn");
 	camera = GetNode<Camera>("Position3D/playerCam");
 	tipNote = GetNode<Label>("tipNote");
 	bpSpendNote = GetNode<Label>("statUI/bpSpendNote");
@@ -1087,8 +1087,9 @@ public void _launch(Vector3 launchVec, float power, bool alterDir){
 	yvelocity = power;
 	hasJumped = yvelocity >= (bounceBase * jumpForce * 1.5F) ? 1 : hasJumped; //soft has jumped else what it was
 	_squishNScale((gravity * .017F), new Vector3(0,0,0), true);
+	wallFriction = 0;
 	squishSet = false;
-	squishReverb[0] = yvelocity * .08F;
+	squishReverb[0] = Mathf.Abs(power) * .08F;
 	squishReverb[2] = 1; //proc wall wiggle
 }
 
@@ -1103,6 +1104,7 @@ public void _damage(float damage, float iFrames){
 }
 
 public override void _Input(InputEvent @event){
+	if (playerId > 1) return;
 	if (@event.IsActionPressed(controls["jump"])) _jump();
 	else if (@event.IsActionReleased(controls["jump"])){
 		if (boingCharge){  //below check: leeway ray and moving up and haven't hard jumped (hasJumped != 2) or yvel = -1 or wall
@@ -1120,19 +1122,6 @@ public override void _Input(InputEvent @event){
 	if (playerId != 0) return;
 	if (@event.IsActionPressed("add_stat")) _setStat(99, statSet);
 	else if (@event.IsActionPressed("sub_stat")) _setStat(-99, statSet);
-	else if (@event.IsActionPressed("game_restart")) _dieNRespawn();
-	else if (@event.IsActionPressed("speedrun_reset")){
-		if ((string)globals.Get("currentScene") == "demo") return;
-		Area checkpnt = (Area)GetNode("../../../../../checkpoints/checkpointSpawn");
-		Translation = checkpnt.GlobalTransform.origin;
-		if (!speedRun){
-			_drawTip("Speedrun mode activated!\nPress T to restart speedrun");
-			speedRun = true;
-			Timer textTimer = (Timer)GetNode("tipNote/Timer");
-			if (!textTimer.IsStopped()) textTimer.Stop();
-			textTimer.Start(2);
-		}
-	}
 	else if (@event.IsActionPressed("set_traction")) statSet = "traction";
 	else if (@event.IsActionPressed("set_speed")) statSet = "speed";
 	else if (@event.IsActionPressed("set_weight")) statSet = "weight";
@@ -1149,7 +1138,7 @@ public override void _Input(InputEvent @event){
 	}
 	else if (@event.IsActionPressed("debug_restart")){
 		_setStat(0, "reset");
-		GetTree().ChangeScene((string)globals.Get("currentScene"));
+		GetTree().ChangeScene("res://levels/" + (string)globals.Get("currentScene") + ".tscn");
 	}
 	else if (@event.IsActionPressed("end_game")) GetTree().Quit();
 	else if (@event.IsActionPressed("fullscreen")) OS.WindowFullscreen = !OS.WindowFullscreen;
@@ -1227,7 +1216,9 @@ public void _dieNRespawn(){
 	Translation = new Vector3(checkpoint.GlobalTransform.origin.x, checkpoint.GlobalTransform.origin.y + 2, checkpoint.GlobalTransform.origin.z);
 	camera.Call("_setToDefaults"); //turn off player: lockOn, camLock, angTarget ; turn off cam: lockOn, heightMove, angMove, lerpMove
 	hp[0] = hp[1];
+	hpBar.Value = hp[0];
 	energy[0] = energy[1];
+	energyBar.Value = energy[0];
 }
 
 public void _on_deathtimer_timeout(){
@@ -1268,7 +1259,7 @@ public void _on_hitBox_area_entered(Area area){
 				else if (deathtimer.IsStopped()) deathtimer.Start(2);
 				break;
 			case "warps":
-				Area checkpoint1 = (Area)GetNode("../../../../../checkpoints/checkpointSpawn");
+				Area checkpoint1 = (Area)GetNode("../../../../../../checkpoints/checkpointSpawn");
 				Translation = checkpoint1.GlobalTransform.origin;
 				Label prNote = GetNode<Label>("prNote");
 				Label speedrunNote = GetNode<Label>("speedrunNote");
@@ -1295,10 +1286,10 @@ public void _on_hitBox_area_entered(Area area){
 					case "jumpTip": str = "Press and release\n" + controlNames["jump"] + " to Boing"; break;
 					case "bounceTip": str = "Try boinging quickly to\nBoing combo!"; break;
 					case "camTip": str = controlNames["camera"] + "\nto pan the camera"; break;
-					case "restartTip": 
-						str = controlNames["restart"] + " to restart from checkpoint\n" +
-						controlNames["speedrun"] + " to start speedrun mode";
-						break;
+					// case "restartTip": 
+					// 	str = controlNames["restart"] + " to restart from checkpoint\n" +
+					// 	controlNames["speedrun"] + " to start speedrun mode";
+					// 	break;
 					case "boingTip": str = "Hold " + controlNames["jump"] + " for longer\nto charge a Boing"; break;
 					case "boingTip2": str = "Pro tip: when in doubt, charge your Boings!"; break;
 					case "dashTip": str = controlNames["dash"] + " to Dash"; break;
@@ -1382,6 +1373,7 @@ public void _collisionDamage(Spatial collisionNode){
 		switch(groups[i].ToString()){
 			case("players"):
 				if (invincible) return;
+				bool hesSliding = ((bool)collisionNode.Get("sliding") && (float)collisionNode.Get("boing") != 0);
 				bool hesDashing = (bool)collisionNode.Get("dashing");
 				bool hesCrashing = (float)collisionNode.Get("weight") > (float)collisionNode.Get("baseWeight");
 				float fric = (float)collisionNode.Get("friction");
@@ -1389,18 +1381,19 @@ public void _collisionDamage(Spatial collisionNode){
 				damage = (.6F + (int)collisionNode.Get("sizePoints") * .012F) * (30 + ((float)collisionNode.Get("speed") * fric * .4F));
 				if (hesDashing) damage *= 1.5F;
 				else if (hesCrashing) damage *= 2;
+				else if (hesSliding) damage *= 1.2F;
 				vel = (Vector3)collisionNode.Get("velocity");
 				if (dashing || (sliding && boing != 0)){
 					if (notCrashing){
-						float weightPowerMod = 1 - (baseWeight * .3F);
+						float weightPowerMod = 1 - (baseWeight * .2F);
 						if (weightPowerMod > 1) weightPowerMod = 1;
-						power = (damage / baseWeight) * weightPowerMod; //don't send me as far
+						power = (damage / baseWeight) * .75F * weightPowerMod; //don't send me as far
 					}
-					else power = damage / (1.5F - (jumpForce * .02F));
+					else power = damage / (1.3F - (bouncePoints * .02F));
 					doShake = false;
 				}
 				else{
-					if (hesDashing || hesCrashing){
+					if (hesDashing || hesCrashing || hesSliding){
 						_damage(damage, .1F);
 						GD.Print("player " + playerId.ToString() + " took " + (Mathf.RoundToInt(damage * 2)).ToString() + " damage!");
 					}
@@ -1415,7 +1408,7 @@ public void _collisionDamage(Spatial collisionNode){
 					launch = new Vector3(vecx * -1, 0, vecz * -1).Normalized();    
 				}
 				collisionNode.Call("_collisionDamage", this);
-				if (hesCrashing && yvelocity != -1) power *= -1;
+				if (hesCrashing && yvelocity != -1) power = -power;
 				_launch(launch, power, notCrashing);
 				if (doShake) camera.Call("_shakeMove", 10, damage * .1F, 0);
 				break;
@@ -1677,10 +1670,10 @@ public void _setStat(int points, string stat){
             floorCast.Translation = new Vector3(0, 1 + myMath.roundTo(scaleRatio * .9F, 100), 0);
             collisionShape.Scale = new Vector3(collisionBaseScale, collisionBaseScale, collisionBaseScale);
             shadowCast.Set("shadowScale", collisionBaseScale);
-            if (IsOnFloor() || yvelocity == -1){
-                Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + (collisionBaseScale * 2), Translation.z);
-                for (int c = 0; c < 3; c++) collisionScales[c] = collisionBaseScale;
-            }
+            // if (IsOnFloor() || yvelocity == -1){
+            //     Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + (collisionBaseScale * 2), Translation.z);
+            //     for (int c = 0; c < 3; c++) collisionScales[c] = collisionBaseScale;
+            // }
             // float scaleRatio = myMath.roundTo((increase - .6F) / ((.6F + myMath.roundTo(sizePoints * (.015F + (30 * .000165F)), 100)) - .6F) * 30, 100);
             // floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.065F * scaleRatio), 100), 1);
             // floorCast.Translation = new Vector3(0, 1 + (scaleRatio * .032F), 0);

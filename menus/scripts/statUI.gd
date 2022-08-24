@@ -20,8 +20,10 @@ var targetInputAlt = 'A :  clear preset'
 var controls = {"allocate_stats": "", "ui_up": "", "ui_down": "", "ui_right": "", "pan_right": "", "ui_left": "", "jump": ""}
 
 func _ready():
-#	if globals.player_count == 2: rect_scale = Vector2(.8,.8)
-#	elif globals.player_count > 2: rect_scale = Vector2(.6,.6)
+	if globals.player_count > 1:
+		rect_scale = Vector2(.8,.8)
+		rect_position.y = 930
+		rect_position.x = 1830
 	for i in range(90): presetList.append(null)
 	if Input.is_joy_known(0):
 		targetInput = "-> :  + 1    R trigger :  + 5    "
@@ -63,8 +65,8 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(controls["ui_up"]) || event.is_action_pressed(controls["ui_down"]):
 		if event.is_action_pressed(controls["ui_up"]): target = target - 1 if (target > 0) else 5
 		elif event.is_action_pressed(controls["ui_down"]): target = target + 1 if (target < 5) else 0
-		targetBar.rect_position.x = barNodes[target].rect_position.x - 1.418
-		targetBar.rect_position.y = barNodes[target].rect_position.y - 1.92
+		targetBar.rect_position.x = barNodes[target].rect_position.x - 2.167
+		targetBar.rect_position.y = barNodes[target].rect_position.y - 1.788
 		_draw_InputNote(1)
 	elif event.is_action_pressed(controls["ui_right"]) || event.is_action_pressed(controls["pan_right"]) || event.is_action_pressed(controls["jump"]):
 		if bpSpent >= 90: return
@@ -125,23 +127,26 @@ func _check_PresetList(bpsent, unspent) -> void:
 func _clear_PresetList(target) -> void:
 	if bpPreset < 1: return
 	bpPreset = 0
+	for i in range(6): preSpendNodes[i].value = barNodes[i].value
 	if target == null: #clear all
 		presetList = []
 		for i in range(90): presetList.append(null)
-		for bar in preSpendNodes: bar.value = 0
 	else: #clear selected
 		var newList = []
-		var nullList = []
 		var val
+		var pointer = 0
 		for i in range(90):
 			val = presetList[i]
-			if val == null || val == target: nullList.append(null)
+			if val == target: continue
+			if val == null: newList.append(null)
 			else:
 				newList.append(val)
 				bpPreset += 1
-		for i in range(bpPreset, 90): newList.append(nullList[i - bpPreset])
+				preSpendNodes[val].value += 1
+			pointer += 1
+		for i in range(pointer, 90): newList.append(null)
 		presetList = newList
-		preSpendNodes[target].value = 0
+		print(newList)
 	targetInputNote.text = targetInput
 	if (bpSpent < 90):
 		if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'

@@ -291,9 +291,6 @@ transform = Transform( 6, 0, 0, 0, 2.5, 0, 0, 0, 1, -129.472, 1.1, -10 )
 [node name="obstacle3" parent="envStarting/part3boinging" instance=ExtResource( 9 )]
 transform = Transform( 6, 0, 0, 0, 2.65, 0, 0, 0, 1, -129.472, 1.6, -52 )
 
-[node name="restartTip" parent="envStarting/part3boinging" instance=ExtResource( 7 )]
-transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -132.687, -9.9659, 68.9194 )
-
 [node name="part4dashing" type="Spatial" parent="envStarting"]
 transform = Transform( 0.707106, 0, -0.707108, 0, 1, 0, 0.707108, 0, 0.707106, -132.831, 2, -85.5293 )
 

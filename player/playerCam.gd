@@ -74,6 +74,7 @@ func _input(event: InputEvent) -> void:
 		_moveCamera(.015, strength)
 
 func _process(delta: float) -> void:
+	if player.playerId == 0: print((str(Engine.get_frames_per_second())))
 	if lerpMove:
 		if heightMove:
 			translation.y = lerp(translation.y, targetY, .05)
@@ -208,7 +209,7 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	var mobParent
 	for area in lockScanner.get_overlapping_areas():
 		mobParent = area.get_parent()
-		if (mobParent.name == player.name) || (lockOn != null && mobParent == lockOn): continue
+		if area.get_parent() == player || (lockOn != null && mobParent == lockOn): continue
 		areas.append(mobParent)
 	if len(areas) == 0: return
 	var spaceState = get_world().direct_space_state

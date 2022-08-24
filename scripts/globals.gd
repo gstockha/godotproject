@@ -17,4 +17,4 @@ var ui_left = "ui_left"
 var ui_right = "ui_right"
 var ui_up = "ui_up"
 var ui_down = "ui_down"
-var player_count = 2
+var player_count = 4
