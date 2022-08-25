@@ -42,10 +42,10 @@ func _ready():
 	controls["lock_on"] = globals.lock_on + id
 	#tweak camera stuff if multiplayer
 	if globals.player_count > 1:
-		if globals.player_count == 2:
-			fov = 35
-			translation.y = 4
-			rotation_degrees.x = -4
+		if globals.player_count == 2 || (globals.player_count == 3 && player.playerId == 0): fov = 35
+		else: fov = 40
+		translation.y = 4
+		rotation_degrees.x = -4
 		baseY = translation.y
 		baseRotX = rotation_degrees.x
 		targetY = baseY
@@ -74,7 +74,7 @@ func _input(event: InputEvent) -> void:
 		_moveCamera(.015, strength)
 
 func _process(delta: float) -> void:
-	if player.playerId == 0: print((str(Engine.get_frames_per_second())))
+#	if player.playerId == 0: print((str(Engine.get_frames_per_second())))
 	if lerpMove:
 		if heightMove:
 			translation.y = lerp(translation.y, targetY, .05)

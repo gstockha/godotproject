@@ -416,6 +416,8 @@ generate_lightmap = false
 mesh = SubResource( 17 )
 material/0 = null
 
+[node name="deathPlaceTimer" type="Timer" parent="shadowCast"]
+
 [node name="hitBox" type="Area" parent="." groups=["playerHitboxes"]]
 collision_layer = 30
 collision_mask = 3
@@ -526,9 +528,9 @@ __meta__ = {
 }
 
 [node name="gravityBar" type="ProgressBar" parent="statUI"]
-margin_left = -326.703
+margin_left = -323.65
 margin_top = -229.412
-margin_right = 73.2971
+margin_right = 76.3501
 margin_bottom = -199.412
 custom_styles/fg = SubResource( 20 )
 custom_styles/bg = SubResource( 21 )
@@ -1003,6 +1005,7 @@ __meta__ = {
 }
 
 [connection signal="timeout" from="Position3D/playerCam/bufferTimer" to="Position3D/playerCam" method="_on_bufferTimer_timeout"]
+[connection signal="timeout" from="shadowCast/deathPlaceTimer" to="shadowCast" method="_on_deathPlaceTimer_timeout"]
 [connection signal="area_entered" from="hitBox" to="." method="_on_hitBox_area_entered"]
 [connection signal="area_exited" from="hitBox" to="." method="_on_hitBox_area_exited"]
 [connection signal="timeout" from="hitBox/deathTimer" to="." method="_on_deathTimer_timeout"]

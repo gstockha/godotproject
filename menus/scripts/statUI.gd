@@ -9,22 +9,35 @@ onready var targetBar = $targetBar
 onready var spendNote = $bpSpendNote
 onready var targetInputNote = $targetBar/inputNote
 onready var alertBar = get_node('../bpSpendAlert')
+onready var bp5Node = preload("res://items/5bp.tscn")
+onready var bp1Node = preload("res://items/bp.tscn")
 var target = 0
+var init = true
 var bpUnspent = 0
 var bpSpent = 0
-var buttonName = "Alt"
 var bpPreset = 0
+var bpTotal = 0
 var presetList = []
 var targetInput = 'D :  + 1    E :  + 5    Space :  fill'
 var targetInputAlt = 'A :  clear preset'
 var controls = {"allocate_stats": "", "ui_up": "", "ui_down": "", "ui_right": "", "pan_right": "", "ui_left": "", "jump": ""}
+var buttonName = "Alt"
+var spendRecord = []
+var recordPointer = 0
 
 func _ready():
 	if globals.player_count > 1:
-		rect_scale = Vector2(.8,.8)
 		rect_position.y = 930
-		rect_position.x = 1830
-	for i in range(90): presetList.append(null)
+		if (globals.player_count == 2 || (globals.player_count == 3 && player.playerId == 0)):
+			rect_scale = Vector2(.8,.8)
+			rect_position.x = 1830
+		else:
+			rect_scale = Vector2(.7,.7)
+			rect_position.x = 1610
+			alertBar.add_font_override("font", load("res://fonts/tipSmallOutline.tres"))
+	for i in range(90):
+		presetList.append(null)
+		spendRecord.append(null)
 	if Input.is_joy_known(0):
 		targetInput = "-> :  + 1    R trigger :  + 5    "
 		var name = Input.get_joy_name(0).to_lower()
@@ -35,7 +48,7 @@ func _ready():
 			buttonName = "Y"
 			targetInput += "A :  fill"
 		targetInputAlt =  '<- :  clear preset'
-	alertBar.text = "Press " + buttonName + " to spend points!";
+	alertBar.text = "Press " + buttonName + " to spend points!"
 	$exitNote.text = "Press " + buttonName + " to close"
 	targetInputNote.text = targetInput
 	#get controls
@@ -54,6 +67,10 @@ func _input(event: InputEvent) -> void:
 		allocateMode = !allocateMode
 		visible = allocateMode
 		if allocateMode:
+			if init: #target bar fix
+				targetBar.rect_position.x = barNodes[0].rect_position.x - 2.167
+				targetBar.rect_position.y = barNodes[0].rect_position.y - 1.788
+				init = false
 			player.idle = 2
 			bpUnspent = player.bpUnspent
 			bpSpent = player.bpSpent
@@ -86,7 +103,8 @@ func _input(event: InputEvent) -> void:
 			else: spendNote.text = str(bpSpent) + ' / 90  set'
 		else: spendNote.text = 'max points spent'
 		_draw_InputNote(0)
-	elif event.is_action_pressed(controls["ui_left"]): _clear_PresetList(target)
+	elif event.is_action_pressed(controls["ui_left"]):
+		_clear_PresetList(target)
 
 func _add_Preset(points) -> void:
 	if barNodes[target].value >= 30: return
@@ -152,6 +170,71 @@ func _clear_PresetList(target) -> void:
 		if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
 		else: spendNote.text = str(bpSpent) + ' / 90  set'
 	else: spendNote.text = 'max points spent'
+
+func _drop_BP() -> void:
+	bpTotal = player.bp
+	bpUnspent = player.bpUnspent
+	bpSpent = player.bpSpent
+	if bpTotal < 1: return
+	var drop = 2 + round(bpTotal * .1)
+	while drop > bpTotal: drop -= 1
+	var subBP = drop
+	if (drop <= 0 || player.deathPlace == Vector3.ZERO): return
+	var bpParent = get_node("../../../../../../../bps")
+	if (drop - 5 > 0):
+		var bp5 = bp5Node.instance()
+		bpParent.add_child(bp5)
+		bp5.global_transform.origin = player.deathPlace
+		drop -= 5
+		bpTotal -= 5
+	for i in range(drop):
+		var bp1 = bp1Node.instance()
+		bpParent.add_child(bp1)
+		bp1.global_transform.origin = Vector3(player.deathPlace.x + (rand_range(-1,1) * 4),
+		player.deathPlace.y, player.deathPlace.z + (rand_range(-1,1) * 4))
+		bpTotal -= 1
+	player.deathPlace = Vector3.ZERO
+	while bpUnspent > 0 && subBP > 0:
+		bpUnspent -= 1
+		subBP -= 1
+	while spendRecord[0] != null && subBP > 0:
+		recordPointer -= 1
+		var targ = spendRecord[recordPointer]
+		for i in range(recordPointer, -1, -1):
+			if spendRecord[i] != targ || subBP < 1: break
+			if targ == spendRecord[i]:
+				spendRecord[i] = null
+				subBP -= 1
+				recordPointer -= 1
+				bpSpent -= 1
+				barNodes[targ].value -= 1
+				if preSpendNodes[targ].value > 0: preSpendNodes[targ].value -= 1
+		recordPointer += 1
+	print(spendRecord)
+	print(recordPointer)
+	if player.bpSpent != bpSpent:
+		var map = {0: "traction", 1: "speed", 2: "weight", 3: "size", 4: "bounce", 5: "energy"}
+		player._setStat(0, "reset")
+		player.bpSpent = bpSpent
+		for i in range(6):
+			var reAllocate = 0
+			for c in range(90):
+				if spendRecord[c] == null: break
+				if spendRecord[c] == i: reAllocate += 1
+			player._setStat(reAllocate, map[i])
+	player.bp = bpTotal
+	player.bpUnspent = bpUnspent
+	if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
+	else: spendNote.text = str(bpSpent) + ' / 90  set'
+
+func _record_spend(points: int) -> void:
+	var spentPoints = 0
+	for i in range(recordPointer, 90):
+		spendRecord[i] = target
+		spentPoints += 1
+		recordPointer += 1
+		if spentPoints == points: break
+	print(spendRecord)
 
 func _draw_InputNote(mode: int) -> void:
 	if mode == 0:

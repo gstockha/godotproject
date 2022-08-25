@@ -64,7 +64,7 @@ float[] squishReverb = new float[] {0,1,0}; //0 is target jiggle intensity, 1 is
 #region shift variables
 float lastTranslationY = 0; //for shifted
 float shiftedLastYNorm = 0; //downward slope boost
-Vector3 shiftedLingerVec = new Vector3(0,0,0); //lingering momentum
+Vector3 shiftedLingerVec, deathPlace = new Vector3(0,0,0); //lingering momentum
 float shiftedDir = 0;
 int shiftedSticky = -1;
 float[] shiftedBoost = new float[] {0,0};
@@ -1187,6 +1187,7 @@ public void _on_SmushTimer_timeout(){
 }
 
 public void _dieNRespawn(){
+	statUI.Call("_drop_BP");
 	if (idle != 2) idle = 1;
 	smushed = false;
 	yvelocity = 1;
@@ -1336,7 +1337,7 @@ public void _on_hitBox_area_entered(Area area){
 				break;
 			case "boingPoints":
 				int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
-				hp[0] += newBp * 30;
+				hp[0] += newBp * 20;
 				hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
 				hpBar.Value = hp[0];
 				bp += newBp;
@@ -1717,6 +1718,7 @@ public void _setStat(int points, string stat){
         if (overflow) points = 30 - oldPoints;
         bpSpent += points;
         bpUnspent -= points;
+		statUI.Call("_record_spend", points);
     }
 }
 

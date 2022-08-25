@@ -16,7 +16,6 @@ func _ready():
 			"demo":
 				spawnPoints = {0: Vector3(-2,2,2), 1: Vector3(2,2,-2), 2: Vector3(-2,2,-2), 3: Vector3(2,2,2)}
 	var spawn = checkpointSpawn.global_transform.origin
-	var offset
 	if (globals.player_count < 3):
 		for i in range(globals.player_count):
 			var hport = hbox.instance()
@@ -26,8 +25,6 @@ func _ready():
 			port.get_child(0).add_child(plr)
 			hport.add_child(port)
 			vbox.add_child(hport)
-			offset = spawnPoints[i]
-			plr.global_transform.origin = Vector3(spawn.x + offset.x, spawn.y + offset.y, spawn.z + offset.z)
 	else:
 		var hport = [hbox.instance(), hbox.instance()]
 		for i in range(globals.player_count):
@@ -41,7 +38,10 @@ func _ready():
 			else:
 				if (i < 2): hport[0].add_child(port)
 				else: hport[1].add_child(port)
-			offset = spawnPoints[i]
-			plr.global_transform.origin = Vector3(spawn.x + offset.x, spawn.y + offset.y, spawn.z + offset.z)
 		vbox.add_child(hport[0])
 		vbox.add_child(hport[1])
+	var offset
+	for player in get_tree().get_nodes_in_group("players"):
+		offset = spawnPoints[player.playerId]
+		player.global_transform.origin = Vector3(spawn.x + offset.x,
+		spawn.y + offset.y, spawn.z + offset.z)
