@@ -1572,7 +1572,7 @@ public void _on_hitBox_area_exited(Area area){
 	}
 }
 
-public void _setStat(int points, string stat){
+public void _setStat(int points, string stat, bool record = true){
     if (stat == "max" || stat == "mario" || stat == "reset"){
         points = (stat == "reset") ? 0 : (stat == "max") ? 30 : 15; 
         traction = points;
@@ -1602,6 +1602,7 @@ public void _setStat(int points, string stat){
     else if (bpUnspent < points){
         points = bpUnspent;
     }
+	GD.Print(stat);
     switch (stat){
         case "traction":
             oldPoints = traction;
@@ -1718,7 +1719,7 @@ public void _setStat(int points, string stat){
         if (overflow) points = 30 - oldPoints;
         bpSpent += points;
         bpUnspent -= points;
-		statUI.Call("_record_spend", points);
+		if (record) statUI.Call("_record_spend", points);
     }
 }
 

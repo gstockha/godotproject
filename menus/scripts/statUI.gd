@@ -91,7 +91,7 @@ func _input(event: InputEvent) -> void:
 		if (event.is_action_pressed(controls["pan_right"])): points = 5
 		elif (event.is_action_pressed(controls["jump"])): points = 30
 		var oldbpSpent = bpSpent
-		if bpUnspent > 0: player._setStat(points, barMap[target])
+		if bpUnspent > 0: player._setStat(points, barMap[target], true)
 		elif bpPreset + bpSpent < 90: _add_Preset(points)
 		else: return
 		bpUnspent = player.bpUnspent
@@ -124,9 +124,9 @@ func _check_PresetList(bpsent, unspent) -> void:
 	bpSpent = bpsent
 	if targetIndex == null || bpPreset < 1 || bpSpent >= 90 || bpsent < 0 || bpsent > 89:
 		bpPreset = 0
-#		print('failed')
+#		print('preallocation allocation failed')
 	else:
-		player._setStat(1, barMap[targetIndex])
+		player._setStat(1, barMap[targetIndex], true)
 #		print('set!')
 		presetList[bpsent] = null
 		bpPreset -= 1
@@ -164,7 +164,6 @@ func _clear_PresetList(target) -> void:
 			pointer += 1
 		for i in range(pointer, 90): newList.append(null)
 		presetList = newList
-		print(newList)
 	targetInputNote.text = targetInput
 	if (bpSpent < 90):
 		if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
@@ -178,6 +177,7 @@ func _drop_BP() -> void:
 	if bpTotal < 1: return
 	var drop = 2 + round(bpTotal * .1)
 	while drop > bpTotal: drop -= 1
+	print("drop: " + str(drop))
 	var subBP = drop
 	if (drop <= 0 || player.deathPlace == Vector3.ZERO): return
 	var bpParent = get_node("../../../../../../../bps")
@@ -197,33 +197,24 @@ func _drop_BP() -> void:
 	while bpUnspent > 0 && subBP > 0:
 		bpUnspent -= 1
 		subBP -= 1
-	while spendRecord[0] != null && subBP > 0:
+	var presetBuffer = []
+	while bpSpent > 0 && subBP > 0:
 		recordPointer -= 1
 		var targ = spendRecord[recordPointer]
 		for i in range(recordPointer, -1, -1):
-			if spendRecord[i] != targ || subBP < 1: break
+			if spendRecord[i] != targ || subBP < 1 || bpSpent < 1: break
 			if targ == spendRecord[i]:
+				presetBuffer.push_front(spendRecord[i])
 				spendRecord[i] = null
 				subBP -= 1
 				recordPointer -= 1
 				bpSpent -= 1
-				barNodes[targ].value -= 1
-				if preSpendNodes[targ].value > 0: preSpendNodes[targ].value -= 1
 		recordPointer += 1
-	print(spendRecord)
-	print(recordPointer)
 	if player.bpSpent != bpSpent:
-		var map = {0: "traction", 1: "speed", 2: "weight", 3: "size", 4: "bounce", 5: "energy"}
-		player._setStat(0, "reset")
+		_hardset_PlayerPoints(presetBuffer)
 		player.bpSpent = bpSpent
-		for i in range(6):
-			var reAllocate = 0
-			for c in range(90):
-				if spendRecord[c] == null: break
-				if spendRecord[c] == i: reAllocate += 1
-			player._setStat(reAllocate, map[i])
-	player.bp = bpTotal
 	player.bpUnspent = bpUnspent
+	player.bp = bpTotal
 	if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
 	else: spendNote.text = str(bpSpent) + ' / 90  set'
 
@@ -235,6 +226,50 @@ func _record_spend(points: int) -> void:
 		recordPointer += 1
 		if spentPoints == points: break
 	print(spendRecord)
+
+func _hardset_PlayerPoints(presetBuffer: Array) -> void: #set it without using the player function
+	player.traction = 0
+	player.speedPoints = 0
+	player.weightPoints = 0
+	player.sizePoints = 0
+	player.bouncePoints = 0
+	player.energyPoints = 0
+	player.bpUnspent = 0
+	var allocate = []
+	for i in range(6): allocate.append(0)
+	for i in range(90):
+		if spendRecord[i] == null: break
+		allocate[spendRecord[i]] += 1
+	for i in range(6):
+		if allocate[i] < 1:
+			barNodes[i].value = 0
+			continue
+		player.bpUnspent += allocate[i]
+		player._setStat(allocate[i], barMap[i], false)
+	var presetBufferLength = len(presetBuffer)
+	if presetBufferLength > 0:
+		var oldPresetList = []
+		var presetPoint = -1
+		var recordPoint = -1
+		for i in range(6): preSpendNodes[i].value = barNodes[i].value
+		for i in range(90):
+			oldPresetList.append(presetList[i])
+			if presetList[i] != null:
+				presetList[i] = null
+				if presetPoint == -1: presetPoint = i
+			if recordPoint == -1 && spendRecord[i] == null: recordPoint = i
+		var bufferPointer = 0
+		for i in range(recordPoint, 90):
+			presetList[i] = presetBuffer[bufferPointer]
+			bufferPointer += 1
+			bpPreset += 1
+			preSpendNodes[presetList[i]].value += 1
+			if bufferPointer == presetBufferLength: break
+		for i in range(recordPoint + bufferPointer, 90):
+			if oldPresetList[presetPoint] == null: break
+			presetList[i] = oldPresetList[presetPoint]
+			presetPoint += 1
+			preSpendNodes[presetList[i]].value += 1
 
 func _draw_InputNote(mode: int) -> void:
 	if mode == 0:
