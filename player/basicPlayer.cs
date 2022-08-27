@@ -112,6 +112,7 @@ ProgressBar energyBar;
 ProgressBar hpBar;
 float barSize;
 Spatial lockOn = null;
+bool lockedOnPlayer = false;
 MeshInstance arrow;
 Node globals;
 [Export] int playerId = 0;
@@ -181,7 +182,8 @@ public override void _Ready(){
 	}
 	#region control dictionary
 	string[] controllerStr = new string[8];
-	if (Input.IsJoyKnown(0) == false || (playerId == 0 && (int)globals.Get("player_count") > 1)){ //keyboard mouse
+	bool p1hasController = (bool)globals.Get("p1hasController");
+	if (Input.IsJoyKnown(0) == false || (playerId == 0 && p1hasController == false)){ //keyboard mouse
 		controllerStr[0] = "WASD or Arrow Keys";
 		controllerStr[1] = "Space";
 		controllerStr[2] = "Shift or C";
@@ -220,7 +222,14 @@ public override void _Ready(){
 	controlNames["target"] = controllerStr[6];
 	#endregion
 	#region define controls
-	string id = ((int)globals.Get("player_count") > 1) ? playerId.ToString() : "";
+	string id;
+	if (playerId == 0){
+		id = (p1hasController == true) ? "" : playerId.ToString(); //jump0 is keyboard only for example
+	}
+	else{
+		if (p1hasController == false) id = playerId.ToString();
+		else id = (playerId + 1).ToString();
+	}
 	controls["move_up"] = (string)globals.Get("move_up") + id;
 	controls["move_down"] = (string)globals.Get("move_down") + id;
 	controls["move_left"] = (string)globals.Get("move_left") + id;
@@ -850,10 +859,13 @@ public void _rotateMesh(float xvel, float yvel, float delta){
 public void _turnDelay(){
 	if (angTarget == 0) return;
 	if (camLock != 2) camLock = 1;
-	float tractionFriction;
-	if (camLock < 2) tractionFriction = (angDelayFriction) ? tractionList[30] * .001F : 0;
-	else tractionFriction = tractionList[traction] * .0008F;
-	ang = Mathf.LerpAngle(ang,angTarget,.015F + tractionFriction);
+	if (lockedOnPlayer == false){
+		float tractionFriction;
+		if (camLock < 2) tractionFriction = (angDelayFriction) ? tractionList[30] * .001F : 0;
+		else tractionFriction = tractionList[traction] * .0008F;
+		ang = Mathf.LerpAngle(ang,angTarget,.015F + tractionFriction);
+	}
+	else ang = Mathf.LerpAngle(ang,angTarget,.012F);
 	if (lockOn != null) return;
 	// GD.Print("ang: " + ang.ToString() + ", angTarget: " + angTarget.ToString());
 	if (camLock == 1){
@@ -1341,6 +1353,7 @@ public void _on_hitBox_area_entered(Area area){
 				break;
 			case "boingPoints":
 				int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
+				int hpGain = newBp;
 				bp += newBp;
 				// int bpTotal = (int)globals.Get("bpTotal");
 				// bpNote.Text = bp.ToString() + " / " + bpTotal.ToString() + " BP";
@@ -1356,7 +1369,7 @@ public void _on_hitBox_area_entered(Area area){
 						statUI.Call("_check_PresetList", bpSpent, bpUnspent);
 					} while (bpUnspent > 0 && bpSpent < 90 && (int)statUI.Get("bpPreset") > 0);
 				}
-				hp[0] += newBp * 30;
+				hp[0] += hpGain * 15;
 				hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
 				hpBar.Value = hp[0];
 				area.QueueFree();

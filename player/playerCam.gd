@@ -145,6 +145,7 @@ func _findLockOn(lockOnMode) -> void:
 		if player.lockOn != null:
 			player.lockOn = null
 			player.angTarget = 0
+		player.lockedOnPlayer = false
 		player.ang = player.rotation.y * -1
 		player.camLock = 0
 		if lockOn != null && is_instance_valid(lockOn): lockOn.arrow.visible = false
@@ -194,6 +195,7 @@ func _findLockOn(lockOnMode) -> void:
 		_findLockOn(0)
 		return
 	player.lockOn = lockOn
+	player.lockedOnPlayer = lockOn.name.begins_with("PlayerBall")
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	if player.angTarget != 0: player.ang = player.angTarget
 	player.angTarget = player.rotation.y * -1
@@ -243,6 +245,7 @@ func _directionalLockOn(direction: String, closest: bool) -> void:
 	if lockOn != null: lockOn.arrow.visible = false
 	lockOn = tempLockOn
 	player.lockOn = lockOn
+	player.lockedOnPlayer = lockOn.name.begins_with("PlayerBall")
 	player.look_at(Vector3(lockOn.translation.x, player.translation.y, lockOn.translation.z), Vector3.UP)
 	player.angTarget = player.rotation.y * -1
 	player.rotation.y = lastRot
@@ -339,6 +342,7 @@ func _setToDefaults() -> void:
 	player.lockOn = null
 	player.camLock = 0
 	player.angTarget = 0
+	player.lockedOnPlayer = false
 	_findLockOn(0)
 	translation.y = baseY
 	rotation_degrees.x = baseRotX
