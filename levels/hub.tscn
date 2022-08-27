@@ -367,4 +367,40 @@ transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -24.8674, 19.0786, -5.77
 [node name="5bp15" parent="bps" instance=ExtResource( 15 )]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -22.5832, 19.0786, -5.77664 )
 
+[node name="5bp4" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -29.1684, 19.0786, -13.4964 )
+
+[node name="5bp11" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -30.8574, 19.0786, -13.4964 )
+
+[node name="5bp16" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -32.7337, 19.0786, -13.4964 )
+
+[node name="5bp17" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -27.1868, 19.0786, -13.4964 )
+
+[node name="5bp18" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -24.8674, 19.0786, -13.4964 )
+
+[node name="5bp19" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -22.5832, 19.0786, -13.4964 )
+
+[node name="5bp20" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -29.1684, 19.0786, -10.9173 )
+
+[node name="5bp21" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -30.8574, 19.0786, -10.9173 )
+
+[node name="5bp22" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -32.7337, 19.0786, -10.9173 )
+
+[node name="5bp23" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -27.1868, 19.0786, -10.9173 )
+
+[node name="5bp24" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -24.8674, 19.0786, -10.9173 )
+
+[node name="5bp25" parent="bps" instance=ExtResource( 15 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -22.5832, 19.0786, -10.9173 )
+
 [connection signal="area_entered" from="levelWarp2" to="levelWarp2" method="_on_levelWarp_area_entered"]

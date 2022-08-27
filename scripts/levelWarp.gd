@@ -2,6 +2,6 @@ extends Area
 export var levelName = ""
 
 func _on_levelWarp_area_entered(area):
+	if !area.get_parent().name.begins_with("PlayerBall"): return
 	globals.currentScene = levelName
-	area.get_parent()._setStat(0, "reset")
 	get_tree().change_scene("res://menus/loadScene.tscn")

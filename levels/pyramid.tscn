@@ -1,7 +1,8 @@
-[gd_scene load_steps=94 format=2]
+[gd_scene load_steps=95 format=2]
 
 [ext_resource path="res://world/env1.tres" type="Environment" id=1]
 [ext_resource path="res://player/playerController.gd" type="Script" id=2]
+[ext_resource path="res://geography/misc/killbox.tscn" type="PackedScene" id=3]
 [ext_resource path="res://geography/structures/wallBlock.tscn" type="PackedScene" id=4]
 [ext_resource path="res://mobs/scripts/Thump.cs" type="Script" id=5]
 [ext_resource path="res://geography/structures/cyFlat.tscn" type="PackedScene" id=7]
@@ -2239,35 +2240,35 @@ transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, -1.00087, 36.845, -70.68
 [node name="bp13" parent="environment/Outside/beamZone/bpParent" instance=ExtResource( 27 )]
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, -24.297, 9.8288, -74.7438 )
 
-[node name="Killbox2" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+[node name="restartbox2" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
 transform = Transform( 0.5, 0, 0, 0, 0.866025, -0.35, 0, 0.5, 0.606218, -0.840698, 19.4464, -54.009 )
 gravity = 0.0
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox2"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/restartbox2"]
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 80 )
 
-[node name="Killbox3" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+[node name="restartbox3" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
 transform = Transform( 0.5, 0, 0, 0, 1, 0, 0, 0, 1.8, -0.840698, 24.4464, -89.385 )
 gravity = 0.0
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox3"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/restartbox3"]
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 80 )
 
-[node name="Killbox4" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+[node name="restartbox4" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
 transform = Transform( 0.5, 0, 0, 0, 0.886914, -0.323354, 0, 0.461934, 0.62084, -0.840698, 28.9464, -125.653 )
 gravity = 0.0
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox4"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/restartbox4"]
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 80 )
 
-[node name="Killbox5" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
+[node name="restartbox5" type="Area" parent="environment/Outside/beamZone" groups=["killboxes"]]
 transform = Transform( 0.8, 0, 0, 0, 1, 0, 0, 0, 1.5, -0.840698, 33.9464, -156.868 )
 gravity = 0.0
 
-[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/Killbox5"]
+[node name="CollisionShape" type="CollisionShape" parent="environment/Outside/beamZone/restartbox5"]
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 80 )
 
@@ -2824,6 +2825,9 @@ transform = Transform( 1.5, 0, 0, 0, 26, 0, 0, 0, 0.1, 0.4, 3.5, 12 )
 [node name="ModalcameraAreaH-6" parent="environment/Outside/spireZone" instance=ExtResource( 22 )]
 transform = Transform( 3, 0, 0, 0, 3.83022, 19.2836, 0, -3.21394, 22.9813, 0, 16.2035, -22.0381 )
 
+[node name="restartBox" parent="environment/Outside/spireZone" instance=ExtResource( 3 )]
+transform = Transform( 1.3, 0, 0, 0, 1, 0, 0, 0, 4, 0, -7.90508, -63.9525 )
+
 [node name="cloudZone" type="Spatial" parent="environment/Outside"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -76.3555, 8.71146, -215.346 )
 
@@ -3204,6 +3208,8 @@ gravity = 0.0
 [node name="CollisionShape" type="CollisionShape" parent="killboxMain"]
 transform = Transform( 15, 0, 0, 0, 1, 0, 0, 0, 15, 0, 0, 0 )
 shape = SubResource( 6 )
+
+[node name="bps" type="Spatial" parent="."]
 
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/center/centerLift/FallTimer" to="environment/Pyramid/PyramidInternal/center/centerLift" method="_on_FallTimer_timeout"]
 [connection signal="timeout" from="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump/FallTimer" to="environment/Pyramid/PyramidInternal/upperLevel/leftCorner/pushONbigThump" method="_on_FallTimer_timeout"]

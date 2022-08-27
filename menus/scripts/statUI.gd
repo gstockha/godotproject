@@ -175,9 +175,11 @@ func _drop_BP() -> void:
 	bpUnspent = player.bpUnspent
 	bpSpent = player.bpSpent
 	if bpTotal < 1: return
-	var drop = 2 + round(bpTotal * .1)
+	var drop = 0
+	if bpTotal > 90: drop = bpTotal - 90
+	else: drop = 2 + round(bpTotal * .05)
 	while drop > bpTotal: drop -= 1
-	print("drop: " + str(drop))
+	player._drawTip("You lost " + str(drop) + " BP!", true)
 	var subBP = drop
 	if (drop <= 0 || player.deathPlace == Vector3.ZERO): return
 	var bpParent = get_node("../../../../../../../bps")
@@ -218,14 +220,17 @@ func _drop_BP() -> void:
 	if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
 	else: spendNote.text = str(bpSpent) + ' / 90  set'
 
-func _record_spend(points: int) -> void:
+func _record_spend(points: int, stat: String) -> void:
+	var statMap = {"weight": 0, "traction": 1, "bounce": 2, "size": 3, "speed": 4, "energy": 5}
+	var targ = statMap[stat]
+	if targ == null: return
 	var spentPoints = 0
 	for i in range(recordPointer, 90):
-		spendRecord[i] = target
+		spendRecord[i] = targ
 		spentPoints += 1
 		recordPointer += 1
 		if spentPoints == points: break
-	print(spendRecord)
+#	print(spendRecord)
 
 func _hardset_PlayerPoints(presetBuffer: Array) -> void: #set it without using the player function
 	player.traction = 0

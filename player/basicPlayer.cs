@@ -110,6 +110,7 @@ Label bpSpendNote;
 Control statUI;
 ProgressBar energyBar;
 ProgressBar hpBar;
+float barSize;
 Spatial lockOn = null;
 MeshInstance arrow;
 Node globals;
@@ -144,6 +145,7 @@ public override void _Ready(){
 	statUI = GetNode<Control>("statUI");
 	energyBar = GetNode<ProgressBar>("statusHUD/energyBar");
 	hpBar = GetNode<ProgressBar>("statusHUD/hpBar");
+	barSize = hpBar.RectSize.x * 2;
 	arrow = GetNode<MeshInstance>("Arrow");
 	statLabels = new Dictionary<string, ProgressBar>(){
 		{"weight", GetNode<ProgressBar>("statUI/gravityBar")},
@@ -179,7 +181,7 @@ public override void _Ready(){
 	}
 	#region control dictionary
 	string[] controllerStr = new string[8];
-	if (Input.IsJoyKnown(0) == false){ //keyboard mouse
+	if (Input.IsJoyKnown(0) == false || (playerId == 0 && (int)globals.Get("player_count") > 1)){ //keyboard mouse
 		controllerStr[0] = "WASD or Arrow Keys";
 		controllerStr[1] = "Space";
 		controllerStr[2] = "Shift or C";
@@ -218,7 +220,7 @@ public override void _Ready(){
 	controlNames["target"] = controllerStr[6];
 	#endregion
 	#region define controls
-	string id = playerId.ToString();
+	string id = ((int)globals.Get("player_count") > 1) ? playerId.ToString() : "";
 	controls["move_up"] = (string)globals.Get("move_up") + id;
 	controls["move_down"] = (string)globals.Get("move_down") + id;
 	controls["move_left"] = (string)globals.Get("move_left") + id;
@@ -403,7 +405,6 @@ public void _applyShift(float delta, bool isGrounded){
 			yvelocity -= (gravity * weight) * delta;
 			shiftedSticky = 0;
 			floorCastTouching = true; //so we don't apply it twice (below)
-			GD.Print("thing");
 		}
 		if (dashing && dashTimer.IsStopped()) dashTimer.Start(.5F + myMath.roundTo(.014F * bouncePoints, 100));
 	}
@@ -586,7 +587,6 @@ public void _isAirborne(float delta){
 	//     }
 	//     _rotateMesh(shiftedLingerVec.x*2*60, shiftedLingerVec.z*2*60, delta);
 	// }
-	// GD.Print("shit");
 	// MoveAndCollide(new Vector3(shift.x*fric*grav, shiftedSticky, shift.z*fric*grav));
 }
 
@@ -825,7 +825,6 @@ public void _squishNScale(float delta, Vector3 squishNormal, bool reset){
 	}
 	// else if (jumpwindow == 0 && boing == 0 && (IsOnFloor() || yvelocity == -1)){
 	//     skinBody.Scale = new Vector3(collisionBaseScale,collisionBaseScale,collisionBaseScale);
-	//     GD.Print("set");
 	// }
 }
 
@@ -872,7 +871,7 @@ public void _turnDelay(){
 	}
 }
 
-public void _lockOn(Node enemyTarget, float delta){
+public void _lockOn(Node lostTarget, float delta){
 	if (lockOn == null){
 		if (camLock == 0 && moveDir[0] != 0){// && !wallb){//(Math.Abs(moveDir[0]) > .05F){
 			float addAng = 0;
@@ -883,9 +882,9 @@ public void _lockOn(Node enemyTarget, float delta){
 		}
 		return;
 	}
-	if (enemyTarget != null && lockOn == enemyTarget || IsInstanceValid(lockOn) == false){// || IsInstanceValid(lockOn)){
+	if (lostTarget != null && lockOn == lostTarget || IsInstanceValid(lockOn) == false){
 		camera.Call("_findLockOn", new object{}); //turn off lockOn on camera node
-		return;
+		return; //lostTarget is an enemy that is dying checking to see if we're locked on to it
 	}
 	Vector3 target = lockOn.GlobalTransform.origin;
 	float oldRot = Rotation.y;
@@ -1104,7 +1103,6 @@ public void _damage(float damage, float iFrames){
 }
 
 public override void _Input(InputEvent @event){
-	if (playerId > 1) return;
 	if (@event.IsActionPressed(controls["jump"])) _jump();
 	else if (@event.IsActionReleased(controls["jump"])){
 		if (boingCharge){  //below check: leeway ray and moving up and haven't hard jumped (hasJumped != 2) or yvel = -1 or wall
@@ -1186,8 +1184,8 @@ public void _on_SmushTimer_timeout(){
 	_squishNScale(gravity * .017F, new Vector3(0,0,0), true);
 }
 
-public void _dieNRespawn(){
-	statUI.Call("_drop_BP");
+public void _dieNRespawn(bool dropBp = true){
+	if (dropBp) statUI.Call("_drop_BP");
 	if (idle != 2) idle = 1;
 	smushed = false;
 	yvelocity = 1;
@@ -1220,6 +1218,12 @@ public void _dieNRespawn(){
 	hpBar.Value = hp[0];
 	energy[0] = energy[1];
 	energyBar.Value = energy[0];
+	Godot.Collections.Array players = GetTree().GetNodesInGroup("players");
+	foreach (Node player in players){
+		if (player == this) continue;
+		player.Call("_lockOn", this, 0);
+	}
+	camera.Call("_findLockOn", new object{}); //turn off lockOn on camera node
 }
 
 public void _on_deathtimer_timeout(){
@@ -1256,7 +1260,7 @@ public void _on_hitBox_area_entered(Area area){
 			case "lavas": _collisionDamage(area); break;
 			case "checkpoints": checkpoint = area; break;
 			case "killboxes":
-				if (!area.Name.BeginsWith("delay")) _dieNRespawn();
+				if (!area.Name.BeginsWith("delay")) _dieNRespawn(area.Name.BeginsWith("kill"));
 				else if (deathtimer.IsStopped()) deathtimer.Start(2);
 				break;
 			case "warps":
@@ -1337,9 +1341,6 @@ public void _on_hitBox_area_entered(Area area){
 				break;
 			case "boingPoints":
 				int newBp = (area.Name.BeginsWith("5")) ? 5 : 1;
-				hp[0] += newBp * 20;
-				hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
-				hpBar.Value = hp[0];
 				bp += newBp;
 				// int bpTotal = (int)globals.Get("bpTotal");
 				// bpNote.Text = bp.ToString() + " / " + bpTotal.ToString() + " BP";
@@ -1355,6 +1356,9 @@ public void _on_hitBox_area_entered(Area area){
 						statUI.Call("_check_PresetList", bpSpent, bpUnspent);
 					} while (bpUnspent > 0 && bpSpent < 90 && (int)statUI.Get("bpPreset") > 0);
 				}
+				hp[0] += newBp * 30;
+				hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
+				hpBar.Value = hp[0];
 				area.QueueFree();
 				// if (bp >= bpTotal) _drawTip("You've collected all the Boing Points!\n... Go touch grass");
 				break;
@@ -1602,7 +1606,6 @@ public void _setStat(int points, string stat, bool record = true){
     else if (bpUnspent < points){
         points = bpUnspent;
     }
-	GD.Print(stat);
     switch (stat){
         case "traction":
             oldPoints = traction;
@@ -1648,14 +1651,14 @@ public void _setStat(int points, string stat, bool record = true){
             if (setWeight) weight = baseWeight;
             dashSpeed = 20 + (.1F * weightPoints);
             statLabels[stat].Value = weightPoints;
-			// float oldH = hp[1];
-			hp[1] = 300 + (weightPoints * 15);
-			// int increase = Mathf.RoundToInt((hp[1] / oldH) * hp[0]);
-			// hp[0] = increase;
-			// hp[0] = Mathf.Clamp(hp[0], 0, hp[1]);
+			float oldH = hp[1];
+			hp[1] = 300 + (weightPoints * 10);
+			int increase = Mathf.RoundToInt((hp[1] / oldH) * hp[0]);
+			hp[0] = increase;
+			hp[0] = Mathf.Clamp(hp[0], 0, hp[1]);
 			hpBar.MaxValue = hp[1];
-			// hpBar.Value = hp[0];
-			hpBar.SetSize(new Vector2(hp[1], hpBar.RectSize.y));
+			hpBar.Value = hp[0];
+			hpBar.SetSize(new Vector2((hp[1]/600) * barSize, hpBar.RectSize.y));
             break;
         case "size":
             oldPoints = sizePoints;
@@ -1672,19 +1675,7 @@ public void _setStat(int points, string stat, bool record = true){
             floorCast.Translation = new Vector3(0, 1 + myMath.roundTo(scaleRatio * .9F, 100), 0);
             collisionShape.Scale = new Vector3(collisionBaseScale, collisionBaseScale, collisionBaseScale);
             shadowCast.Set("shadowScale", collisionBaseScale);
-            // if (IsOnFloor() || yvelocity == -1){
-            //     Translation = new Vector3(Translation.x, floorCast.GetCollisionPoint().y + (collisionBaseScale * 2), Translation.z);
-            //     for (int c = 0; c < 3; c++) collisionScales[c] = collisionBaseScale;
-            // }
-            // float scaleRatio = myMath.roundTo((increase - .6F) / ((.6F + myMath.roundTo(sizePoints * (.015F + (30 * .000165F)), 100)) - .6F) * 30, 100);
-            // floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((.065F * scaleRatio), 100), 1);
-            // floorCast.Translation = new Vector3(0, 1 + (scaleRatio * .032F), 0);
             statLabels[stat].Value = sizePoints;
-            // GD.Print(scaleRatio);
-            // GD.Print("collisionBaseScale " + collisionBaseScale.ToString());
-            // GD.Print("hitbox scale " + hitBoxShape.Scale.ToString());
-            // GD.Print("floorCast scale " + floorCast.Scale.ToString());
-            // GD.Print("floorCast translationY " + floorCast.Translation.y.ToString());
             break;
         case "bounce":
             oldPoints = bouncePoints;
@@ -1706,20 +1697,20 @@ public void _setStat(int points, string stat, bool record = true){
 			energyPoints = Mathf.Clamp(energyPoints, 0, 30);
 			statLabels[stat].Value = energyPoints;
 			float oldE = energy[1];
-			energy[1] = 300 + (energyPoints * 15);
+			energy[1] = 300 + (energyPoints * 10);
 			int eIncrease = Mathf.RoundToInt((energy[1] / oldE) * energy[0]);
 			energy[0] = eIncrease;
 			energy[0] = Mathf.Clamp(energy[0], 0, energy[1]);
 			energyBar.MaxValue = energy[1];
 			energyBar.Value = energy[0];
-			energyBar.SetSize(new Vector2(energy[1], energyBar.RectSize.y));
+			energyBar.SetSize(new Vector2((energy[1]/600) * barSize, energyBar.RectSize.y));
             break;
     }
     if (hax < 1){
         if (overflow) points = 30 - oldPoints;
         bpSpent += points;
         bpUnspent -= points;
-		if (record) statUI.Call("_record_spend", points);
+		if (record) statUI.Call("_record_spend", points, stat);
     }
 }
 
@@ -1730,10 +1721,11 @@ public void _drawMoveNote(string text){
 	moveNote.AddColorOverride("font_color", new Color(1,1,1,1));
 }
 
-public void _drawTip(string text){
+public void _drawTip(string text, bool startTimer = false){
 	Timer textTimer = (Timer)GetNode("tipNote/Timer");
 	if (!textTimer.IsStopped()) textTimer.Stop();
 	tipNote.Text = text;
+	if (startTimer) textTimer.Start(3);
 }
 
 }
