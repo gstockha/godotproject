@@ -52,7 +52,7 @@ func _ready():
 	$exitNote.text = "Press " + buttonName + " to close"
 	targetInputNote.text = targetInput
 	#get controls
-	var id = str(player.playerId)
+	var id = globals._getControlId(player.playerId)
 	controls["allocate_stats"] = globals.allocate_stats + id
 	controls["pan_right"] = globals.pan_right + id
 	controls["jump"] = globals.jump + id

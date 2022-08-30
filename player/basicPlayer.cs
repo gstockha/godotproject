@@ -222,14 +222,7 @@ public override void _Ready(){
 	controlNames["target"] = controllerStr[6];
 	#endregion
 	#region define controls
-	string id;
-	if (playerId == 0){
-		id = (p1hasController == true) ? "" : playerId.ToString(); //jump0 is keyboard only for example
-	}
-	else{
-		if (p1hasController == false) id = playerId.ToString();
-		else id = (playerId + 1).ToString();
-	}
+	string id = (string)globals.Call("_getControlId", playerId);
 	controls["move_up"] = (string)globals.Get("move_up") + id;
 	controls["move_down"] = (string)globals.Get("move_down") + id;
 	controls["move_left"] = (string)globals.Get("move_left") + id;
@@ -865,7 +858,10 @@ public void _turnDelay(){
 		else tractionFriction = tractionList[traction] * .0008F;
 		ang = Mathf.LerpAngle(ang,angTarget,.015F + tractionFriction);
 	}
-	else ang = Mathf.LerpAngle(ang,angTarget,.012F);
+	else{
+		float distanceLerpMod = Mathf.Clamp(GlobalTransform.origin.DistanceTo(lockOn.GlobalTransform.origin), 10, 30);
+		ang = Mathf.LerpAngle(ang,angTarget, distanceLerpMod * .001F);
+	}
 	if (lockOn != null) return;
 	// GD.Print("ang: " + ang.ToString() + ", angTarget: " + angTarget.ToString());
 	if (camLock == 1){
@@ -1397,11 +1393,21 @@ public void _collisionDamage(Spatial collisionNode){
 				float fric = (float)collisionNode.Get("friction");
 				if (fric < .2F) fric = .2F;
 				damage = (.6F + (int)collisionNode.Get("sizePoints") * .012F) * (30 + ((float)collisionNode.Get("speed") * fric * .4F));
-				if (hesDashing) damage *= 1.5F;
+				if (hesDashing){
+					if (dashing){
+						Timer hisTimer = ((Timer)collisionNode.Get("dashTimer"));
+						float timeElapsed = (.5F + myMath.roundTo(.014F * (int)collisionNode.Get("bouncePoints"), 100)) - hisTimer.TimeLeft;
+						float myElapsed = (.5F + myMath.roundTo(.014F * bouncePoints, 100)) - dashTimer.TimeLeft;
+						if (timeElapsed <= .1F && myElapsed <= timeElapsed) damage *= 1 + timeElapsed;
+						else if (timeElapsed > .1F && timeElapsed <= myElapsed) damage *= 1.5F;
+						else hesDashing = false; //dont do damage
+					}
+					else damage *= 1.5F;
+				}
 				else if (hesCrashing) damage *= 2;
 				else if (hesSliding) damage *= 1.2F;
 				vel = (Vector3)collisionNode.Get("velocity");
-				if (dashing || (sliding && boing != 0)){
+				if ((dashing && !hesDashing) || (sliding && boing != 0)){
 					if (notCrashing){
 						float weightPowerMod = 1 - (baseWeight * .2F);
 						if (weightPowerMod > 1) weightPowerMod = 1;

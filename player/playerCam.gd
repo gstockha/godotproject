@@ -36,7 +36,7 @@ func _ready():
 	InputMap.action_set_deadzone(controls["pan_right"], .3)
 	InputMap.action_set_deadzone(controls["pan_left"], .3)
 	#region define controls
-	var id = str(player.playerId)
+	var id = globals._getControlId(player.playerId)
 	controls["pan_right"] = globals.pan_right + id
 	controls["pan_left"] = globals.pan_left + id
 	controls["lock_on"] = globals.lock_on + id

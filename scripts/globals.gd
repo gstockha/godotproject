@@ -17,12 +17,21 @@ var ui_left = "ui_left"
 var ui_right = "ui_right"
 var ui_up = "ui_up"
 var ui_down = "ui_down"
-var player_count = 1
+var player_count = 2
 var p1hasController = false
 
 func _ready():
+	_processJoyCount()
+
+func _processJoyCount() -> void:
 	if (player_count == 1): p1hasController = true
 	else:
 		var joyCount = 0
 		for i in range(4): if Input.is_joy_known(i): joyCount += 1
 		p1hasController = joyCount >= player_count
+		
+func _getControlId(id: int) -> String:
+	var controllerId = ''
+	if id == 0: controllerId = str(id) if !p1hasController else ""
+	else: controllerId = str(id) if !globals.p1hasController else str(id + 1)
+	return controllerId
