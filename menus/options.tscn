@@ -3,11 +3,10 @@
 [ext_resource path="res://fonts/troika.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://sprites/UI/slider_grabber.png" type="Texture" id=3]
 [ext_resource path="res://sounds/gear.wav" type="AudioStream" id=4]
-[ext_resource path="res://menus/music_slider.gd" type="Script" id=5]
-[ext_resource path="res://menus/backButton.gd" type="Script" id=6]
-[ext_resource path="res://menus/sfx_slider.gd" type="Script" id=7]
-[ext_resource path="res://menus/options.gd" type="Script" id=8]
-
+[ext_resource path="res://menus/scripts/music_slider.gd" type="Script" id=5]
+[ext_resource path="res://menus/scripts/backButton.gd" type="Script" id=6]
+[ext_resource path="res://menus/scripts/sfx_slider.gd" type="Script" id=7]
+[ext_resource path="res://menus/scripts/options.gd" type="Script" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 1 )
@@ -46,6 +45,9 @@ font_data = ExtResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="."]
 margin_right = 40.0

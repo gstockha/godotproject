@@ -2,7 +2,8 @@ extends Node
 var rooms = {
 	"arena" : preload("res://levels/hub.tscn"),
 	"titlecard" : preload("res://menus/titlecard.tscn"),
-	"options" : preload("res://menus/options.tscn")
+	"options" : preload("res://menus/options.tscn"),
+	"load": preload("res://menus/loadScene.tscn")
 }
 var goToRoom = rooms["titlecard"]
 # Called when the node enters the scene tree for the first time.
@@ -17,5 +18,10 @@ func _on_transition_transitioned():
 	$currentScene.add_child(newRoom)
 	
 func on_goToRoom(room):
+	goToRoom= rooms[room]
+	$transition.transition()
+
+
+func _on_titlecard_goToRoom(room):
 	goToRoom= rooms[room]
 	$transition.transition()

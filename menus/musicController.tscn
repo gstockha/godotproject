@@ -1,9 +1,8 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://sounds/song.wav" type="AudioStream" id=1]
-[ext_resource path="res://menus/musicController.gd" type="Script" id=2]
+[ext_resource path="res://menus/scripts/musicController.gd" type="Script" id=2]
 
 [node name="musicController" type="AudioStreamPlayer"]
 stream = ExtResource( 1 )
-bus = "Music"
 script = ExtResource( 2 )

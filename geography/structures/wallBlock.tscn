@@ -10,7 +10,7 @@ material = SubResource( 2 )
 size = Vector3( 4, 1, 4 )
 
 [sub_resource type="SpatialMaterial" id=4]
-albedo_color = Color( 1, 0, 0.890196, 1 )
+albedo_color = Color( 1, 0.262745, 0.917647, 1 )
 
 [node name="wallBlock" type="StaticBody" groups=["walls"]]
 collision_mask = 0

@@ -19,4 +19,6 @@ func _ready():
 
 func _on_start_pressed():
 	#get_tree().change_scene("res://scenes/Arena/Arena.tscn")
-	emit_signal("goToRoom","arena")
+	globals._processJoyCount()
+	emit_signal("goToRoom","load")
+#	get_tree().change_scene("res://menus/loadScene.tscn")

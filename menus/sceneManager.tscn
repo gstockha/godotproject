@@ -2,12 +2,20 @@
 
 [ext_resource path="res://menus/titlecard.tscn" type="PackedScene" id=1]
 [ext_resource path="res://menus/fade.tscn" type="PackedScene" id=2]
-[ext_resource path="res://menus/sceneManager.gd" type="Script" id=3]
+[ext_resource path="res://menus/scripts/sceneManager.gd" type="Script" id=3]
 
 [node name="sceneManager" type="Node"]
 script = ExtResource( 3 )
 
 [node name="currentScene" type="Node" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="currentScene"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.839216, 0.431373, 0.784314, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="titlecard" parent="currentScene" instance=ExtResource( 1 )]
 
@@ -15,4 +23,8 @@ script = ExtResource( 3 )
 
 [node name="musicController" type="AudioStreamPlayer" parent="."]
 
+[connection signal="goToRoom" from="currentScene/titlecard" to="." method="_on_titlecard_goToRoom"]
+[connection signal="goToRoom" from="currentScene/titlecard/menu" to="currentScene/titlecard" method="_on_menu_goToRoom"]
 [connection signal="transitioned" from="transition" to="." method="_on_transition_transitioned"]
+
+[editable path="currentScene/titlecard"]
