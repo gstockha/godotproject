@@ -1365,7 +1365,7 @@ public void _on_hitBox_area_entered(Area area){
 						statUI.Call("_check_PresetList", bpSpent, bpUnspent);
 					} while (bpUnspent > 0 && bpSpent < 90 && (int)statUI.Get("bpPreset") > 0);
 				}
-				hp[0] += hpGain * 15;
+				hp[0] += hpGain * 30;
 				hp[0] = Mathf.Clamp(hp[0], 1, hp[1]);
 				hpBar.Value = hp[0];
 				area.QueueFree();

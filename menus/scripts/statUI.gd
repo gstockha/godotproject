@@ -176,7 +176,8 @@ func _drop_BP() -> void:
 	bpSpent = player.bpSpent
 	if bpTotal < 1: return
 	var drop = 0
-	if bpTotal > 90: drop = bpTotal - 90
+	var sub90 = bpTotal <= 90
+	if !sub90: drop = bpTotal - 90
 	else: drop = 2 + round(bpTotal * .05)
 	while drop > bpTotal: drop -= 1
 	player._drawTip("You lost " + str(drop) + " BP!", true)
@@ -196,26 +197,27 @@ func _drop_BP() -> void:
 		player.deathPlace.y, player.deathPlace.z + (rand_range(-1,1) * 4))
 		bpTotal -= 1
 	player.deathPlace = Vector3.ZERO
-	while bpUnspent > 0 && subBP > 0:
-		bpUnspent -= 1
-		subBP -= 1
-	var presetBuffer = []
-	while bpSpent > 0 && subBP > 0:
-		recordPointer -= 1
-		var targ = spendRecord[recordPointer]
-		for i in range(recordPointer, -1, -1):
-			if spendRecord[i] != targ || subBP < 1 || bpSpent < 1: break
-			if targ == spendRecord[i]:
-				presetBuffer.push_front(spendRecord[i])
-				spendRecord[i] = null
-				subBP -= 1
-				recordPointer -= 1
-				bpSpent -= 1
-		recordPointer += 1
-	if player.bpSpent != bpSpent:
-		_hardset_PlayerPoints(presetBuffer)
-		player.bpSpent = bpSpent
-	player.bpUnspent = bpUnspent
+	if sub90:
+		while bpUnspent > 0 && subBP > 0:
+			bpUnspent -= 1
+			subBP -= 1
+		var presetBuffer = []
+		while bpSpent > 0 && subBP > 0:
+			recordPointer -= 1
+			var targ = spendRecord[recordPointer]
+			for i in range(recordPointer, -1, -1):
+				if spendRecord[i] != targ || subBP < 1 || bpSpent < 1: break
+				if targ == spendRecord[i]:
+					presetBuffer.push_front(spendRecord[i])
+					spendRecord[i] = null
+					subBP -= 1
+					recordPointer -= 1
+					bpSpent -= 1
+			recordPointer += 1
+		if player.bpSpent != bpSpent:
+			_hardset_PlayerPoints(presetBuffer)
+			player.bpSpent = bpSpent
+		player.bpUnspent = bpUnspent
 	player.bp = bpTotal
 	if (bpUnspent > 0): spendNote.text = str(bpUnspent) + ' points to spend'
 	else: spendNote.text = str(bpSpent) + ' / 90  set'

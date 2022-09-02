@@ -15,7 +15,7 @@ _global_script_class_icons={
 [application]
 
 config/name="marblebounce"
-run/main_scene="res://menus/sceneManager.tscn"
+run/main_scene="res://levels/hub.tscn"
 
 [autoload]
 
@@ -29,7 +29,6 @@ shapes/collision/shape_color=Color( 0, 0.65098, 0.545098, 0.419608 )
 
 window/size/width=1920
 window/size/height=1080
-window/size/fullscreen=true
 window/size/always_on_top=true
 window/size/test_width=1280
 window/size/test_height=720
