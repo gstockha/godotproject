@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Spatial.gd" type="Script" id=1]
+[ext_resource path="res://menus/bouncy_menu_deco.tres" type="Material" id=2]
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="CSGSphere" type="CSGSphere" parent="."]
+material = ExtResource( 2 )

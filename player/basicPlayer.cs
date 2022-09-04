@@ -1596,80 +1596,80 @@ public void _on_hitBox_area_exited(Area area){
 }
 
 public void _setStat(int points, string stat, bool record = true){
-    if (stat == "max" || stat == "mario" || stat == "reset"){
-        points = (stat == "reset") ? 0 : (stat == "max") ? 30 : 15; 
-        traction = points;
-        speedPoints = points;
-        weightPoints = points;
-        sizePoints = points;
-        bouncePoints = points;
-        energyPoints = points;
-        _setStat(98, "traction");
-        _setStat(98, "speed");
-        _setStat(98, "weight");
-        _setStat(98, "size");
-        _setStat(98, "bounce");
-        _setStat(98, "energy");
-        return;
-    }
-    int oldPoints = 0;
-    int hax = 0;
-    bool overflow = false;
-    if (Mathf.Abs(points) > 90){
-        if (points == 99){
-            points = 5 * Mathf.Sign(points);
-            hax = 1;
-        }
-        else hax = 2;
-    }
-    else if (bpUnspent < points){
-        points = bpUnspent;
-    }
-    switch (stat){
-        case "traction":
-            oldPoints = traction;
-            if (oldPoints == 30 && hax < 1) return;
-            if (hax < 2) traction += points;
-            overflow = traction > 30;
-            traction = Mathf.Clamp(traction, 0, 30);
-            int oldDirSize = dirSize;
-            dirSize = 10 - (traction / 5);
-            if (dirSize != oldDirSize){
-                float meanX = myMath.array2dMean(dir,0);
-                float meanZ = myMath.array2dMean(dir,1);
-                dir = new float[2,dirSize];
-                for (int i = 0; i < dirSize; i++){
-                    dir[0,i] = meanX;
-                    dir[1,i] = meanZ;
-                }
-            }
-            // GD.Print(dirSize);
-            // GD.Print("traction " + traction.ToString());
-            statLabels[stat].Value = traction;
-            break;
-        case "speed":
-            oldPoints = speedPoints;
-            if (oldPoints == 30 && hax < 1) return;
-            if (hax < 2) speedPoints += points;
-            overflow = speedPoints > 30;
-            speedPoints = Mathf.Clamp(speedPoints, 0, 30);
-            bool setSpd = speed == speedBase;
-            speedBase = 14 + myMath.roundTo(speedPoints * .134F, 10);
-            if (setSpd) speed = speedBase;
-            // GD.Print("speed " + speedBase.ToString());
-            statLabels[stat].Value = speedPoints;
-            break;
-        case "weight":
-            oldPoints = weightPoints;
-            if (oldPoints == 30 && hax < 1) return;
-            if (hax < 2) weightPoints += points;
-            overflow = weightPoints > 30;
-            weightPoints = Mathf.Clamp(weightPoints, 0, 30);
-            bool setWeight = weight == baseWeight;
-            baseWeight = 1.2F + myMath.roundTo(weightPoints * .04F, 100);
-            if (setWeight) weight = baseWeight;
-            dashSpeed = 20 + (.1F * weightPoints);
-            statLabels[stat].Value = weightPoints;
+	if (stat == "max" || stat == "mario" || stat == "reset"){
+		points = (stat == "reset") ? 0 : (stat == "max") ? 30 : 15; 
+		traction = points;
+		speedPoints = points;
+		weightPoints = points;
+		sizePoints = points;
+		bouncePoints = points;
+		energyPoints = points;
+		_setStat(98, "traction");
+		_setStat(98, "speed");
+		_setStat(98, "weight");
+		_setStat(98, "size");
+		_setStat(98, "bounce");
+		_setStat(98, "energy");
+		return;
+	}
+	int oldPoints = 0;
+	int hax = 0;
+	bool overflow = false;
+	if (Mathf.Abs(points) > 90){
+		if (points == 99){
+			points = 5 * Mathf.Sign(points);
+			hax = 1;
+		}
+		else hax = 2;
+	}
+	else if (bpUnspent < points){
+		points = bpUnspent;
+	}
+	switch (stat){
+		case "traction":
+			oldPoints = traction;
+			if (oldPoints == 30 && hax < 1) return;
+			if (hax < 2) traction += points;
+			overflow = traction > 30;
+			traction = Mathf.Clamp(traction, 0, 30);
+			int oldDirSize = dirSize;
+			dirSize = 10 - (traction / 5);
+			if (dirSize != oldDirSize){
+				float meanX = myMath.array2dMean(dir,0);
+				float meanZ = myMath.array2dMean(dir,1);
+				dir = new float[2,dirSize];
+				for (int i = 0; i < dirSize; i++){
+					dir[0,i] = meanX;
+					dir[1,i] = meanZ;
+				}
+			}
+			// GD.Print(dirSize);
+			// GD.Print("traction " + traction.ToString());
+			statLabels[stat].Value = traction;
+			break;
+		case "speed":
+			oldPoints = speedPoints;
+			if (oldPoints == 30 && hax < 1) return;
+			if (hax < 2) speedPoints += points;
+			overflow = speedPoints > 30;
+			speedPoints = Mathf.Clamp(speedPoints, 0, 30);
+			bool setSpd = speed == speedBase;
+			speedBase = 14 + myMath.roundTo(speedPoints * .134F, 10);
+			if (setSpd) speed = speedBase;
+			// GD.Print("speed " + speedBase.ToString());
+			statLabels[stat].Value = speedPoints;
+			break;
+		case "weight":
+			oldPoints = weightPoints;
+			if (oldPoints == 30 && hax < 1) return;
+			if (hax < 2) weightPoints += points;
+			overflow = weightPoints > 30;
+			weightPoints = Mathf.Clamp(weightPoints, 0, 30);
+			bool setWeight = weight == baseWeight;
+			baseWeight = 1.2F + myMath.roundTo(weightPoints * .04F, 100);
+			if (setWeight) weight = baseWeight;
+			dashSpeed = 20 + (.1F * weightPoints);
+			statLabels[stat].Value = weightPoints;
 			float oldH = hp[1];
 			hp[1] = 300 + (weightPoints * 10);
 			int increase = Mathf.RoundToInt((hp[1] / oldH) * hp[0]);
@@ -1678,38 +1678,38 @@ public void _setStat(int points, string stat, bool record = true){
 			hpBar.MaxValue = hp[1];
 			hpBar.Value = hp[0];
 			hpBar.SetSize(new Vector2((hp[1]/600) * barSize, hpBar.RectSize.y));
-            break;
-        case "size":
-            oldPoints = sizePoints;
-            if (oldPoints == 30 && hax < 1) return;
-            if (hax < 2) sizePoints += points;
-            overflow = sizePoints > 30;
-            sizePoints = Mathf.Clamp(sizePoints, 0, 30);
-            float hIncrease = .6F + myMath.roundTo(sizePoints * (.015F + (sizePoints * .000165F)), 100);
-            collisionBaseScale = hIncrease;
-            collisionBaseScale = myMath.roundTo(collisionBaseScale, 100);
-            hitBoxShape.Scale = new Vector3(collisionBaseScale + .05F, collisionBaseScale + .05F, collisionBaseScale + .05F);
-            float scaleRatio = (collisionBaseScale - .6F) / .6F;
-            floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((1.9F * scaleRatio), 100), 1);
-            floorCast.Translation = new Vector3(0, 1 + myMath.roundTo(scaleRatio * .9F, 100), 0);
-            collisionShape.Scale = new Vector3(collisionBaseScale, collisionBaseScale, collisionBaseScale);
-            shadowCast.Set("shadowScale", collisionBaseScale);
-            statLabels[stat].Value = sizePoints;
-            break;
-        case "bounce":
-            oldPoints = bouncePoints;
-            if (oldPoints == 30 && hax < 1) return;
-            if (hax < 2) bouncePoints += points;
-            overflow = bouncePoints > 30;
-            bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
-            jumpForce = 11.5F + myMath.roundTo(bouncePoints * .2F, 10);
-            bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
-            statLabels[stat].Value = bouncePoints;
-            // GD.Print("jumpForce " + jumpForce.ToString());
-            // GD.Print("bounceComboCap " + bounceComboCap.ToString());
-            break;
-        case "energy":
-            oldPoints = energyPoints;
+			break;
+		case "size":
+			oldPoints = sizePoints;
+			if (oldPoints == 30 && hax < 1) return;
+			if (hax < 2) sizePoints += points;
+			overflow = sizePoints > 30;
+			sizePoints = Mathf.Clamp(sizePoints, 0, 30);
+			float hIncrease = .6F + myMath.roundTo(sizePoints * (.015F + (sizePoints * .000165F)), 100);
+			collisionBaseScale = hIncrease;
+			collisionBaseScale = myMath.roundTo(collisionBaseScale, 100);
+			hitBoxShape.Scale = new Vector3(collisionBaseScale + .05F, collisionBaseScale + .05F, collisionBaseScale + .05F);
+			float scaleRatio = (collisionBaseScale - .6F) / .6F;
+			floorCast.Scale = new Vector3(1, 2 + myMath.roundTo((1.9F * scaleRatio), 100), 1);
+			floorCast.Translation = new Vector3(0, 1 + myMath.roundTo(scaleRatio * .9F, 100), 0);
+			collisionShape.Scale = new Vector3(collisionBaseScale, collisionBaseScale, collisionBaseScale);
+			shadowCast.Set("shadowScale", collisionBaseScale);
+			statLabels[stat].Value = sizePoints;
+			break;
+		case "bounce":
+			oldPoints = bouncePoints;
+			if (oldPoints == 30 && hax < 1) return;
+			if (hax < 2) bouncePoints += points;
+			overflow = bouncePoints > 30;
+			bouncePoints = Mathf.Clamp(bouncePoints, 0, 30);
+			jumpForce = 11.5F + myMath.roundTo(bouncePoints * .2F, 10);
+			bounceComboCap = 3 + Mathf.FloorToInt(bouncePoints / 5);
+			statLabels[stat].Value = bouncePoints;
+			// GD.Print("jumpForce " + jumpForce.ToString());
+			// GD.Print("bounceComboCap " + bounceComboCap.ToString());
+			break;
+		case "energy":
+			oldPoints = energyPoints;
 			if (oldPoints == 30 && hax < 1) return;
 			if (hax < 2) energyPoints += points;
 			overflow = energyPoints > 30;
@@ -1723,14 +1723,14 @@ public void _setStat(int points, string stat, bool record = true){
 			energyBar.MaxValue = energy[1];
 			energyBar.Value = energy[0];
 			energyBar.SetSize(new Vector2((energy[1]/600) * barSize, energyBar.RectSize.y));
-            break;
-    }
-    if (hax < 1){
-        if (overflow) points = 30 - oldPoints;
-        bpSpent += points;
-        bpUnspent -= points;
+			break;
+	}
+	if (hax < 1){
+		if (overflow) points = 30 - oldPoints;
+		bpSpent += points;
+		bpUnspent -= points;
 		if (record) statUI.Call("_record_spend", points, stat);
-    }
+	}
 }
 
 public void _drawMoveNote(string text){
