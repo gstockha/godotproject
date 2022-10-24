@@ -192,7 +192,7 @@ public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
     if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "hopper", spawnPoint);
+    parent.Call("_spawnTimerSet", this, "hopper", spawnPoint);
 }
 
 }

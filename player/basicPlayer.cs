@@ -891,7 +891,7 @@ public void _lockOn(Node lostTarget, float delta){
 		return;
 	}
 	if (lostTarget != null && lockOn == lostTarget || IsInstanceValid(lockOn) == false){
-		camera.Call("_findLockOn", new object{}); //turn off lockOn on camera node
+		camera.Call("_findLockOn", 0); //turn off lockOn on camera node
 		return; //lostTarget is an enemy that is dying checking to see if we're locked on to it
 	}
 	Vector3 target = lockOn.GlobalTransform.origin;
@@ -1320,9 +1320,9 @@ public void _on_hitBox_area_entered(Area area){
 					case "part4Tip": str = "Try dashing into the wall and\ncharge a Wallboing off of it!"; break;
 					case "endTip": str = "That's all for now. Good job!\nTravel down to restart in speedrun mode!"; break;
 					case "targetingTip": str = "Push " + controlNames["target"] + " to lock on enemies!\n" +
-					controlNames["camera"] + " to change target"; break;
+					controlNames["dash"] + " to dash at them"; break;
 					case "welcomeTip": str = "Welcome to the\nBoing Boing Bros prototype!"; break;
-					case "tutorialTip": str = "Enter the tube above to do the\nAdvanced movement trial!"; break;
+					case "tutorialTip": str = "Advanced movement tutorial available\n to those who've entered the pink gate!"; break;
 					case "pyramidTip": str ="This way to the new Pyramid Zone!\nPress H to return here at anytime"; break;
 				}
 				if (str != "") _drawTip(str);

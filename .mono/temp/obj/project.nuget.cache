@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "nGkZj1JZ5x4ODp81ZkNbqAJqGIhpPvgFcVoTpcwEnilHxQWdGUT2PunpxfNTF9wk+X0TzzRntOhhIqUgT+lMfw==",
+  "dgSpecHash": "/okzID3CGNJq97LQAhs1mLRoGzVGi/r8mC+bgXe0CKYlo88ZZJ05bOPL+qbTvBg8EDSrR7bxz+rvKqtmNS8aTw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\marblebounce.csproj",
+  "projectFilePath": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\marblebounce.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\aravi\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.0\\microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
-    "C:\\Users\\aravi\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net472\\1.0.0\\microsoft.netframework.referenceassemblies.net472.1.0.0.nupkg.sha512"
+    "C:\\Users\\AAAAAAA\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.2\\microsoft.netframework.referenceassemblies.1.0.2.nupkg.sha512",
+    "C:\\Users\\AAAAAAA\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net472\\1.0.2\\microsoft.netframework.referenceassemblies.net472.1.0.2.nupkg.sha512"
   ],
   "logs": []
 }

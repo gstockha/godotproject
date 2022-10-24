@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://fonts/troika.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://menus/scripts/start.gd" type="Script" id=2]
@@ -44,6 +44,8 @@ size = 62
 outline_size = 3
 outline_color = Color( 0, 0, 0, 1 )
 font_data = ExtResource( 1 )
+
+[sub_resource type="MeshTexture" id=30]
 
 [sub_resource type="StyleBoxEmpty" id=25]
 
@@ -150,10 +152,10 @@ align = 1
 margin_top = 86.0
 margin_right = 562.0
 margin_bottom = 150.0
-custom_colors/font_color = Color( 0.423529, 1, 0.905882, 1 )
+custom_colors/font_color = Color( 1, 0.423529, 0.992157, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 22 )
-text = "sep. 2022 prototype"
+text = "nov. 2022 prototype"
 align = 1
 
 [node name="start" type="Button" parent="MarginContainer/VBoxContainer"]
@@ -177,15 +179,16 @@ script = ExtResource( 2 )
 
 [node name="players" type="OptionButton" parent="MarginContainer/VBoxContainer"]
 material = SubResource( 23 )
-margin_left = 157.0
+margin_left = 163.0
 margin_top = 228.0
-margin_right = 404.0
+margin_right = 398.0
 margin_bottom = 298.0
 size_flags_horizontal = 4
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_hover = Color( 0, 1, 0.505882, 1 )
 custom_colors/font_color_pressed = Color( 0, 1, 0.505882, 1 )
 custom_fonts/font = SubResource( 24 )
+custom_icons/arrow = SubResource( 30 )
 custom_styles/hover = SubResource( 25 )
 custom_styles/pressed = SubResource( 26 )
 custom_styles/focus = SubResource( 27 )

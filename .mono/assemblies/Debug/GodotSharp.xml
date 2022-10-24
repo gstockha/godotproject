@@ -2471,23 +2471,23 @@
         </member>
         <member name="M:Godot.Node.Rpc(System.String,System.Object[])">
             <summary>
-            <para>Sends a remote procedure call request for the given <c>method</c> to peers on the network (and locally), optionally sending all additional arguments as arguments to the method called by the RPC. The call request will only be received by nodes with the same <see cref="T:Godot.NodePath"/>, including the exact same node name. Behaviour depends on the RPC configuration for the given method, see <see cref="M:Godot.Node.RpcConfig(System.String,Godot.MultiplayerAPI.RPCMode)"/>. Methods are not exposed to RPCs by default. See also <see cref="M:Godot.Node.Rset(System.String,System.Object)"/> and <see cref="M:Godot.Node.RsetConfig(System.String,Godot.MultiplayerAPI.RPCMode)"/> for properties. Returns an empty <c>Variant</c>.</para>
+            <para>Sends a remote procedure call request for the given <c>method</c> to peers on the network (and locally), optionally sending all additional arguments as arguments to the method called by the RPC. The call request will only be received by nodes with the same <see cref="T:Godot.NodePath"/>, including the exact same node name. Behaviour depends on the RPC configuration for the given method, see <see cref="M:Godot.Node.RpcConfig(System.String,Godot.MultiplayerAPI.RPCMode)"/>. Methods are not exposed to RPCs by default. See also <see cref="M:Godot.Node.Rset(System.String,System.Object)"/> and <see cref="M:Godot.Node.RsetConfig(System.String,Godot.MultiplayerAPI.RPCMode)"/> for properties. Returns <c>null</c>.</para>
             <para>Note: You can only safely use RPCs on clients after you received the <c>connected_to_server</c> signal from the <see cref="T:Godot.SceneTree"/>. You also need to keep track of the connection state, either by the <see cref="T:Godot.SceneTree"/> signals like <c>server_disconnected</c> or by checking <c>SceneTree.network_peer.get_connection_status() == CONNECTION_CONNECTED</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.Node.RpcUnreliable(System.String,System.Object[])">
             <summary>
-            <para>Sends a <see cref="M:Godot.Node.Rpc(System.String,System.Object[])"/> using an unreliable protocol. Returns an empty <c>Variant</c>.</para>
+            <para>Sends a <see cref="M:Godot.Node.Rpc(System.String,System.Object[])"/> using an unreliable protocol. Returns <c>null</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.Node.RpcId(System.Int32,System.String,System.Object[])">
             <summary>
-            <para>Sends a <see cref="M:Godot.Node.Rpc(System.String,System.Object[])"/> to a specific peer identified by <c>peer_id</c> (see <see cref="M:Godot.NetworkedMultiplayerPeer.SetTargetPeer(System.Int32)"/>). Returns an empty <c>Variant</c>.</para>
+            <para>Sends a <see cref="M:Godot.Node.Rpc(System.String,System.Object[])"/> to a specific peer identified by <c>peer_id</c> (see <see cref="M:Godot.NetworkedMultiplayerPeer.SetTargetPeer(System.Int32)"/>). Returns <c>null</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.Node.RpcUnreliableId(System.Int32,System.String,System.Object[])">
             <summary>
-            <para>Sends a <see cref="M:Godot.Node.Rpc(System.String,System.Object[])"/> to a specific peer identified by <c>peer_id</c> using an unreliable protocol (see <see cref="M:Godot.NetworkedMultiplayerPeer.SetTargetPeer(System.Int32)"/>). Returns an empty <c>Variant</c>.</para>
+            <para>Sends a <see cref="M:Godot.Node.Rpc(System.String,System.Object[])"/> to a specific peer identified by <c>peer_id</c> using an unreliable protocol (see <see cref="M:Godot.NetworkedMultiplayerPeer.SetTargetPeer(System.Int32)"/>). Returns <c>null</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.Node.Rset(System.String,System.Object)">
@@ -2863,7 +2863,7 @@
         <member name="M:Godot.Object.Connect(System.String,Godot.Object,System.String,Godot.Collections.Array,System.UInt32)">
             <summary>
             <para>Connects a <c>signal</c> to a <c>method</c> on a <c>target</c> object. Pass optional <c>binds</c> to the call as an <see cref="T:Godot.Collections.Array"/> of parameters. These parameters will be passed to the method after any parameter used in the call to <see cref="M:Godot.Object.EmitSignal(System.String,System.Object[])"/>. Use <c>flags</c> to set deferred or one-shot connections. See <see cref="T:Godot.Object.ConnectFlags"/> constants.</para>
-            <para>A <c>signal</c> can only be connected once to a <c>method</c>. It will throw an error if already connected, unless the signal was connected with <see cref="F:Godot.Object.ConnectFlags.ReferenceCounted"/>. To avoid this, first, use <see cref="M:Godot.Object.IsConnected(System.String,Godot.Object,System.String)"/> to check for existing connections.</para>
+            <para>A <c>signal</c> can only be connected once to a <c>method</c>. It will print an error if already connected, unless the signal was connected with <see cref="F:Godot.Object.ConnectFlags.ReferenceCounted"/>. To avoid this, first, use <see cref="M:Godot.Object.IsConnected(System.String,Godot.Object,System.String)"/> to check for existing connections.</para>
             <para>If the <c>target</c> is destroyed in the game's lifecycle, the connection will be lost.</para>
             <para>Examples:</para>
             <para><code>
@@ -2884,7 +2884,7 @@
         <member name="M:Godot.Object.Disconnect(System.String,Godot.Object,System.String)">
             <summary>
             <para>Disconnects a <c>signal</c> from a <c>method</c> on the given <c>target</c>.</para>
-            <para>If you try to disconnect a connection that does not exist, the method will throw an error. Use <see cref="M:Godot.Object.IsConnected(System.String,Godot.Object,System.String)"/> to ensure that the connection exists.</para>
+            <para>If you try to disconnect a connection that does not exist, the method will print an error. Use <see cref="M:Godot.Object.IsConnected(System.String,Godot.Object,System.String)"/> to ensure that the connection exists.</para>
             </summary>
         </member>
         <member name="M:Godot.Object.IsConnected(System.String,Godot.Object,System.String)">
@@ -9276,7 +9276,8 @@
         </member>
         <member name="F:Godot.PropertyHint.Enum">
             <summary>
-            <para>Hints that an integer, float or string property is an enumerated value to pick in a list specified via a hint string such as <c>"Hello,Something,Else"</c>.</para>
+            <para>Hints that an integer, float or string property is an enumerated value to pick in a list specified via a hint string.</para>
+            <para>The hint string is a comma separated list of names such as <c>"Hello,Something,Else"</c>. For integer and float properties, the first name in the list has value 0, the next 1, and so on. Explicit values can also be specified by appending <c>:integer</c> to the name, e.g. <c>"Zero,One,Three:3,Four,Six:6"</c>.</para>
             </summary>
         </member>
         <member name="F:Godot.PropertyHint.ExpEasing">
@@ -13292,7 +13293,7 @@
         <member name="T:Godot.AudioEffectCapture">
             <summary>
             <para>AudioEffectCapture is an AudioEffect which copies all audio frames from the attached audio effect bus into its internal ring buffer.</para>
-            <para>Application code should consume these audio frames from this ring buffer using <see cref="M:Godot.AudioEffectCapture.GetBuffer(System.Int32)"/> and process it as needed, for example to capture data from a microphone, implement application defined effects, or to transmit audio over the network.</para>
+            <para>Application code should consume these audio frames from this ring buffer using <see cref="M:Godot.AudioEffectCapture.GetBuffer(System.Int32)"/> and process it as needed, for example to capture data from a microphone, implement application defined effects, or to transmit audio over the network. When capturing audio data from a microphone, the format of the samples will be stereo 32-bit floating point PCM.</para>
             </summary>
         </member>
         <member name="P:Godot.AudioEffectCapture.BufferLength">
@@ -14908,7 +14909,7 @@
         </member>
         <member name="P:Godot.BakedLightmap.Quality">
             <summary>
-            <para>Determines the amount of samples per texel used in indrect light baking. The amount of samples for each quality level can be configured in the project settings.</para>
+            <para>Determines the amount of samples per texel used in indirect light baking. The amount of samples for each quality level can be configured in the project settings.</para>
             </summary>
         </member>
         <member name="P:Godot.BakedLightmap.Bounces">
@@ -16960,7 +16961,7 @@
         </member>
         <member name="M:Godot.Camera.ProjectRayNormal(Godot.Vector2)">
             <summary>
-            <para>Returns a normal vector in world space, that is the result of projecting a point on the <see cref="T:Godot.Viewport"/> rectangle by the camera projection. This is useful for casting rays in the form of (origin, normal) for object intersection or picking.</para>
+            <para>Returns a normal vector in world space, that is the result of projecting a point on the <see cref="T:Godot.Viewport"/> rectangle by the inverse camera projection. This is useful for casting rays in the form of (origin, normal) for object intersection or picking.</para>
             </summary>
         </member>
         <member name="M:Godot.Camera.ProjectLocalRayNormal(Godot.Vector2)">
@@ -16970,7 +16971,7 @@
         </member>
         <member name="M:Godot.Camera.ProjectRayOrigin(Godot.Vector2)">
             <summary>
-            <para>Returns a 3D position in world space, that is the result of projecting a point on the <see cref="T:Godot.Viewport"/> rectangle by the camera projection. This is useful for casting rays in the form of (origin, normal) for object intersection or picking.</para>
+            <para>Returns a 3D position in world space, that is the result of projecting a point on the <see cref="T:Godot.Viewport"/> rectangle by the inverse camera projection. This is useful for casting rays in the form of (origin, normal) for object intersection or picking.</para>
             </summary>
         </member>
         <member name="M:Godot.Camera.UnprojectPosition(Godot.Vector3)">
@@ -17535,7 +17536,7 @@
         </member>
         <member name="M:Godot.CanvasItem.SetAsToplevel(System.Boolean)">
             <summary>
-            <para>If <c>enable</c> is <c>true</c>, the node won't inherit its transform from parent canvas items.</para>
+            <para>If <c>enable</c> is <c>true</c>, this <see cref="T:Godot.CanvasItem"/> will not inherit its transform from parent <see cref="T:Godot.CanvasItem"/>s. Its draw order will also be changed to make it draw on top of other <see cref="T:Godot.CanvasItem"/>s that are not set as top-level. The <see cref="T:Godot.CanvasItem"/> will effectively act as if it was placed as a child of a bare <see cref="T:Godot.Node"/>. See also <see cref="M:Godot.CanvasItem.IsSetAsToplevel"/>.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.IsSetAsToplevel">
@@ -17546,44 +17547,52 @@
         <member name="M:Godot.CanvasItem.DrawLine(Godot.Vector2,Godot.Vector2,Godot.Color,System.Single,System.Boolean)">
             <summary>
             <para>Draws a line from a 2D point to another, with a given color and width. It can be optionally antialiased. See also <see cref="M:Godot.CanvasItem.DrawMultiline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/> and <see cref="M:Godot.CanvasItem.DrawPolyline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/>.</para>
+            <para>Note: Line drawing is not accelerated by batching if <c>antialiased</c> is <c>true</c>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent lines and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedLine2D node. That node relies on a texture with custom mipmaps to perform antialiasing. 2D batching is also still supported with those antialiased lines.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawPolyline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)">
             <summary>
             <para>Draws interconnected line segments with a uniform <c>color</c> and <c>width</c> and optional antialiasing. When drawing large amounts of lines, this is faster than using individual <see cref="M:Godot.CanvasItem.DrawLine(Godot.Vector2,Godot.Vector2,Godot.Color,System.Single,System.Boolean)"/> calls. To draw disconnected lines, use <see cref="M:Godot.CanvasItem.DrawMultiline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/> instead. See also <see cref="M:Godot.CanvasItem.DrawPolygon(Godot.Vector2[],Godot.Color[],Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)"/>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent polygons and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawPolylineColors(Godot.Vector2[],Godot.Color[],System.Single,System.Boolean)">
             <summary>
             <para>Draws interconnected line segments with a uniform <c>width</c> and segment-by-segment coloring, and optional antialiasing. Colors assigned to line segments match by index between <c>points</c> and <c>colors</c>. When drawing large amounts of lines, this is faster than using individual <see cref="M:Godot.CanvasItem.DrawLine(Godot.Vector2,Godot.Vector2,Godot.Color,System.Single,System.Boolean)"/> calls. To draw disconnected lines, use <see cref="M:Godot.CanvasItem.DrawMultilineColors(Godot.Vector2[],Godot.Color[],System.Single,System.Boolean)"/> instead. See also <see cref="M:Godot.CanvasItem.DrawPolygon(Godot.Vector2[],Godot.Color[],Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)"/>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent polygons and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawArc(Godot.Vector2,System.Single,System.Single,System.Single,System.Int32,Godot.Color,System.Single,System.Boolean)">
             <summary>
             <para>Draws a unfilled arc between the given angles. The larger the value of <c>point_count</c>, the smoother the curve. See also <see cref="M:Godot.CanvasItem.DrawCircle(Godot.Vector2,System.Single,Godot.Color)"/>.</para>
+            <para>Note: Line drawing is not accelerated by batching if <c>antialiased</c> is <c>true</c>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent lines and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedRegularPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing. 2D batching is also still supported with those antialiased lines.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawMultiline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)">
             <summary>
             <para>Draws multiple disconnected lines with a uniform <c>color</c>. When drawing large amounts of lines, this is faster than using individual <see cref="M:Godot.CanvasItem.DrawLine(Godot.Vector2,Godot.Vector2,Godot.Color,System.Single,System.Boolean)"/> calls. To draw interconnected lines, use <see cref="M:Godot.CanvasItem.DrawPolyline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/> instead.</para>
-            <para>Note: <c>width</c> and <c>antialiased</c> are currently not implemented and have no effect.</para>
+            <para>Note: <c>width</c> and <c>antialiased</c> are currently not implemented and have no effect. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedLine2D node. That node relies on a texture with custom mipmaps to perform antialiasing. 2D batching is also still supported with those antialiased lines.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawMultilineColors(Godot.Vector2[],Godot.Color[],System.Single,System.Boolean)">
             <summary>
             <para>Draws multiple disconnected lines with a uniform <c>width</c> and segment-by-segment coloring. Colors assigned to line segments match by index between <c>points</c> and <c>colors</c>. When drawing large amounts of lines, this is faster than using individual <see cref="M:Godot.CanvasItem.DrawLine(Godot.Vector2,Godot.Vector2,Godot.Color,System.Single,System.Boolean)"/> calls. To draw interconnected lines, use <see cref="M:Godot.CanvasItem.DrawPolylineColors(Godot.Vector2[],Godot.Color[],System.Single,System.Boolean)"/> instead.</para>
-            <para>Note: <c>width</c> and <c>antialiased</c> are currently not implemented and have no effect.</para>
+            <para>Note: <c>width</c> and <c>antialiased</c> are currently not implemented and have no effect. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedLine2D node. That node relies on a texture with custom mipmaps to perform antialiasing. 2D batching is also still supported with those antialiased lines.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawRect(Godot.Rect2,Godot.Color,System.Boolean,System.Single,System.Boolean)">
             <summary>
-            <para>Draws a rectangle. If <c>filled</c> is <c>true</c>, the rectangle will be filled with the <c>color</c> specified. If <c>filled</c> is <c>false</c>, the rectangle will be drawn as a stroke with the <c>color</c> and <c>width</c> specified. If <c>antialiased</c> is <c>true</c>, the lines will be antialiased.</para>
+            <para>Draws a rectangle. If <c>filled</c> is <c>true</c>, the rectangle will be filled with the <c>color</c> specified. If <c>filled</c> is <c>false</c>, the rectangle will be drawn as a stroke with the <c>color</c> and <c>width</c> specified. If <c>antialiased</c> is <c>true</c>, the lines will attempt to perform antialiasing using OpenGL line smoothing.</para>
             <para>Note: <c>width</c> and <c>antialiased</c> are only effective if <c>filled</c> is <c>false</c>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent polygons and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawCircle(Godot.Vector2,System.Single,Godot.Color)">
             <summary>
-            <para>Draws a colored, unfilled circle. See also <see cref="M:Godot.CanvasItem.DrawArc(Godot.Vector2,System.Single,System.Single,System.Single,System.Int32,Godot.Color,System.Single,System.Boolean)"/>, <see cref="M:Godot.CanvasItem.DrawPolyline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/> and <see cref="M:Godot.CanvasItem.DrawPolygon(Godot.Vector2[],Godot.Color[],Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)"/>.</para>
+            <para>Draws a colored, filled circle. See also <see cref="M:Godot.CanvasItem.DrawArc(Godot.Vector2,System.Single,System.Single,System.Single,System.Int32,Godot.Color,System.Single,System.Boolean)"/>, <see cref="M:Godot.CanvasItem.DrawPolyline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/> and <see cref="M:Godot.CanvasItem.DrawPolygon(Godot.Vector2[],Godot.Color[],Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)"/>.</para>
+            <para>Note: Built-in antialiasing is not provided for <see cref="M:Godot.CanvasItem.DrawCircle(Godot.Vector2,System.Single,Godot.Color)"/>. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedRegularPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
         </member>
         <member name="M:Godot.CanvasItem.DrawTexture(Godot.Texture,Godot.Vector2,System.Nullable{Godot.Color},Godot.Texture)">
@@ -17617,12 +17626,14 @@
         <member name="M:Godot.CanvasItem.DrawPolygon(Godot.Vector2[],Godot.Color[],Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)">
             <summary>
             <para>Draws a solid polygon of any amount of points, convex or concave. Unlike <see cref="M:Godot.CanvasItem.DrawColoredPolygon(Godot.Vector2[],Godot.Color,Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)"/>, each point's color can be changed individually. See also <see cref="M:Godot.CanvasItem.DrawPolyline(Godot.Vector2[],Godot.Color,System.Single,System.Boolean)"/> and <see cref="M:Godot.CanvasItem.DrawPolylineColors(Godot.Vector2[],Godot.Color[],System.Single,System.Boolean)"/>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent polygons and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
             <param name="uvs">If the parameter is null, then the default value is Array.Empty&lt;Vector2&gt;()</param>
         </member>
         <member name="M:Godot.CanvasItem.DrawColoredPolygon(Godot.Vector2[],Godot.Color,Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)">
             <summary>
             <para>Draws a colored polygon of any amount of points, convex or concave. Unlike <see cref="M:Godot.CanvasItem.DrawPolygon(Godot.Vector2[],Godot.Color[],Godot.Vector2[],Godot.Texture,Godot.Texture,System.Boolean)"/>, a single color must be specified for the whole polygon.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent polygons and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
             <param name="uvs">If the parameter is null, then the default value is Array.Empty&lt;Vector2&gt;()</param>
         </member>
@@ -18260,6 +18271,7 @@
         <member name="T:Godot.CollisionObject2D">
             <summary>
             <para>CollisionObject2D is the base class for 2D physics objects. It can hold any number of 2D collision <see cref="T:Godot.Shape2D"/>s. Each shape must be assigned to a shape owner. The CollisionObject2D can have any number of shape owners. Shape owners are not nodes and do not appear in the editor, but are accessible through code using the <c>shape_owner_*</c> methods.</para>
+            <para>Note: Only collisions between objects within the same canvas (<see cref="T:Godot.Viewport"/> canvas or <see cref="T:Godot.CanvasLayer"/>) are supported. The behavior of collisions between objects in different canvases is undefined.</para>
             </summary>
         </member>
         <member name="P:Godot.CollisionObject2D.CollisionLayer">
@@ -20645,12 +20657,12 @@
         </member>
         <member name="P:Godot.CurveTexture.Width">
             <summary>
-            <para>The width of the texture.</para>
+            <para>The width of the texture (in pixels). Higher values make it possible to represent high-frequency data better (such as sudden direction changes), at the cost of increased generation time and memory usage.</para>
             </summary>
         </member>
         <member name="P:Godot.CurveTexture.Curve">
             <summary>
-            <para>The <c>curve</c> rendered onto the texture.</para>
+            <para>The <see cref="T:Godot.Curve"/> that is rendered onto the texture.</para>
             </summary>
         </member>
         <member name="T:Godot.CylinderMesh">
@@ -21075,27 +21087,28 @@
         </member>
         <member name="F:Godot.Environment.ToneMapper.Linear">
             <summary>
-            <para>Linear tonemapper operator. Reads the linear data and passes it on unmodified.</para>
+            <para>Linear tonemapper operator. Reads the linear data and passes it on unmodified. This can cause bright lighting to look blown out, with noticeable clipping in the output colors.</para>
             </summary>
         </member>
         <member name="F:Godot.Environment.ToneMapper.Reinhardt">
             <summary>
-            <para>Reinhardt tonemapper operator. Performs a variation on rendered pixels' colors by this formula: <c>color = color / (1 + color)</c>.</para>
+            <para>Reinhardt tonemapper operator. Performs a variation on rendered pixels' colors by this formula: <c>color = color / (1 + color)</c>. This avoids clipping bright highlights, but the resulting image can look a bit dull.</para>
             </summary>
         </member>
         <member name="F:Godot.Environment.ToneMapper.Filmic">
             <summary>
-            <para>Filmic tonemapper operator.</para>
+            <para>Filmic tonemapper operator. This avoids clipping bright highlights, with a resulting image that usually looks more vivid than <see cref="F:Godot.Environment.ToneMapper.Reinhardt"/>.</para>
             </summary>
         </member>
         <member name="F:Godot.Environment.ToneMapper.Aces">
             <summary>
-            <para>Academy Color Encoding System tonemapper operator. Performs an approximation of the ACES tonemapping curve.</para>
+            <para>Use the legacy Godot version of the Academy Color Encoding System tonemapper. Unlike <see cref="F:Godot.Environment.ToneMapper.AcesFitted"/>, this version of ACES does not handle bright lighting in a physically accurate way. ACES typically has a more contrasted output compared to <see cref="F:Godot.Environment.ToneMapper.Reinhardt"/> and <see cref="F:Godot.Environment.ToneMapper.Filmic"/>.</para>
+            <para>Note: This tonemapping operator will be removed in Godot 4.0 in favor of the more accurate <see cref="F:Godot.Environment.ToneMapper.AcesFitted"/>.</para>
             </summary>
         </member>
         <member name="F:Godot.Environment.ToneMapper.AcesFitted">
             <summary>
-            <para>High quality Academy Color Encoding System tonemapper operator that matches the industry standard. Performs a more physically accurate curve fit which better simulates how light works in the real world. The color of lights and emissive materials will become lighter as the emissive energy increases, and will eventually become white if the light is bright enough to saturate the camera sensor.</para>
+            <para>Use the Academy Color Encoding System tonemapper. ACES is slightly more expensive than other options, but it handles bright lighting in a more realistic fashion by desaturating it as it becomes brighter. ACES typically has a more contrasted output compared to <see cref="F:Godot.Environment.ToneMapper.Reinhardt"/> and <see cref="F:Godot.Environment.ToneMapper.Filmic"/>.</para>
             </summary>
         </member>
         <member name="F:Godot.Environment.GlowBlendModeEnum.Additive">
@@ -22085,6 +22098,36 @@
             <para>Calls <see cref="M:Godot.GIProbe.Bake(Godot.Node,System.Boolean)"/> with <c>create_visual_debug</c> enabled.</para>
             </summary>
         </member>
+        <member name="T:Godot.GLTFAccessor">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFAccessor"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFAnimation">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFAnimation"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFBufferView">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFBufferView"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFCamera">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFCamera"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFDocument">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFDocument"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFLight">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFLight"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
         <member name="P:Godot.GLTFLight.Color">
             <summary>
             <para>The <see cref="T:Godot.Color"/> of the light. Defaults to white. A black color causes the light to have no effect.</para>
@@ -22115,6 +22158,31 @@
             <summary>
             <para>The outer angle of the cone in a spotlight. Must be greater than or equal to the inner angle.</para>
             <para>At this angle, the light drops off to zero brightness. Between the inner and outer cone angles, there is a transition from full brightness to zero brightness. If this angle is a half turn, then the spotlight emits in all directions. When creating a Godot <see cref="T:Godot.SpotLight"/>, the outer cone angle is used as the angle of the spotlight.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFNode">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFNode"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFSkeleton">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFSkeleton"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFSpecGloss">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFSpecGloss"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFState">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFState"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFTexture">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFTexture"/> within a script will cause an error in an exported project.</para>
             </summary>
         </member>
         <member name="T:Godot.Generic6DOFJoint">
@@ -22723,7 +22791,7 @@
         </member>
         <member name="T:Godot.GradientTexture">
             <summary>
-            <para>GradientTexture uses a <see cref="T:Godot.Gradient"/> to fill the texture data. The gradient will be filled from left to right using colors obtained from the gradient. This means the texture does not necessarily represent an exact copy of the gradient, but instead an interpolation of samples obtained from the gradient at fixed steps (see <see cref="P:Godot.GradientTexture.Width"/>).</para>
+            <para>GradientTexture uses a <see cref="T:Godot.Gradient"/> to fill the texture data. The gradient will be filled from left to right using colors obtained from the gradient. This means the texture does not necessarily represent an exact copy of the gradient, but instead an interpolation of samples obtained from the gradient at fixed steps (see <see cref="P:Godot.GradientTexture.Width"/>). See also <see cref="T:Godot.CurveTexture"/>.</para>
             </summary>
         </member>
         <member name="P:Godot.GradientTexture.Gradient">
@@ -25482,7 +25550,8 @@
         <member name="M:Godot.Input.SetUseAccumulatedInput(System.Boolean)">
             <summary>
             <para>Enables or disables the accumulation of similar input events sent by the operating system. When input accumulation is enabled, all input events generated during a frame will be merged and emitted when the frame is done rendering. Therefore, this limits the number of input method calls per second to the rendering FPS.</para>
-            <para>Input accumulation is enabled by default. It can be disabled to get slightly more precise/reactive input at the cost of increased CPU usage. In applications where drawing freehand lines is required, input accumulation should generally be disabled while the user is drawing the line to get results that closely follow the actual input.</para>
+            <para>Input accumulation can be disabled to get slightly more precise/reactive input at the cost of increased CPU usage. In applications where drawing freehand lines is required, input accumulation should generally be disabled while the user is drawing the line to get results that closely follow the actual input.</para>
+            <para>Note: Input accumulation is disabled by default for backward compatibility reasons. It is however recommended to enable it for games which don't require very reactive input, as this will decrease CPU usage.</para>
             </summary>
         </member>
         <member name="M:Godot.Input.FlushBufferedEvents">
@@ -25603,7 +25672,7 @@
         </member>
         <member name="P:Godot.InputEventJoypadButton.Pressure">
             <summary>
-            <para>Represents the pressure the user puts on the button with his finger, if the controller supports it. Ranges from <c>0</c> to <c>1</c>.</para>
+            <para>Represents the pressure the user puts on the button with their finger, if the controller supports it. Ranges from <c>0</c> to <c>1</c>.</para>
             </summary>
         </member>
         <member name="P:Godot.InputEventJoypadButton.Pressed">
@@ -25718,7 +25787,8 @@
         <member name="T:Godot.InputEventMouseMotion">
             <summary>
             <para>Contains mouse and pen motion information. Supports relative, absolute positions and speed. See <see cref="M:Godot.Node._Input(Godot.InputEvent)"/>.</para>
-            <para>Note: By default, this event is only emitted once per frame rendered at most. If you need more precise input reporting, call <see cref="M:Godot.Input.SetUseAccumulatedInput(System.Boolean)"/> with <c>false</c> to make events emitted as often as possible. If you use InputEventMouseMotion to draw lines, consider implementing <a href="https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm">Bresenham's line algorithm</a> as well to avoid visible gaps in lines if the user is moving the mouse quickly.</para>
+            <para>Note: By default, this event can be emitted multiple times per frame rendered, allowing for precise input reporting, at the expense of CPU usage. You can call <see cref="M:Godot.Input.SetUseAccumulatedInput(System.Boolean)"/> with <c>true</c> to let multiple events merge into a single emitted event per frame.</para>
+            <para>Note: If you use InputEventMouseMotion to draw lines, consider implementing <a href="https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm">Bresenham's line algorithm</a> as well to avoid visible gaps in lines if the user is moving the mouse quickly.</para>
             </summary>
         </member>
         <member name="P:Godot.InputEventMouseMotion.Tilt">
@@ -25876,6 +25946,7 @@
         <member name="M:Godot.InputMap.GetActionList(System.String)">
             <summary>
             <para>Returns an array of <see cref="T:Godot.InputEvent"/>s associated with a given action.</para>
+            <para>Note: When used in the editor (e.g. a tool script or <see cref="!:Godot.EditorPlugin"/>), this method will return events for the editor action. If you want to access your project's input binds from the editor, read the <c>input/*</c> settings from <see cref="T:Godot.ProjectSettings"/>.</para>
             </summary>
         </member>
         <member name="M:Godot.InputMap.EventIsAction(Godot.InputEvent,System.String,System.Boolean)">
@@ -27351,7 +27422,7 @@
         </member>
         <member name="T:Godot.Line2D">
             <summary>
-            <para>A line through several points in 2D space.</para>
+            <para>A line through several points in 2D space. Supports varying width and color over the line's length, texturing, and several cap/joint types.</para>
             <para>Note: By default, Godot can only draw up to 4,096 polygon points at a time. To increase this limit, open the Project Settings and increase  and .</para>
             </summary>
         </member>
@@ -27462,8 +27533,9 @@
         </member>
         <member name="P:Godot.Line2D.Antialiased">
             <summary>
-            <para>If <c>true</c>, the line's border will be anti-aliased.</para>
-            <para>Note: Line2D is not accelerated by batching when being anti-aliased.</para>
+            <para>If <c>true</c>, the line's border will attempt to perform antialiasing by drawing thin OpenGL smooth lines on the line's edges.</para>
+            <para>Note: Line2D is not accelerated by batching if <see cref="P:Godot.Line2D.Antialiased"/> is <c>true</c>.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent lines and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedLine2D node. That node relies on a texture with custom mipmaps to perform antialiasing. 2D batching is also still supported with those antialiased lines.</para>
             </summary>
         </member>
         <member name="M:Godot.Line2D.SetPointPosition(System.Int32,Godot.Vector2)">
@@ -28595,7 +28667,7 @@
         </member>
         <member name="T:Godot.MeshInstance">
             <summary>
-            <para>MeshInstance is a node that takes a <see cref="T:Godot.Mesh"/> resource and adds it to the current scenario by creating an instance of it. This is the class most often used to get 3D geometry rendered and can be used to instance a single <see cref="T:Godot.Mesh"/> in many places. This allows to reuse geometry and save on resources. When a <see cref="T:Godot.Mesh"/> has to be instanced more than thousands of times at close proximity, consider using a <see cref="T:Godot.MultiMesh"/> in a <see cref="T:Godot.MultiMeshInstance"/> instead.</para>
+            <para>MeshInstance is a node that takes a <see cref="T:Godot.Mesh"/> resource and adds it to the current scenario by creating an instance of it. This is the class most often used to get 3D geometry rendered and can be used to instance a single <see cref="T:Godot.Mesh"/> in many places. This allows reusing geometry, which can save on resources. When a <see cref="T:Godot.Mesh"/> has to be instanced more than thousands of times at close proximity, consider using a <see cref="T:Godot.MultiMesh"/> in a <see cref="T:Godot.MultiMeshInstance"/> instead.</para>
             </summary>
         </member>
         <member name="P:Godot.MeshInstance.Mesh">
@@ -28621,17 +28693,18 @@
         </member>
         <member name="M:Godot.MeshInstance.GetSurfaceMaterialCount">
             <summary>
-            <para>Returns the number of surface materials.</para>
+            <para>Returns the number of surface override materials.</para>
             </summary>
         </member>
         <member name="M:Godot.MeshInstance.SetSurfaceMaterial(System.Int32,Godot.Material)">
             <summary>
-            <para>Sets the <see cref="T:Godot.Material"/> for a surface of the <see cref="T:Godot.Mesh"/> resource.</para>
+            <para>Sets the override <see cref="T:Godot.Material"/> for the specified surface of the <see cref="T:Godot.Mesh"/> resource. This material is associated with this <see cref="T:Godot.MeshInstance"/> rather than with the <see cref="T:Godot.Mesh"/> resource.</para>
             </summary>
         </member>
         <member name="M:Godot.MeshInstance.GetSurfaceMaterial(System.Int32)">
             <summary>
-            <para>Returns the <see cref="T:Godot.Material"/> for a surface of the <see cref="T:Godot.Mesh"/> resource.</para>
+            <para>Returns the override <see cref="T:Godot.Material"/> for a surface of the <see cref="T:Godot.Mesh"/> resource.</para>
+            <para>Note: This function only returns override materials associated with this <see cref="T:Godot.MeshInstance"/>. Consider using <see cref="M:Godot.MeshInstance.GetActiveMaterial(System.Int32)"/> or <see cref="M:Godot.Mesh.SurfaceGetMaterial(System.Int32)"/> to get materials associated with the <see cref="T:Godot.Mesh"/> resource.</para>
             </summary>
         </member>
         <member name="M:Godot.MeshInstance.GetActiveMaterial(System.Int32)">
@@ -30409,6 +30482,11 @@
         <member name="M:Godot.PHashTranslation.Generate(Godot.Translation)">
             <summary>
             <para>Generates and sets an optimized translation from the given <see cref="T:Godot.Translation"/> resource.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.PackedSceneGLTF">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.PackedSceneGLTF"/> within a script will cause an error in an exported project.</para>
             </summary>
         </member>
         <member name="T:Godot.PacketPeer">
@@ -34326,7 +34404,8 @@
         </member>
         <member name="P:Godot.Polygon2D.Antialiased">
             <summary>
-            <para>If <c>true</c>, polygon edges will be anti-aliased.</para>
+            <para>If <c>true</c>, attempts to perform antialiasing for polygon edges by drawing a thin OpenGL smooth line on the edges.</para>
+            <para>Note: Due to how it works, built-in antialiasing will not look correct for translucent polygons and may not work on certain platforms. As a workaround, install the <a href="https://github.com/godot-extended-libraries/godot-antialiased-line2d">Antialiased Line2D</a> add-on then create an AntialiasedPolygon2D node. That node relies on a texture with custom mipmaps to perform antialiasing.</para>
             </summary>
         </member>
         <member name="P:Godot.Polygon2D.Texture">
@@ -35175,7 +35254,60 @@
         </member>
         <member name="T:Godot.ProximityGroup">
             <summary>
-            <para>General-purpose proximity detection node.</para>
+            <para>General-purpose proximity detection node. <see cref="T:Godot.ProximityGroup"/> can be used for approximate distance checks, which are faster than exact distance checks using <c>Vector3.distance_to</c> or <c>Vector3.distance_squared_to</c>.</para>
+            <para><see cref="T:Godot.ProximityGroup"/> nodes are automatically grouped together, as long as they share the same <see cref="P:Godot.ProximityGroup.GroupName"/> and intersect with each other. By calling the <see cref="M:Godot.ProximityGroup.Broadcast(System.String,System.Object)"/>, you can invoke a specified method with various parameters to all intersecting members.</para>
+            <para><see cref="T:Godot.ProximityGroup"/> is cuboid-shaped and consists of a cluster of <see cref="T:Godot.Vector3"/> coordinates. The coordinates are automatically calculated by calling <see cref="P:Godot.ProximityGroup.GridRadius"/>. To allow <see cref="T:Godot.ProximityGroup"/> to find its peers (and perform automatic grouping), you need to define its <see cref="P:Godot.ProximityGroup.GroupName"/> to a non-empty <see cref="T:System.String"/>. As soon as this object's shape intersects with another <see cref="T:Godot.ProximityGroup"/> object' shape, and both share the same <see cref="P:Godot.ProximityGroup.GroupName"/>, they will belong together for as long as they intersect.</para>
+            <para>Since <see cref="T:Godot.ProximityGroup"/> doesn't rely the physics engine, you don't need to add any other node as a child (unlike <see cref="T:Godot.PhysicsBody"/>).</para>
+            <para>The <see cref="T:Godot.ProximityGroup"/> uses the <see cref="T:Godot.SceneTree"/> groups in the background by calling the method <see cref="M:Godot.Node.AddToGroup(System.String,System.Boolean)"/> internally. The <see cref="T:Godot.SceneTree"/> group names are constructed by combining the <see cref="P:Godot.ProximityGroup.GroupName"/> with its coordinates, which are calculated using the <see cref="P:Godot.ProximityGroup.GridRadius"/> you defined beforehand.</para>
+            <para>Example: A <see cref="T:Godot.ProximityGroup"/> node named <c>"PlanetEarth"</c> at position <c>Vector3(6, 6, 6)</c> with a <see cref="P:Godot.ProximityGroup.GroupName"/> set to <c>"planets"</c> and a <see cref="P:Godot.ProximityGroup.GridRadius"/> of <c>Vector3(1, 2, 3)</c> will create the following <see cref="T:Godot.SceneTree"/> group names:</para>
+            <para><code>
+            - "planets|5|4|3"
+            - "planets|5|4|4"
+            - "planets|5|4|5"
+            - "planets|5|4|6"
+            - "planets|5|4|7"
+            - "planets|5|4|8"
+            - "planets|5|4|9"
+            - ...
+            </code></para>
+            <para>If there is another <see cref="T:Godot.ProximityGroup"/> named <c>"PlanetMars"</c> with group name <c>"planets"</c>, and one of its coordinates is <c>Vector3(5, 4, 7)</c>, it would normally create the <see cref="T:Godot.SceneTree"/> group called <c>"planets|5|4|7"</c>. However, since this group name already exists, this <see cref="T:Godot.ProximityGroup"/> object will be added to the existing one. <c>"PlanetEarth"</c> is already in this group. As long as both nodes don't change their transform and stop intersecting (or exit the scene tree), they are grouped together. As long as this intersection exists, any call to <see cref="M:Godot.ProximityGroup.Broadcast(System.String,System.Object)"/> will affect both <see cref="T:Godot.ProximityGroup"/> nodes.</para>
+            <para>There are 3 caveats to keep in mind when using <see cref="T:Godot.ProximityGroup"/>:</para>
+            <para>- The larger the grid radius, the more coordinates and the more <see cref="T:Godot.SceneTree"/> groups are created. This can have a performance impact if too many groups are created.</para>
+            <para>- If the <see cref="T:Godot.ProximityGroup"/> node is transformed in any way (or is removed from the scene tree), the groupings will have to be recalculated. This can also have a performance impact.</para>
+            <para>- If your <see cref="P:Godot.ProximityGroup.GridRadius"/> is smaller than <c>Vector3(1, 1, 1)</c>, it will be rounded up to <c>Vector3(1, 1, 1)</c>. Therefore, small grid radius values may lead to unwanted groupings.</para>
+            <para>Note: <see cref="T:Godot.ProximityGroup"/> will be removed in Godot 4.0 in favor of more effective and faster <see cref="T:Godot.VisibilityNotifier"/> functionality. For most use cases, <c>Vector3.distance_to</c> or <c>Vector3.distance_squared_to</c> are fast enough too, especially if you call them less often using a <see cref="T:Godot.Timer"/> node.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.ProximityGroup.DispatchModeEnum.Proxy">
+            <summary>
+            <para>This <see cref="T:Godot.ProximityGroup"/>'s parent will be target of <see cref="M:Godot.ProximityGroup.Broadcast(System.String,System.Object)"/>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.ProximityGroup.DispatchModeEnum.Signal">
+            <summary>
+            <para>This <see cref="T:Godot.ProximityGroup"/> will emit the <c>broadcast</c> signal when calling the <see cref="M:Godot.ProximityGroup.Broadcast(System.String,System.Object)"/> method.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.ProximityGroup.GroupName">
+            <summary>
+            <para>Specify the common group name, to let other <see cref="T:Godot.ProximityGroup"/> nodes know, if they should be auto-grouped with this node in case they intersect with each other.</para>
+            <para>For example, if you have a <see cref="T:Godot.ProximityGroup"/> node named <c>"Earth"</c> and another called <c>"Mars"</c>, with both nodes having <c>"planet"</c> as their <see cref="P:Godot.ProximityGroup.GroupName"/>. Give both planets a significantly larger <see cref="P:Godot.ProximityGroup.GridRadius"/> than their actual radius, position them close enough and they'll be automatically grouped.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.ProximityGroup.DispatchMode">
+            <summary>
+            <para>Specifies which node gets contacted on a call of method <see cref="M:Godot.ProximityGroup.Broadcast(System.String,System.Object)"/>.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.ProximityGroup.GridRadius">
+            <summary>
+            <para>The size of the space in 3D units. This also sets the amount of coordinates required to calculate whether two <see cref="T:Godot.ProximityGroup"/> nodes are intersecting or not. Smaller <see cref="P:Godot.ProximityGroup.GridRadius"/> values can be used for more precise proximity checks at the cost of performance, since more groups will be created.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.ProximityGroup.Broadcast(System.String,System.Object)">
+            <summary>
+            <para>Calls on all intersecting <see cref="T:Godot.ProximityGroup"/> the given method and parameters.</para>
+            <para>If the <see cref="P:Godot.ProximityGroup.DispatchMode"/> is set to <see cref="F:Godot.ProximityGroup.DispatchModeEnum.Proxy"/> (the default), all calls are delegated to their respective parent <see cref="T:Godot.Node"/>.</para>
             </summary>
         </member>
         <member name="T:Godot.QuadMesh">
@@ -36582,7 +36714,7 @@
         </member>
         <member name="P:Godot.RigidBody.LinearDamp">
             <summary>
-            <para>The body's linear damp. Cannot be less than -1.0. If this value is different from -1.0, any linear damp derived from the world or areas will be overridden.</para>
+            <para>The body's linear damp. Cannot be less than -1.0. If this value is different from -1.0 it will be added to any linear damp derived from the world or areas.</para>
             <para>See  for more details about damping.</para>
             </summary>
         </member>
@@ -36593,7 +36725,7 @@
         </member>
         <member name="P:Godot.RigidBody.AngularDamp">
             <summary>
-            <para>Damps RigidBody's rotational forces.</para>
+            <para>Damps RigidBody's rotational forces. If this value is different from -1.0 it will be added to any linear damp derived from the world or areas.</para>
             <para>See  for more details about damping.</para>
             </summary>
         </member>
@@ -36789,7 +36921,7 @@
         </member>
         <member name="P:Godot.RigidBody2D.LinearDamp">
             <summary>
-            <para>Damps the body's <see cref="P:Godot.RigidBody2D.LinearVelocity"/>. If <c>-1</c>, the body will use the Default Linear Damp in Project &gt; Project Settings &gt; Physics &gt; 2d.</para>
+            <para>Damps the body's <see cref="P:Godot.RigidBody2D.LinearVelocity"/>. If <c>-1</c>, the body will use the Default Linear Damp in Project &gt; Project Settings &gt; Physics &gt; 2d. If greater than <c>-1</c> it will be added to the default project value.</para>
             <para>See  for more details about damping.</para>
             </summary>
         </member>
@@ -36800,7 +36932,7 @@
         </member>
         <member name="P:Godot.RigidBody2D.AngularDamp">
             <summary>
-            <para>Damps the body's <see cref="P:Godot.RigidBody2D.AngularVelocity"/>. If <c>-1</c>, the body will use the Default Angular Damp defined in Project &gt; Project Settings &gt; Physics &gt; 2d.</para>
+            <para>Damps the body's <see cref="P:Godot.RigidBody2D.AngularVelocity"/>. If <c>-1</c>, the body will use the Default Angular Damp defined in Project &gt; Project Settings &gt; Physics &gt; 2d. If greater than <c>-1</c> it will be added to the default project value.</para>
             <para>See  for more details about damping.</para>
             </summary>
         </member>
@@ -37416,6 +37548,7 @@
             <para>Changes the running scene to a new instance of the given <see cref="T:Godot.PackedScene"/>.</para>
             <para>Returns <c>OK</c> on success or <c>ERR_CANT_CREATE</c> if the scene cannot be instantiated.</para>
             <para>Note: The scene change is deferred, which means that the new scene node is added on the next idle frame. You won't be able to access it immediately after the <see cref="M:Godot.SceneTree.ChangeSceneTo(Godot.PackedScene)"/> call.</para>
+            <para>Note: Passing a value of <c>null</c> into the method will unload the current scene without loading a new one.</para>
             </summary>
         </member>
         <member name="M:Godot.SceneTree.ReloadCurrentScene">
@@ -37752,13 +37885,17 @@
         </member>
         <member name="M:Godot.Shape2D.CollideAndGetContacts(Godot.Transform2D,Godot.Shape2D,Godot.Transform2D)">
             <summary>
-            <para>Returns a list of the points where this shape touches another. If there are no collisions the list is empty.</para>
+            <para>Returns a list of contact point pairs where this shape touches another.</para>
+            <para>If there are no collisions, the returned list is empty. Otherwise, the returned list contains contact points arranged in pairs, with entries alternating between points on the boundary of this shape and points on the boundary of <c>with_shape</c>.</para>
+            <para>A collision pair A, B can be used to calculate the collision normal with <c>(B - A).normalized()</c>, and the collision depth with <c>(B - A).length()</c>. This information is typically used to separate shapes, particularly in collision solvers.</para>
             <para>This method needs the transformation matrix for this shape (<c>local_xform</c>), the shape to check collisions with (<c>with_shape</c>), and the transformation matrix of that shape (<c>shape_xform</c>).</para>
             </summary>
         </member>
         <member name="M:Godot.Shape2D.CollideWithMotionAndGetContacts(Godot.Transform2D,Godot.Vector2,Godot.Shape2D,Godot.Transform2D,Godot.Vector2)">
             <summary>
-            <para>Returns a list of the points where this shape would touch another, if a given movement was applied. If there are no collisions the list is empty.</para>
+            <para>Returns a list of contact point pairs where this shape would touch another, if a given movement was applied.</para>
+            <para>If there would be no collisions, the returned list is empty. Otherwise, the returned list contains contact points arranged in pairs, with entries alternating between points on the boundary of this shape and points on the boundary of <c>with_shape</c>.</para>
+            <para>A collision pair A, B can be used to calculate the collision normal with <c>(B - A).normalized()</c>, and the collision depth with <c>(B - A).length()</c>. This information is typically used to separate shapes, particularly in collision solvers.</para>
             <para>This method needs the transformation matrix for this shape (<c>local_xform</c>), the movement to test on this shape (<c>local_motion</c>), the shape to check collisions with (<c>with_shape</c>), the transformation matrix of that shape (<c>shape_xform</c>), and the movement to test onto the other object (<c>shape_motion</c>).</para>
             </summary>
         </member>
@@ -39123,7 +39260,10 @@
         </member>
         <member name="P:Godot.SpatialMaterial.FlagsVertexLighting">
             <summary>
-            <para>If <c>true</c>, lighting is calculated per vertex rather than per pixel. This may increase performance on low-end devices.</para>
+            <para>If <c>true</c>, lighting is calculated per vertex rather than per pixel. This may increase performance on low-end devices, especially for meshes with a lower polygon count. The downside is that shading becomes much less accurate, with visible linear interpolation between vertices that are joined together. This can be compensated by ensuring meshes have a sufficient level of subdivision (but not too much, to avoid reducing performance). Some material features are also not supported when vertex shading is enabled.</para>
+            <para>See also  which can globally enable vertex shading on all materials.</para>
+            <para>Note: By default, vertex shading is enforced on mobile platforms by 's <c>mobile</c> override.</para>
+            <para>Note: <see cref="P:Godot.SpatialMaterial.FlagsVertexLighting"/> has no effect if <see cref="P:Godot.SpatialMaterial.FlagsUnshaded"/> is <c>true</c>.</para>
             </summary>
         </member>
         <member name="P:Godot.SpatialMaterial.FlagsNoDepthTest">
@@ -43861,7 +44001,7 @@
             <para>Returns the currently edited item. Can be used with <c>item_edited</c> to get the item that was modified.</para>
             <para><code>
             func _ready():
-                $Tree.item_edited.connect(on_Tree_item_edited)
+                $Tree.connect("item_edited", self, "on_Tree_item_edited")
             
             func on_Tree_item_edited():
                 print($Tree.get_edited()) # This item just got edited (e.g. checked).
@@ -48346,27 +48486,28 @@
         </member>
         <member name="F:Godot.VisualServer.EnvironmentToneMapper.Linear">
             <summary>
-            <para>Output color as they came in.</para>
+            <para>Output color as they came in. This can cause bright lighting to look blown out, with noticeable clipping in the output colors.</para>
             </summary>
         </member>
         <member name="F:Godot.VisualServer.EnvironmentToneMapper.Reinhard">
             <summary>
-            <para>Use the Reinhard tonemapper.</para>
+            <para>Use the Reinhard tonemapper. Performs a variation on rendered pixels' colors by this formula: <c>color = color / (1 + color)</c>. This avoids clipping bright highlights, but the resulting image can look a bit dull.</para>
             </summary>
         </member>
         <member name="F:Godot.VisualServer.EnvironmentToneMapper.Filmic">
             <summary>
-            <para>Use the filmic tonemapper.</para>
+            <para>Use the filmic tonemapper. This avoids clipping bright highlights, with a resulting image that usually looks more vivid than <see cref="F:Godot.VisualServer.EnvironmentToneMapper.Reinhard"/>.</para>
             </summary>
         </member>
         <member name="F:Godot.VisualServer.EnvironmentToneMapper.Aces">
             <summary>
-            <para>Use the ACES tonemapper.</para>
+            <para>Use the legacy Godot version of the Academy Color Encoding System tonemapper. Unlike <see cref="F:Godot.VisualServer.EnvironmentToneMapper.AcesFitted"/>, this version of ACES does not handle bright lighting in a physically accurate way. ACES typically has a more contrasted output compared to <see cref="F:Godot.VisualServer.EnvironmentToneMapper.Reinhard"/> and <see cref="F:Godot.VisualServer.EnvironmentToneMapper.Filmic"/>.</para>
+            <para>Note: This tonemapping operator will be removed in Godot 4.0 in favor of the more accurate <see cref="F:Godot.VisualServer.EnvironmentToneMapper.AcesFitted"/>.</para>
             </summary>
         </member>
         <member name="F:Godot.VisualServer.EnvironmentToneMapper.AcesFitted">
             <summary>
-            <para>Use the ACES Fitted tonemapper.</para>
+            <para>Use the Academy Color Encoding System tonemapper. ACES is slightly more expensive than other options, but it handles bright lighting in a more realistic fashion by desaturating it as it becomes brighter. ACES typically has a more contrasted output compared to <see cref="F:Godot.VisualServer.EnvironmentToneMapper.Reinhard"/> and <see cref="F:Godot.VisualServer.EnvironmentToneMapper.Filmic"/>.</para>
             </summary>
         </member>
         <member name="F:Godot.VisualServer.EnvironmentGlowBlendMode.Additive">
@@ -49080,7 +49221,7 @@
         </member>
         <member name="M:Godot.VisualServer.MaterialGetParamDefault(Godot.RID,System.String)">
             <summary>
-            <para>Returns the default value for the param if available. Otherwise returns an empty <c>Variant</c>.</para>
+            <para>Returns the default value for the param if available. Returns <c>null</c> otherwise.</para>
             </summary>
         </member>
         <member name="M:Godot.VisualServer.MaterialSetRenderPriority(Godot.RID,System.Int32)">
@@ -53925,12 +54066,12 @@
         </member>
         <member name="M:Godot.Geometry.SegmentIntersectsSegment2d(Godot.Vector2,Godot.Vector2,Godot.Vector2,Godot.Vector2)">
             <summary>
-            <para>Checks if the two segments (<c>from_a</c>, <c>to_a</c>) and (<c>from_b</c>, <c>to_b</c>) intersect. If yes, return the point of intersection as <see cref="T:Godot.Vector2"/>. If no intersection takes place, returns an empty <c>Variant</c>.</para>
+            <para>Checks if the two segments (<c>from_a</c>, <c>to_a</c>) and (<c>from_b</c>, <c>to_b</c>) intersect. If yes, return the point of intersection as <see cref="T:Godot.Vector2"/>. If no intersection takes place, returns <c>null</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.Geometry.LineIntersectsLine2d(Godot.Vector2,Godot.Vector2,Godot.Vector2,Godot.Vector2)">
             <summary>
-            <para>Checks if the two lines (<c>from_a</c>, <c>dir_a</c>) and (<c>from_b</c>, <c>dir_b</c>) intersect. If yes, return the point of intersection as <see cref="T:Godot.Vector2"/>. If no intersection takes place, returns an empty <c>Variant</c>.</para>
+            <para>Checks if the two lines (<c>from_a</c>, <c>dir_a</c>) and (<c>from_b</c>, <c>dir_b</c>) intersect. If yes, return the point of intersection as <see cref="T:Godot.Vector2"/>. If no intersection takes place, returns <c>null</c>.</para>
             <para>Note: The lines are specified using direction vectors, not end points.</para>
             </summary>
         </member>
@@ -54931,6 +55072,10 @@
                 if argument.find("=") &gt; -1:
                     var key_value = argument.split("=")
                     arguments[key_value[0].lstrip("--")] = key_value[1]
+                else:
+                    # Options without an argument will be present in the dictionary,
+                    # with the value set to an empty string.
+                    arguments[argument.lstrip("--")] = ""
             </code></para>
             </summary>
         </member>

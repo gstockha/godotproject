@@ -1547,13 +1547,13 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 44.783, 2.75629, -39.119
 transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 50.5918, 2.75629, -50.2913 )
 
 [node name="bp33" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.25, -31.923 )
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.84351, -31.923 )
 
 [node name="bp34" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.25, -26.506 )
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.84351, -26.506 )
 
 [node name="bp35" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 27 )]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.25, -21.359 )
+transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 43.232, 9.84351, -21.359 )
 
 [node name="5bp4" parent="environment/Pyramid/PyramidInternal/bpParent" instance=ExtResource( 28 )]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 45.0601, 7.13243, -21.139 )

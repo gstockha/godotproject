@@ -1376,6 +1376,11 @@
             </code></para>
             </summary>
         </member>
+        <member name="T:Godot.EditorSceneImporterGLTF">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.EditorSceneImporterGLTF"/> within a script will cause an error in an exported project.</para>
+            </summary>
+        </member>
         <member name="T:Godot.EditorScenePostImport">
             <summary>
             <para>Imported scenes can be automatically modified right after import by setting their Custom Script Import property to a <c>tool</c> script that inherits from this class.</para>
@@ -1880,6 +1885,11 @@
         <member name="M:Godot.EditorVCSInterface.GetVcsName">
             <summary>
             <para>Returns the name of the VCS if the VCS has been initialized, else return an empty string.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.GLTFMesh">
+            <summary>
+            <para>Note: This class is only compiled in editor builds. Run-time glTF loading and saving is not available in exported projects. References to <see cref="T:Godot.GLTFMesh"/> within a script will cause an error in an exported project.</para>
             </summary>
         </member>
         <member name="T:Godot.ScriptCreateDialog">

@@ -2,13 +2,13 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.7.2": {
-      "Microsoft.NETFramework.ReferenceAssemblies/1.0.0": {
+      "Microsoft.NETFramework.ReferenceAssemblies/1.0.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.NETFramework.ReferenceAssemblies.net472": "1.0.0"
+          "Microsoft.NETFramework.ReferenceAssemblies.net472": "1.0.2"
         }
       },
-      "Microsoft.NETFramework.ReferenceAssemblies.net472/1.0.0": {
+      "Microsoft.NETFramework.ReferenceAssemblies.net472/1.0.2": {
         "type": "package",
         "build": {
           "build/Microsoft.NETFramework.ReferenceAssemblies.net472.targets": {}
@@ -17,21 +17,21 @@
     }
   },
   "libraries": {
-    "Microsoft.NETFramework.ReferenceAssemblies/1.0.0": {
-      "sha512": "7D2TMufjGiowmt0E941kVoTIS+GTNzaPopuzM1/1LSaJAdJdBrVP0SkZW7AgDd0a2U1DjsIeaKG1wxGVBNLDMw==",
+    "Microsoft.NETFramework.ReferenceAssemblies/1.0.2": {
+      "sha512": "5/cSEVld+px/CuRrbohO/djfg6++eR6zGpy88MgqloXvkj//WXWpFZyu/OpkXPN0u5m+dN/EVwLNYFUxD4h2+A==",
       "type": "package",
-      "path": "microsoft.netframework.referenceassemblies/1.0.0",
+      "path": "microsoft.netframework.referenceassemblies/1.0.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "microsoft.netframework.referenceassemblies.1.0.0.nupkg.sha512",
+        "microsoft.netframework.referenceassemblies.1.0.2.nupkg.sha512",
         "microsoft.netframework.referenceassemblies.nuspec"
       ]
     },
-    "Microsoft.NETFramework.ReferenceAssemblies.net472/1.0.0": {
-      "sha512": "VI0f22cH/xOlXLUVY7t6vr2Gi7cg0vzwpspNGz5isRusyspZblF7jJMw49E8mF1m071JyeVmZVkIK9c5kbiyFA==",
+    "Microsoft.NETFramework.ReferenceAssemblies.net472/1.0.2": {
+      "sha512": "ryAuwkvjMC9xYQ0VXsG7ZBo62y5tBmYaCnovOL5IXfnQPQqjvJGRkLMDyUx+dnCb96UVLJv83R6XK+sRnDnaZg==",
       "type": "package",
-      "path": "microsoft.netframework.referenceassemblies.net472/1.0.0",
+      "path": "microsoft.netframework.referenceassemblies.net472/1.0.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -404,34 +404,34 @@
         "build/.NETFramework/v4.7.2/sysglobl.dll",
         "build/.NETFramework/v4.7.2/sysglobl.xml",
         "build/Microsoft.NETFramework.ReferenceAssemblies.net472.targets",
-        "microsoft.netframework.referenceassemblies.net472.1.0.0.nupkg.sha512",
+        "microsoft.netframework.referenceassemblies.net472.1.0.2.nupkg.sha512",
         "microsoft.netframework.referenceassemblies.net472.nuspec"
       ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.7.2": [
-      "Microsoft.NETFramework.ReferenceAssemblies >= 1.0.0"
+      "Microsoft.NETFramework.ReferenceAssemblies >= 1.0.2"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\aravi\\.nuget\\packages\\": {},
+    "C:\\Users\\AAAAAAA\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\marblebounce.csproj",
+      "projectUniqueName": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\marblebounce.csproj",
       "projectName": "marblebounce",
-      "projectPath": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\marblebounce.csproj",
-      "packagesPath": "C:\\Users\\aravi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\aravi\\OneDrive\\Desktop\\godotproject\\.mono\\temp\\obj\\",
+      "projectPath": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\marblebounce.csproj",
+      "packagesPath": "C:\\Users\\AAAAAAA\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\AAAAAAA\\desktop\\godotprojects\\dreamcourse1\\.mono\\temp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\aravi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\AAAAAAA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -461,11 +461,11 @@
           "Microsoft.NETFramework.ReferenceAssemblies": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[1.0.0, )",
+            "version": "[1.0.2, )",
             "autoReferenced": true
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

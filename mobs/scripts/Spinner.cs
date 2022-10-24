@@ -101,7 +101,7 @@ public void _on_DeathTimer_timeout(){
     deathTimer.Stop();
     QueueFree();
     if (lockable) foreach (Node player in players) player.Call("_lockOn", this, 0);
-    parent.Call("_spawnTimerSet", GetNode<Spatial>("."), "spinner", spawnPoint, new float[] {angMod, dirMod});
+    parent.Call("_spawnTimerSet", this, "spinner", spawnPoint, new float[] {angMod, dirMod});
     //if ((state != states.squished && state != states.launched) && (target.Get("lockOn") == this)) foreach (Node player in players) player.Call("_lockOn", this, 0);
 }
 

@@ -19,6 +19,7 @@ var ui_up = "ui_up"
 var ui_down = "ui_down"
 var player_count = 1
 var p1hasController = false
+var pyramided = false
 
 func _processJoyCount() -> void:
 	if (player_count == 1): p1hasController = true

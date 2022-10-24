@@ -15,3 +15,4 @@ C:\Users\aravi\OneDrive\Desktop\godotproject\.mono\temp\obj\Debug\marblebounce.A
 C:\Users\aravi\OneDrive\Desktop\godotproject\.mono\temp\obj\Debug\marblebounce.csproj.CoreCompileInputs.cache
 C:\Users\aravi\OneDrive\Desktop\godotproject\.mono\temp\obj\Debug\marblebounce.dll
 C:\Users\aravi\OneDrive\Desktop\godotproject\.mono\temp\obj\Debug\marblebounce.pdb
+C:\Users\AAAAAAA\desktop\godotprojects\dreamcourse1\.mono\temp\obj\Debug\marblebounce.GeneratedMSBuildEditorConfig.editorconfig
